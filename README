@@ -1,4 +1,8 @@
-This is your new Play application
-=====================================
+Build notes:
 
-This file will be packaged with your application, when using `play dist`.
+If there are any changes made to the SQL evolutions, you must
+have a PostgreSQL server running because of the code generation.
+It assumes that you can get into the server with the username
+postgres and password postgres. It then creates (and deletes)
+a database named recon_gen and applies all the evolutions
+so the code generator can inspect the tables.

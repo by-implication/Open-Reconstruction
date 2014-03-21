@@ -13,3 +13,6 @@ dist
 /.project
 /RUNNING_PID
 /.settings
+/conf/evolutions/default/.hash
+/recon.sublime-project
+/recon.sublime-workspace
