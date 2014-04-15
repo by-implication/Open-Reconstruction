@@ -14,9 +14,20 @@ object Requests extends Controller with Secured {
   }
 
   def createForm: Form[Req] = Form(
-    // description, location. Optionally, amount, photographs
-  	mapping("text" -> text)
-  	(text => Req(anorm.Id(1)))
+  	mapping(
+      "description" -> nonEmptyText,
+      "location" -> nonEmptyText,
+      "amount" -> optional(number),
+      "photographs" -> text
+    )
+  	((description, location, amount, photographs) => {
+      Req(
+        description = description,
+        location = location,
+        amount = BigDecimal(amount.getOrElse(0))
+        // photographs = photographs
+      )
+    })
   	(_ => None)
 	)
 
@@ -24,7 +35,7 @@ object Requests extends Controller with Secured {
   	if(user.canCreateRequests){
   		createForm.bindFromRequest.fold(
   			Rest.formError(_),
-  			_.save().map { r =>
+  			_.copy(authorId = user.id).save().map { r =>
   				Rest.success("req" -> r.insertJson)
   			}.getOrElse(Rest.serverError())
 			)
