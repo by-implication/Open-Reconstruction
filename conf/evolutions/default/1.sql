@@ -1,10 +1,23 @@
 # --- !Ups
 
-CREATE TABLE stuffs (
-  stuff_id serial PRIMARY KEY,
-  stuff_content text
+CREATE TYPE disaster_types AS ENUM(
+	'Earthquake',
+	'Flood',
+	'Typhoon',
+	'Landslide',
+	'Anthropogenic'
+);;
+
+CREATE TABLE disasters (
+  disaster_id serial PRIMARY KEY,
+  disaster_kind disaster_types NOT NULL,
+  disaster_name text NOT NULL,
+  disaster_date timestamp NOT NULL,
+  disaster_cause text
 );;
 
 # --- !Downs
 
-DROP TABLE IF EXISTS stuff;;
+DROP TABLE IF EXISTS disasters;;
+
+DROP TYPE IF EXISTS disaster_types;;
