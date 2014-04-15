@@ -4,6 +4,7 @@ import anorm._
 import anorm.SqlParser._
 import java.sql.Timestamp
 import play.api.db._
+import play.api.libs.json._
 import play.api.Play.current
 import recon.support._
 

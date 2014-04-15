@@ -7,6 +7,7 @@ object GenerateSource {
     "anorm.SqlParser._",
     "java.sql.Timestamp",
     "play.api.db._",
+    "play.api.libs.json._",
     "play.api.Play.current",
     "recon.support._"
   )

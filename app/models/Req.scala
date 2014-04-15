@@ -4,14 +4,15 @@ import anorm._
 import anorm.SqlParser._
 import java.sql.Timestamp
 import play.api.db._
+import play.api.libs.json._
 import play.api.Play.current
 import recon.support._
 
-object Request extends RequestGen {
+object Req extends ReqGen {
 }
 
 // GENERATED case class start
-case class Request(
+case class Req(
   id: Pk[Int] = NA,
   date: Timestamp = Time.now,
   code: String = "",
@@ -26,65 +27,70 @@ case class Request(
   remarks: Option[String] = None,
   attachments: PGIntList = Nil,
   disasterId: Int = 0
-) extends RequestCCGen with Entity[Request]
+) extends ReqCCGen with Entity[Req]
 // GENERATED case class end
+{
+
+  def insertJson = Json.obj("lol" -> "wut")
+  
+}
 
 // GENERATED object start
-trait RequestGen extends EntityCompanion[Request] {
+trait ReqGen extends EntityCompanion[Req] {
   val simple = {
-    get[Pk[Int]]("request_id") ~
-    get[Timestamp]("request_date") ~
-    get[String]("request_code") ~
-    get[Int]("request_level") ~
-    get[Boolean]("request_rejected") ~
+    get[Pk[Int]]("req_id") ~
+    get[Timestamp]("req_date") ~
+    get[String]("req_code") ~
+    get[Int]("req_level") ~
+    get[Boolean]("req_rejected") ~
     get[Int]("author_id") ~
     get[Int]("implementing_agency_id") ~
-    get[ProjectType]("request_project_type") ~
-    get[String]("request_description") ~
-    get[java.math.BigDecimal]("request_amount") ~
-    get[String]("request_location") ~
-    get[Option[String]]("request_remarks") ~
-    get[PGIntList]("request_attachments") ~
+    get[ProjectType]("req_project_type") ~
+    get[String]("req_description") ~
+    get[java.math.BigDecimal]("req_amount") ~
+    get[String]("req_location") ~
+    get[Option[String]]("req_remarks") ~
+    get[PGIntList]("req_attachments") ~
     get[Int]("disaster_id") map {
       case id~date~code~level~isRejected~authorId~implementingAgencyId~projectType~description~amount~location~remarks~attachments~disasterId =>
-        Request(id, date, code, level, isRejected, authorId, implementingAgencyId, projectType, description, amount, location, remarks, attachments, disasterId)
+        Req(id, date, code, level, isRejected, authorId, implementingAgencyId, projectType, description, amount, location, remarks, attachments, disasterId)
     }
   }
 
-  def lazyFind(column: String, value: Any) = SQL("select * from requests where "+column+" = {value}").on('value -> value)
+  def lazyFind(column: String, value: Any) = SQL("select * from reqs where "+column+" = {value}").on('value -> value)
 
-  def findOne(column: String, value: Any): Option[Request] = DB.withConnection { implicit c =>
+  def findOne(column: String, value: Any): Option[Req] = DB.withConnection { implicit c =>
     lazyFind(column, value).singleOpt(simple)
   }
 
-  def findAll(column: String, value: Any): Seq[Request] = DB.withConnection { implicit c =>
+  def findAll(column: String, value: Any): Seq[Req] = DB.withConnection { implicit c =>
     lazyFind(column, value).list(simple)
   }
 
-  def findById(id: Int): Option[Request] = findOne("request_id", id)
+  def findById(id: Int): Option[Req] = findOne("req_id", id)
 
-  def list(count: Int = 10, offset: Int = 0): Seq[Request] = DB.withConnection { implicit c =>
-    SQL("select * from requests limit {count} offset {offset}").on('count -> count, 'offset -> offset).list(simple)
+  def list(count: Int = 10, offset: Int = 0): Seq[Req] = DB.withConnection { implicit c =>
+    SQL("select * from reqs limit {count} offset {offset}").on('count -> count, 'offset -> offset).list(simple)
   }
 
-  def insert(o: Request): Option[Request] = DB.withConnection { implicit c =>
+  def insert(o: Req): Option[Req] = DB.withConnection { implicit c =>
     o.id match {
       case NotAssigned => {
         val id = SQL("""
-          insert into requests (
-            request_id,
-            request_date,
-            request_code,
-            request_level,
-            request_rejected,
+          insert into reqs (
+            req_id,
+            req_date,
+            req_code,
+            req_level,
+            req_rejected,
             author_id,
             implementing_agency_id,
-            request_project_type,
-            request_description,
-            request_amount,
-            request_location,
-            request_remarks,
-            request_attachments,
+            req_project_type,
+            req_description,
+            req_amount,
+            req_location,
+            req_remarks,
+            req_attachments,
             disaster_id
           ) VALUES (
             DEFAULT,
@@ -122,20 +128,20 @@ trait RequestGen extends EntityCompanion[Request] {
       }
       case Id(n) => {
         SQL("""
-          insert into requests (
-            request_id,
-            request_date,
-            request_code,
-            request_level,
-            request_rejected,
+          insert into reqs (
+            req_id,
+            req_date,
+            req_code,
+            req_level,
+            req_rejected,
             author_id,
             implementing_agency_id,
-            request_project_type,
-            request_description,
-            request_amount,
-            request_location,
-            request_remarks,
-            request_attachments,
+            req_project_type,
+            req_description,
+            req_amount,
+            req_location,
+            req_remarks,
+            req_attachments,
             disaster_id
           ) VALUES (
             {id},
@@ -173,23 +179,23 @@ trait RequestGen extends EntityCompanion[Request] {
     }
   }
 
-  def update(o: Request): Boolean = DB.withConnection { implicit c =>
+  def update(o: Req): Boolean = DB.withConnection { implicit c =>
     SQL("""
-      update requests set
-        request_date={date},
-        request_code={code},
-        request_level={level},
-        request_rejected={isRejected},
+      update reqs set
+        req_date={date},
+        req_code={code},
+        req_level={level},
+        req_rejected={isRejected},
         author_id={authorId},
         implementing_agency_id={implementingAgencyId},
-        request_project_type={projectType},
-        request_description={description},
-        request_amount={amount},
-        request_location={location},
-        request_remarks={remarks},
-        request_attachments={attachments},
+        req_project_type={projectType},
+        req_description={description},
+        req_amount={amount},
+        req_location={location},
+        req_remarks={remarks},
+        req_attachments={attachments},
         disaster_id={disasterId}
-      where request_id={id}
+      where req_id={id}
     """).on(
       'id -> o.id,
       'date -> o.date,
@@ -209,12 +215,12 @@ trait RequestGen extends EntityCompanion[Request] {
   }
 
   def delete(id: Int): Boolean = DB.withConnection { implicit c =>
-    SQL("delete from requests where request_id={id}").on('id -> id).executeUpdate() > 0
+    SQL("delete from reqs where req_id={id}").on('id -> id).executeUpdate() > 0
   }
 }
 
-trait RequestCCGen {
-  val companion = Request
+trait ReqCCGen {
+  val companion = Req
 }
 // GENERATED object end
 

@@ -2,12 +2,33 @@ package recon.models
 
 import anorm._
 import anorm.SqlParser._
+import com.redis.serialization.Parse.Implicits._
 import java.sql.Timestamp
 import play.api.db._
+import play.api.mvc.RequestHeader
 import play.api.Play.current
 import recon.support._
 
 object User extends UserGen {
+
+  def Anon(implicit request: RequestHeader) = {
+    
+    val anon = User(id = Id(-1))
+
+    anon.sessionId = {
+      request.session.get("session_id").map(_.toInt)
+      .getOrElse(Redis.xaction { r =>    
+        r.get[Int]("sessionCount") match {
+          case Some(n) => r.incr("sessionCount"); n+1
+          case None => r.set("sessionCount", 1); 1
+        }
+      })
+    }
+
+    anon
+
+  }
+
 }
 
 // GENERATED case class start
@@ -18,6 +39,18 @@ case class User(
   kind: UserType = UserType.LGU
 ) extends UserCCGen with Entity[User]
 // GENERATED case class end
+{
+
+  var sessionId = -1
+
+  def canCreateRequests = {
+    import UserType._
+    Seq(LGU, GOCC, NGA) contains kind
+  }
+
+  def isAnonymous = id.get == -1
+
+}
 
 // GENERATED object start
 trait UserGen extends EntityCompanion[User] {
