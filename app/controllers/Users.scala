@@ -13,18 +13,21 @@ object Users extends Controller with Secured {
     Ok(views.html.mithril())
   }
 
-  def loginForm: Form[User] = Form(
-  	mapping("text" -> text)
-  	(text => User(anorm.Id(1)))
-  	(_ => None)
-	)
+  lazy val loginForm: Form[Option[User]] = Form(
+    mapping(
+      "handle" -> text,
+      "password" -> text
+    )((h, p) => User.authenticate(h, p))
+    (_ => None)
+    .verifying("Invalid username/password", _.isDefined)
+  )
 
   def authenticate = UserAction(){ implicit user => implicit request =>
     if (Secured.attemptLogin(request.remoteAddress)) {
       if(user.isAnonymous){
         loginForm.bindFromRequest.fold(
           Rest.formError(_),
-          user => Secured.login(user)(request)
+          userOpt => Secured.login(userOpt.get)(request)
         )
       } else Redirect(routes.Application.index)
     } else Rest.error("too many login attempts")

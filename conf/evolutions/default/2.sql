@@ -1,5 +1,7 @@
 # --- !Ups
 
+CREATE EXTENSION IF NOT EXISTS pgcrypto;;
+
 CREATE TYPE user_type AS ENUM(
 	'LGU',
 	'GOCC',
@@ -22,3 +24,5 @@ CREATE TABLE users (
 DROP TABLE IF EXISTS users;;
 
 DROP TYPE IF EXISTS user_type;;
+
+DROP EXTENSION IF EXISTS pgcrypto;;

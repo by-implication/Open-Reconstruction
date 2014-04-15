@@ -11,6 +11,86 @@ import recon.support._
 
 object User extends UserGen {
 
+  override def insert(o: User): Option[User] = DB.withConnection { implicit c =>
+    o.id match {
+      case NotAssigned => {
+        val id = SQL("""
+          insert into users (
+            user_id,
+            user_handle,
+            user_password,
+            user_kind
+          ) VALUES (
+            DEFAULT,
+            {handle},
+            crypt({password}, gen_salt('bf')),
+            {kind}
+          )
+        """).on(
+          'id -> o.id,
+          'handle -> o.handle,
+          'password -> o.password,
+          'kind -> o.kind
+        ).executeInsert()
+        id.map(i => o.copy(id=Id(i.toInt)))
+      }
+      case Id(n) => {
+        SQL("""
+          insert into users (
+            user_id,
+            user_handle,
+            user_password,
+            user_kind
+          ) VALUES (
+            {id},
+            {handle},
+            crypt({password}, gen_salt('bf')),
+            {kind}
+          )
+        """).on(
+          'id -> o.id,
+          'handle -> o.handle,
+          'password -> o.password,
+          'kind -> o.kind
+        ).executeInsert().flatMap(x => Some(o))
+      }
+    }
+  }
+
+  override def update(o: User): Boolean = DB.withConnection { implicit c =>
+    SQL("""
+      update users set
+        user_handle={handle},
+        user_kind={kind}
+      where user_id={id}
+    """).on(
+      'id -> o.id,
+      'handle -> o.handle,
+      'kind -> o.kind
+    ).executeUpdate() > 0
+  }
+
+  def changePassword(id: Int, oldPassword: String, newPassword: String): Boolean = DB.withConnection { implicit c =>
+    SQL("""
+      update users set user_password = crypt({new}, gen_salt('bf'))
+      where user_id = {id} and user_password = crypt({old}, user_password)
+    """).on(
+      'id -> id,
+      'old -> oldPassword,
+      'new -> newPassword
+    ).executeUpdate() > 0
+  }
+
+  def resetPassword(id: Int, newPassword: String): Boolean = DB.withConnection { implicit c =>
+    SQL("""
+      update users set user_password = crypt({new}, gen_salt('bf'))
+      where user_id = {id}
+    """).on(
+      'id -> id,
+      'new -> newPassword
+    ).executeUpdate() > 0
+  }
+
   def Anon(implicit request: RequestHeader) = {
     
     val anon = User(id = Id(-1))
@@ -27,6 +107,12 @@ object User extends UserGen {
 
     anon
 
+  }
+
+  def authenticate(handle: String, password: String): Option[User] = DB.withConnection { implicit c =>
+    SQL("select * from users where user_handle ilike {handle} and user_password = crypt({password}, user_password)")
+    .on('handle -> handle, 'password -> password)
+    .singleOpt(simple)
   }
 
 }
