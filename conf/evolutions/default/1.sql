@@ -1,6 +1,6 @@
 # --- !Ups
 
-CREATE TYPE disaster_types AS ENUM(
+CREATE TYPE disaster_type AS ENUM(
 	'Earthquake',
 	'Flood',
 	'Typhoon',
@@ -10,7 +10,7 @@ CREATE TYPE disaster_types AS ENUM(
 
 CREATE TABLE disasters (
   disaster_id serial PRIMARY KEY,
-  disaster_kind disaster_types NOT NULL,
+  disaster_kind disaster_type NOT NULL,
   disaster_name text NOT NULL,
   disaster_date timestamp NOT NULL,
   disaster_cause text
@@ -20,4 +20,4 @@ CREATE TABLE disasters (
 
 DROP TABLE IF EXISTS disasters;;
 
-DROP TYPE IF EXISTS disaster_types;;
+DROP TYPE IF EXISTS disaster_type;;

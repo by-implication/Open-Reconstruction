@@ -13,7 +13,7 @@ object Disaster extends DisasterGen {
 // GENERATED case class start
 case class Disaster(
   id: Pk[Int] = NA,
-  kind: DisasterTypes = DisasterTypes.EARTHQUAKE,
+  kind: DisasterType = DisasterType.EARTHQUAKE,
   name: String = "",
   date: Timestamp = Time.now,
   cause: Option[String] = None
@@ -24,7 +24,7 @@ case class Disaster(
 trait DisasterGen extends EntityCompanion[Disaster] {
   val simple = {
     get[Pk[Int]]("disaster_id") ~
-    get[DisasterTypes]("disaster_kind") ~
+    get[DisasterType]("disaster_kind") ~
     get[String]("disaster_name") ~
     get[Timestamp]("disaster_date") ~
     get[Option[String]]("disaster_cause") map {

@@ -3,22 +3,33 @@ package recon.models
 
 import recon.support._
 
-sealed class DisasterTypes(override val name: String) extends PGObject("disaster_types", name) with DisasterTypes.Value
-object DisasterTypes extends Enum[DisasterTypes] {
-  val EARTHQUAKE = new DisasterTypes("Earthquake")
-  val FLOOD = new DisasterTypes("Flood")
-  val TYPHOON = new DisasterTypes("Typhoon")
-  val LANDSLIDE = new DisasterTypes("Landslide")
-  val ANTHROPOGENIC = new DisasterTypes("Anthropogenic")
+sealed class DisasterType(override val name: String) extends PGObject("disaster_type", name) with DisasterType.Value
+object DisasterType extends Enum[DisasterType] {
+  val EARTHQUAKE = new DisasterType("Earthquake")
+  val FLOOD = new DisasterType("Flood")
+  val TYPHOON = new DisasterType("Typhoon")
+  val LANDSLIDE = new DisasterType("Landslide")
+  val ANTHROPOGENIC = new DisasterType("Anthropogenic")
 }
 
-sealed class ProjectTypes(override val name: String) extends PGObject("project_types", name) with ProjectTypes.Value
-object ProjectTypes extends Enum[ProjectTypes] {
-  val INFRASTRUCTURE = new ProjectTypes("Infrastructure")
-  val AGRICULTURE = new ProjectTypes("Agriculture")
-  val SCHOOL_BUILDING = new ProjectTypes("School Building")
-  val HEALTH_FACILITIES = new ProjectTypes("Health Facilities")
-  val SHELTER_UNITS = new ProjectTypes("Shelter Units")
-  val ENVIRONMENT = new ProjectTypes("Environment")
-  val OTHER = new ProjectTypes("Other")
+sealed class UserType(override val name: String) extends PGObject("user_type", name) with UserType.Value
+object UserType extends Enum[UserType] {
+  val LGU = new UserType("LGU")
+  val GOCC = new UserType("GOCC")
+  val NGA = new UserType("NGA")
+  val OCD = new UserType("OCD")
+  val ASSESSING_AGENCY = new UserType("ASSESSING_AGENCY")
+  val OP = new UserType("OP")
+  val DBM = new UserType("DBM")
+}
+
+sealed class ProjectType(override val name: String) extends PGObject("project_type", name) with ProjectType.Value
+object ProjectType extends Enum[ProjectType] {
+  val INFRASTRUCTURE = new ProjectType("Infrastructure")
+  val AGRICULTURE = new ProjectType("Agriculture")
+  val SCHOOL_BUILDING = new ProjectType("School Building")
+  val HEALTH_FACILITIES = new ProjectType("Health Facilities")
+  val SHELTER_UNITS = new ProjectType("Shelter Units")
+  val ENVIRONMENT = new ProjectType("Environment")
+  val OTHER = new ProjectType("Other")
 }

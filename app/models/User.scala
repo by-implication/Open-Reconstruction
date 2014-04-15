@@ -15,7 +15,7 @@ case class User(
   id: Pk[Int] = NA,
   handle: String = "",
   password: String = "",
-  agencyId: Int = 0
+  kind: UserType = UserType.LGU
 ) extends UserCCGen with Entity[User]
 // GENERATED case class end
 
@@ -25,9 +25,9 @@ trait UserGen extends EntityCompanion[User] {
     get[Pk[Int]]("user_id") ~
     get[String]("user_handle") ~
     get[String]("user_password") ~
-    get[Int]("agency_id") map {
-      case id~handle~password~agencyId =>
-        User(id, handle, password, agencyId)
+    get[UserType]("user_kind") map {
+      case id~handle~password~kind =>
+        User(id, handle, password, kind)
     }
   }
 
@@ -55,18 +55,18 @@ trait UserGen extends EntityCompanion[User] {
             user_id,
             user_handle,
             user_password,
-            agency_id
+            user_kind
           ) VALUES (
             DEFAULT,
             {handle},
             {password},
-            {agencyId}
+            {kind}
           )
         """).on(
           'id -> o.id,
           'handle -> o.handle,
           'password -> o.password,
-          'agencyId -> o.agencyId
+          'kind -> o.kind
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -76,18 +76,18 @@ trait UserGen extends EntityCompanion[User] {
             user_id,
             user_handle,
             user_password,
-            agency_id
+            user_kind
           ) VALUES (
             {id},
             {handle},
             {password},
-            {agencyId}
+            {kind}
           )
         """).on(
           'id -> o.id,
           'handle -> o.handle,
           'password -> o.password,
-          'agencyId -> o.agencyId
+          'kind -> o.kind
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -98,13 +98,13 @@ trait UserGen extends EntityCompanion[User] {
       update users set
         user_handle={handle},
         user_password={password},
-        agency_id={agencyId}
+        user_kind={kind}
       where user_id={id}
     """).on(
       'id -> o.id,
       'handle -> o.handle,
       'password -> o.password,
-      'agencyId -> o.agencyId
+      'kind -> o.kind
     ).executeUpdate() > 0
   }
 

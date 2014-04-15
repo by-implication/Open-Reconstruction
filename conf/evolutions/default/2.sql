@@ -1,19 +1,24 @@
 # --- !Ups
 
-CREATE TABLE agencys (
-	agency_id serial PRIMARY KEY,
-	agency_name text NOT NULL
+CREATE TYPE user_type AS ENUM(
+	'LGU',
+	'GOCC',
+	'NGA',
+	'OCD',
+	'ASSESSING_AGENCY', /* like DPWH */
+	'OP',
+	'DBM'
 );;
 
 CREATE TABLE users (
 	user_id serial PRIMARY KEY,
 	user_handle text NOT NULL,
 	user_password text NOT NULL,
-	agency_id int NOT NULL REFERENCES agencys
+	user_kind user_type NOT NULL
 );;
 
 # --- !Downs
 
 DROP TABLE IF EXISTS users;;
 
-DROP TABLE IF EXISTS agencies;;
+DROP TYPE IF EXISTS user_type;;
