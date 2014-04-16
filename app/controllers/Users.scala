@@ -10,7 +10,7 @@ import recon.support._
 object Users extends Controller with Secured {
 
   def login() = Action {
-    Ok(views.html.mithril())
+    Ok(views.html.index())
   }
 
   lazy val loginForm: Form[Option[User]] = Form(
