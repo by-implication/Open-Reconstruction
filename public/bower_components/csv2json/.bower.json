@@ -1,0 +1,32 @@
+{
+  "name": "csv2json",
+  "main": "csv2json.js",
+  "version": "0.0.4",
+  "homepage": "https://github.com/ile/csv2json",
+  "authors": [
+    "ilkkah <ilkkah@gmail.com>"
+  ],
+  "description": "csv parser and json converter",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "bin",
+    "package.json",
+    "Makefile",
+    "src",
+    "tests"
+  ],
+  "_release": "0.0.4",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.0.4",
+    "commit": "2720b95005299758ab230af129caf0f2687d1bc4"
+  },
+  "_source": "git://github.com/ile/csv2json.git",
+  "_target": "~0.0.4",
+  "_originalSource": "csv2json",
+  "_direct": true
+}

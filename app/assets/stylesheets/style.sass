@@ -1,0 +1,221 @@
+@import foundation/foundation
+@import colors/colors
+@import bourbon/bourbon
+@import neat/neat
+
+@import variables
+
+body
+  &.detail
+    background-color: #eee
+  .row
+    max-width: 80rem
+  
+.portrait
+  border-radius: 50%
+  &.sml
+    height: 32px
+    width: 32px
+  &.med
+    height: 64px
+    width: 64px
+  &.lrg
+    height: 128px
+    width: 128px
+
+.banner
+  background-color: $accent
+  margin-bottom: 20px
+  padding-top: 40px
+  padding-bottom: 20px
+  h1 
+    color: $white
+
+ul
+  list-style: none
+
+table
+  width: 100%
+  margin-top: 20px
+
+h1
+  font-weight: bold
+
+form
+  section
+    padding-top: 20px
+    padding-bottom: 20px
+
+section
+  &.alt
+    background-color: #f4f4f4
+
+#map, #detailMap
+  height: 256px
+  width: 100%
+
+.label
+  margin-right: 10px
+
+.name
+  margin-right: 10px
+
+.prog
+  +clearfix
+  width: 100%
+  background-color: #ddd
+  color: rgba(black, 0.1)
+  border-radius: 3px
+  overflow: hidden
+  margin-bottom: 20px
+  line-height: 30px
+  text-transform: uppercase
+  font-size: 12px
+  .step
+    +box-sizing(border-box)
+    // width: 25%
+    float: left
+    padding: 0px 10px
+    font-weight: bold
+    text-align: center
+  .completed
+    background-color: $teal
+    color: darken($teal, 10%)
+    .label
+      +label($bg: darken($teal, 5%))
+    .number
+      border: 3px solid $white
+  .pending
+    background-color: $teal
+    color: $white
+    +border-right-radius(3px)
+    .label
+      +label($bg: darken($teal, 10%))
+    .number
+      border: 3px solid $white
+  .number
+    display: inline-block
+    border-radius: 50%
+    width: 36px
+    text-align: center
+    border: 3px solid $gray
+
+section.summary
+  // background-color: white
+  padding-bottom: 40px
+  padding-top: 40px
+
+section.history
+  // padding-top: 20px
+
+.value
+  font-weight: bold
+
+.event
+  +clearfix
+  padding: 10px 0px
+  position: relative
+  // &:first-child
+    // padding-top: 40px
+  &:last-child
+    .details
+      border-bottom: none
+  .date
+    +box-sizing(border-box)
+    position: relative
+    z-index: 1
+    height: 72px
+    width: 72px
+    border-radius: 50%
+    background-color: #eee
+    text-align: center
+    float: left
+    padding-top: 6px
+    .day
+      margin: 0px
+    .month, .year
+      font-size: 12px
+  .dateGroup
+    .divider
+      position: absolute
+      z-index: 0
+      top: 0
+      bottom: 0
+      left: 0
+      width: 36px + 2px
+      border-right: 4px solid white
+
+  .details
+    margin-left: 90px
+    padding-bottom: 20px
+    border-bottom: 1px dashed $gray
+
+.timestamp
+  color: $gray
+
+h1 small
+  color: $orange
+
+.legend
+  margin-left: 36px
+
+
+.swatch
+  position: relative
+  display: inline-block
+  height: 24px
+  width: 24px
+  border-radius: 50%
+  margin-right: 10px
+  bottom: -5px
+  &.orange
+    background-color: $orange
+  &.black
+    background-color: rgba(black, 0.3)
+
+.actions
+  background-color: white
+  .action
+    margin-left: 90px
+    padding: 20px 0px
+
+.help
+  color: $gray
+
+.field
+  position: relative
+
+.help-container
+  position: absolute
+  right: 0
+
+.card
+  background-color: white
+  box-shadow: 0px 2px 2px rgba(black, 0.05)
+  .section
+    padding: 14px
+    // border-bottom: 1px solid #eee
+    &.type
+      background-color: $orange
+      color: white
+    // .info
+    //   font-size: 10px
+    //   margin-bottom: 0px
+    //   line-height: 18px
+    //   color: $gray
+  h4
+    font-weight: 300
+
+hr
+  border-top: 0px
+  border-bottom: 1px solid #eee
+  margin: 0
+
+.project-stub
+  @extend .card
+
+.meta
+  color: $gray
+  font-size: 12px
+  line-height: 18px
+  margin-bottom: 0px
