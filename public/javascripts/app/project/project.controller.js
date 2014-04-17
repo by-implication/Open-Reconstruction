@@ -13,7 +13,6 @@ project.controller = function(){
     var userPermission = process.permissions()[this.app.currentUser().department];
     return _.contains(userPermission, this.project().progress());
   }
-
   this.initMap = function(elem, isInit){
     this.app.initMap(elem, isInit, {scrollWheelZoom: false});
   }.bind(this)
