@@ -1,3 +1,3 @@
-app.controller = function(){
+agency.controller = function(){
   
 }
