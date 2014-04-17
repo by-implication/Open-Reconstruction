@@ -14,7 +14,8 @@ object Agency extends AgencyGen {
 // GENERATED case class start
 case class Agency(
   id: Pk[Int] = NA,
-  name: String = ""
+  name: String = "",
+  roleId: Int = 0
 ) extends AgencyCCGen with Entity[Agency]
 // GENERATED case class end
 
@@ -22,9 +23,10 @@ case class Agency(
 trait AgencyGen extends EntityCompanion[Agency] {
   val simple = {
     get[Pk[Int]]("agency_id") ~
-    get[String]("agency_name") map {
-      case id~name =>
-        Agency(id, name)
+    get[String]("agency_name") ~
+    get[Int]("role_id") map {
+      case id~name~roleId =>
+        Agency(id, name, roleId)
     }
   }
 
@@ -50,14 +52,17 @@ trait AgencyGen extends EntityCompanion[Agency] {
         val id = SQL("""
           insert into agencys (
             agency_id,
-            agency_name
+            agency_name,
+            role_id
           ) VALUES (
             DEFAULT,
-            {name}
+            {name},
+            {roleId}
           )
         """).on(
           'id -> o.id,
-          'name -> o.name
+          'name -> o.name,
+          'roleId -> o.roleId
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -65,14 +70,17 @@ trait AgencyGen extends EntityCompanion[Agency] {
         SQL("""
           insert into agencys (
             agency_id,
-            agency_name
+            agency_name,
+            role_id
           ) VALUES (
             {id},
-            {name}
+            {name},
+            {roleId}
           )
         """).on(
           'id -> o.id,
-          'name -> o.name
+          'name -> o.name,
+          'roleId -> o.roleId
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -81,11 +89,13 @@ trait AgencyGen extends EntityCompanion[Agency] {
   def update(o: Agency): Boolean = DB.withConnection { implicit c =>
     SQL("""
       update agencys set
-        agency_name={name}
+        agency_name={name},
+        role_id={roleId}
       where agency_id={id}
     """).on(
       'id -> o.id,
-      'name -> o.name
+      'name -> o.name,
+      'roleId -> o.roleId
     ).executeUpdate() > 0
   }
 

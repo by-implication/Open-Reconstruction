@@ -10,11 +10,6 @@ CREATE TYPE project_type AS ENUM(
 	'Other'
 );;
 
-CREATE TABLE agencys (
-	agency_id serial PRIMARY KEY,
-	agency_name text NOT NULL
-);;
-
 CREATE TABLE reqs (
 	req_id serial PRIMARY KEY,
 	req_date timestamp NOT NULL,
