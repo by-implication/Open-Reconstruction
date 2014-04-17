@@ -38,4 +38,23 @@ object Requests extends Controller with Secured {
   	} else Rest.unauthorized()
   }
 
+  def signoff(id: Int) = UserAction(){ implicit user => implicit request =>
+    Req.findById(id).map { r =>
+      
+      val authorized = r.level match {
+        case 0 => r.implementingAgencyId == user.agencyId
+        case 1 => user.role.name == "administrator"
+        case 2 => user.role.name == "approver"
+        case _ => false
+      }
+
+      if(authorized){
+        r.copy(level = r.level + 1).save().map( r =>
+          Rest.success()
+        ).getOrElse(Rest.serverError())
+      } else Rest.unauthorized()
+
+    }.getOrElse(Rest.notFound())
+  }
+
 }

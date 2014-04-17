@@ -36,7 +36,7 @@ INSERT INTO agencys VALUES
 	(DEFAULT, 'LGU', 1),
 	(DEFAULT, 'NGA', 1),
 	(DEFAULT, 'GOCC', 1),
-	(DEFAULT, 'OCA', 2),
+	(DEFAULT, 'OCD', 2),
 	(DEFAULT, 'OP', 5),
 	(DEFAULT, 'DPWH', 6),
 	(DEFAULT, 'DBM', 7);;
@@ -48,6 +48,10 @@ CREATE TABLE users (
 	agency_id int NOT NULL REFERENCES agencys,
 	user_admin boolean NOT NULL DEFAULT false
 );;
+
+INSERT INTO users VALUES
+	(DEFAULT, 'OCD', crypt('password', gen_salt('bf')), 4, true),
+	(DEFAULT, 'LGU', crypt('password', gen_salt('bf')), 1, true);;
 
 # --- !Downs
 
