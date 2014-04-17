@@ -9,10 +9,6 @@ import recon.support._
 
 object Requests extends Controller with Secured {
 
-  def create() = Action {
-    Ok(views.html.index())
-  }
-
   def createForm: Form[Req] = Form(
   	mapping(
       "description" -> nonEmptyText,

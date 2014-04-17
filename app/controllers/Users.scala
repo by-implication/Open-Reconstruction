@@ -9,10 +9,6 @@ import recon.support._
 
 object Users extends Controller with Secured {
 
-  def login() = Action {
-    Ok(views.html.index())
-  }
-
   lazy val loginForm: Form[Option[User]] = Form(
     mapping(
       "handle" -> text,
@@ -22,7 +18,7 @@ object Users extends Controller with Secured {
     .verifying("Invalid username/password", _.isDefined)
   )
 
-  def authenticate = UserAction(){ implicit user => implicit request =>
+  def login = UserAction(){ implicit user => implicit request =>
     if (Secured.attemptLogin(request.remoteAddress)) {
       if(user.isAnonymous){
         loginForm.bindFromRequest.fold(

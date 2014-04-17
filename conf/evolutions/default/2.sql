@@ -7,7 +7,6 @@ CREATE TYPE permission AS ENUM(
     'VALIDATE_REQUESTS',
     'EDIT_REQUESTS',
     'IMPLEMENT_REQUESTS',
-    'CREATE_USERS',
     'SIGNOFF',
     'ASSIGN_FUNDING'
 );;
@@ -20,7 +19,7 @@ CREATE TABLE roles (
 
 INSERT INTO roles VALUES
 	(DEFAULT, 'request creator', '{"CREATE_REQUESTS"}'),
-	(DEFAULT, 'admin', '{"VALIDATE_REQUESTS", "EDIT_REQUESTS", "CREATE_USERS", "SIGNOFF"}'),
+	(DEFAULT, 'administrator', '{"VALIDATE_REQUESTS", "EDIT_REQUESTS", "SIGNOFF"}'),
 	(DEFAULT, 'validator', '{"VALIDATE_REQUESTS", "SIGNOFF"}'),
 	(DEFAULT, 'implementor', '{"IMPLEMENT_REQUESTS"}'),
 	(DEFAULT, 'approver', '{"SIGNOFF"}'),
@@ -46,7 +45,8 @@ CREATE TABLE users (
 	user_id serial PRIMARY KEY,
 	user_handle text NOT NULL,
 	user_password text NOT NULL,
-	agency_id int NOT NULL REFERENCES agencys
+	agency_id int NOT NULL REFERENCES agencys,
+	user_admin boolean NOT NULL DEFAULT false
 );;
 
 # --- !Downs

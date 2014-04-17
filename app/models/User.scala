@@ -122,7 +122,8 @@ case class User(
   id: Pk[Int] = NA,
   handle: String = "",
   password: String = "",
-  agencyId: Int = 0
+  agencyId: Int = 0,
+  isAdmin: Boolean = false
 ) extends UserCCGen with Entity[User]
 // GENERATED case class end
 {
@@ -151,9 +152,10 @@ trait UserGen extends EntityCompanion[User] {
     get[Pk[Int]]("user_id") ~
     get[String]("user_handle") ~
     get[String]("user_password") ~
-    get[Int]("agency_id") map {
-      case id~handle~password~agencyId =>
-        User(id, handle, password, agencyId)
+    get[Int]("agency_id") ~
+    get[Boolean]("user_admin") map {
+      case id~handle~password~agencyId~isAdmin =>
+        User(id, handle, password, agencyId, isAdmin)
     }
   }
 
@@ -181,18 +183,21 @@ trait UserGen extends EntityCompanion[User] {
             user_id,
             user_handle,
             user_password,
-            agency_id
+            agency_id,
+            user_admin
           ) VALUES (
             DEFAULT,
             {handle},
             {password},
-            {agencyId}
+            {agencyId},
+            {isAdmin}
           )
         """).on(
           'id -> o.id,
           'handle -> o.handle,
           'password -> o.password,
-          'agencyId -> o.agencyId
+          'agencyId -> o.agencyId,
+          'isAdmin -> o.isAdmin
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -202,18 +207,21 @@ trait UserGen extends EntityCompanion[User] {
             user_id,
             user_handle,
             user_password,
-            agency_id
+            agency_id,
+            user_admin
           ) VALUES (
             {id},
             {handle},
             {password},
-            {agencyId}
+            {agencyId},
+            {isAdmin}
           )
         """).on(
           'id -> o.id,
           'handle -> o.handle,
           'password -> o.password,
-          'agencyId -> o.agencyId
+          'agencyId -> o.agencyId,
+          'isAdmin -> o.isAdmin
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -224,13 +232,15 @@ trait UserGen extends EntityCompanion[User] {
       update users set
         user_handle={handle},
         user_password={password},
-        agency_id={agencyId}
+        agency_id={agencyId},
+        user_admin={isAdmin}
       where user_id={id}
     """).on(
       'id -> o.id,
       'handle -> o.handle,
       'password -> o.password,
-      'agencyId -> o.agencyId
+      'agencyId -> o.agencyId,
+      'isAdmin -> o.isAdmin
     ).executeUpdate() > 0
   }
 

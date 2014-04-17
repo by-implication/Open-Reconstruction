@@ -18,7 +18,6 @@ object Permission extends Enum[Permission] {
   val VALIDATE_REQUESTS = new Permission("VALIDATE_REQUESTS")
   val EDIT_REQUESTS = new Permission("EDIT_REQUESTS")
   val IMPLEMENT_REQUESTS = new Permission("IMPLEMENT_REQUESTS")
-  val CREATE_USERS = new Permission("CREATE_USERS")
   val SIGNOFF = new Permission("SIGNOFF")
   val ASSIGN_FUNDING = new Permission("ASSIGN_FUNDING")
 }
