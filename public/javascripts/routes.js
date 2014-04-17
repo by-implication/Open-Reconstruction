@@ -8,5 +8,7 @@ m.route(document, "/projects", {
   "/projects/:id": project,
   "/dashboard": dashboard,
   "/user/:id": user,
-  "/admin": admin
+  "/admin": admin,
+  "/agencies/new": agencyCreation,
+  "/agencies/:id": agency
 });
