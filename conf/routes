@@ -15,3 +15,5 @@ GET		/logout						controllers.Users.logout()
 POST	/requests/new				controllers.Requests.insert()
 POST    /requests/:id/signoff       controllers.Requests.signoff(id: Int)
 POST    /requests/:id/attach        controllers.Requests.attach(id: Int)
+
+POST    /agencies/new               controllers.Agencies.insert()
