@@ -44,7 +44,10 @@ object Users extends Controller with Secured {
         mapping(
           "handle" -> nonEmptyText,
           "password" -> nonEmptyText,
-          "agencyId" -> number,
+          "agencyId" -> number.verifying(
+            "Can't add users to this agency",
+            agencyId => user.role == "administrator" || agencyId == user.agencyId
+          ),
           "isAdmin" -> boolean
         )
         ((handle, password, agencyId, isAdmin) => User(
