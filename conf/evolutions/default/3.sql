@@ -29,7 +29,16 @@ CREATE TABLE reqs (
 	disaster_id int NOT NULL REFERENCES disasters
 );;
 
+CREATE TABLE attachments (
+	attachment_id serial PRIMARY KEY,
+	attachment_date_uploaded timestamp NOT NULL DEFAULT NOW(),
+	attachment_filename text NOT NULL,
+	uploader_id int NOT NULL REFERENCES users(user_id)
+);;
+
 # --- !Downs
+
+DROP TABLE IF EXISTS attachments;;
 
 DROP TABLE IF EXISTS reqs;;
 
