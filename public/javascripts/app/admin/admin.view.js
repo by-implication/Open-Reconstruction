@@ -1,18 +1,18 @@
 admin.view = function(ctrl){
-  var agencyList = m.prop([
-    {
-      shortname: "OCD",
-      name: "Office of Civil Defense",
-      permissions: "xxrrdd",
-      userCount: 42, 
-    },
-    {
-      shortname: "DPWH",
-      name: "Department of Public Works and Highways",
-      permissions: "xxrrdd",
-      userCount: 145, 
-    },
-  ])
+  // var agencyList = m.prop([
+  //   {
+  //     shortname: "OCD",
+  //     name: "Office of Civil Defense",
+  //     permissions: "xxrrdd",
+  //     userCount: 42, 
+  //   },
+  //   {
+  //     shortname: "DPWH",
+  //     name: "Department of Public Works and Highways",
+  //     permissions: "xxrrdd",
+  //     userCount: 145, 
+  //   },
+  // ])
   return app.template(ctrl, [
     common.banner("Administrative Interface"),
     m("section", [
@@ -22,7 +22,7 @@ admin.view = function(ctrl){
         ]),
       ]),
     ]),
-    console.log(ctrl.app.getLoggedIn().department),
+    // console.log(ctrl.app.getLoggedIn().department),
     m.if(ctrl.app.getLoggedIn().department == "OCD", 
       m("section", [
         m(".row", [
@@ -30,6 +30,9 @@ admin.view = function(ctrl){
           // create agencies
           // list of agencies
           m(".columns.medium-8", [
+            m("button", [
+              "New agency"
+            ]),
             m("table", [
               m("thead", [
                 m("tr", [
@@ -48,7 +51,7 @@ admin.view = function(ctrl){
                 ]),
               ]),
               m("tbody", [
-                agencyList().map(function(a){
+                ctrl.agencyList().map(function(a){
                   return m("tr", [
                     m("td", [
                       a.name

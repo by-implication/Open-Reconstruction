@@ -9,7 +9,8 @@ var database = {
   projectList: m.prop([]),
   userList: m.prop([]),
   projectFilters: m.prop([]),
-  projectDisasters: m.prop([])
+  projectDisasters: m.prop([]),
+  agencyList: m.prop([])
 }
 
 database.pull = function(){
@@ -148,5 +149,19 @@ database.pull = function(){
 
     database.projectFilters(pFilters);
     database.projectDisasters(pDisasters);
+    database.agencyList([
+      {
+        shortname: "OCD",
+        name: "Office of Civil Defense",
+        permissions: "xxrrdd",
+        userCount: 42, 
+      },
+      {
+        shortname: "DPWH",
+        name: "Department of Public Works and Highways",
+        permissions: "xxrrdd",
+        userCount: 145, 
+      },
+    ]);
   });
 }
