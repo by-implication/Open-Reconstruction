@@ -12,6 +12,8 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 POST	/login						controllers.Users.login()
 GET		/logout						controllers.Users.logout()
 
+POST    /users/new                  controllers.Users.insert()
+
 POST	/requests/new				controllers.Requests.insert()
 POST    /requests/:id/signoff       controllers.Requests.signoff(id: Int)
 POST    /requests/:id/attach        controllers.Requests.attach(id: Int)
