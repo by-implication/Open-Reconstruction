@@ -7,5 +7,6 @@ m.route(document, "/projects", {
   "/projects/new": projectCreation,
   "/projects/:id": project,
   "/dashboard": dashboard,
-  "/user/:id": user
+  "/user/:id": user,
+  "/admin": admin
 });

@@ -27,11 +27,12 @@ app.navbar = function(ctrl){
 
   var menuItems = [
     {label: "Overview", url: "/dashboard"},
-    {label: "Projects", url: "/projects"}
+    {label: "Projects", url: "/projects"},
+    {label: "Admin", url: "/admin"}
   ]
 
   var menuItem = function(data){
-    if(!data.url) data.url = "#";
+    if(!data.url) data.url = "/projects";
     return m("li", [m("a", {href: data.url, config: m.route}, data.label)]);
   }
 
