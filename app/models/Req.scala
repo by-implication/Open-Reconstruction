@@ -33,7 +33,7 @@ case class Req(
 // GENERATED case class end
 {
 
-  def insertJson = Json.obj("lol" -> "wut")
+  def insertJson = Json.obj("id" -> id.get)
   
 }
 

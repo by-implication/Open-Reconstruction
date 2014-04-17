@@ -22,9 +22,8 @@ object Agencies extends Controller with Secured {
     if(user.role == "administrator"){
       createForm.bindFromRequest.fold(
         Rest.formError(_),
-        agency => agency.create().map { _ =>
-          Rest.success()
-        }.getOrElse(Rest.serverError())
+        _.create().map(_ => Rest.success())
+        .getOrElse(Rest.serverError())
       )
     } else Rest.unauthorized()
   }
