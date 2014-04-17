@@ -54,16 +54,18 @@ admin.view = function(ctrl){
                 ctrl.agencyList().map(function(a){
                   return m("tr", [
                     m("td", [
-                      a.name
+                      m("a", {href: "/agencies/"+a.slug(), config: m.route}, [
+                        a.name()
+                      ]),
                     ]),
                     m("td", [
-                      a.shortname
+                      a.shortname()
                     ]),
                     m("td", [
-                      a.userCount
+                      a.userCount()
                     ]),
                     m("td", [
-                      a.permissions
+                      a.permissions()
                     ]),
                   ]);
                 })

@@ -150,18 +150,18 @@ database.pull = function(){
     database.projectFilters(pFilters);
     database.projectDisasters(pDisasters);
     database.agencyList([
-      {
+      new agency.Agency({
         shortname: "OCD",
         name: "Office of Civil Defense",
         permissions: "xxrrdd",
         userCount: 42, 
-      },
-      {
+      }),
+      new agency.Agency({
         shortname: "DPWH",
         name: "Department of Public Works and Highways",
         permissions: "xxrrdd",
         userCount: 145, 
-      },
+      }),
     ]);
   });
 }
