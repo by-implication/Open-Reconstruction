@@ -24,13 +24,13 @@ object User extends UserGen {
             DEFAULT,
             {handle},
             crypt({password}, gen_salt('bf')),
-            {kind}
+            {agencyId}
           )
         """).on(
           'id -> o.id,
           'handle -> o.handle,
           'password -> o.password,
-          'kind -> o.kind
+          'agencyId -> o.agencyId
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -45,13 +45,13 @@ object User extends UserGen {
             {id},
             {handle},
             crypt({password}, gen_salt('bf')),
-            {kind}
+            {agencyId}
           )
         """).on(
           'id -> o.id,
           'handle -> o.handle,
           'password -> o.password,
-          'kind -> o.kind
+          'agencyId -> o.agencyId
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -61,12 +61,12 @@ object User extends UserGen {
     SQL("""
       update users set
         user_handle={handle},
-        user_kind={kind}
+        user_kind={agencyId}
       where user_id={id}
     """).on(
       'id -> o.id,
       'handle -> o.handle,
-      'kind -> o.kind
+      'agencyId -> o.agencyId
     ).executeUpdate() > 0
   }
 
@@ -122,16 +122,23 @@ case class User(
   id: Pk[Int] = NA,
   handle: String = "",
   password: String = "",
-  kind: UserType = UserType.LGU
+  agencyId: Int = 0
 ) extends UserCCGen with Entity[User]
 // GENERATED case class end
 {
 
   var sessionId = -1
 
-  def canCreateRequests = {
-    import UserType._
-    Seq(LGU, GOCC, NGA) contains kind
+  def canCreateRequests = canDo(Permission.CREATE_REQUESTS)
+
+  private def canDo(p: Permission): Boolean = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT * FROM users NATURAL JOIN agencys NATURAL JOIN roles
+      WHERE user_id = {userId} AND = {pName} ANY role_permissions
+    """).on(
+      'userId -> id,
+      'pName -> p.name
+    ).list(User.simple).length > 0
   }
 
   def isAnonymous = id.get == -1
@@ -144,9 +151,9 @@ trait UserGen extends EntityCompanion[User] {
     get[Pk[Int]]("user_id") ~
     get[String]("user_handle") ~
     get[String]("user_password") ~
-    get[UserType]("user_kind") map {
-      case id~handle~password~kind =>
-        User(id, handle, password, kind)
+    get[Int]("agency_id") map {
+      case id~handle~password~agencyId =>
+        User(id, handle, password, agencyId)
     }
   }
 
@@ -174,18 +181,18 @@ trait UserGen extends EntityCompanion[User] {
             user_id,
             user_handle,
             user_password,
-            user_kind
+            agency_id
           ) VALUES (
             DEFAULT,
             {handle},
             {password},
-            {kind}
+            {agencyId}
           )
         """).on(
           'id -> o.id,
           'handle -> o.handle,
           'password -> o.password,
-          'kind -> o.kind
+          'agencyId -> o.agencyId
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -195,18 +202,18 @@ trait UserGen extends EntityCompanion[User] {
             user_id,
             user_handle,
             user_password,
-            user_kind
+            agency_id
           ) VALUES (
             {id},
             {handle},
             {password},
-            {kind}
+            {agencyId}
           )
         """).on(
           'id -> o.id,
           'handle -> o.handle,
           'password -> o.password,
-          'kind -> o.kind
+          'agencyId -> o.agencyId
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -217,13 +224,13 @@ trait UserGen extends EntityCompanion[User] {
       update users set
         user_handle={handle},
         user_password={password},
-        user_kind={kind}
+        agency_id={agencyId}
       where user_id={id}
     """).on(
       'id -> o.id,
       'handle -> o.handle,
       'password -> o.password,
-      'kind -> o.kind
+      'agencyId -> o.agencyId
     ).executeUpdate() > 0
   }
 
