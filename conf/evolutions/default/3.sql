@@ -15,9 +15,11 @@ CREATE TABLE reqs (
 	req_date timestamp NOT NULL,
 	req_code text NOT NULL,
 	req_level int NOT NULL,
+	req_validated boolean NOT NULL DEFAULT FALSE,
 	req_rejected boolean NOT NULL DEFAULT FALSE,
 	author_id int NOT NULL REFERENCES users(user_id),
-	implementing_agency_id int NOT NULL REFERENCES agencys(agency_id),
+	assessing_agency_id int REFERENCES agencys(agency_id),
+	implementing_agency_id int REFERENCES agencys(agency_id),
 	req_project_type project_type NOT NULL,
 	req_description text NOT NULL,
 	req_amount numeric(10,2) NOT NULL,
@@ -27,10 +29,17 @@ CREATE TABLE reqs (
 	disaster_id int NOT NULL REFERENCES disasters
 );;
 
+CREATE TABLE attachments (
+	attachment_id serial PRIMARY KEY,
+	attachment_date_uploaded timestamp NOT NULL DEFAULT NOW(),
+	attachment_filename text NOT NULL,
+	uploader_id int NOT NULL REFERENCES users(user_id)
+);;
+
 # --- !Downs
 
-DROP TABLE IF EXISTS reqs;;
+DROP TABLE IF EXISTS attachments;;
 
-DROP TABLE IF EXISTS agencys;;
+DROP TABLE IF EXISTS reqs;;
 
 DROP TYPE IF EXISTS project_type;;

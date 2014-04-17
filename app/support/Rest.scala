@@ -9,7 +9,7 @@ import play.api.mvc.Results.{BadRequest, InternalServerError, NotFound, Ok, Unau
 
 object Rest {
 
-  // def NO_FILE: SimpleResult = error("No file included")
+  def NO_FILE: SimpleResult = error("No file included")
   // def FILE_TOO_BIG: SimpleResult = error("Your file cannot exceed " + ImageHandling.MAXFILESIZE)
   // def INVALID_IMAGE_FORMAT: SimpleResult = error("Image must be either JPG or PNG and must not exceed dimensional limits.")
 

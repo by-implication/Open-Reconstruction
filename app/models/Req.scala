@@ -17,9 +17,11 @@ case class Req(
   date: Timestamp = Time.now,
   code: String = "",
   level: Int = 0,
+  isValidated: Boolean = false,
   isRejected: Boolean = false,
   authorId: Int = 0,
-  implementingAgencyId: Int = 0,
+  assessingAgencyId: Option[Int] = None,
+  implementingAgencyId: Option[Int] = None,
   projectType: ProjectType = ProjectType.INFRASTRUCTURE,
   description: String = "",
   amount: BigDecimal = 0,
@@ -42,9 +44,11 @@ trait ReqGen extends EntityCompanion[Req] {
     get[Timestamp]("req_date") ~
     get[String]("req_code") ~
     get[Int]("req_level") ~
+    get[Boolean]("req_validated") ~
     get[Boolean]("req_rejected") ~
     get[Int]("author_id") ~
-    get[Int]("implementing_agency_id") ~
+    get[Option[Int]]("assessing_agency_id") ~
+    get[Option[Int]]("implementing_agency_id") ~
     get[ProjectType]("req_project_type") ~
     get[String]("req_description") ~
     get[java.math.BigDecimal]("req_amount") ~
@@ -52,8 +56,8 @@ trait ReqGen extends EntityCompanion[Req] {
     get[Option[String]]("req_remarks") ~
     get[PGIntList]("req_attachments") ~
     get[Int]("disaster_id") map {
-      case id~date~code~level~isRejected~authorId~implementingAgencyId~projectType~description~amount~location~remarks~attachments~disasterId =>
-        Req(id, date, code, level, isRejected, authorId, implementingAgencyId, projectType, description, amount, location, remarks, attachments, disasterId)
+      case id~date~code~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~projectType~description~amount~location~remarks~attachments~disasterId =>
+        Req(id, date, code, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, projectType, description, amount, location, remarks, attachments, disasterId)
     }
   }
 
@@ -82,8 +86,10 @@ trait ReqGen extends EntityCompanion[Req] {
             req_date,
             req_code,
             req_level,
+            req_validated,
             req_rejected,
             author_id,
+            assessing_agency_id,
             implementing_agency_id,
             req_project_type,
             req_description,
@@ -97,8 +103,10 @@ trait ReqGen extends EntityCompanion[Req] {
             {date},
             {code},
             {level},
+            {isValidated},
             {isRejected},
             {authorId},
+            {assessingAgencyId},
             {implementingAgencyId},
             {projectType},
             {description},
@@ -113,8 +121,10 @@ trait ReqGen extends EntityCompanion[Req] {
           'date -> o.date,
           'code -> o.code,
           'level -> o.level,
+          'isValidated -> o.isValidated,
           'isRejected -> o.isRejected,
           'authorId -> o.authorId,
+          'assessingAgencyId -> o.assessingAgencyId,
           'implementingAgencyId -> o.implementingAgencyId,
           'projectType -> o.projectType,
           'description -> o.description,
@@ -133,8 +143,10 @@ trait ReqGen extends EntityCompanion[Req] {
             req_date,
             req_code,
             req_level,
+            req_validated,
             req_rejected,
             author_id,
+            assessing_agency_id,
             implementing_agency_id,
             req_project_type,
             req_description,
@@ -148,8 +160,10 @@ trait ReqGen extends EntityCompanion[Req] {
             {date},
             {code},
             {level},
+            {isValidated},
             {isRejected},
             {authorId},
+            {assessingAgencyId},
             {implementingAgencyId},
             {projectType},
             {description},
@@ -164,8 +178,10 @@ trait ReqGen extends EntityCompanion[Req] {
           'date -> o.date,
           'code -> o.code,
           'level -> o.level,
+          'isValidated -> o.isValidated,
           'isRejected -> o.isRejected,
           'authorId -> o.authorId,
+          'assessingAgencyId -> o.assessingAgencyId,
           'implementingAgencyId -> o.implementingAgencyId,
           'projectType -> o.projectType,
           'description -> o.description,
@@ -185,8 +201,10 @@ trait ReqGen extends EntityCompanion[Req] {
         req_date={date},
         req_code={code},
         req_level={level},
+        req_validated={isValidated},
         req_rejected={isRejected},
         author_id={authorId},
+        assessing_agency_id={assessingAgencyId},
         implementing_agency_id={implementingAgencyId},
         req_project_type={projectType},
         req_description={description},
@@ -201,8 +219,10 @@ trait ReqGen extends EntityCompanion[Req] {
       'date -> o.date,
       'code -> o.code,
       'level -> o.level,
+      'isValidated -> o.isValidated,
       'isRejected -> o.isRejected,
       'authorId -> o.authorId,
+      'assessingAgencyId -> o.assessingAgencyId,
       'implementingAgencyId -> o.implementingAgencyId,
       'projectType -> o.projectType,
       'description -> o.description,

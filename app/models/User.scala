@@ -128,6 +128,13 @@ case class User(
 // GENERATED case class end
 {
 
+  lazy val role: Role = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT * FROM roles NATURAL JOIN agencys
+      WHERE agency_id = {agencyId}
+    """).on('agencyId -> agencyId).single(Role.simple)
+  }
+
   var sessionId = -1
 
   def canCreateRequests = canDo(Permission.CREATE_REQUESTS)
@@ -140,6 +147,10 @@ case class User(
       'userId -> id,
       'pName -> p.name
     ).list(User.simple).length > 0
+  }
+
+  def canEditRequest(r: Req): Boolean = DB.withConnection { implicit c =>
+    agencyId == r.implementingAgencyId // todo add other conditions
   }
 
   def isAnonymous = id.get == -1
