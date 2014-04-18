@@ -20,6 +20,7 @@ POST	/requests/new				controllers.Requests.insert()
 POST    /requests/:id/signoff       controllers.Requests.signoff(id: Int)
 POST    /requests/:id/attach        controllers.Requests.attach(id: Int)
 
+GET     /agencies/new/meta          controllers.Agencies.createMeta()
 POST    /agencies/new               controllers.Agencies.insert()
 
 # view routes (these all serve the index view)
