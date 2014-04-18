@@ -15,6 +15,10 @@ app.controller = function(){
   this.isSuperAdmin = function(){
     return this.currentUser() && this.currentUser().isSuperAdmin;
   }
+
+  this.isAgencyAdmin = function(agencyId){
+    return this.currentUser() && this.currentUser().isAdmin && this.currentUser().agency.id === agencyId;
+  }
   
   this.isLoggedIn = function(){
     var currentUserId = localStorage["currentUser"];

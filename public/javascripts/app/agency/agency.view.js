@@ -5,7 +5,12 @@ agency.view = function(ctrl){
       m(".row", "id: " + ctrl.agency().id),
       m(".row", "name: " + ctrl.agency().name),
       m(".row", "acronym: " + ctrl.agency().acronym),
-      m(".row", "role: " + ctrl.agency().role)
+      m(".row", "role: " + ctrl.agency().role),
+      m.if(ctrl.app.isAgencyAdmin(ctrl.agency().id), 
+        m(".row", [
+          "you are admin" // list all users
+        ])
+      )
     ]),
   ])
 }
