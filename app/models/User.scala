@@ -136,7 +136,8 @@ case class User(
         "handle" -> handle,
         "agency" -> Json.obj(
           "name" -> agency.name,
-          "acronym" -> agency.acronym
+          "acronym" -> agency.acronym,
+          "id" -> agency.id.get
         ),
         "isAdmin" -> isAdmin,
         "isSuperAdmin" -> isSuperAdmin,
