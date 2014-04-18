@@ -174,11 +174,11 @@ var helper = {
   }
 }
 
-m.if = function(bool, elem){
+m.if = function(bool, ifElem, elseElem){
   if(bool){
-    return elem;
+    return ifElem;
   } else {
-    return null;
+    return elseElem ? elseElem : null;
   }
 }
 

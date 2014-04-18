@@ -55,12 +55,14 @@ app.navbar = function(ctrl){
             m.if(!m.cookie().logged_in, "Guest")
           ]),
           m("ul.dropdown", [
-            m.if(m.cookie().logged_in, m("li", [
-              m("a", {href: "/logout"}, "Log out")
-            ])),
-            m.if(!m.cookie().logged_in, m("li", [
-              m("a", {href: "/login", config: m.route}, "Log in")
-            ]))
+            m.if(m.cookie().logged_in, 
+              m("li", [
+                m("a", {href: "/logout"}, "Log out")
+              ]),
+              m("li", [
+                m("a", {href: "/login", config: m.route}, "Log in")
+              ])
+            ),
           ])
         ])
       ])
