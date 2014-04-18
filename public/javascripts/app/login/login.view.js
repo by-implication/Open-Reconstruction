@@ -5,14 +5,14 @@ login.view = function(ctrl){
         m(".columns.medium-6.medium-centered", [
           m(".card", [
             m(".section", [
-              m("form", [
+              m("form", {onsubmit: ctrl.submit}, [
                 m("label", [
                   "Username",
-                  m("input[type='text']"),
+                  m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.handle)})
                 ]),
                 m("label", [
                   "Password",
-                  m("input[type='password']")
+                  m("input[type='password']", {onchange: m.withAttr("value", ctrl.input.password)})
                 ]),
                 m("button", "Log in")
               ]),

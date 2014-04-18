@@ -106,12 +106,17 @@ object Secured {
       LoginExpiry.set(public)(user, request)
     })
     redirect(request.session + ("user_id" -> user.id.toString))
-    .withCookies(Cookie("last_login", user.handle, httpOnly = false))
+    .withCookies(
+      Cookie("last_login", user.handle, httpOnly = false),
+      Cookie("logged_in", user.handle, httpOnly = false)
+    )
   }
 
   def logout()(implicit user: User, request: RequestHeader) = {
-    Redis.xaction(_.del("login-" + user.id + "-" + request.session.get("session_id").get))
-    Redirect(routes.Application.index).withNewSession
+    request.session.get("session_id").map { sessionId =>
+      Redis.xaction(_.del("login-" + user.id + "-" + sessionId))
+    }
+    Redirect(routes.Application.index).withNewSession.discardingCookies("logged_in")
   }
 
   def currentUser(implicit request: RequestHeader) = {

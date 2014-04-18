@@ -27,14 +27,12 @@ object Users extends Controller with Secured {
           userOpt => Secured.login(userOpt.get)(request)
         )
 
-      } else Redirect(routes.Application.index)
+      } else Rest.error("already logged in")
     } else Rest.error("too many login attempts")
   }
 
   def logout() = UserAction(){ implicit user => implicit request =>
-    if(!user.isAnonymous){
-      Secured.logout()
-    } else Redirect(routes.Application.index)
+    Secured.logout()
   }
 
   def insert() = UserAction(){ implicit user => implicit request =>

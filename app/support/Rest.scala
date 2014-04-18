@@ -23,7 +23,7 @@ object Rest {
   }
 
   def error(reason: String, other: (String, JsValue)*): SimpleResult = BadRequest(toJson(Map(
-    "success" -> toJson("false"),
+    "success" -> toJson(false),
     "reason" -> toJson(reason)
   ) ++ other))
 
