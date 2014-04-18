@@ -9,7 +9,7 @@ agency.controller = function(){
     role: ""
   });
 
-  m.request({method: "GET", url: ("/agencies/" + this.slug() + "/meta"), data: self.input, config: app.xhrConfig}).then(function (r){
+  m.request({method: "GET", url: ("/agencies/" + this.slug() + "/meta"), config: app.xhrConfig}).then(function (r){
     if(r.success){
       self.agency(r.agency)
     } else if(r.reason == "form error"){
