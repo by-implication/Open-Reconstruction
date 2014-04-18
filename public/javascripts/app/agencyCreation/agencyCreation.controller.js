@@ -4,19 +4,20 @@ agencyCreation.controller = function(){
 
   var self = this;
 
-  this.roles = [
-    {id: 1, name: 'LGU'},
-    {id: 2, name: 'OCD'},
-    {id: 3, name: 'OP'},
-    {id: 4, name: 'DPWH'},
-    {id: 5, name: 'DBM'},
-    {id: 6, name: 'NGA'}
-  ]
+  this.roles = m.prop([{id: 0, name: 'Loading...'}]);
+
+  m.request({method: "GET", url: ("/agencies/new/meta"), config: app.xhrConfig}).then(function (r){
+    if(r.success){
+      self.roles(r.roles);
+    } else {
+      alert(r.reason);
+    }
+  });
 
   this.input = {
     name: m.prop(""),
     acronym: m.prop(""),
-    roleId: m.prop(this.roles[0].id)
+    roleId: m.prop(this.roles()[0].id)
   }
   
   this.submit = function(e){
