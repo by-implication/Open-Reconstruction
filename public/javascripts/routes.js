@@ -10,5 +10,6 @@ m.route(document, "/projects", {
   "/user/:id": user,
   "/admin": admin,
   "/agencies/new": agencyCreation,
-  "/agencies/:id": agency
+  "/agencies/:id": agency,
+  "/login": login
 });
