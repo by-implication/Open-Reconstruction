@@ -48,8 +48,19 @@ common.formSection = function(icon, content, i){
 
 common.tabs = {};
 
-common.tabs.view = function(ctrl, arr){
-  return m("dl.tabs[data-tab]", [
+common.tabs.view = function(ctrl, options, arr){
+  var ctrl, options, arr;
+  if(arguments.length === 2){
+    ctrl = arguments[0];
+    arr = arguments[1];
+    options = {};
+  } else if (arguments.length === 3){
+    ctrl = arguments[0];
+    options = arguments[1];
+    arr = arguments[2];
+  }
+
+  return m("dl.tabs[data-tab]", options, [
     arr.map(function(item, i){
       var setActive = function(i){
         if(ctrl.isActive(item.label, i)){
