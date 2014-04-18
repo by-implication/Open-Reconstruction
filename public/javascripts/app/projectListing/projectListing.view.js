@@ -10,7 +10,7 @@ projectListing.view = function(ctrl){
         m("div", {class: "columns medium-9"}, [
           m("div.clearfix", [
             common.tabs.view(ctrl.tabs, {className: "left"}, tabs),
-            m.if(ctrl.app.isLoggedIn(),
+            m.if(ctrl.app.currentUser() && _.contains(ctrl.app.currentUser().permissions, 1),
               m(
                 "a.button.right", 
                 {href: "/projects/new", config: m.route}, 
