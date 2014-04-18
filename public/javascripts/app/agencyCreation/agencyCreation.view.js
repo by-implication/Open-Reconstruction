@@ -15,9 +15,11 @@ agencyCreation.view = function(ctrl){
           ),
           common.field(
             "Agency Role",
-            m("select", ctrl.roles.map(function(role){
-              return m("option", {value: role.id}, role.name)
-            }), {onchange: m.withAttr("value", ctrl.input.roleId)})
+            m("select", {onchange: m.withAttr("value", ctrl.input.roleId)}, 
+              ctrl.roles.map(function(role){
+                return m("option", {value: role.id}, role.name)
+              }
+            ))
           )
         ]
       ),
