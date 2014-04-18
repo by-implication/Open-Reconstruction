@@ -5,6 +5,7 @@ import anorm.SqlParser._
 import com.redis.serialization.Parse.Implicits._
 import java.sql.Timestamp
 import play.api.db._
+import play.api.libs.json.Json
 import play.api.mvc.RequestHeader
 import play.api.Play.current
 import recon.support._
@@ -129,6 +130,21 @@ case class User(
 // GENERATED case class end
 {
 
+  lazy val infoJson = Json.obj(
+    "handle" -> handle,
+    "agency" -> Json.obj(
+      "name" -> agency.name,
+      "acronym" -> agency.acronym
+    ),
+    "isAdmin" -> isAdmin,
+    "isSuperAdmin" -> isSuperAdmin,
+    "permissions" -> permissions
+  )
+
+  lazy val agency = Agency.findById(agencyId).get
+
+  lazy val permissions = role.permissions
+
   lazy val isSuperAdmin = role.name == "administrator"
 
   lazy val role: Role = DB.withConnection { implicit c =>
@@ -145,10 +161,10 @@ case class User(
   private def canDo(p: Permission): Boolean = DB.withConnection { implicit c =>
     SQL("""
       SELECT * FROM users NATURAL JOIN agencys NATURAL JOIN roles
-      WHERE user_id = {userId} AND {pName}::permission = ANY(role_permissions)
+      WHERE user_id = {userId} AND {permission} = ANY(role_permissions)
     """).on(
       'userId -> id,
-      'pName -> p.name
+      'permission -> p.value
     ).list(User.simple).length > 0
   }
 

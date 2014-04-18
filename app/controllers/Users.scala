@@ -11,7 +11,7 @@ object Users extends Controller with Secured {
 
   def login = UserAction(){ implicit user => implicit request =>
     if (Secured.attemptLogin(request.remoteAddress)) {
-      
+
       val loginForm: Form[Option[User]] = Form(
         mapping(
           "handle" -> text,
@@ -62,6 +62,10 @@ object Users extends Controller with Secured {
       )
 
     } else Rest.unauthorized()
+  }
+
+  def info() = UserAction(){ implicit user => implicit request =>
+    Ok(user.infoJson)
   }
 
 }

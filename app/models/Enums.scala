@@ -13,16 +13,6 @@ object DisasterType extends Enum[DisasterType] {
   val ANTHROPOGENIC = new DisasterType("Anthropogenic")
 }
 
-sealed class Permission(override val name: String) extends PGObject("permission", name) with Permission.Value
-object Permission extends Enum[Permission] {
-  val CREATE_REQUESTS = new Permission("CREATE_REQUESTS")
-  val VALIDATE_REQUESTS = new Permission("VALIDATE_REQUESTS")
-  val EDIT_REQUESTS = new Permission("EDIT_REQUESTS")
-  val IMPLEMENT_REQUESTS = new Permission("IMPLEMENT_REQUESTS")
-  val SIGNOFF = new Permission("SIGNOFF")
-  val ASSIGN_FUNDING = new Permission("ASSIGN_FUNDING")
-}
-
 sealed class ProjectType(override val name: String) extends PGObject("project_type", name) with ProjectType.Value
 object ProjectType extends Enum[ProjectType] {
   val INFRASTRUCTURE = new ProjectType("Infrastructure")
