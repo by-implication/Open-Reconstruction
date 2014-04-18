@@ -145,7 +145,7 @@ case class User(
 
   lazy val permissions = role.permissions
 
-  lazy val isSuperAdmin = role.name == "administrator"
+  lazy val isSuperAdmin = role.name == "OCD"
 
   lazy val role: Role = DB.withConnection { implicit c =>
     SQL("""
