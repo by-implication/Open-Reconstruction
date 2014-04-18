@@ -7,6 +7,10 @@ app.controller = function(){
   }).then(function(r){
     this.currentUser(r);
   }.bind(this));
+
+  this.isAuthorized = function(permission){
+    return this.currentUser() && _.contains(this.currentUser().permissions, permission);
+  }
   
   this.isLoggedIn = function(){
     var currentUserId = localStorage["currentUser"];

@@ -10,10 +10,6 @@ project.view = function(ctrl){
     }
   }
 
-  var whichAction = function(ctrl, arr){
-
-  }
-
   var userActions = function(ctrl){
 
     var actions = m.prop({
@@ -35,7 +31,7 @@ project.view = function(ctrl){
       ]
     })
 
-    if(ctrl.isCurrentUserAuthorized()){
+    // if(ctrl.isCurrentUserAuthorized()){
       return m("div", [
         common.tabs.view(ctrl.tabs, [
           {label: "Comment"},
@@ -44,9 +40,9 @@ project.view = function(ctrl){
         ]),
         m("form", actions()[ctrl.tabs.currentTab() ? ctrl.tabs.currentTab() : "Comment"])
       ])
-    } else {
-      return m("div", actions()["Comment"])
-    }
+    // } else {
+    //   return m("div", actions()["Comment"])
+    // }
   }
 
   return app.template(ctrl.app, {class: "detail"}, [
@@ -139,7 +135,9 @@ project.view = function(ctrl){
             ]),
             common.tabs.panes(ctrl.projectTabs, {
               "Images": m(".section", [
-                // m("h4", "Images"),
+                m.if(ctrl.app.isAuthorized(3),
+                  m("#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
+                ),  
                 m("ul.small-block-grid-3", [
                   m("li", [
                     m("img[src='http://placehold.it/400x300']")
@@ -154,6 +152,9 @@ project.view = function(ctrl){
               ]),
               "Documents": m(".section", [
                 // m("h4", "Documents"),
+                m.if(ctrl.app.isAuthorized(3),
+                  m("#docDropzone.dropzone", {config: ctrl.initDocDropzone})
+                ),
                 m("table.doc-list", [
                   m("thead", [
                     m("tr", [
