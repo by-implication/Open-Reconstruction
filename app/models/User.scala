@@ -121,6 +121,7 @@ object User extends UserGen {
 case class User(
   id: Pk[Int] = NA,
   handle: String = "",
+  name: Option[String] = None,
   password: String = "",
   agencyId: Int = 0,
   isAdmin: Boolean = false
@@ -164,11 +165,12 @@ trait UserGen extends EntityCompanion[User] {
   val simple = {
     get[Pk[Int]]("user_id") ~
     get[String]("user_handle") ~
+    get[Option[String]]("user_name") ~
     get[String]("user_password") ~
     get[Int]("agency_id") ~
     get[Boolean]("user_admin") map {
-      case id~handle~password~agencyId~isAdmin =>
-        User(id, handle, password, agencyId, isAdmin)
+      case id~handle~name~password~agencyId~isAdmin =>
+        User(id, handle, name, password, agencyId, isAdmin)
     }
   }
 
@@ -195,12 +197,14 @@ trait UserGen extends EntityCompanion[User] {
           insert into users (
             user_id,
             user_handle,
+            user_name,
             user_password,
             agency_id,
             user_admin
           ) VALUES (
             DEFAULT,
             {handle},
+            {name},
             {password},
             {agencyId},
             {isAdmin}
@@ -208,6 +212,7 @@ trait UserGen extends EntityCompanion[User] {
         """).on(
           'id -> o.id,
           'handle -> o.handle,
+          'name -> o.name,
           'password -> o.password,
           'agencyId -> o.agencyId,
           'isAdmin -> o.isAdmin
@@ -219,12 +224,14 @@ trait UserGen extends EntityCompanion[User] {
           insert into users (
             user_id,
             user_handle,
+            user_name,
             user_password,
             agency_id,
             user_admin
           ) VALUES (
             {id},
             {handle},
+            {name},
             {password},
             {agencyId},
             {isAdmin}
@@ -232,6 +239,7 @@ trait UserGen extends EntityCompanion[User] {
         """).on(
           'id -> o.id,
           'handle -> o.handle,
+          'name -> o.name,
           'password -> o.password,
           'agencyId -> o.agencyId,
           'isAdmin -> o.isAdmin
@@ -244,6 +252,7 @@ trait UserGen extends EntityCompanion[User] {
     SQL("""
       update users set
         user_handle={handle},
+        user_name={name},
         user_password={password},
         agency_id={agencyId},
         user_admin={isAdmin}
@@ -251,6 +260,7 @@ trait UserGen extends EntityCompanion[User] {
     """).on(
       'id -> o.id,
       'handle -> o.handle,
+      'name -> o.name,
       'password -> o.password,
       'agencyId -> o.agencyId,
       'isAdmin -> o.isAdmin

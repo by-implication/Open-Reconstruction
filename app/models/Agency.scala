@@ -15,6 +15,7 @@ object Agency extends AgencyGen {
 case class Agency(
   id: Pk[Int] = NA,
   name: String = "",
+  acronym: Option[String] = None,
   roleId: Int = 0
 ) extends AgencyCCGen with Entity[Agency]
 // GENERATED case class end
@@ -24,9 +25,10 @@ trait AgencyGen extends EntityCompanion[Agency] {
   val simple = {
     get[Pk[Int]]("agency_id") ~
     get[String]("agency_name") ~
+    get[Option[String]]("agency_acronym") ~
     get[Int]("role_id") map {
-      case id~name~roleId =>
-        Agency(id, name, roleId)
+      case id~name~acronym~roleId =>
+        Agency(id, name, acronym, roleId)
     }
   }
 
@@ -53,15 +55,18 @@ trait AgencyGen extends EntityCompanion[Agency] {
           insert into agencys (
             agency_id,
             agency_name,
+            agency_acronym,
             role_id
           ) VALUES (
             DEFAULT,
             {name},
+            {acronym},
             {roleId}
           )
         """).on(
           'id -> o.id,
           'name -> o.name,
+          'acronym -> o.acronym,
           'roleId -> o.roleId
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
@@ -71,15 +76,18 @@ trait AgencyGen extends EntityCompanion[Agency] {
           insert into agencys (
             agency_id,
             agency_name,
+            agency_acronym,
             role_id
           ) VALUES (
             {id},
             {name},
+            {acronym},
             {roleId}
           )
         """).on(
           'id -> o.id,
           'name -> o.name,
+          'acronym -> o.acronym,
           'roleId -> o.roleId
         ).executeInsert().flatMap(x => Some(o))
       }
@@ -90,11 +98,13 @@ trait AgencyGen extends EntityCompanion[Agency] {
     SQL("""
       update agencys set
         agency_name={name},
+        agency_acronym={acronym},
         role_id={roleId}
       where agency_id={id}
     """).on(
       'id -> o.id,
       'name -> o.name,
+      'acronym -> o.acronym,
       'roleId -> o.roleId
     ).executeUpdate() > 0
   }
