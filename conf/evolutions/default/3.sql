@@ -33,7 +33,9 @@ CREATE TABLE reqs (
 	req_location text NOT NULL,
 	req_remarks text,
 	req_attachments int[] NOT NULL,
-	disaster_id int NOT NULL REFERENCES disasters
+	req_disaster_type disaster_type NOT NULL,
+	req_disaster_date timestamp NOT NULL,
+	req_disaster_name text
 );;
 
 CREATE TABLE attachments (
@@ -48,5 +50,7 @@ CREATE TABLE attachments (
 DROP TABLE IF EXISTS attachments;;
 
 DROP TABLE IF EXISTS reqs;;
+
+DROP TYPE IF EXISTS project_scope;;
 
 DROP TYPE IF EXISTS project_type;;

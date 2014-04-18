@@ -7,7 +7,7 @@ projectCreation.view = function(ctrl){
         m("h2", "Disaster"),
         common.field(
           "Type",
-          m("select", ["Typhoon", "Earthquake", "Flood", "Fire", "Other"].map(function(e){return m("option", e)}))
+          m("select", ctrl.requestCreationInfo.disasterTypes.map(function(e){return m("option", e)}))
         ),
         common.field(
           "Date",
@@ -54,7 +54,7 @@ projectCreation.view = function(ctrl){
         ),
         common.field(
           "Type",
-          m("select", {onchange: m.withAttr("value", ctrl.projectType), value: ctrl.projectType()}, ["Road", "Bridge", "Public Building", "School Building"].map(function(e){return m("option", e)}))
+          m("select", {onchange: m.withAttr("value", ctrl.projectType), value: ctrl.projectType()}, ctrl.requestCreationInfo.projectTypes.map(function(e){return m("option", e)}))
         ),
         m.if(
           ctrl.projectType() == "Bridge",
@@ -70,7 +70,7 @@ projectCreation.view = function(ctrl){
         ),
         common.field(
           "Scope of Work",
-          m("select", {onchange: m.withAttr("value", ctrl.scopeOfWork), value: ctrl.scopeOfWork()}, ["Reconstruction", "Repair and Rehabilitation", "Other"].map(function(e){return m("option", e)})),
+          m("select", {onchange: m.withAttr("value", ctrl.scopeOfWork), value: ctrl.scopeOfWork()}, ctrl.requestCreationInfo.projectScopes.map(function(e){return m("option", e)})),
           "Do we need to reconstruct this in its entirety? Or is this simply a repair job?"
         ),
         common.field(
@@ -100,7 +100,7 @@ projectCreation.view = function(ctrl){
     // },
     {
       content: [
-        m("button", {type: "button"}, "Submit"),
+        m("button", "Submit"),
         m("button", {type: "button", class: "alert"}, "Cancel"),
       ]
     }
@@ -108,7 +108,7 @@ projectCreation.view = function(ctrl){
 
   return app.template(ctrl, [
     common.banner("New Project Request"),
-    m("form", 
+    m("form", {onsubmit: ctrl.submitNewRequest },
       sections.map(function(s, i){
         return common.formSection(s.icon, s.content, i);
       })

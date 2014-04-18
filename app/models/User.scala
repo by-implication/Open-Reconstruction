@@ -144,7 +144,7 @@ case class User(
   private def canDo(p: Permission): Boolean = DB.withConnection { implicit c =>
     SQL("""
       SELECT * FROM users NATURAL JOIN agencys NATURAL JOIN roles
-      WHERE user_id = {userId} AND = {pName} ANY role_permissions
+      WHERE user_id = {userId} AND {pName}::permission = ANY(role_permissions)
     """).on(
       'userId -> id,
       'pName -> p.name

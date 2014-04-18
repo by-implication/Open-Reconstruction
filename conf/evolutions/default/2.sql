@@ -23,7 +23,7 @@ INSERT INTO roles VALUES
 	(DEFAULT, 'validator', '{"VALIDATE_REQUESTS", "SIGNOFF"}'),
 	(DEFAULT, 'implementor', '{"IMPLEMENT_REQUESTS"}'),
 	(DEFAULT, 'approver', '{"SIGNOFF"}'),
-	(DEFAULT, 'validator and implementor', '{"VALIDATE_REQUESTS", "IMPLEMENT_REQUESTS", "SIGNOFF"}'),
+	(DEFAULT, 'creator, validator, implementor', '{"CREATE_REQUESTS", "VALIDATE_REQUESTS", "IMPLEMENT_REQUESTS", "SIGNOFF"}'),
 	(DEFAULT, 'fund assigner', '{"ASSIGN_FUNDING", "SIGNOFF"}');;
 
 CREATE TABLE agencys (
