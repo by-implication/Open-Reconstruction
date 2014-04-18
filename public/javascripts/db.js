@@ -16,7 +16,7 @@ var database = {
 database.pull = function(){
   return m.request({
     method: "GET",
-    url: "assets/data/CF14-RQST-Sanitized.csv",
+    url: "/assets/data/CF14-RQST-Sanitized.csv",
     deserialize: function(data){
       return csv2json.csv.parse(data, function(d, i){
         // console.log(d);

@@ -5,7 +5,7 @@ import anorm.SqlParser._
 import com.redis.serialization.Parse.Implicits._
 import java.sql.Timestamp
 import play.api.db._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.RequestHeader
 import play.api.Play.current
 import recon.support._
@@ -130,16 +130,20 @@ case class User(
 // GENERATED case class end
 {
 
-  lazy val infoJson = Json.obj(
-    "handle" -> handle,
-    "agency" -> Json.obj(
-      "name" -> agency.name,
-      "acronym" -> agency.acronym
-    ),
-    "isAdmin" -> isAdmin,
-    "isSuperAdmin" -> isSuperAdmin,
-    "permissions" -> permissions
-  )
+  lazy val infoJson = {
+    if(!isAnonymous){
+      Json.obj(
+        "handle" -> handle,
+        "agency" -> Json.obj(
+          "name" -> agency.name,
+          "acronym" -> agency.acronym
+        ),
+        "isAdmin" -> isAdmin,
+        "isSuperAdmin" -> isSuperAdmin,
+        "permissions" -> permissions
+      )
+    } else JsNull
+  }
 
   lazy val agency = Agency.findById(agencyId).get
 
