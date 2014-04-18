@@ -15,16 +15,22 @@ object Requests extends Controller with Secured {
 
     val createForm: Form[Req] = Form(
       mapping(
+        "disaster_type" -> nonEmptyText,
+        "disaster_date" -> date,
+        "disaster_name" -> optional(text),
         "description" -> nonEmptyText,
         "location" -> nonEmptyText,
         "amount" -> optional(number),
         "photographs" -> text
       )
-      ((description, location, amount, photographs) => {
+      ((disasterType, disasterDate, disasterName, description, location, amount, photographs) => {
         Req(
           description = description,
           location = location,
-          amount = BigDecimal(amount.getOrElse(0))
+          amount = BigDecimal(amount.getOrElse(0)),
+          disasterType = DisasterType.withName(disasterType),
+          disasterDate = disasterDate,
+          disasterName = disasterName
           // photographs = photographs
         )
       })

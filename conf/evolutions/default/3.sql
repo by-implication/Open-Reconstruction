@@ -33,7 +33,7 @@ CREATE TABLE reqs (
 	req_location text NOT NULL,
 	req_remarks text,
 	req_attachments int[] NOT NULL,
-	req_disaster_kind disaster_type NOT NULL,
+	req_disaster_type disaster_type NOT NULL,
 	req_disaster_date timestamp NOT NULL,
 	req_disaster_name text
 );;

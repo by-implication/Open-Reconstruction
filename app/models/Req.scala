@@ -29,7 +29,7 @@ case class Req(
   location: String = "",
   remarks: Option[String] = None,
   attachments: PGIntList = Nil,
-  disasterKind: DisasterType = DisasterType.EARTHQUAKE,
+  disasterType: DisasterType = DisasterType.EARTHQUAKE,
   disasterDate: Timestamp = Time.now,
   disasterName: Option[String] = None
 ) extends ReqCCGen with Entity[Req]
@@ -59,11 +59,11 @@ trait ReqGen extends EntityCompanion[Req] {
     get[String]("req_location") ~
     get[Option[String]]("req_remarks") ~
     get[PGIntList]("req_attachments") ~
-    get[DisasterType]("req_disaster_kind") ~
+    get[DisasterType]("req_disaster_type") ~
     get[Timestamp]("req_disaster_date") ~
     get[Option[String]]("req_disaster_name") map {
-      case id~description~projectType~amount~scope~date~code~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachments~disasterKind~disasterDate~disasterName =>
-        Req(id, description, projectType, amount, scope, date, code, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachments, disasterKind, disasterDate, disasterName)
+      case id~description~projectType~amount~scope~date~code~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachments~disasterType~disasterDate~disasterName =>
+        Req(id, description, projectType, amount, scope, date, code, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachments, disasterType, disasterDate, disasterName)
     }
   }
 
@@ -104,7 +104,7 @@ trait ReqGen extends EntityCompanion[Req] {
             req_location,
             req_remarks,
             req_attachments,
-            req_disaster_kind,
+            req_disaster_type,
             req_disaster_date,
             req_disaster_name
           ) VALUES (
@@ -124,7 +124,7 @@ trait ReqGen extends EntityCompanion[Req] {
             {location},
             {remarks},
             {attachments},
-            {disasterKind},
+            {disasterType},
             {disasterDate},
             {disasterName}
           )
@@ -145,7 +145,7 @@ trait ReqGen extends EntityCompanion[Req] {
           'location -> o.location,
           'remarks -> o.remarks,
           'attachments -> o.attachments,
-          'disasterKind -> o.disasterKind,
+          'disasterType -> o.disasterType,
           'disasterDate -> o.disasterDate,
           'disasterName -> o.disasterName
         ).executeInsert()
@@ -170,7 +170,7 @@ trait ReqGen extends EntityCompanion[Req] {
             req_location,
             req_remarks,
             req_attachments,
-            req_disaster_kind,
+            req_disaster_type,
             req_disaster_date,
             req_disaster_name
           ) VALUES (
@@ -190,7 +190,7 @@ trait ReqGen extends EntityCompanion[Req] {
             {location},
             {remarks},
             {attachments},
-            {disasterKind},
+            {disasterType},
             {disasterDate},
             {disasterName}
           )
@@ -211,7 +211,7 @@ trait ReqGen extends EntityCompanion[Req] {
           'location -> o.location,
           'remarks -> o.remarks,
           'attachments -> o.attachments,
-          'disasterKind -> o.disasterKind,
+          'disasterType -> o.disasterType,
           'disasterDate -> o.disasterDate,
           'disasterName -> o.disasterName
         ).executeInsert().flatMap(x => Some(o))
@@ -237,7 +237,7 @@ trait ReqGen extends EntityCompanion[Req] {
         req_location={location},
         req_remarks={remarks},
         req_attachments={attachments},
-        req_disaster_kind={disasterKind},
+        req_disaster_type={disasterType},
         req_disaster_date={disasterDate},
         req_disaster_name={disasterName}
       where req_id={id}
@@ -258,7 +258,7 @@ trait ReqGen extends EntityCompanion[Req] {
       'location -> o.location,
       'remarks -> o.remarks,
       'attachments -> o.attachments,
-      'disasterKind -> o.disasterKind,
+      'disasterType -> o.disasterType,
       'disasterDate -> o.disasterDate,
       'disasterName -> o.disasterName
     ).executeUpdate() > 0

@@ -28,5 +28,7 @@ package object models {
       r
     }
   }
+
+  implicit def dateToTimestamp(date: java.util.Date): java.sql.Timestamp = new java.sql.Timestamp(date.getTime())
  
 }
