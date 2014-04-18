@@ -21,3 +21,15 @@ POST    /requests/:id/signoff       controllers.Requests.signoff(id: Int)
 POST    /requests/:id/attach        controllers.Requests.attach(id: Int)
 
 POST    /agencies/new               controllers.Agencies.insert()
+
+# view routes (these all serve the index view)
+
+GET     /projects                   controllers.Application.index
+GET     /projects/new               controllers.Application.index
+GET     /projects/:id               controllers.Application.index1(id: Int)
+GET     /dashboard                  controllers.Application.index
+GET     /user/:id                   controllers.Application.index1(id: Int)
+GET     /admin                      controllers.Application.index
+GET     /agencies/new               controllers.Application.index
+GET     /agencies/:id               controllers.Application.index1(id: Int)
+GET     /login                      controllers.Application.index
