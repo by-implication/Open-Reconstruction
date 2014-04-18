@@ -14,6 +14,10 @@ object Req extends ReqGen {
 // GENERATED case class start
 case class Req(
   id: Pk[Int] = NA,
+  description: String = "",
+  projectType: ProjectType = ProjectType.INFRASTRUCTURE,
+  amount: BigDecimal = 0,
+  scope: ProjectScope = null,
   date: Timestamp = Time.now,
   code: String = "",
   level: Int = 0,
@@ -22,9 +26,6 @@ case class Req(
   authorId: Int = 0,
   assessingAgencyId: Option[Int] = None,
   implementingAgencyId: Option[Int] = None,
-  projectType: ProjectType = ProjectType.INFRASTRUCTURE,
-  description: String = "",
-  amount: BigDecimal = 0,
   location: String = "",
   remarks: Option[String] = None,
   attachments: PGIntList = Nil,
@@ -41,6 +42,10 @@ case class Req(
 trait ReqGen extends EntityCompanion[Req] {
   val simple = {
     get[Pk[Int]]("req_id") ~
+    get[String]("req_description") ~
+    get[ProjectType]("req_project_type") ~
+    get[java.math.BigDecimal]("req_amount") ~
+    get[ProjectScope]("req_scope") ~
     get[Timestamp]("req_date") ~
     get[String]("req_code") ~
     get[Int]("req_level") ~
@@ -49,15 +54,12 @@ trait ReqGen extends EntityCompanion[Req] {
     get[Int]("author_id") ~
     get[Option[Int]]("assessing_agency_id") ~
     get[Option[Int]]("implementing_agency_id") ~
-    get[ProjectType]("req_project_type") ~
-    get[String]("req_description") ~
-    get[java.math.BigDecimal]("req_amount") ~
     get[String]("req_location") ~
     get[Option[String]]("req_remarks") ~
     get[PGIntList]("req_attachments") ~
     get[Int]("disaster_id") map {
-      case id~date~code~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~projectType~description~amount~location~remarks~attachments~disasterId =>
-        Req(id, date, code, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, projectType, description, amount, location, remarks, attachments, disasterId)
+      case id~description~projectType~amount~scope~date~code~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachments~disasterId =>
+        Req(id, description, projectType, amount, scope, date, code, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachments, disasterId)
     }
   }
 
@@ -83,6 +85,10 @@ trait ReqGen extends EntityCompanion[Req] {
         val id = SQL("""
           insert into reqs (
             req_id,
+            req_description,
+            req_project_type,
+            req_amount,
+            req_scope,
             req_date,
             req_code,
             req_level,
@@ -91,15 +97,16 @@ trait ReqGen extends EntityCompanion[Req] {
             author_id,
             assessing_agency_id,
             implementing_agency_id,
-            req_project_type,
-            req_description,
-            req_amount,
             req_location,
             req_remarks,
             req_attachments,
             disaster_id
           ) VALUES (
             DEFAULT,
+            {description},
+            {projectType},
+            {amount},
+            {scope},
             {date},
             {code},
             {level},
@@ -108,9 +115,6 @@ trait ReqGen extends EntityCompanion[Req] {
             {authorId},
             {assessingAgencyId},
             {implementingAgencyId},
-            {projectType},
-            {description},
-            {amount},
             {location},
             {remarks},
             {attachments},
@@ -118,6 +122,10 @@ trait ReqGen extends EntityCompanion[Req] {
           )
         """).on(
           'id -> o.id,
+          'description -> o.description,
+          'projectType -> o.projectType,
+          'amount -> o.amount.bigDecimal,
+          'scope -> o.scope,
           'date -> o.date,
           'code -> o.code,
           'level -> o.level,
@@ -126,9 +134,6 @@ trait ReqGen extends EntityCompanion[Req] {
           'authorId -> o.authorId,
           'assessingAgencyId -> o.assessingAgencyId,
           'implementingAgencyId -> o.implementingAgencyId,
-          'projectType -> o.projectType,
-          'description -> o.description,
-          'amount -> o.amount.bigDecimal,
           'location -> o.location,
           'remarks -> o.remarks,
           'attachments -> o.attachments,
@@ -140,6 +145,10 @@ trait ReqGen extends EntityCompanion[Req] {
         SQL("""
           insert into reqs (
             req_id,
+            req_description,
+            req_project_type,
+            req_amount,
+            req_scope,
             req_date,
             req_code,
             req_level,
@@ -148,15 +157,16 @@ trait ReqGen extends EntityCompanion[Req] {
             author_id,
             assessing_agency_id,
             implementing_agency_id,
-            req_project_type,
-            req_description,
-            req_amount,
             req_location,
             req_remarks,
             req_attachments,
             disaster_id
           ) VALUES (
             {id},
+            {description},
+            {projectType},
+            {amount},
+            {scope},
             {date},
             {code},
             {level},
@@ -165,9 +175,6 @@ trait ReqGen extends EntityCompanion[Req] {
             {authorId},
             {assessingAgencyId},
             {implementingAgencyId},
-            {projectType},
-            {description},
-            {amount},
             {location},
             {remarks},
             {attachments},
@@ -175,6 +182,10 @@ trait ReqGen extends EntityCompanion[Req] {
           )
         """).on(
           'id -> o.id,
+          'description -> o.description,
+          'projectType -> o.projectType,
+          'amount -> o.amount.bigDecimal,
+          'scope -> o.scope,
           'date -> o.date,
           'code -> o.code,
           'level -> o.level,
@@ -183,9 +194,6 @@ trait ReqGen extends EntityCompanion[Req] {
           'authorId -> o.authorId,
           'assessingAgencyId -> o.assessingAgencyId,
           'implementingAgencyId -> o.implementingAgencyId,
-          'projectType -> o.projectType,
-          'description -> o.description,
-          'amount -> o.amount.bigDecimal,
           'location -> o.location,
           'remarks -> o.remarks,
           'attachments -> o.attachments,
@@ -198,6 +206,10 @@ trait ReqGen extends EntityCompanion[Req] {
   def update(o: Req): Boolean = DB.withConnection { implicit c =>
     SQL("""
       update reqs set
+        req_description={description},
+        req_project_type={projectType},
+        req_amount={amount},
+        req_scope={scope},
         req_date={date},
         req_code={code},
         req_level={level},
@@ -206,9 +218,6 @@ trait ReqGen extends EntityCompanion[Req] {
         author_id={authorId},
         assessing_agency_id={assessingAgencyId},
         implementing_agency_id={implementingAgencyId},
-        req_project_type={projectType},
-        req_description={description},
-        req_amount={amount},
         req_location={location},
         req_remarks={remarks},
         req_attachments={attachments},
@@ -216,6 +225,10 @@ trait ReqGen extends EntityCompanion[Req] {
       where req_id={id}
     """).on(
       'id -> o.id,
+      'description -> o.description,
+      'projectType -> o.projectType,
+      'amount -> o.amount.bigDecimal,
+      'scope -> o.scope,
       'date -> o.date,
       'code -> o.code,
       'level -> o.level,
@@ -224,9 +237,6 @@ trait ReqGen extends EntityCompanion[Req] {
       'authorId -> o.authorId,
       'assessingAgencyId -> o.assessingAgencyId,
       'implementingAgencyId -> o.implementingAgencyId,
-      'projectType -> o.projectType,
-      'description -> o.description,
-      'amount -> o.amount.bigDecimal,
       'location -> o.location,
       'remarks -> o.remarks,
       'attachments -> o.attachments,

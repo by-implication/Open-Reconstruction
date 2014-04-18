@@ -15,9 +15,8 @@ object Disaster extends DisasterGen {
 case class Disaster(
   id: Pk[Int] = NA,
   kind: DisasterType = DisasterType.EARTHQUAKE,
-  name: String = "",
   date: Timestamp = Time.now,
-  cause: Option[String] = None
+  name: Option[String] = None
 ) extends DisasterCCGen with Entity[Disaster]
 // GENERATED case class end
 
@@ -26,11 +25,10 @@ trait DisasterGen extends EntityCompanion[Disaster] {
   val simple = {
     get[Pk[Int]]("disaster_id") ~
     get[DisasterType]("disaster_kind") ~
-    get[String]("disaster_name") ~
     get[Timestamp]("disaster_date") ~
-    get[Option[String]]("disaster_cause") map {
-      case id~kind~name~date~cause =>
-        Disaster(id, kind, name, date, cause)
+    get[Option[String]]("disaster_name") map {
+      case id~kind~date~name =>
+        Disaster(id, kind, date, name)
     }
   }
 
@@ -57,22 +55,19 @@ trait DisasterGen extends EntityCompanion[Disaster] {
           insert into disasters (
             disaster_id,
             disaster_kind,
-            disaster_name,
             disaster_date,
-            disaster_cause
+            disaster_name
           ) VALUES (
             DEFAULT,
             {kind},
-            {name},
             {date},
-            {cause}
+            {name}
           )
         """).on(
           'id -> o.id,
           'kind -> o.kind,
-          'name -> o.name,
           'date -> o.date,
-          'cause -> o.cause
+          'name -> o.name
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -81,22 +76,19 @@ trait DisasterGen extends EntityCompanion[Disaster] {
           insert into disasters (
             disaster_id,
             disaster_kind,
-            disaster_name,
             disaster_date,
-            disaster_cause
+            disaster_name
           ) VALUES (
             {id},
             {kind},
-            {name},
             {date},
-            {cause}
+            {name}
           )
         """).on(
           'id -> o.id,
           'kind -> o.kind,
-          'name -> o.name,
           'date -> o.date,
-          'cause -> o.cause
+          'name -> o.name
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -106,16 +98,14 @@ trait DisasterGen extends EntityCompanion[Disaster] {
     SQL("""
       update disasters set
         disaster_kind={kind},
-        disaster_name={name},
         disaster_date={date},
-        disaster_cause={cause}
+        disaster_name={name}
       where disaster_id={id}
     """).on(
       'id -> o.id,
       'kind -> o.kind,
-      'name -> o.name,
       'date -> o.date,
-      'cause -> o.cause
+      'name -> o.name
     ).executeUpdate() > 0
   }
 
