@@ -17,6 +17,10 @@ object Agencies extends Controller with Secured {
     }
   }
 
+  def allMeta(): Action[AnyContent] = GenericAction(){ implicit user => implicit request =>
+    Rest.success("agencies" ->  Json.toJson(Agency.list().map(_.toJson)))
+  }
+
   lazy val createForm: Form[Agency] = Form(
     mapping(
       "name" -> nonEmptyText,
