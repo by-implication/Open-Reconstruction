@@ -12,7 +12,10 @@ object Agencies extends Controller with Secured {
 
   def viewMeta(id: Int): Action[AnyContent] = GenericAction(){ implicit user => implicit request =>
     Agency.findById(id) match {
-      case Some(agency) => Rest.success("agency" -> agency.toJson)
+      case Some(agency) => Rest.success(
+        "agency" -> agency.toJson,
+        "users" -> Json.toJson(agency.users.map(_.infoJson))
+      )
       case None => Rest.notFound()
     }
   }
