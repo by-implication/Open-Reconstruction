@@ -151,12 +151,13 @@ database.pull = function(){
     database.projectDisasters(pDisasters);
     _.chain(database.userList())
       .map(function(u){
-        return [u.department, u.name]
+        console.log(u.name)
+        return u.name
       })
-      .tap(function(d){
-        console.log(d)
-      })
-      .value()
+      // .tap(function(d){
+      //   console.log(d)
+      // })
+      .value();
     database.agencyList([
       new agency.Agency({
         shortname: "OCD",
