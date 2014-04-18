@@ -18,9 +18,6 @@ admin.view = function(ctrl){
                     "Agency Name"
                   ]),
                   m("td", [
-                    "Acronym"
-                  ]),
-                  m("td", [
                     "Users"
                   ]),
                   m("td", [
@@ -33,11 +30,13 @@ admin.view = function(ctrl){
                   return m("tr", [
                     m("td", [
                       m("a", {href: "/agencies/"+a.id, config: m.route}, [
-                        a.name
+                        a.name,
+                        m.if(a.acronym, 
+                          m("span.acronym", [
+                            "("+a.acronym+")"
+                          ])
+                        )
                       ]),
-                    ]),
-                    m("td", [
-                      a.acronym
                     ]),
                     m("td", [
                       a.totalUsers

@@ -3,7 +3,7 @@ agency.view = function(ctrl){
     common.banner(ctrl.agency().name),
     m("section", [
       m("a.button", {href: "/users/new", config: m.route}, [
-        "New users"
+        "Add new user"
       ]),
       m(".row", "id: " + ctrl.agency().id),
       m(".row", "name: " + ctrl.agency().name),
