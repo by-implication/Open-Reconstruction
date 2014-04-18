@@ -16,3 +16,4 @@ dist
 /conf/evolutions/default/.hash
 /recon.sublime-project
 /recon.sublime-workspace
+/.sass-cache
