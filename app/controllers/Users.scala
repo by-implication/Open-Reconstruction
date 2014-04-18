@@ -11,23 +11,21 @@ object Users extends Controller with Secured {
 
   def login = UserAction(){ implicit user => implicit request =>
     if (Secured.attemptLogin(request.remoteAddress)) {
-      if(user.isAnonymous){
+      
+      val loginForm: Form[Option[User]] = Form(
+        mapping(
+          "handle" -> text,
+          "password" -> text
+        )((h, p) => User.authenticate(h, p))
+        (_ => None)
+        .verifying("Invalid username/password", _.isDefined)
+      )
 
-        val loginForm: Form[Option[User]] = Form(
-          mapping(
-            "handle" -> text,
-            "password" -> text
-          )((h, p) => User.authenticate(h, p))
-          (_ => None)
-          .verifying("Invalid username/password", _.isDefined)
-        )
+      loginForm.bindFromRequest.fold(
+        Rest.formError(_),
+        userOpt => Secured.login(userOpt.get)(request)
+      )
 
-        loginForm.bindFromRequest.fold(
-          Rest.formError(_),
-          userOpt => Secured.login(userOpt.get)(request)
-        )
-
-      } else Rest.error("already logged in")
     } else Rest.error("too many login attempts")
   }
 

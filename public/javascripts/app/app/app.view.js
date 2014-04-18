@@ -67,13 +67,12 @@ app.navbar = function(ctrl){
                 }}, user.name)
               ])
             }),
-            helper.selfun(function(){
-              if(ctrl.app.isLoggedIn()){
-                return m("li", [
-                  m("a", {onclick: ctrl.app.logout.bind(ctrl.app)}, "Logout")
-                ])
-              }
-            })
+            m("li", [
+              m("a", {href: "/login", config: m.route}, "Log in")
+            ]),
+            m("li", [
+              m("a", {href: "/logout", config: m.route}, "Log out")
+            ])
           ])
         ])
       ])
