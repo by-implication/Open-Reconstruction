@@ -10,10 +10,6 @@ project.view = function(ctrl){
     }
   }
 
-  var whichAction = function(ctrl, arr){
-
-  }
-
   var userActions = function(ctrl){
 
     var actions = m.prop({
@@ -139,7 +135,7 @@ project.view = function(ctrl){
             ]),
             common.tabs.panes(ctrl.projectTabs, {
               "Images": m(".section", [
-                // m("h4", "Images"),
+                m("#imageDropzone.dropzone", {config: ctrl.initImageDropzone}),
                 m("ul.small-block-grid-3", [
                   m("li", [
                     m("img[src='http://placehold.it/400x300']")
@@ -154,6 +150,7 @@ project.view = function(ctrl){
               ]),
               "Documents": m(".section", [
                 // m("h4", "Documents"),
+                m("#docDropzone.dropzone", {config: ctrl.initDocDropzone}),
                 m("table.doc-list", [
                   m("thead", [
                     m("tr", [

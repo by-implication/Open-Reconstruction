@@ -16,4 +16,16 @@ project.controller = function(){
   this.initMap = function(elem, isInit){
     this.app.initMap(elem, isInit, {scrollWheelZoom: false});
   }.bind(this)
+
+  this.initImageDropzone = function(elem, isInit){
+    if(!isInit){
+      var dropzone = new Dropzone(elem, {url: "/file/post"})
+    }
+  }
+
+  this.initDocDropzone = function(elem, isInit){
+    if(!isInit){
+      var dropzone = new Dropzone(elem, {url: "/file/post"})
+    }
+  }
 }
