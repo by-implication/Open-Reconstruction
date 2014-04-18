@@ -41,7 +41,7 @@ app.navbar = function(ctrl){
         m("li", [
           m("a", {href: "/projects", config: m.route}, "Projects")
         ]),
-        m.if(ctrl.currentUser().isSuperAdmin,
+        m.if(ctrl.currentUser() && ctrl.currentUser().isSuperAdmin,
           m("li", [
             m("a", {href: "/admin", config: m.route}, "Admin")
           ])
