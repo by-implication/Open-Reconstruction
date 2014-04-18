@@ -2,28 +2,19 @@
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;;
 
-CREATE TYPE permission AS ENUM(
-    'CREATE_REQUESTS',
-    'VALIDATE_REQUESTS',
-    'EDIT_REQUESTS',
-    'IMPLEMENT_REQUESTS',
-    'SIGNOFF',
-    'ASSIGN_FUNDING'
-);;
-
 CREATE TABLE roles (
     role_id serial PRIMARY KEY,
     role_name text NOT NULL,
-    role_permissions permission[] NOT NULL
+    role_permissions int[] NOT NULL
 );;
 
 INSERT INTO roles VALUES
-	(DEFAULT, 'LGU', '{"CREATE_REQUESTS"}'),
-	(DEFAULT, 'OCD', '{"VALIDATE_REQUESTS", "EDIT_REQUESTS", "SIGNOFF"}'),
-    (DEFAULT, 'OP', '{"SIGNOFF"}'),
-	(DEFAULT, 'DPWH', '{"CREATE_REQUESTS", "EDIT_REQUESTS", "VALIDATE_REQUESTS", "IMPLEMENT_REQUESTS", "SIGNOFF"}'),
-	(DEFAULT, 'DBM', '{"CREATE_REQUESTS", "ASSIGN_FUNDING", "SIGNOFF"}'),
-    (DEFAULT, 'NGA', '{"CREATE_REQUESTS", "IMPLEMENT_REQUESTS"}');;
+	(DEFAULT, 'LGU', '{1}'),
+	(DEFAULT, 'OCD', '{2, 3, 5}'),
+    (DEFAULT, 'OP', '{5}'),
+	(DEFAULT, 'DPWH', '{1, 3, 2, 4, 5}'),
+	(DEFAULT, 'DBM', '{1, 6, 5}'),
+    (DEFAULT, 'NGA', '{1, 4}');;
 
 CREATE TABLE agencys (
 	agency_id serial PRIMARY KEY,
@@ -62,7 +53,5 @@ DROP TABLE IF EXISTS users;;
 DROP TABLE IF EXISTS agencys;;
 
 DROP TABLE IF EXISTS roles;;
-
-DROP TYPE IF EXISTS permission;;
 
 DROP EXTENSION IF EXISTS pgcrypto;;
