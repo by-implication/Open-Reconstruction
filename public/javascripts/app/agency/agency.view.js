@@ -1,14 +1,11 @@
 agency.view = function(ctrl){
   return app.template(ctrl.app, [
-    common.banner(ctrl.agency().name()),
+    common.banner(ctrl.agency().name),
     m("section", [
-      m(".row", [
-        m(".columns.medium-9", [
-          "table of users and their permissions",
-          "link to edit",
-          "link to add user",
-        ]),
-      ]),
+      m(".row", "id: " + ctrl.agency().id),
+      m(".row", "name: " + ctrl.agency().name),
+      m(".row", "acronym: " + ctrl.agency().acronym),
+      m(".row", "role: " + ctrl.agency().role)
     ]),
   ])
 }
