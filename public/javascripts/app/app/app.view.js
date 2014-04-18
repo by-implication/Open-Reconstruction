@@ -41,6 +41,12 @@ app.navbar = function(ctrl){
         m("li", [
           m("a", {href: "/projects", config: m.route}, "Projects")
         ]),
+        console.log(ctrl.currentUser()),
+        m.if(ctrl.currentUser() && ctrl.currentUser().agency,
+          m("li", [
+            m("a", {href: "/"}, "My Agency")
+          ])
+        ),
         m.if(ctrl.currentUser() && ctrl.currentUser().isSuperAdmin,
           m("li", [
             m("a", {href: "/admin", config: m.route}, "Admin")
