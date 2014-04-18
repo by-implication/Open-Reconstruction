@@ -157,14 +157,23 @@ project.view = function(ctrl){
                 m("table.doc-list", [
                   m("thead", [
                     m("tr", [
-                      m("td", "document"),
-                      m("td", "type")
+                      m("td", "Document"),
+                      m("td", "Type"),
+                      m("td", "Actions")
                     ])
                   ]),
                   m("tbody", [
                     m("tr", [
                       m("td", "hi"),
-                      m("td", "BP202")
+                      m("td", "BP202"),
+                      m("td", [
+                        m("a", {title: "Preview"}, [
+                          m("i.fa.fa-lg.fa-eye.fa-fw"),
+                        ]),
+                        m("a", {title: "Download"}, [
+                          m("i.fa.fa-lg.fa-download.fa-fw"),
+                        ]),
+                      ])
                     ])
                   ])
                 ]),
