@@ -5,19 +5,22 @@ agencyCreation.controller = function(){
   var self = this;
 
   this.roles = [
-    {id: 0, name: 'LGU'},
-    {id: 1, name: 'OCD'},
-    {id: 2, name: 'OP'},
+    {id: 1, name: 'LGU'},
+    {id: 2, name: 'OCD'},
+    {id: 3, name: 'OP'},
+    {id: 4, name: 'DPWH'},
+    {id: 5, name: 'DBM'},
+    {id: 6, name: 'NGA'}
   ]
 
   this.input = {
     name: m.prop(""),
+    acronym: m.prop(""),
     roleId: m.prop(this.roles[0].id)
   }
   
   this.submit = function(e){
     e.preventDefault();
-    console.log(self.input);
     m.request({method: "POST", url: "/agencies/new", data: self.input, config: app.xhrConfig}).then(function (r){
       if(r.success){
         window.location = '/';

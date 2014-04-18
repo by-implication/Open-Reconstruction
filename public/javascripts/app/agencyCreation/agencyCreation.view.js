@@ -10,6 +10,10 @@ agencyCreation.view = function(ctrl){
             m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.name)})
           ),
           common.field(
+            "Agency Acronym (optional)",
+            m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.acronym)})
+          ),
+          common.field(
             "Agency Role",
             m("select", ctrl.roles.map(function(role){
               return m("option", {value: role.id}, role.name)
