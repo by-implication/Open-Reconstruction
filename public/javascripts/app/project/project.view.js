@@ -135,7 +135,7 @@ project.view = function(ctrl){
             ]),
             common.tabs.panes(ctrl.projectTabs, {
               "Images": m(".section", [
-                m.if(ctrl.app.currentUser() && _.contains(ctrl.app.currentUser().permissions, 3),
+                m.if(ctrl.app.isAuthorized(3),
                   m("#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
                 ),  
                 m("ul.small-block-grid-3", [
@@ -152,7 +152,7 @@ project.view = function(ctrl){
               ]),
               "Documents": m(".section", [
                 // m("h4", "Documents"),
-                m.if(ctrl.app.currentUser() && _.contains(ctrl.app.currentUser().permissions, 3),
+                m.if(ctrl.app.isAuthorized(3),
                   m("#docDropzone.dropzone", {config: ctrl.initDocDropzone})
                 ),
                 m("table.doc-list", [
