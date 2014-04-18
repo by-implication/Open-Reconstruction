@@ -12,9 +12,10 @@ object Agencies extends Controller with Secured {
   lazy val createForm: Form[Agency] = Form(
     mapping(
       "name" -> nonEmptyText,
+      "acronym" -> optional(text),
       "roleId" -> number
     )
-    ((name, roleId) => Agency(name = name, roleId = roleId))
+    ((name, acronym, roleId) => Agency(name = name, acronym = acronym, roleId = roleId))
     (_ => None)
   )
 

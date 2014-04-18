@@ -1,24 +1,25 @@
 agencyCreation.view = function(ctrl){
-  var sections
   return app.template(ctrl.app, [
     common.banner("New Agency"),
-    m("form", [
+    m("form", {onsubmit: ctrl.submit}, [
       common.formSection(
         "fa-star",
         [
           common.field(
             "Agency Name",
-            m("input[type='text']")
+            m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.name)})
           ),
           common.field(
-            "Agency Acronym",
-            m("input[type='text']")
+            "Agency Acronym (optional)",
+            m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.acronym)})
           ),
           common.field(
             "Agency Role",
-            m("select", [
-              m("option", "NGA"),
-            ])
+            m("select", {onchange: m.withAttr("value", ctrl.input.roleId)}, 
+              ctrl.roles.map(function(role){
+                return m("option", {value: role.id}, role.name)
+              }
+            ))
           )
         ]
       ),
