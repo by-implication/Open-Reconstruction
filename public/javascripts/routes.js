@@ -2,7 +2,7 @@
 ////////////////////////////////////////////////////
 // routes
 
-m.route(document, "/projects", {
+m.route(document, window.location.pathname == "/" ? "/projects" : window.location.pathname, {
   "/projects": projectListing,
   "/projects/new": projectCreation,
   "/projects/:id": project,
