@@ -51,28 +51,18 @@ app.navbar = function(ctrl){
       m("ul.right", [
         m("li.has-dropdown.not-click", [
           m("a", {href: "#"}, [
-            helper.selfun(function(){
-              if(ctrl.app.isLoggedIn()){
-                return ctrl.app.getLoggedIn().name;
-              } else {
-                return "Guest";
-              }
-            })
+            m.if(m.cookie().logged_in, m.cookie().logged_in),
+            m.if(!m.cookie().logged_in, "Guest")
           ]),
           m("ul.dropdown", [
-            ctrl.app.authorizedUsers().map(function(user){
-              return m("li", [
-                m("a", {onclick: function(){
-                  ctrl.app.login(user)
-                }}, user.name)
+            m.if(m.cookie().logged_in, 
+              m("li", [
+                m("a", {href: "/logout"}, "Log out")
+              ]),
+              m("li", [
+                m("a", {href: "/login", config: m.route}, "Log in")
               ])
-            }),
-            m("li", [
-              m("a", {href: "/login", config: m.route}, "Log in")
-            ]),
-            m("li", [
-              m("a", {href: "/logout", config: m.route}, "Log out")
-            ])
+            ),
           ])
         ])
       ])
