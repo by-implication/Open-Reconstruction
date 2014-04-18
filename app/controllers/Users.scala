@@ -38,7 +38,7 @@ object Users extends Controller with Secured {
   }
 
   def insert() = UserAction(){ implicit user => implicit request =>
-    if(user.role == "administrator" || user.isAdmin){
+    if(user.isSuperAdmin || user.isAdmin){
 
       val createForm: Form[User] = Form(
         mapping(
@@ -46,7 +46,7 @@ object Users extends Controller with Secured {
           "password" -> nonEmptyText,
           "agencyId" -> number.verifying(
             "Can't add users to this agency",
-            agencyId => user.role == "administrator" || agencyId == user.agencyId
+            agencyId => user.isSuperAdmin || agencyId == user.agencyId
           ),
           "isAdmin" -> boolean
         )

@@ -19,7 +19,7 @@ object Agencies extends Controller with Secured {
   )
 
   def insert() = UserAction(){ implicit user => implicit request =>
-    if(user.role == "administrator"){
+    if(user.isSuperAdmin){
       createForm.bindFromRequest.fold(
         Rest.formError(_),
         _.create().map(_ => Rest.success())

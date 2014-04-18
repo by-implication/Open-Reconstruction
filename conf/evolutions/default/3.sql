@@ -10,8 +10,18 @@ CREATE TYPE project_type AS ENUM(
 	'Other'
 );;
 
+CREATE TYPE project_scope AS ENUM(
+	'Reconstruction',
+	'Repair and Rehabilitation',
+	'Other'
+);;
+
 CREATE TABLE reqs (
 	req_id serial PRIMARY KEY,
+	req_description text NOT NULL,
+	req_project_type project_type NOT NULL,
+	req_amount numeric(10,2) NOT NULL,
+	req_scope project_scope NOT NULL,
 	req_date timestamp NOT NULL,
 	req_code text NOT NULL,
 	req_level int NOT NULL,
@@ -20,9 +30,6 @@ CREATE TABLE reqs (
 	author_id int NOT NULL REFERENCES users(user_id),
 	assessing_agency_id int REFERENCES agencys(agency_id),
 	implementing_agency_id int REFERENCES agencys(agency_id),
-	req_project_type project_type NOT NULL,
-	req_description text NOT NULL,
-	req_amount numeric(10,2) NOT NULL,
 	req_location text NOT NULL,
 	req_remarks text,
 	req_attachments int[] NOT NULL,

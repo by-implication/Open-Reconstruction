@@ -5,15 +5,15 @@ CREATE TYPE disaster_type AS ENUM(
 	'Flood',
 	'Typhoon',
 	'Landslide',
+	'Fire',
 	'Anthropogenic'
 );;
 
 CREATE TABLE disasters (
   disaster_id serial PRIMARY KEY,
   disaster_kind disaster_type NOT NULL,
-  disaster_name text NOT NULL,
   disaster_date timestamp NOT NULL,
-  disaster_cause text
+  disaster_name text
 );;
 
 # --- !Downs

@@ -128,6 +128,8 @@ case class User(
 // GENERATED case class end
 {
 
+  lazy val isSuperAdmin = role.name == "administrator"
+
   lazy val role: Role = DB.withConnection { implicit c =>
     SQL("""
       SELECT * FROM roles NATURAL JOIN agencys
@@ -150,7 +152,7 @@ case class User(
   }
 
   def canEditRequest(r: Req): Boolean = DB.withConnection { implicit c =>
-    agencyId == r.implementingAgencyId // todo add other conditions
+    r.implementingAgencyId.map(_ == agencyId).getOrElse(false) // todo add other conditions
   }
 
   def isAnonymous = id.get == -1

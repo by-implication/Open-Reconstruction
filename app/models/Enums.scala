@@ -9,6 +9,7 @@ object DisasterType extends Enum[DisasterType] {
   val FLOOD = new DisasterType("Flood")
   val TYPHOON = new DisasterType("Typhoon")
   val LANDSLIDE = new DisasterType("Landslide")
+  val FIRE = new DisasterType("Fire")
   val ANTHROPOGENIC = new DisasterType("Anthropogenic")
 }
 
@@ -31,4 +32,11 @@ object ProjectType extends Enum[ProjectType] {
   val SHELTER_UNITS = new ProjectType("Shelter Units")
   val ENVIRONMENT = new ProjectType("Environment")
   val OTHER = new ProjectType("Other")
+}
+
+sealed class ProjectScope(override val name: String) extends PGObject("project_scope", name) with ProjectScope.Value
+object ProjectScope extends Enum[ProjectScope] {
+  val RECONSTRUCTION = new ProjectScope("Reconstruction")
+  val REPAIR_AND_REHABILITATION = new ProjectScope("Repair and Rehabilitation")
+  val OTHER = new ProjectScope("Other")
 }
