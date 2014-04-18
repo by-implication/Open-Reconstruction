@@ -13,3 +13,5 @@ m.route(document, "/projects", {
   "/agencies/:id": agency,
   "/login": login
 });
+
+m.route.mode = "pathname";

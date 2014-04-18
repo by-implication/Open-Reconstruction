@@ -13,6 +13,7 @@ POST	/login						controllers.Users.login()
 GET		/logout						controllers.Users.logout()
 
 POST    /users/new                  controllers.Users.insert()
+GET     /users/info                 controllers.Users.info()
 
 GET     /requests/info              controllers.Requests.createInfo()
 POST	/requests/new				controllers.Requests.insert()

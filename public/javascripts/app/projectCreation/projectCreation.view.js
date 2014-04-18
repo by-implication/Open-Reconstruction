@@ -56,14 +56,29 @@ projectCreation.view = function(ctrl){
           "Type",
           m("select", {onchange: m.withAttr("value", ctrl.projectType), value: ctrl.projectType()}, ctrl.requestCreationInfo.projectTypes.map(function(e){return m("option", e)}))
         ),
-        m.if(
-          ctrl.projectType() == "Bridge",
-          common.field(
-            "Parent Road",
-            m("input", {type: "text", placeholder: "Tagbilaran North Road"}),
-            "Tell us on which road this bridge is located."
+        // m.if(
+        //   ctrl.projectType() == "Bridge",
+        //   common.field(
+        //     "Parent Road",
+        //     m("input", {type: "text", placeholder: "Tagbilaran North Road"}),
+        //     "Tell us on which road this bridge is located."
+        //   )
+        // ),
+        m.switch(ctrl.projectType())
+          .case("Bridge", 
+            common.field(
+              "Parent Road",
+              m("input", {type: "text", placeholder: "Tagbilaran North Road"}),
+              "Tell us on which road this bridge is located."
+            )
           )
-        ),
+          .case("Agriculture", 
+            "agri!"
+          )
+          .case("Other",
+            "specify!"
+          )
+          .render(),
         common.field(
           "Amount",
           m("input", {type: "number"})

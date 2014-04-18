@@ -15,7 +15,7 @@ object Role extends RoleGen {
 case class Role(
   id: Pk[Int] = NA,
   name: String = "",
-  permissions: Permission = null
+  permissions: PGIntList = Nil
 ) extends RoleCCGen with Entity[Role]
 // GENERATED case class end
 
@@ -24,7 +24,7 @@ trait RoleGen extends EntityCompanion[Role] {
   val simple = {
     get[Pk[Int]]("role_id") ~
     get[String]("role_name") ~
-    get[Permission]("role_permissions") map {
+    get[PGIntList]("role_permissions") map {
       case id~name~permissions =>
         Role(id, name, permissions)
     }
@@ -109,3 +109,15 @@ trait RoleCCGen {
 }
 // GENERATED object end
 
+case class Permission(value: Int)
+
+object Permission {
+
+  val CREATE_REQUESTS = Permission(1)
+  val VALIDATE_REQUESTS = Permission(2)
+  val EDIT_REQUESTS = Permission(3)
+  val IMPLEMENT_REQUESTS = Permission(4)
+  val SIGNOFF = Permission(5)
+  val ASSIGN_FUNDING = Permission(6)
+
+}
