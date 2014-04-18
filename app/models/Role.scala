@@ -18,7 +18,15 @@ case class Role(
   permissions: PGIntList = Nil
 ) extends RoleCCGen with Entity[Role]
 // GENERATED case class end
-
+{
+  def toJson: JsObject = {
+    Json.obj(
+      "id" -> id.toInt,
+      "name" -> name,
+      "permissions" -> permissions
+    )
+  }
+}
 // GENERATED object start
 trait RoleGen extends EntityCompanion[Role] {
   val simple = {
