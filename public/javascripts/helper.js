@@ -182,6 +182,31 @@ m.if = function(bool, ifElem, elseElem){
   }
 }
 
+m.switchObject = function(base, acc){
+  this.case = function(cond, elem){
+    if(base === cond){
+      return new m.switchObject(base, elem);
+    } else {
+      return new m.switchObject(base, acc);
+    }
+  }
+  this.default = function(elem){
+    if(acc){
+      return new m.switchObject(base, acc);
+    } else {
+      return new m.switchObject(base, elem);
+    }
+  }
+  this.render = function(){
+    // return the m()
+    return acc;
+  }
+}
+
+m.switch = function(base){
+  return new m.switchObject(base, null);
+}
+
 m.cookie = function(){
   var cookieRaw = document.cookie.split("; ").map(function(c){
     return c.split("=")
