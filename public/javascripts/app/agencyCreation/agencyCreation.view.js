@@ -1,5 +1,5 @@
 agencyCreation.view = function(ctrl){
-  return app.template(ctrl, [
+  return app.template(ctrl.app, [
     common.banner("New Agency"),
     m("form", {onsubmit: ctrl.submit}, [
       common.formSection(

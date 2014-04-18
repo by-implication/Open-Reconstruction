@@ -121,7 +121,7 @@ projectCreation.view = function(ctrl){
     }
   ]
 
-  return app.template(ctrl, [
+  return app.template(ctrl.app, [
     common.banner("New Project Request"),
     m("form", {onsubmit: ctrl.submitNewRequest },
       sections.map(function(s, i){

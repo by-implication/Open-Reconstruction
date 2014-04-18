@@ -13,7 +13,7 @@ admin.view = function(ctrl){
   //     userCount: 145, 
   //   },
   // ])
-  return app.template(ctrl, [
+  return app.template(ctrl.app, [
     common.banner("Administrative Interface"),
     // console.log(ctrl.app.getLoggedIn().department),
     m.if(ctrl.app.getLoggedIn().department == "OCD", 
