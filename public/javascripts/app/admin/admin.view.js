@@ -1,21 +1,7 @@
 admin.view = function(ctrl){
-  // var agencyList = m.prop([
-  //   {
-  //     shortname: "OCD",
-  //     name: "Office of Civil Defense",
-  //     permissions: "xxrrdd",
-  //     userCount: 42, 
-  //   },
-  //   {
-  //     shortname: "DPWH",
-  //     name: "Department of Public Works and Highways",
-  //     permissions: "xxrrdd",
-  //     userCount: 145, 
-  //   },
-  // ])
+  
   return app.template(ctrl.app, [
     common.banner("Administrative Interface"),
-    // console.log(ctrl.app.getLoggedIn().department),
     m.if(ctrl.app.isSuperAdmin(),
       m("section", [
         m(".row", [
@@ -24,6 +10,9 @@ admin.view = function(ctrl){
           m(".columns.medium-8", [
             m("a.button", {href: "/agencies/new", config: m.route}, [
               "New agency"
+            ]),
+            m("a.button", {href: "/users/new", config: m.route}, [
+              "New users"
             ]),
             m("table", [
               m("thead", [
@@ -47,7 +36,6 @@ admin.view = function(ctrl){
                   return m("tr", [
                     m("td", [
                       m("a", {href: "/agencies/"+a.id, config: m.route}, [
-                        // a.name()
                         a.name
                       ]),
                     ]),
@@ -55,10 +43,13 @@ admin.view = function(ctrl){
                       a.acronym
                     ]),
                     m("td", [
-                      "count"
+                      a.totalUsers
                     ]),
                     m("td", [
                       a.role
+                    ]),
+                    m("td", [
+                      a.permissions
                     ]),
                   ]);
                 })

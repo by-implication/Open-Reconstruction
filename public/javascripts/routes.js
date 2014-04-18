@@ -7,7 +7,7 @@ m.route(document, window.location.pathname == "/" ? "/projects" : window.locatio
   "/projects/new": projectCreation,
   "/projects/:id": project,
   "/dashboard": dashboard,
-  "/user/:id": user,
+  "/users/:id": user,
   "/admin": admin,
   "/agencies/new": agencyCreation,
   "/agencies/:id": agency,
