@@ -49,7 +49,7 @@ project.view = function(ctrl){
     }
   }
 
-  return app.template(ctrl, {class: "detail"}, [
+  return app.template(ctrl.app, {class: "detail"}, [
     // m("div#detailMap", {config: ctrl.initMap}),
 
     m("section.summary", [

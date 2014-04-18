@@ -3,7 +3,7 @@ projectListing.view = function(ctrl){
     {label: "All"},
     {label: "Assigned to Me"}
   ];
-  return app.template(ctrl, [
+  return app.template(ctrl.app, [
     common.banner("List of Requested Projects"),
     m("section", [
       m("div",{class: "row"}, [

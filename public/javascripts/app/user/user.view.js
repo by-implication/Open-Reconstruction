@@ -1,5 +1,5 @@
 user.view = function(ctrl){
-  return app.template(ctrl, [
+  return app.template(ctrl.app, [
     common.banner(ctrl.user().name),
     m("div", {class: "row"}, [
       m("div", {class: "columns medium-9"}, [

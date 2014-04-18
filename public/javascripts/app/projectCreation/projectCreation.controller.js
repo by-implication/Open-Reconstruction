@@ -11,7 +11,7 @@ projectCreation.controller = function(){
   }.bind(this));
   this.submitNewRequest = function(e){
     e.preventDefault();
-    m.request({method: "POST", url: "/requests/new"}).then(function (r){
+    m.request({method: "POST", url: "/requests/new"}).then(function(r){
       console.log(r);
     })
   };

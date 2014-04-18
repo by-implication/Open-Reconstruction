@@ -1,5 +1,5 @@
 agency.view = function(ctrl){
-  return app.template(ctrl, [
+  return app.template(ctrl.app, [
     common.banner(ctrl.agency().name()),
     m("section", [
       m(".row", [
