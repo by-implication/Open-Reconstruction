@@ -17,3 +17,10 @@ process.permissions = m.prop({
   "DBM": [40],
   "OP": [30]
 });
+
+// process.titles = m.prop([
+//   "MAYOR",
+//   "CONG",
+//   "GOV",
+//   "USEC",
+// ])
