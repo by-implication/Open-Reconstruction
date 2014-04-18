@@ -22,6 +22,8 @@ trait Enum[A] {
 
 	def values = _values
 
+	def jsonList = Json.toJson(values.map(_._1))
+
 	def toSelectJson = Json.toJson(values.map(v => Json.obj(
 		"value" -> v._1,
 		"label" -> v._2.toString.capitalize

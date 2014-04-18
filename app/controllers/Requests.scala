@@ -5,11 +5,20 @@ import play.api._
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.Files.TemporaryFile
+import play.api.libs.json.Json
 import play.api.mvc._
 import recon.models._
 import recon.support._
 
 object Requests extends Controller with Secured {
+
+  def createInfo() = UserAction(){ implicit user => implicit request =>
+    Ok(Json.obj(
+      "disasterTypes" -> DisasterType.jsonList,
+      "projectTypes" -> ProjectType.jsonList,
+      "projectScopes" -> ProjectScope.jsonList
+    ))
+  }
 
   def insert() = UserAction(){ implicit user => implicit request =>
 
