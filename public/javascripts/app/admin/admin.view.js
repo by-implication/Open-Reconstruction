@@ -16,7 +16,7 @@ admin.view = function(ctrl){
   return app.template(ctrl.app, [
     common.banner("Administrative Interface"),
     // console.log(ctrl.app.getLoggedIn().department),
-    m.if(ctrl.app.getLoggedIn().department == "OCD", 
+    m.if(ctrl.app.isSuperAdmin(),
       m("section", [
         m(".row", [
           // create agencies
@@ -46,18 +46,19 @@ admin.view = function(ctrl){
                 ctrl.agencyList().map(function(a){
                   return m("tr", [
                     m("td", [
-                      m("a", {href: "/agencies/"+a.slug(), config: m.route}, [
-                        a.name()
+                      m("a", {href: "/agencies/"+a.id, config: m.route}, [
+                        // a.name()
+                        a.name
                       ]),
                     ]),
                     m("td", [
-                      a.shortname()
+                      a.acronym
                     ]),
                     m("td", [
-                      a.userCount()
+                      "count"
                     ]),
                     m("td", [
-                      a.permissions()
+                      a.role
                     ]),
                   ]);
                 })

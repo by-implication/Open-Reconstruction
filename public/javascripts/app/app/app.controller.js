@@ -11,6 +11,10 @@ app.controller = function(){
   this.isAuthorized = function(permission){
     return this.currentUser() && _.contains(this.currentUser().permissions, permission);
   }
+
+  this.isSuperAdmin = function(){
+    return this.currentUser() && this.currentUser().isSuperAdmin;
+  }
   
   this.isLoggedIn = function(){
     var currentUserId = localStorage["currentUser"];

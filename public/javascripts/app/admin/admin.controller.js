@@ -1,7 +1,11 @@
 admin.controller = function(){
   this.app = new app.controller();
   this.agencyList = m.prop([]);
-  database.pull().then(function(data){
-    this.agencyList(database.agencyList());
-  }.bind(this));
+
+  m.request({
+    method: "GET",
+    url: "/agencies/all/meta"
+  }).then(function(r){
+    this.agencyList(r.agencies);
+  }.bind(this))
 }
