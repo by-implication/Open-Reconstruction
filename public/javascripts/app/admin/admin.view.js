@@ -30,7 +30,7 @@ admin.view = function(ctrl){
           // create agencies
           // list of agencies
           m(".columns.medium-8", [
-            m("button", [
+            m("a.button", {href: "/agencies/new", config: m.route}, [
               "New agency"
             ]),
             m("table", [

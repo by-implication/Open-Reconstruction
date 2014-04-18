@@ -193,6 +193,7 @@ project.listView = function(ctrl){
       m("tr", [
         m("th", "id"),
         m("th", "name"),
+        m("th", "dep"),
         m("th", "data integrity"),
         m("th.text-right", "amount")
       ])
@@ -215,6 +216,9 @@ project.listView = function(ctrl){
           m("td", project.id()),
           m("td", [
             m("a.name", {href: url, config: m.route}, project.description())
+          ]),
+          m("td", [
+            m.if(project.author().department, project.author().department)
           ]),
           m("td", [
             project.errors().length ? m("span.label.alert", project.errors().length+" errors") : m("span.label.success", [m("i.fa.fa-check")])

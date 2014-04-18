@@ -4,7 +4,9 @@ agency.view = function(ctrl){
     m("section", [
       m(".row", [
         m(".columns.medium-9", [
-          ctrl.agency().name()
+          "table of users and their permissions",
+          "link to edit",
+          "link to add user",
         ]),
       ]),
     ]),
