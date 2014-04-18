@@ -9,6 +9,14 @@ import play.api.Play.current
 import recon.support._
 
 object Agency extends AgencyGen {
+  def users(id: Int): Seq[User] = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT * from users
+      WHERE agency_id = {id}
+    """).on(
+      'id -> id
+    ).list(User.simple)
+  }
 }
 
 // GENERATED case class start
@@ -20,11 +28,14 @@ case class Agency(
 ) extends AgencyCCGen with Entity[Agency]
 // GENERATED case class end
 {
+  def users:Seq[User] = Agency.users(id)
+
   def toJson: JsObject = {
     Json.obj(
       "id" -> id.toInt,
       "name" -> name,
       "acronym" -> (acronym.getOrElse(""): String),
+      "totalUsers" -> users.length,
       "role" -> roleId // change this to role.toJson
     )
   }
