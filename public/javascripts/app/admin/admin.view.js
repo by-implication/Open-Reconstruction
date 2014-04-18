@@ -47,10 +47,7 @@ admin.view = function(ctrl){
                     ]),
                     m("td", [
                       a.role
-                    ]),
-                    m("td", [
-                      a.permissions
-                    ]),
+                    ])
                   ]);
                 })
               ]),
