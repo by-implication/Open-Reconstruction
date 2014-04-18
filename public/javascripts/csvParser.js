@@ -28,6 +28,7 @@ csv2json.dsv(",", "text/plain", 1)("/assets/data/CF14-RQST-Sanitized.csv", funct
         "DATE_REQD"
     ].forEach(function (x){ uselessColumns[x] = true; });
 
+    var projectTypes = {'BRIDGES': true};
     var users = [];
     var agencyNames = [];
     var agencies = [];
@@ -58,7 +59,10 @@ csv2json.dsv(",", "text/plain", 1)("/assets/data/CF14-RQST-Sanitized.csv", funct
         row.description = row.PURPOSE;
         delete row.PURPOSE;
 
-        row.projectType = row.PURPOSE1;
+        row.projectType = row.PURPOSE1 || "OTHERS";
+        if(row.projectType == "FA") row.projectType = "FINANCIAL AID";
+        if(row.projectType == "ROADS/BRIDGES") row.projectType = "ROADS";
+        projectTypes[row.projectType] = true;
         delete row.PURPOSE1;
 
         var user = row["REQUESTING PARTY"];
@@ -128,35 +132,22 @@ csv2json.dsv(",", "text/plain", 1)("/assets/data/CF14-RQST-Sanitized.csv", funct
 
     });
 
-    document.write("<table border=1>");
-    document.write("<tr>");
-    for(var i in data[0]) document.write("<th>" + i + "</th>");
-    document.write("</tr>");
-    for(var i in data){
-        document.write("<tr>");
-        for(var j in data[i]){
-            document.write("<td>" + data[i][j] + "</td>");
-        }
-        document.write("</tr>");
-    }
+    // document.write("<table border=1>");
+    // document.write("<tr>");
+    // for(var i in data[0]) document.write("<th>" + i + "</th>");
+    // document.write("</tr>");
+    // for(var i in data){
+    //     document.write("<tr>");
+    //     for(var j in data[i]){
+    //         document.write("<td>" + data[i][j] + "</td>");
+    //     }
+    //     document.write("</tr>");
+    // }
+    // document.write("</table>");
 
-
-
-    // TARGET MODEL
-
-    // description: String = "",
-    // projectType: ProjectType = ProjectType.INFRASTRUCTURE,
-    // amount: BigDecimal = 0,
-    // scope: ProjectScope = ProjectScope.RECONSTRUCTION,
-    // date: Timestamp = Time.now,
-    // assessingAgencyId: Option[Int] = None,
-    // implementingAgencyId: Option[Int] = None,
-    // location: String = "",
-    // remarks: Option[String] = None,
-    // disasterType: DisasterType = DisasterType.EARTHQUAKE,
-    // disasterDate: Timestamp = Time.now,
-    // disasterName: Option[String] = None
-
-    // row.authorId: Int = 0,
+    document.write("<h1>Project Types</h1>");
+    projectTypesArray = [];
+    for(var i in projectTypes) projectTypesArray.push("'" + i + "'");
+    document.write(projectTypesArray.join(", "));
 
 });

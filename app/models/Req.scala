@@ -15,7 +15,7 @@ object Req extends ReqGen {
 case class Req(
   id: Pk[Int] = NA,
   description: String = "",
-  projectType: ProjectType = ProjectType.INFRASTRUCTURE,
+  projectType: ProjectType = ProjectType.BRIDGES,
   amount: BigDecimal = 0,
   scope: ProjectScope = ProjectScope.RECONSTRUCTION,
   date: Timestamp = Time.now,

@@ -15,13 +15,23 @@ object DisasterType extends Enum[DisasterType] {
 
 sealed class ProjectType(override val name: String) extends PGObject("project_type", name) with ProjectType.Value
 object ProjectType extends Enum[ProjectType] {
-  val INFRASTRUCTURE = new ProjectType("Infrastructure")
-  val AGRICULTURE = new ProjectType("Agriculture")
-  val SCHOOL_BUILDING = new ProjectType("School Building")
-  val HEALTH_FACILITIES = new ProjectType("Health Facilities")
-  val SHELTER_UNITS = new ProjectType("Shelter Units")
-  val ENVIRONMENT = new ProjectType("Environment")
-  val OTHER = new ProjectType("Other")
+  val BRIDGES = new ProjectType("BRIDGES")
+  val WATER_SYSTEM = new ProjectType("WATER SYSTEM")
+  val OTHERS = new ProjectType("OTHERS")
+  val FINANCIAL_AID = new ProjectType("FINANCIAL AID")
+  val ROAD = new ProjectType("ROAD")
+  val FLOOD_CONTROL = new ProjectType("FLOOD CONTROL")
+  val RIVER_CONTROL = new ProjectType("RIVER CONTROL")
+  val RIVERS = new ProjectType("RIVERS")
+  val SCHOOL_BUILDING = new ProjectType("SCHOOL BUILDING")
+  val SEAWALL = new ProjectType("SEAWALL")
+  val EQUIPMENT = new ProjectType("EQUIPMENT")
+  val IRRIGATION_SYSTEM = new ProjectType("IRRIGATION SYSTEM")
+  val BUILDING = new ProjectType("BUILDING")
+  val HOUSE = new ProjectType("HOUSE")
+  val ROADS = new ProjectType("ROADS")
+  val HOUSING_UNITS = new ProjectType("HOUSING UNITS")
+  val EVAC_CENTER = new ProjectType("EVAC CENTER")
 }
 
 sealed class ProjectScope(override val name: String) extends PGObject("project_scope", name) with ProjectScope.Value

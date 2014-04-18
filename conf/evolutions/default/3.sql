@@ -1,13 +1,33 @@
 # --- !Ups
 
+-- CREATE TYPE project_type AS ENUM(
+-- 	'Infrastructure',
+-- 	'Agriculture',
+-- 	'School Building',
+-- 	'Health Facilities',
+-- 	'Shelter Units',
+-- 	'Environment',
+-- 	'Other'
+-- );;
+
 CREATE TYPE project_type AS ENUM(
-	'Infrastructure',
-	'Agriculture',
-	'School Building',
-	'Health Facilities',
-	'Shelter Units',
-	'Environment',
-	'Other'
+	'BRIDGES',
+	'WATER SYSTEM',
+	'OTHERS',
+	'FINANCIAL AID',
+	'ROAD',
+	'FLOOD CONTROL',
+	'RIVER CONTROL',
+	'RIVERS',
+	'SCHOOL BUILDING',
+	'SEAWALL',
+	'EQUIPMENT',
+	'IRRIGATION SYSTEM',
+	'BUILDING',
+	'HOUSE',
+	'ROADS',
+	'HOUSING UNITS',
+	'EVAC CENTER'
 );;
 
 CREATE TYPE project_scope AS ENUM(
