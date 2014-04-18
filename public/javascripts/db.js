@@ -149,15 +149,17 @@ database.pull = function(){
 
     database.projectFilters(pFilters);
     database.projectDisasters(pDisasters);
-    _.chain(database.userList())
-      .map(function(u){
-        console.log(u.name)
-        return u.name
-      })
-      // .tap(function(d){
-      //   console.log(d)
-      // })
-      .value();
+
+    // _.chain(database.userList())
+    //   .map(function(u){
+    //     console.log(u.name)
+    //     return u.name
+    //   })
+    //   // .tap(function(d){
+    //   //   console.log(d)
+    //   // })
+    //   .value();
+    
     database.agencyList([
       new agency.Agency({
         shortname: "OCD",
