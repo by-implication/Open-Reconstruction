@@ -10,9 +10,11 @@ agency.view = function(ctrl){
       m(".row", "acronym: " + ctrl.agency().acronym),
       m(".row", "role: " + ctrl.agency().role),
       m.if(ctrl.app.isAgencyAdmin(ctrl.agency().id), 
-        m(".row", [
-          "you are admin" // list all users
-        ])
+        m(".row", 
+          ctrl.users().map(function(u){
+            return m(".row", u.handle)
+          })
+        )
       )
     ]),
   ])
