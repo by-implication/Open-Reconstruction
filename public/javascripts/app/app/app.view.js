@@ -67,12 +67,12 @@ app.navbar = function(ctrl){
                 }}, user.name)
               ])
             }),
-            m("li", [
+            m.if(m.cookie().logged_in, m("li", [
+              m("a", {href: "/logout"}, "Log out")
+            ])),
+            m.if(!m.cookie().logged_in, m("li", [
               m("a", {href: "/login", config: m.route}, "Log in")
-            ]),
-            m("li", [
-              m("a", {href: "/logout", config: m.route}, "Log out")
-            ])
+            ]))
           ])
         ])
       ])

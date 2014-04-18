@@ -182,3 +182,10 @@ m.if = function(bool, elem){
   }
 }
 
+m.cookie = function(){
+  var cookieRaw = document.cookie.split("; ").map(function(c){
+    return c.split("=")
+  })
+  return _.object(cookieRaw);
+}
+
