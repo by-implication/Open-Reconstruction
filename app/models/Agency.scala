@@ -19,7 +19,16 @@ case class Agency(
   roleId: Int = 0
 ) extends AgencyCCGen with Entity[Agency]
 // GENERATED case class end
-
+{
+  def toJson: JsObject = {
+    Json.obj(
+      "id" -> id.toInt,
+      "name" -> name,
+      "acronym" -> (acronym.getOrElse(""): String),
+      "role" -> roleId // change this to role.toJson
+    )
+  }
+}
 // GENERATED object start
 trait AgencyGen extends EntityCompanion[Agency] {
   val simple = {
