@@ -32,4 +32,5 @@ GET     /user/:id                   controllers.Application.index1(id: Int)
 GET     /admin                      controllers.Application.index
 GET     /agencies/new               controllers.Application.index
 GET     /agencies/:id               controllers.Application.index1(id: Int)
+GET     /agencies/:id/meta          controllers.Agencies.viewMeta(id: Int)
 GET     /login                      controllers.Application.index

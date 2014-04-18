@@ -9,6 +9,13 @@ import recon.support._
 
 object Agencies extends Controller with Secured {
 
+  def viewMeta(id: Int): Action[AnyContent] = GenericAction(){ implicit user => implicit request =>
+    Agency.findById(id) match {
+      case Some(agency) => Ok(agency.toJson)
+      case None => Rest.notFound()
+    }
+  }
+
   lazy val createForm: Form[Agency] = Form(
     mapping(
       "name" -> nonEmptyText,
@@ -19,7 +26,7 @@ object Agencies extends Controller with Secured {
     (_ => None)
   )
 
-  def insert() = UserAction(){ implicit user => implicit request =>
+  def insert(): Action[AnyContent] = UserAction(){ implicit user => implicit request =>
     if(user.isSuperAdmin){
       createForm.bindFromRequest.fold(
         Rest.formError(_),
