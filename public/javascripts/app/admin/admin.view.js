@@ -11,9 +11,6 @@ admin.view = function(ctrl){
             m("a.button", {href: "/agencies/new", config: m.route}, [
               "New agency"
             ]),
-            m("a.button", {href: "/users/new", config: m.route}, [
-              "New users"
-            ]),
             m("table", [
               m("thead", [
                 m("tr", [

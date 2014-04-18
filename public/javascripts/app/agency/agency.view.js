@@ -2,6 +2,9 @@ agency.view = function(ctrl){
   return app.template(ctrl.app, [
     common.banner(ctrl.agency().name),
     m("section", [
+      m("a.button", {href: "/users/new", config: m.route}, [
+        "New users"
+      ]),
       m(".row", "id: " + ctrl.agency().id),
       m(".row", "name: " + ctrl.agency().name),
       m(".row", "acronym: " + ctrl.agency().acronym),
