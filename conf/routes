@@ -9,14 +9,15 @@ GET     /assets/javascripts/routes  controllers.Application.jsRoutes
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
-POST	/login						controllers.Users.login()
-GET		/logout						controllers.Users.logout()
+POST    /login                      controllers.Users.login()
+GET     /logout                     controllers.Users.logout()
 
 POST    /users/new                  controllers.Users.insert()
 GET     /users/info                 controllers.Users.info()
+GET     /users/:id/meta             controllers.Users.viewMeta(id: Int)
 
 GET     /requests/info              controllers.Requests.createInfo()
-POST	/requests/new				controllers.Requests.insert()
+POST    /requests/new               controllers.Requests.insert()
 POST    /requests/:id/signoff       controllers.Requests.signoff(id: Int)
 POST    /requests/:id/attach        controllers.Requests.attach(id: Int)
 
