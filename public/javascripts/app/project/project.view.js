@@ -231,7 +231,7 @@ project.listView = function(ctrl){
           m("td", [
             m.if(project.author.agency, project.author.agency)
           ]),
-          m("td.text-right", helper.commaize(project.amount))
+          m("td.text-right", helper.commaize(project.amount.toFixed(2)))
         ])
       })
       .value()

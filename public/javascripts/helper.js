@@ -91,24 +91,27 @@ helper.truncate = function(input, place){
   out = roundTo(buffer[0], place) + " " + suffix;
   return out;
 };
-helper.commaize = function(number){
-  if(!number){return "";}
+// helper.commaize = function(number){
+//   if(!number){return "";}
 
-  var process = function(acc, arr){
-    if (acc.length < 1){
-      return arr;
-    } else {
-      arr.push(acc.substr(-3));
-      return process(acc.substr(0, acc.length-3), arr);
-    }
-  }
-  return process(number + "", []).reduceRight(function(acc, head){
-    if(acc == ""){
-      return head + "";
-    } else {
-      return acc + "," + head;
-    }
-  }, "");
+//   var process = function(acc, arr){
+//     if (acc.length < 1){
+//       return arr;
+//     } else {
+//       arr.push(acc.substr(-3));
+//       return process(acc.substr(0, acc.length-3), arr);
+//     }
+//   }
+//   return process(number + "", []).reduceRight(function(acc, head){
+//     if(acc == ""){
+//       return head + "";
+//     } else {
+//       return acc + "," + head;
+//     }
+//   }, "");
+// };
+helper.commaize = function(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 helper.timeago = function (time, local, raw) {
   //time: the time
