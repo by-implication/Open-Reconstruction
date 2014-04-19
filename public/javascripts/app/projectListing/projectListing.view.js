@@ -5,14 +5,14 @@ projectListing.view = function(ctrl){
       m("div",{class: "row"}, [
         m("div", {class: "columns medium-9"}, [
           m("div.clearfix", [
-            common.tabs.view(ctrl.tabs, {className: "left"}),
             ctrl.app.isAuthorized(1) ?
               m(
                 "a.button.left", 
                 {href: "/projects/new", config: m.route}, 
                 "New Request"
               )
-            : null
+            : null,
+            common.tabs.view(ctrl.tabs, {className: "right"}),
           ]),
           
           project.listView(ctrl)
