@@ -70,7 +70,7 @@ case class Evolutions(sql: String, root: File) {
 
     println("[info] Reapplying evolutions to dummy database, PostgreSQL errors may follow")
     DatabaseSupport.conn.createStatement().execute("CREATE SCHEMA IF NOT EXISTS codegen")
-    DatabaseSupport.conn.createStatement().execute("SET search_path TO codegen")
+    DatabaseSupport.conn.createStatement().execute("SET search_path TO codegen,public")
     var stmt = DatabaseSupport.conn.createStatement
     println(sql.replaceAll(";;", ";"))
     stmt.execute(sql.replaceAll(";;", ";"))
