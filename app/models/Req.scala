@@ -17,9 +17,8 @@ case class Req(
   description: String = "",
   projectType: ProjectType = ProjectType.BRIDGES,
   amount: BigDecimal = 0,
-  scope: ProjectScope = ProjectScope.RECONSTRUCTION,
+  scope: ProjectScope = ProjectScope.REPAIR_AND_REHABILITATION,
   date: Timestamp = Time.now,
-  code: String = "",
   level: Int = 0,
   isValidated: Boolean = false,
   isRejected: Boolean = false,
@@ -29,7 +28,7 @@ case class Req(
   location: String = "",
   remarks: Option[String] = None,
   attachments: PGIntList = Nil,
-  disasterType: DisasterType = DisasterType.EARTHQUAKE,
+  disasterType: DisasterType = DisasterType.TYPHOON,
   disasterDate: Timestamp = Time.now,
   disasterName: Option[String] = None
 ) extends ReqCCGen with Entity[Req]
@@ -49,7 +48,6 @@ trait ReqGen extends EntityCompanion[Req] {
     get[java.math.BigDecimal]("req_amount") ~
     get[ProjectScope]("req_scope") ~
     get[Timestamp]("req_date") ~
-    get[String]("req_code") ~
     get[Int]("req_level") ~
     get[Boolean]("req_validated") ~
     get[Boolean]("req_rejected") ~
@@ -62,8 +60,8 @@ trait ReqGen extends EntityCompanion[Req] {
     get[DisasterType]("req_disaster_type") ~
     get[Timestamp]("req_disaster_date") ~
     get[Option[String]]("req_disaster_name") map {
-      case id~description~projectType~amount~scope~date~code~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachments~disasterType~disasterDate~disasterName =>
-        Req(id, description, projectType, amount, scope, date, code, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachments, disasterType, disasterDate, disasterName)
+      case id~description~projectType~amount~scope~date~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachments~disasterType~disasterDate~disasterName =>
+        Req(id, description, projectType, amount, scope, date, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachments, disasterType, disasterDate, disasterName)
     }
   }
 
@@ -94,7 +92,6 @@ trait ReqGen extends EntityCompanion[Req] {
             req_amount,
             req_scope,
             req_date,
-            req_code,
             req_level,
             req_validated,
             req_rejected,
@@ -114,7 +111,6 @@ trait ReqGen extends EntityCompanion[Req] {
             {amount},
             {scope},
             {date},
-            {code},
             {level},
             {isValidated},
             {isRejected},
@@ -135,7 +131,6 @@ trait ReqGen extends EntityCompanion[Req] {
           'amount -> o.amount.bigDecimal,
           'scope -> o.scope,
           'date -> o.date,
-          'code -> o.code,
           'level -> o.level,
           'isValidated -> o.isValidated,
           'isRejected -> o.isRejected,
@@ -160,7 +155,6 @@ trait ReqGen extends EntityCompanion[Req] {
             req_amount,
             req_scope,
             req_date,
-            req_code,
             req_level,
             req_validated,
             req_rejected,
@@ -180,7 +174,6 @@ trait ReqGen extends EntityCompanion[Req] {
             {amount},
             {scope},
             {date},
-            {code},
             {level},
             {isValidated},
             {isRejected},
@@ -201,7 +194,6 @@ trait ReqGen extends EntityCompanion[Req] {
           'amount -> o.amount.bigDecimal,
           'scope -> o.scope,
           'date -> o.date,
-          'code -> o.code,
           'level -> o.level,
           'isValidated -> o.isValidated,
           'isRejected -> o.isRejected,
@@ -227,7 +219,6 @@ trait ReqGen extends EntityCompanion[Req] {
         req_amount={amount},
         req_scope={scope},
         req_date={date},
-        req_code={code},
         req_level={level},
         req_validated={isValidated},
         req_rejected={isRejected},
@@ -248,7 +239,6 @@ trait ReqGen extends EntityCompanion[Req] {
       'amount -> o.amount.bigDecimal,
       'scope -> o.scope,
       'date -> o.date,
-      'code -> o.code,
       'level -> o.level,
       'isValidated -> o.isValidated,
       'isRejected -> o.isRejected,
