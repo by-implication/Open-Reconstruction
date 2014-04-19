@@ -11,6 +11,7 @@ object DisasterType extends Enum[DisasterType] {
   val LANDSLIDE = new DisasterType("Landslide")
   val FIRE = new DisasterType("Fire")
   val ANTHROPOGENIC = new DisasterType("Anthropogenic")
+  val NONE_OR_PREVENTIVE = new DisasterType("None or Preventive")
 }
 
 sealed class ProjectType(override val name: String) extends PGObject("project_type", name) with ProjectType.Value
