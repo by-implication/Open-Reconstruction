@@ -55,7 +55,8 @@ projectCreation.controller = function(){
           editableLayers.addLayer(layer);
 
           // console.log(layer);
-          self.input.location(layer._latlng);
+          var coords = layer._latlng
+          self.input.location(coords.lat+","+coords.lng);
         });
       }, 100)
     }
