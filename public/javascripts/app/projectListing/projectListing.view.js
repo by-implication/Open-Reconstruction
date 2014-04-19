@@ -12,7 +12,9 @@ projectListing.view = function(ctrl){
                 "New Request"
               )
             : null,
-            common.tabs.view(ctrl.tabs, {className: "right"}),
+            ctrl.app.currentUser() ?
+              common.tabs.view(ctrl.tabs, {className: "right"})
+            : null
           ]),
           
           project.listView(ctrl)
