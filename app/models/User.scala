@@ -20,18 +20,21 @@ object User extends UserGen {
             user_id,
             user_handle,
             user_password,
-            user_kind
+            agency_id,
+            user_admin
           ) VALUES (
             DEFAULT,
             {handle},
             crypt({password}, gen_salt('bf')),
-            {agencyId}
+            {agencyId},
+            {isAdmin}
           )
         """).on(
           'id -> o.id,
           'handle -> o.handle,
           'password -> o.password,
-          'agencyId -> o.agencyId
+          'agencyId -> o.agencyId,
+          'isAdmin -> o.isAdmin
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -41,18 +44,21 @@ object User extends UserGen {
             user_id,
             user_handle,
             user_password,
-            user_kind
+            agency_id,
+            user_admin
           ) VALUES (
             {id},
             {handle},
             crypt({password}, gen_salt('bf')),
-            {agencyId}
+            {agencyId},
+            {isAdmin}
           )
         """).on(
           'id -> o.id,
           'handle -> o.handle,
           'password -> o.password,
-          'agencyId -> o.agencyId
+          'agencyId -> o.agencyId,
+          'isAdmin -> o.isAdmin
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -62,7 +68,7 @@ object User extends UserGen {
     SQL("""
       update users set
         user_handle={handle},
-        user_kind={agencyId}
+        agency_id={agencyId}
       where user_id={id}
     """).on(
       'id -> o.id,
@@ -134,9 +140,11 @@ case class User(
     if(!isAnonymous){
       Json.obj(
         "handle" -> handle,
+        "name" -> (name.getOrElse(""): String),
         "agency" -> Json.obj(
           "name" -> agency.name,
-          "acronym" -> agency.acronym
+          "acronym" -> agency.acronym,
+          "id" -> agency.id.get
         ),
         "isAdmin" -> isAdmin,
         "isSuperAdmin" -> isSuperAdmin,

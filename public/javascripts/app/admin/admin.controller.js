@@ -1,7 +1,16 @@
 admin.controller = function(){
   this.app = new app.controller();
   this.agencyList = m.prop([]);
-  database.pull().then(function(data){
-    this.agencyList(database.agencyList());
+  
+  m.request({
+    method: "GET", 
+    url: "/agencies/all/meta", 
+    config: app.xhrConfig
+  }).then(function (r){
+    if(r.success){
+      this.agencyList(r.agencies);
+    } else {
+      alert(r.reason);
+    }
   }.bind(this));
 }

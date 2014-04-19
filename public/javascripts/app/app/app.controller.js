@@ -1,5 +1,25 @@
 app.controller = function(){
-  this.currentUser = app.currentUser;
+  var self = this;
+  this.currentUser = m.prop({});
+  m.request({
+    method: "GET",
+    url: "/users/info"
+  }).then(function(r){
+    this.currentUser(r);
+  }.bind(this));
+
+  this.isAuthorized = function(permission){
+    return this.currentUser() && _.contains(this.currentUser().permissions, permission);
+  }
+
+  this.isSuperAdmin = function(){
+    return this.currentUser() && this.currentUser().isSuperAdmin;
+  }
+
+  this.isAgencyAdmin = function(agencyId){
+    return this.isSuperAdmin() || this.currentUser() && this.currentUser().isAdmin && this.currentUser().agency.id === agencyId;
+  }
+  
   this.isLoggedIn = function(){
     var currentUserId = localStorage["currentUser"];
     if(currentUserId && this.findUserBySlug(database.userList(), currentUserId)){

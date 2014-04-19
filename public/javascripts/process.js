@@ -18,6 +18,15 @@ process.permissions = m.prop({
   "OP": [30]
 });
 
+process.rolePermissions = m.prop({
+  "1": "CREATE_REQUESTS",
+  "2": "VALIDATE_REQUESTS",
+  "3": "EDIT_REQUESTS",
+  "4": "IMPLEMENT_REQUESTS",
+  "5": "SIGNOFF",
+  "6": "ASSIGN_FUNDING",
+})
+
 // process.titles = m.prop([
 //   "MAYOR",
 //   "CONG",

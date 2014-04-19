@@ -1,22 +1,20 @@
 projectListing.view = function(ctrl){
-  var tabs = [
-    {label: "All"},
-    {label: "Assigned to Me"}
-  ];
-  return app.template(ctrl, [
+  return app.template(ctrl.app, [
     common.banner("List of Requested Projects"),
     m("section", [
       m("div",{class: "row"}, [
         m("div", {class: "columns medium-9"}, [
           m("div.clearfix", [
-            common.tabs.view(ctrl.tabs, {className: "left"}, tabs),
-            m.if(ctrl.app.isLoggedIn(),
+            ctrl.app.isAuthorized(1) ?
               m(
-                "a.button.right", 
+                "a.button.left", 
                 {href: "/projects/new", config: m.route}, 
                 "New Request"
               )
-            ),
+            : null,
+            ctrl.app.currentUser() ?
+              common.tabs.view(ctrl.tabs, {className: "right"})
+            : null
           ]),
           
           project.listView(ctrl)

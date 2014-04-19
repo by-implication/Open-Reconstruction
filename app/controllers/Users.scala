@@ -64,6 +64,15 @@ object Users extends Controller with Secured {
     } else Rest.unauthorized()
   }
 
+  def viewMeta(id: Int): Action[AnyContent] = GenericAction(){ implicit currentUser => implicit request =>
+    User.findById(id) match {
+      case Some(user) => Rest.success(
+        "user" -> user.infoJson
+      )
+      case None => Rest.notFound()
+    }
+  }
+
   def info() = UserAction(){ implicit user => implicit request =>
     Ok(user.infoJson)
   }

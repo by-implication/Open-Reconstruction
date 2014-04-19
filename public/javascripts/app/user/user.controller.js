@@ -1,17 +1,16 @@
 user.controller = function(){
+  this.app = new app.controller();
   var self = this;
   this.id = m.route.param("id");
   this.user = m.prop({});
   this.projectList = m.prop([]);
   this.currentFilter = {projects: function(){return null}};
 
-  database.pull().then(function(data){
-    var user = _.find(database.userList(), function(user){
-      return user.slug == self.id;
-    });
-    self.projectList = m.prop(database.projectList().filter(function(project){
-      return project.author().name == user.name;
-    }));
-    self.user(user);
+  m.request({method: "GET", url: ("/users/" + this.id + "/meta"), config: app.xhrConfig}).then(function (r){
+    if(r.success){
+      self.user(r.user)
+    } else {
+      alert(r.reason);
+    }
   })
 }

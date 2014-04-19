@@ -25,17 +25,6 @@ app.template = function(a, b, c){
 
 app.navbar = function(ctrl){
 
-  var menuItems = [
-    {label: "Overview", url: "/dashboard"},
-    {label: "Projects", url: "/projects"},
-    {label: "Admin", url: "/admin"}
-  ]
-
-  var menuItem = function(data){
-    if(!data.url) data.url = "/projects";
-    return m("li", [m("a", {href: data.url, config: m.route}, data.label)]);
-  }
-
   return m("nav.top-bar[data-topbar]", [
     m("ul.title-area", [
       m("li.name", [
@@ -46,7 +35,22 @@ app.navbar = function(ctrl){
     ]),
     m("section.top-bar-section", [
       m("ul.left", [
-        menuItems.map(menuItem)
+        m("li", [
+          m("a", {href: "/dashboard", config: m.route}, "Dashboard")
+        ]),
+        m("li", [
+          m("a", {href: "/projects", config: m.route}, "Projects")
+        ]),
+        ctrl.currentUser() && ctrl.currentUser().agency ?
+          m("li", [
+            m("a", {href: "/agencies/" + ctrl.currentUser().agency.id, config: m.route}, "My Agency")
+          ])
+        : null,
+        ctrl.currentUser() && ctrl.currentUser().isSuperAdmin ?
+          m("li", [
+            m("a", {href: "/admin", config: m.route}, "Admin")
+          ])
+        : null
       ]),
       m("ul.right", [
         m("li.has-dropdown.not-click", [

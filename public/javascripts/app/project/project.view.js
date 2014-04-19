@@ -10,10 +10,6 @@ project.view = function(ctrl){
     }
   }
 
-  var whichAction = function(ctrl, arr){
-
-  }
-
   var userActions = function(ctrl){
 
     var actions = m.prop({
@@ -35,7 +31,7 @@ project.view = function(ctrl){
       ]
     })
 
-    if(ctrl.isCurrentUserAuthorized()){
+    // if(ctrl.isCurrentUserAuthorized()){
       return m("div", [
         common.tabs.view(ctrl.tabs, [
           {label: "Comment"},
@@ -44,12 +40,12 @@ project.view = function(ctrl){
         ]),
         m("form", actions()[ctrl.tabs.currentTab() ? ctrl.tabs.currentTab() : "Comment"])
       ])
-    } else {
-      return m("div", actions()["Comment"])
-    }
+    // } else {
+    //   return m("div", actions()["Comment"])
+    // }
   }
 
-  return app.template(ctrl, {class: "detail"}, [
+  return app.template(ctrl.app, {class: "detail"}, [
     // m("div#detailMap", {config: ctrl.initMap}),
 
     m("section.summary", [
@@ -133,62 +129,69 @@ project.view = function(ctrl){
         m("div.columns.medium-8", [
           m(".card", [
             m(".section", [
-              common.tabs.view(ctrl.projectTabs, [
-                {label: "Images"}, {label: "Documents"}, {label: "Activity"}
-              ])
+              common.tabs.view(ctrl.projectTabs)
             ]),
-            common.tabs.panes(ctrl.projectTabs, {
-              "Images": m(".section", [
-                // m("h4", "Images"),
-                m("ul.small-block-grid-3", [
-                  m("li", [
-                    m("img[src='http://placehold.it/400x300']")
-                  ]),
-                  m("li", [
-                    m("img[src='http://placehold.it/400x300']")
-                  ]),
-                  m("li", [
-                    m("img[src='http://placehold.it/400x300']")
-                  ])
-                ]),
-              ]),
-              "Documents": m(".section", [
-                // m("h4", "Documents"),
-                m("table.doc-list", [
-                  m("thead", [
-                    m("tr", [
-                      m("td", "Document"),
-                      m("td", "Type"),
-                      m("td", "Actions")
+            m.switch(ctrl.projectTabs.currentTab())
+              .case("Images", function(){
+                return m(".section", [
+                  m.if(ctrl.app.isAuthorized(3),
+                    m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
+                  ),  
+                  m("ul.small-block-grid-3", [
+                    m("li", [
+                      m("img[src='http://placehold.it/400x300']")
+                    ]),
+                    m("li", [
+                      m("img[src='http://placehold.it/400x300']")
+                    ]),
+                    m("li", [
+                      m("img[src='http://placehold.it/400x300']")
                     ])
                   ]),
-                  m("tbody", [
-                    m("tr", [
-                      m("td", "hi"),
-                      m("td", "BP202"),
-                      m("td", [
-                        m("a", {title: "Preview"}, [
-                          m("i.fa.fa-lg.fa-eye.fa-fw"),
-                        ]),
-                        m("a", {title: "Download"}, [
-                          m("i.fa.fa-lg.fa-download.fa-fw"),
-                        ]),
+                ])
+              })
+              .case("Documents", function(){
+                return m(".section", [
+                  m.if(ctrl.app.isAuthorized(3),
+                    m("div.dropzone", {config: ctrl.initDocDropzone})
+                  ),
+                  m("table.doc-list", [
+                    m("thead", [
+                      m("tr", [
+                        m("td", "Document"),
+                        m("td", "Type"),
+                        m("td", "Actions")
+                      ])
+                    ]),
+                    m("tbody", [
+                      m("tr", [
+                        m("td", "hi"),
+                        m("td", "BP202"),
+                        m("td", [
+                          m("a", {title: "Preview"}, [
+                            m("i.fa.fa-lg.fa-eye.fa-fw"),
+                          ]),
+                          m("a", {title: "Download"}, [
+                            m("i.fa.fa-lg.fa-download.fa-fw"),
+                          ]),
+                        ])
                       ])
                     ])
-                  ])
-                ]),
-              ]),
-              "Activity": m(".section", [
-                // m("h4", "History"),
-                historyEvent.calamity(ctrl.project().disaster()),
-                ctrl.project().history().map(function(entry){
-                  return historyEvent.project(entry);
-                }),
-                m(".action", [
-                  userActions(ctrl)
+                  ]),
                 ])
-              ]),
-            }),
+              })
+              .case("Activity", function(){
+                return m(".section", [
+                  historyEvent.calamity(ctrl.project().disaster()),
+                  ctrl.project().history().map(function(entry){
+                    return historyEvent.project(entry);
+                  }),
+                  // m(".action", [
+                  //   userActions(ctrl)
+                  // ])
+                ])
+              })
+              .render()
           ])
         ])
       ])
