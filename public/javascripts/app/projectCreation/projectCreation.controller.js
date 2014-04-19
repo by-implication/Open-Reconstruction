@@ -5,7 +5,6 @@ projectCreation.controller = function(){
   this.initMap = function(elem, isInit){
     this.app.initMap(elem, isInit, {scrollWheelZoom: false}, true);
   }.bind(this);
-  database.pull();
   m.request({method: "GET", url: "/requests/info"}).then(function(data){
     this.requestCreationInfo = data;
   }.bind(this));
