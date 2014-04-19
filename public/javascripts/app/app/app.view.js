@@ -41,16 +41,16 @@ app.navbar = function(ctrl){
         m("li", [
           m("a", {href: "/projects", config: m.route}, "Projects")
         ]),
-        m.if(ctrl.currentUser() && ctrl.currentUser().agency,
+        ctrl.currentUser() && ctrl.currentUser().agency ?
           m("li", [
-            m("a", {href: "/agencies/" + ctrl.currentUser().agency.id}, "My Agency")
+            m("a", {href: "/agencies/" + ctrl.currentUser().agency.id, config: m.route}, "My Agency")
           ])
-        ),
-        m.if(ctrl.currentUser() && ctrl.currentUser().isSuperAdmin,
+        : null,
+        ctrl.currentUser() && ctrl.currentUser().isSuperAdmin ?
           m("li", [
             m("a", {href: "/admin", config: m.route}, "Admin")
           ])
-        )
+        : null
       ]),
       m("ul.right", [
         m("li.has-dropdown.not-click", [
