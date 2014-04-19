@@ -7,7 +7,7 @@ projectCreation.view = function(ctrl){
         m("h2", "Disaster"),
         common.field(
           "Type",
-          m("select", ctrl.requestCreationInfo.disasterTypes.map(function(e){return m("option", e)}))
+          m("select", {onchange: m.withAttr("value", ctrl.input.disaster_type)}, ctrl.requestCreationInfo.disasterTypes.map(function(e){return m("option", e)}))
         ),
         common.field(
           "Date",
@@ -37,7 +37,7 @@ projectCreation.view = function(ctrl){
         ),
         common.field(
           "Name",
-          m("input", {type: 'text', placeholder: 'Yolanda, Pepeng, Piping, Popong, etc...'}),
+          m("input", {onchange: m.withAttr("value", ctrl.input.disaster_name), type: 'text', placeholder: 'Yolanda, Pepeng, Piping, Popong, etc...'}),
           "Only if it applies. Please be careful with spelling."
         )
       ],
@@ -49,7 +49,7 @@ projectCreation.view = function(ctrl){
         m("h2", "Basic Information"),
         common.field(
           "Description",
-          m("input", {type: "text", placeholder: "Seawall for this town"}),
+          m("input", {onchange: m.withAttr("value", ctrl.input.description), type: "text", placeholder: "Seawall for this town"}),
           "This is what everyone will see. Keep it short and clear."
         ),
         common.field(
@@ -64,21 +64,21 @@ projectCreation.view = function(ctrl){
         //     "Tell us on which road this bridge is located."
         //   )
         // ),
-        m.switch(ctrl.projectType())
-          .case("Bridge", 
-            common.field(
-              "Parent Road",
-              m("input", {type: "text", placeholder: "Tagbilaran North Road"}),
-              "Tell us on which road this bridge is located."
-            )
-          )
-          .case("Agriculture", 
-            "agri!"
-          )
-          .case("Other",
-            "specify!"
-          )
-          .render(),
+        // m.switch(ctrl.projectType())
+        //   .case("Bridge", 
+        //     common.field(
+        //       "Parent Road",
+        //       m("input", {type: "text", placeholder: "Tagbilaran North Road"}),
+        //       "Tell us on which road this bridge is located."
+        //     )
+        //   )
+        //   .case("Agriculture", 
+        //     "agri!"
+        //   )
+        //   .case("Other",
+        //     "specify!"
+        //   )
+        //   .render(),
         common.field(
           "Amount",
           m("input", {type: "number"})
