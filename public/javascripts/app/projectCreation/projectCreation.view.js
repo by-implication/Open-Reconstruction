@@ -1,5 +1,7 @@
 projectCreation.view = function(ctrl){
 
+  function cancel(){ history.back(); }
+
   var sections = [
     {
       icon: "fa-cloud",
@@ -7,7 +9,7 @@ projectCreation.view = function(ctrl){
         m("h2", "Disaster"),
         common.field(
           "Type",
-          m("select", ctrl.requestCreationInfo.disasterTypes.map(function(e){return m("option", e)}))
+          m("select", {onchange: m.withAttr("value", ctrl.input.disasterType)}, ctrl.requestCreationInfo.disasterTypes.map(function(e){return m("option", e)}))
         ),
         common.field(
           "Date",
@@ -37,7 +39,7 @@ projectCreation.view = function(ctrl){
         ),
         common.field(
           "Name",
-          m("input", {type: 'text', placeholder: 'Yolanda, Pepeng, Piping, Popong, etc...'}),
+          m("input", {onchange: m.withAttr("value", ctrl.input.disasterName), type: 'text', placeholder: 'Yolanda, Pepeng, Piping, Popong, etc...'}),
           "Only if it applies. Please be careful with spelling."
         )
       ],
@@ -49,14 +51,18 @@ projectCreation.view = function(ctrl){
         m("h2", "Basic Information"),
         common.field(
           "Description",
-          m("input", {type: "text", placeholder: "Seawall for this town"}),
+          m("input", {onchange: m.withAttr("value", ctrl.input.description), type: "text", placeholder: "Seawall for this town"}),
           "This is what everyone will see. Keep it short and clear."
         ),
         common.field(
           "Type",
-          m("select", {onchange: m.withAttr("value", ctrl.projectType), value: ctrl.projectType()}, ctrl.requestCreationInfo.projectTypes.map(function(e){return m("option", e)}))
+          m("select", {
+            onchange: m.withAttr("value", ctrl.input.projectType), 
+            value: ctrl.input.projectType()
+          }, ctrl.requestCreationInfo.projectTypes.map(function(e){return m("option", e)}))
         ),
-        m.switch(ctrl.projectType())
+
+        m.switch(ctrl.input.projectType())
           .case("Bridge", function(){
             return common.field(
               "Parent Road",
@@ -71,13 +77,14 @@ projectCreation.view = function(ctrl){
             return "specify!";
           })
           .render(),
+
         common.field(
           "Amount",
-          m("input", {type: "number"})
+          m("input", {type: "number", onchange: m.withAttr("value", ctrl.input.amount)})
         ),
         common.field(
           "Scope of Work",
-          m("select", {onchange: m.withAttr("value", ctrl.scopeOfWork), value: ctrl.scopeOfWork()}, ctrl.requestCreationInfo.projectScopes.map(function(e){return m("option", e)})),
+          m("select", {onchange: m.withAttr("value", ctrl.input.scopeOfWork), value: ctrl.input.scopeOfWork()}, ctrl.requestCreationInfo.projectScopes.map(function(e){return m("option", e)})),
           "Do we need to reconstruct this in its entirety? Or is this simply a repair job?"
         ),
         common.field(
@@ -108,7 +115,7 @@ projectCreation.view = function(ctrl){
     {
       content: [
         m("button", "Submit"),
-        m("button", {type: "button", class: "alert"}, "Cancel"),
+        m("button", {type: "button", class: "alert", onclick: cancel}, "Cancel"),
       ]
     }
   ]

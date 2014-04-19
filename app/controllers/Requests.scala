@@ -24,23 +24,29 @@ object Requests extends Controller with Secured {
 
     val createForm: Form[Req] = Form(
       mapping(
-        "disaster_type" -> nonEmptyText,
-        "disaster_date" -> date,
-        "disaster_name" -> optional(text),
-        "description" -> nonEmptyText,
-        "location" -> nonEmptyText,
         "amount" -> optional(number),
-        "photographs" -> text
+        "attachments" -> seq(number),
+        "description" -> nonEmptyText,
+        "disasterDate" -> date,
+        "disasterName" -> optional(text),
+        "disasterType" -> nonEmptyText,
+        "location" -> nonEmptyText,
+        "projectType" -> nonEmptyText,
+        "scopeOfWork" -> nonEmptyText
       )
-      ((disasterType, disasterDate, disasterName, description, location, amount, photographs) => {
+      ((amount, attachments, description, 
+        disasterDate, disasterName, disasterType,
+        location, projectType, scope) => {
         Req(
-          description = description,
-          location = location,
           amount = BigDecimal(amount.getOrElse(0)),
-          disasterType = DisasterType.withName(disasterType),
+          attachments = attachments,
+          description = description,
           disasterDate = disasterDate,
-          disasterName = disasterName
-          // photographs = photographs
+          disasterName = disasterName,
+          disasterType = DisasterType.withName(disasterType),
+          projectType = ProjectType.withName(projectType),
+          scope = ProjectScope.withName(scope),
+          location = location
         )
       })
       (_ => None)
