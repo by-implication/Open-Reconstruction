@@ -14,6 +14,10 @@ projectListing.controller = function(){
   // })
   this.app = new app.controller();
   this.tabs = new common.tabs.controller();
+  this.tabs.tabs = m.prop([
+    {label: "All"},
+    {label: "Assigned to Me"}
+  ]);
   this.projectList = m.prop([]);
   this.projectFilters = m.prop([]);
   this.currentFilter = {
