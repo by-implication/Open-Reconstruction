@@ -54,7 +54,7 @@ projectCreation.view = function(ctrl){
         ),
         common.field(
           "Type",
-          m("select", {onchange: m.withAttr("value", ctrl.projectType), value: ctrl.projectType()}, ctrl.requestCreationInfo.projectTypes.map(function(e){return m("option", e)}))
+          m("select", {onchange: m.withAttr("value", ctrl.input.projectType), value: ctrl.input.projectType()}, ctrl.requestCreationInfo.projectTypes.map(function(e){return m("option", e)}))
         ),
         // m.if(
         //   ctrl.projectType() == "Bridge",
@@ -85,7 +85,7 @@ projectCreation.view = function(ctrl){
         ),
         common.field(
           "Scope of Work",
-          m("select", {onchange: m.withAttr("value", ctrl.scopeOfWork), value: ctrl.scopeOfWork()}, ctrl.requestCreationInfo.projectScopes.map(function(e){return m("option", e)})),
+          m("select", {onchange: m.withAttr("value", ctrl.input.scopeOfWork), value: ctrl.input.scopeOfWork()}, ctrl.requestCreationInfo.projectScopes.map(function(e){return m("option", e)})),
           "Do we need to reconstruct this in its entirety? Or is this simply a repair job?"
         ),
         common.field(

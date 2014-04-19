@@ -1,7 +1,6 @@
 projectCreation.controller = function(){
   this.app = new app.controller();
-  this.projectType = m.prop("Road");
-  this.scopeOfWork = m.prop("Reconstruction");
+  
   this.input = {
     disaster_type: m.prop(""),
     disaster_date: m.prop(""),
@@ -9,7 +8,9 @@ projectCreation.controller = function(){
     description: m.prop(""),
     location: m.prop(""),
     amount: m.prop(0),
-    photographs: m.prop("")
+    photographs: m.prop(""),
+    scopeOfWork: m.prop("Reconstruction"),
+    projectType: m.prop("Road")
   }
 
   this.initMap = function(elem, isInit){
