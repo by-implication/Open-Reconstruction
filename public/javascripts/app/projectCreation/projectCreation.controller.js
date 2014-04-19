@@ -64,6 +64,7 @@ projectCreation.controller = function(){
 
   m.request({method: "GET", url: "/requests/info"}).then(function(data){
     this.requestCreationInfo = data;
+    this.input.disasterType(data.disasterTypes[0]);
   }.bind(this));
 
   this.disasterDate = [2001, 1, 1];
