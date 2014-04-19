@@ -14,7 +14,7 @@ agency.view = function(ctrl){
           ctrl.app.isAgencyAdmin(ctrl.agency().id) ?
             m("a.button", 
               {
-                href: ("/agencies/"+ctrl.agency().id+"/user-creation"), 
+                href: ("/agencies/"+ctrl.agency().id+"/newUser"), 
                 config: m.route
               }, 
               ["Add new user"]

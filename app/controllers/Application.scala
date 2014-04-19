@@ -9,8 +9,10 @@ object Application extends Controller {
     Ok(views.html.index())
   }
 
-  def index1(id: Int) = Action {
-    Ok(views.html.index())
+  def index1(id: Int) = index
+
+  def csvParser() = Action {
+    Ok(views.html.csvParser())
   }
 
   def jsRoutes = Action { implicit request =>
