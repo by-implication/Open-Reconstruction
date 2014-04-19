@@ -6,6 +6,10 @@ userCreation.view = function(ctrl){
         "fa-user",
         [
           common.field(
+            "Full Name",
+            m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.name), placeholder: "e.g., Juan Carlos Dizon de Guzman"})
+          ),
+          common.field(
             "Username",
             m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.handle)}),
             "In general the pattern should be [first initial][middle initial][surname]. For example, Juan Carlos Dizon de Guzman should be jddeguzman."

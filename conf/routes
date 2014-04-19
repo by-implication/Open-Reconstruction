@@ -13,7 +13,6 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 POST    /login                      controllers.Users.login()
 GET     /logout                     controllers.Users.logout()
 
-POST    /users/new                  controllers.Users.insert()
 GET     /users/info                 controllers.Users.info()
 GET     /users/:id/meta             controllers.Users.viewMeta(id: Int)
 
@@ -26,6 +25,7 @@ GET     /agencies/all/meta          controllers.Agencies.allMeta()
 GET     /agencies/new/meta          controllers.Agencies.createMeta()
 GET     /agencies/:id/meta          controllers.Agencies.viewMeta(id: Int)
 POST    /agencies/new               controllers.Agencies.insert()
+POST    /agencies/:id/newUser       controllers.Users.insert(id: Int)
 
 # view routes (these all serve the index view)
 
@@ -36,6 +36,6 @@ GET     /dashboard                  controllers.Application.index
 GET     /users/:id                  controllers.Application.index1(id: Int)
 GET     /admin                      controllers.Application.index
 GET     /agencies/new               controllers.Application.index
-GET     /agencies/:id/user-creation controllers.Application.index1(id: Int)
+GET     /agencies/:id/newUser       controllers.Application.index1(id: Int)
 GET     /agencies/:id               controllers.Application.index1(id: Int)
 GET     /login                      controllers.Application.index

@@ -103,7 +103,7 @@ INSERT INTO municipalitys VALUES
 CREATE TABLE users (
     user_id serial PRIMARY KEY,
     user_handle text NOT NULL,
-    user_name text,
+    user_name text NOT NULL,
     user_password text NOT NULL,
     agency_id int NOT NULL REFERENCES agencys,
     user_admin boolean NOT NULL DEFAULT false
