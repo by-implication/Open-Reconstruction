@@ -189,7 +189,10 @@ csv2json.dsv(",", "text/plain", 1)("/assets/data/CF14-RQST-Sanitized.csv", funct
     document.write("CREATE TYPE project_type AS ENUM(<br/>");
     projectTypesArray = [];
     for(var t in projectTypes){
-        t = t.split(" ").map(function (s){ return s[0].toUpperCase() + s.slice(1).toLowerCase(); }).join(" ");
+        t = t.split("/").join(" or ")
+            .split(" ")
+            .map(function (s){ return s[0].toUpperCase() + s.slice(1).toLowerCase(); })
+            .join(" ");
         projectTypesArray.push(q(t));
     }
     document.write(projectTypesArray.join(",<br/>") + ");;");

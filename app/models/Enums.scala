@@ -29,7 +29,7 @@ object ProjectType extends Enum[ProjectType] {
   val IRRIGATION_SYSTEM = new ProjectType("Irrigation System")
   val BUILDING = new ProjectType("Building")
   val HOUSE = new ProjectType("House")
-  val ROADS = new ProjectType("Roads")
+  val ROAD_OR_BRIDGE = new ProjectType("Road Or Bridge")
   val HOUSING_UNITS = new ProjectType("Housing Units")
   val EVAC_CENTER = new ProjectType("Evac Center")
 }
