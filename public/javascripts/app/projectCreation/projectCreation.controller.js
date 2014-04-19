@@ -3,7 +3,7 @@ projectCreation.controller = function(){
   this.projectType = m.prop("Road");
   this.scopeOfWork = m.prop("Reconstruction");
   this.initMap = function(elem, isInit){
-    this.app.initMap(elem, isInit, {drawControl: true, scrollWheelZoom: false});
+    this.app.initMap(elem, isInit, {scrollWheelZoom: false});
   }.bind(this);
   database.pull();
   m.request({method: "GET", url: "/requests/info"}).then(function(data){
