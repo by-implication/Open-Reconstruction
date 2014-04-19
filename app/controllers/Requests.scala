@@ -34,7 +34,7 @@ object Requests extends Controller with Secured {
         "projectType" -> nonEmptyText,
         "scopeOfWork" -> nonEmptyText
       )
-      ((amount, attachments, date, description, 
+      ((amount, attachments, description, 
         disasterDate, disasterName, disasterType,
         location, projectType, scope) => {
         Req(
