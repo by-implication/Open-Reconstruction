@@ -48,20 +48,13 @@ common.formSection = function(icon, content, i){
 
 common.tabs = {};
 
-common.tabs.view = function(ctrl, options, arr){
-  var ctrl, options, arr;
-  if(arguments.length === 2){
-    ctrl = arguments[0];
-    arr = arguments[1];
+common.tabs.view = function(ctrl, options){
+  if(!options){
     options = {};
-  } else if (arguments.length === 3){
-    ctrl = arguments[0];
-    options = arguments[1];
-    arr = arguments[2];
   }
 
   return m("dl.tabs[data-tab]", options, [
-    arr.map(function(item, i){
+    ctrl.tabs().map(function(item, i){
       var setActive = function(i){
         if(ctrl.isActive(item.label, i)){
           return "active";
@@ -80,6 +73,7 @@ common.tabs.view = function(ctrl, options, arr){
 
 common.tabs.controller = function(){
   this.currentTab = m.prop("");
+  this.tabs = m.prop([]);
   this.isActive = function(label, index){
     if(!this.currentTab()){
       if(index == 0){
@@ -96,12 +90,12 @@ common.tabs.controller = function(){
   }
 }
 
-common.tabs.panes = function(ctrl, views){
-  if(!ctrl.currentTab()){
-    ctrl.currentTab(_.keys(views)[0]);
-  }
-  return views[ctrl.currentTab()];
-}
+// common.tabs.panes = function(ctrl, views){
+//   if(!ctrl.currentTab()){
+//     ctrl.currentTab(_.keys(views)[0]);
+//   }
+//   return views[ctrl.currentTab()];
+// }
 
 common.renderString = function(str){
   if(str){

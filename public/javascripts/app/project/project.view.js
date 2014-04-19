@@ -129,67 +129,126 @@ project.view = function(ctrl){
         m("div.columns.medium-8", [
           m(".card", [
             m(".section", [
-              common.tabs.view(ctrl.projectTabs, [
-                {label: "Images"}, {label: "Documents"}, {label: "Activity"}
-              ])
+              common.tabs.view(ctrl.projectTabs)
             ]),
-            common.tabs.panes(ctrl.projectTabs, {
-              "Images": m(".section", [
-                m.if(ctrl.app.isAuthorized(3),
-                  m("#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
-                ),  
-                m("ul.small-block-grid-3", [
-                  m("li", [
-                    m("img[src='http://placehold.it/400x300']")
-                  ]),
-                  m("li", [
-                    m("img[src='http://placehold.it/400x300']")
-                  ]),
-                  m("li", [
-                    m("img[src='http://placehold.it/400x300']")
-                  ])
-                ]),
-              ]),
-              "Documents": m(".section", [
-                // m("h4", "Documents"),
-                m.if(ctrl.app.isAuthorized(3),
-                  m("#docDropzone.dropzone", {config: ctrl.initDocDropzone})
-                ),
-                m("table.doc-list", [
-                  m("thead", [
-                    m("tr", [
-                      m("td", "Document"),
-                      m("td", "Type"),
-                      m("td", "Actions")
+            m.switch(ctrl.projectTabs.currentTab())
+              .case("Images", 
+                m(".section", [
+                  m.if(ctrl.app.isAuthorized(3),
+                    m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
+                  ),  
+                  m("ul.small-block-grid-3", [
+                    m("li", [
+                      m("img[src='http://placehold.it/400x300']")
+                    ]),
+                    m("li", [
+                      m("img[src='http://placehold.it/400x300']")
+                    ]),
+                    m("li", [
+                      m("img[src='http://placehold.it/400x300']")
                     ])
                   ]),
-                  m("tbody", [
-                    m("tr", [
-                      m("td", "hi"),
-                      m("td", "BP202"),
-                      m("td", [
-                        m("a", {title: "Preview"}, [
-                          m("i.fa.fa-lg.fa-eye.fa-fw"),
-                        ]),
-                        m("a", {title: "Download"}, [
-                          m("i.fa.fa-lg.fa-download.fa-fw"),
-                        ]),
+                ])
+              )
+              .case("Documents", 
+                m(".section", [
+                  m.if(ctrl.app.isAuthorized(3),
+                    m("div.dropzone", {config: ctrl.initDocDropzone})
+                  ),
+                  m("table.doc-list", [
+                    m("thead", [
+                      m("tr", [
+                        m("td", "Document"),
+                        m("td", "Type"),
+                        m("td", "Actions")
+                      ])
+                    ]),
+                    m("tbody", [
+                      m("tr", [
+                        m("td", "hi"),
+                        m("td", "BP202"),
+                        m("td", [
+                          m("a", {title: "Preview"}, [
+                            m("i.fa.fa-lg.fa-eye.fa-fw"),
+                          ]),
+                          m("a", {title: "Download"}, [
+                            m("i.fa.fa-lg.fa-download.fa-fw"),
+                          ]),
+                        ])
                       ])
                     ])
-                  ])
-                ]),
-              ]),
-              "Activity": m(".section", [
-                // m("h4", "History"),
-                historyEvent.calamity(ctrl.project().disaster()),
-                ctrl.project().history().map(function(entry){
-                  return historyEvent.project(entry);
-                }),
-                m(".action", [
-                  userActions(ctrl)
+                  ]),
                 ])
-              ]),
-            }),
+              )
+              .case("Activity", 
+                m(".section", [
+                  historyEvent.calamity(ctrl.project().disaster()),
+                  ctrl.project().history().map(function(entry){
+                    return historyEvent.project(entry);
+                  }),
+                  // m(".action", [
+                  //   userActions(ctrl)
+                  // ])
+                ])
+              )
+              .render()
+            // common.tabs.panes(ctrl.projectTabs, {
+            //   "Images": m(".section", [
+            //     m.if(ctrl.app.isAuthorized(3),
+            //       m("#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
+            //     ),  
+            //     m("ul.small-block-grid-3", [
+            //       m("li", [
+            //         m("img[src='http://placehold.it/400x300']")
+            //       ]),
+            //       m("li", [
+            //         m("img[src='http://placehold.it/400x300']")
+            //       ]),
+            //       m("li", [
+            //         m("img[src='http://placehold.it/400x300']")
+            //       ])
+            //     ]),
+            //   ]),
+            //   "Documents": m(".section", [
+            //     // m("h4", "Documents"),
+            //     m.if(ctrl.app.isAuthorized(3),
+            //       m("#docDropzone.dropzone", {config: ctrl.initDocDropzone})
+            //     ),
+            //     m("table.doc-list", [
+            //       m("thead", [
+            //         m("tr", [
+            //           m("td", "Document"),
+            //           m("td", "Type"),
+            //           m("td", "Actions")
+            //         ])
+            //       ]),
+            //       m("tbody", [
+            //         m("tr", [
+            //           m("td", "hi"),
+            //           m("td", "BP202"),
+            //           m("td", [
+            //             m("a", {title: "Preview"}, [
+            //               m("i.fa.fa-lg.fa-eye.fa-fw"),
+            //             ]),
+            //             m("a", {title: "Download"}, [
+            //               m("i.fa.fa-lg.fa-download.fa-fw"),
+            //             ]),
+            //           ])
+            //         ])
+            //       ])
+            //     ]),
+            //   ]),
+            //   "Activity": m(".section", [
+            //     // m("h4", "History"),
+            //     historyEvent.calamity(ctrl.project().disaster()),
+            //     ctrl.project().history().map(function(entry){
+            //       return historyEvent.project(entry);
+            //     }),
+            //     m(".action", [
+            //       userActions(ctrl)
+            //     ])
+            //   ]),
+            // }),
           ])
         ])
       ])
