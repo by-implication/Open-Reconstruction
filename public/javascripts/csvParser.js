@@ -41,6 +41,9 @@ csv2json.dsv(",", "text/plain", 1)("/assets/data/CF14-RQST-Sanitized.csv", funct
 
         for(var column in uselessColumns) delete row[column];
 
+        row.date = row["DATE_OCD"];
+        delete row["DATE_OCD"];
+
         row.location = [row.BARANGAY, row.TOWN, row.CITY, row.PROVINCE].filter(function (field){
             return field && field.length;
         }).join(", ");
@@ -157,7 +160,7 @@ csv2json.dsv(",", "text/plain", 1)("/assets/data/CF14-RQST-Sanitized.csv", funct
         events.push({
             reqId: reqId,
             kind: "reviseAmount",
-            date: row["RECOM_DATE"],
+            date: row["RECOM_DATE"] || row.date,
             content: row["AMT_REQD"] + " " + row.amount
         });
         delete row["RECOM_DATE"];
@@ -167,7 +170,7 @@ csv2json.dsv(",", "text/plain", 1)("/assets/data/CF14-RQST-Sanitized.csv", funct
             events.push({
                 reqId: reqId,
                 kind: "comment",
-                date: row["ACT_DATE1"],
+                date: row["ACT_DATE1"] || row.date,
                 content: row.REMARKS
             });
         }
@@ -179,9 +182,6 @@ csv2json.dsv(",", "text/plain", 1)("/assets/data/CF14-RQST-Sanitized.csv", funct
 
         if (!row.amount && row.INFRA) row.amount = row.INFRA;
         delete row.INFRA;
-
-        row.date = row["DATE_OCD"];
-        delete row["DATE_OCD"];
 
         return row;
 
