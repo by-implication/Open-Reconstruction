@@ -10,6 +10,7 @@ m.route(document, window.location.pathname == "/" ? "/projects" : window.locatio
   "/users/:id": user,
   "/admin": admin,
   "/agencies/new": agencyCreation,
+  "/agencies/:id/user-creation": userCreation,
   "/agencies/:id": agency,
   "/login": login
 });

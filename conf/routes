@@ -33,8 +33,8 @@ GET     /projects/new               controllers.Application.index
 GET     /projects/:id               controllers.Application.index1(id: Int)
 GET     /dashboard                  controllers.Application.index
 GET     /users/:id                  controllers.Application.index1(id: Int)
-GET     /users/new                  controllers.Application.index
 GET     /admin                      controllers.Application.index
 GET     /agencies/new               controllers.Application.index
+GET     /agencies/:id/user-creation controllers.Application.index1(id: Int)
 GET     /agencies/:id               controllers.Application.index1(id: Int)
 GET     /login                      controllers.Application.index
