@@ -17,6 +17,10 @@ object Agency extends AgencyGen {
       'id -> id
     ).list(User.simple)
   }
+
+  def listAll: Seq[Agency] = DB.withConnection { implicit c =>
+    SQL("select * from agencys").list(simple)
+  }
 }
 
 // GENERATED case class start

@@ -55,43 +55,36 @@ dashboard.controller = function(){
   }
 
   this.chartInit = function(elem){
+    function entryToInt(entry) {
+      var date = entry.date();
+      return date.getFullYear() * 12 + date.getMonth();
+    }
+
+    function formatDate(val) {
+      var year = Math.floor(val / 12);
+      var month = val % 12;
+      return helper.monthArray[month] + ", " + year;
+    }
+
     var labels = [];
-    var rawCount = _.chain(self.projects())
-      .countBy(function(entry){
-        return helper.monthArray[entry.date().getMonth()] + ", " + entry.date().getFullYear();
-      });
+    var rawGroup = _.chain(self.projects()).groupBy(entryToInt)
 
-    var rawGroup = _.chain(self.projects())
-      .groupBy(function(entry){
-        return helper.monthArray[entry.date().getMonth()] + ", " + entry.date().getFullYear();
-      });
-
-    var first = new Date(rawCount.keys().head().value());
-    var last = new Date(rawCount.keys().last().value());
-    var dateRangeObj = _.chain(first.getFullYear())
-      .range(last.getFullYear() + 1)
-      .map(function(year, index, list){
-        if(index === 0){
-          return _.range(first.getMonth(), 12).map(function(month){
-            return helper.monthArray[month] + ", " + year;
-          });
-        } else if (index === list.length - 1){
-          return _.range(0, last.getMonth() + 1).map(function(month){
-            return helper.monthArray[month] + ", " + year;
-          });
-        } else {
-          return _.range(0, 12).map(function(month){
-            return helper.monthArray[month] + ", " + year;
-          });
-        }
+    var times = rawGroup.keys()
+      .map(function(key) {
+        return parseInt(key);
       })
-      .flatten();
+      .compact()
+      .sort();
+
+    var first = times.head().value();
+    var last = times.last().value() + 1;
+    var dateRangeObj = _.chain(first).range(last)
 
     var countPerMonth = dateRangeObj
       .map(function(dateYear){
-        return [dateYear, rawCount.value()[dateYear] ? rawCount.value()[dateYear] : 0];
-      })
-      .object();
+        var projects = rawGroup.value()[dateYear]
+        return projects ? projects.length : 0;
+      });
 
     var amountPerMonth = dateRangeObj
       .map(function(dateYear){
@@ -110,13 +103,12 @@ dashboard.controller = function(){
           .value();
         }
 
-        return [dateYear, projects ? amount * 0.00000001 : 0];
-      })
-      .object();
+        return projects ? amount * 0.00000001 : 0;
+      });
 
-    var cpmValues = countPerMonth.values().value();
-    var apmValues = amountPerMonth.values().value();
-    var labels = dateRangeObj.value();
+    var cpmValues = countPerMonth.value();
+    var apmValues = amountPerMonth.value();
+    var labels = dateRangeObj.map(formatDate).value();
 
     var data = {
       labels: labels,
