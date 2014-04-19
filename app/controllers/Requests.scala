@@ -26,7 +26,6 @@ object Requests extends Controller with Secured {
       mapping(
         "amount" -> optional(number),
         "attachments" -> seq(number),
-        "date" -> date,
         "description" -> nonEmptyText,
         "disasterDate" -> date,
         "disasterName" -> optional(text),
@@ -40,8 +39,7 @@ object Requests extends Controller with Secured {
         location, projectType, scope) => {
         Req(
           amount = BigDecimal(amount.getOrElse(0)),
-          attachments = attachments,
-          date = date,
+          attachments = attachments
           description = description,
           disasterDate = disasterDate,
           disasterName = disasterName,
