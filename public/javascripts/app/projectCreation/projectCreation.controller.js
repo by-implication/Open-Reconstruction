@@ -6,7 +6,7 @@ projectCreation.controller = function(){
     attachments: m.prop([]),
     date: m.prop(""),
     description: m.prop(""),
-    disasterDate: m.prop(""),
+    disasterDate: m.prop("1/1/2001"),
     disasterName: m.prop(""),
     disasterType: m.prop(""),
     location: m.prop(""),
@@ -15,13 +15,19 @@ projectCreation.controller = function(){
   }
 
   this.initMap = function(elem, isInit){
-    this.app.initMap(elem, isInit, {drawControl: true, scrollWheelZoom: false});
+    this.app.initMap(elem, isInit, {scrollWheelZoom: false}, true);
   }.bind(this);
-  database.pull();
   m.request({method: "GET", url: "/requests/info"}).then(function(data){
     this.requestCreationInfo = data;
   }.bind(this));
-  
+
+  this.disasterDate = [1, 1, 2001];
+  this.updateDateField = function(e){
+    var i = ["disaster-month", "disaster-day", "disaster-year"].indexOf(e.srcElement.id);
+    this.disasterDate[i] = e.srcElement.value;
+    this.input.disasterDate(this.disasterDate.join("/"));
+  }.bind(this);
+
   this.submitNewRequest = function(e){
     e.preventDefault();
     m.request({method: "POST", url: "/requests/new", data: this.input, config: app.xhrConfig}).then(function(r){

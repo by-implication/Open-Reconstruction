@@ -1,27 +1,24 @@
 import java.sql.{Connection, DriverManager, ResultSet}
 import java.io.{File, FileWriter, FilenameFilter}
 import scala.io.Source
+import com.typesafe.config.{Config,ConfigFactory}
 
 object DatabaseSupport {
   Class.forName("org.postgresql.Driver")
 
-  val dbname = "recon_gen"
-  val username = "postgres"
-  val password = "postgres"
+  val config = ConfigFactory.parseFile(new File("conf/application.conf"))
+
+  val url = config.getString("db.default.url")
+  val user = config.getString("db.default.user")
+  val password = config.getString("db.default.password")
 
   var _conn: java.sql.Connection = null
 
   def conn = {
     if(_conn == null || _conn.isClosed()) {
-      _conn = DriverManager.getConnection("jdbc:postgresql:"+dbname, username, password)
+      _conn = DriverManager.getConnection(url, user, password)
     }
     _conn
-  }
-
-  def recreate() = {
-    val conn = DriverManager.getConnection("jdbc:postgresql", "postgres", "postgres")
-    conn.createStatement().execute("DROP DATABASE "+dbname+"; CREATE DATABASE "+dbname)
-    conn.close()
   }
 }
 
@@ -75,7 +72,8 @@ case class Evolutions(sql: String, root: File) {
     import scala.collection.JavaConversions._
 
     println("[info] Reapplying evolutions to dummy database, PostgreSQL errors may follow")
-    DatabaseSupport.recreate()
+    DatabaseSupport.conn.createStatement().execute("CREATE SCHEMA IF NOT EXISTS codegen")
+    DatabaseSupport.conn.createStatement().execute("SET search_path TO codegen,public")
     var stmt = DatabaseSupport.conn.createStatement
     println(sql.replaceAll(";;", ";"))
     stmt.execute(sql.replaceAll(";;", ";"))
@@ -86,6 +84,8 @@ case class Evolutions(sql: String, root: File) {
     val fws = new FileWriter(hashFile)
     fws.write(sql.hashCode.toString)
     fws.close()
+    DatabaseSupport.conn.createStatement().execute("SET search_path TO public")
+    DatabaseSupport.conn.createStatement().execute("DROP SCHEMA codegen CASCADE")
     DatabaseSupport.conn.close();
   }
 }

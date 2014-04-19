@@ -20,36 +20,7 @@ app.controller = function(){
     return this.isSuperAdmin() || this.currentUser() && this.currentUser().isAdmin && this.currentUser().agency.id === agencyId;
   }
   
-  this.isLoggedIn = function(){
-    var currentUserId = localStorage["currentUser"];
-    if(currentUserId && this.findUserBySlug(database.userList(), currentUserId)){
-      return true;
-    } else {
-      return false;
-    }
-  }.bind(this);
-  this.login = function(user){
-    localStorage["currentUser"] = user.slug
-  };
-  this.logout = function(){
-    // this.currentUser(new user.GUEST());
-    localStorage["currentUser"] = null;
-  };
-  this.getLoggedIn = function(){
-    var currentUserId = localStorage["currentUser"];
-    return this.findUserBySlug(database.userList(), currentUserId);
-  }.bind(this);
-  this.findUserBySlug = function(list, slug){
-    return _.find(list, function(u){
-      return u.slug == slug;
-    });
-  };
-  this.authorizedUsers = function(){
-    return database.userList().filter(function(user){
-      return user.department === "OCD" || user.department === "DPWH";
-    });
-  };
-  this.initMap = function(elem, isInit, config){
+  this.initMap = function(elem, isInit, config, isEditable){
     if(!isInit){
       window.setTimeout(function(){
         var map = L.map(elem, config).setView([11.3333, 123.0167], 5);
@@ -57,8 +28,37 @@ app.controller = function(){
         // create the tile layer with correct attribution
         var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-        var osm = new L.TileLayer(osmUrl, {minZoom: 5, maxZoom: 19, attribution: osmAttrib});   
-        map.addLayer(osm);
+        var osm = new L.TileLayer(osmUrl, {minZoom: 5, maxZoom: 19, attribution: osmAttrib}).addTo(map);   
+
+        if(isEditable){
+          var editableLayers = new L.FeatureGroup();
+          map.addLayer(editableLayers);
+
+          // Initialise the draw control and pass it the FeatureGroup of editable layers
+          var drawControl = new L.Control.Draw({
+            edit: {
+              featureGroup: editableLayers,
+              edit: false,
+              remove: false
+            },
+            draw: {
+              polyline: false,
+              polygon: false,
+              rectangle: false,
+              circle: false
+            },
+            // position: 'topright' 
+          });
+          map.addControl(drawControl);
+
+          map.on('draw:created', function (e) {
+            var type = e.layerType,
+              layer = e.layer;
+
+            editableLayers.clearLayers();
+            editableLayers.addLayer(layer);
+          });
+        }
       }, 100)
     }
     

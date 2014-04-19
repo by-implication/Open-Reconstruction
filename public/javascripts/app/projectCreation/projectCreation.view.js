@@ -13,21 +13,21 @@ projectCreation.view = function(ctrl){
           "Date",
           m("div.row", [
             m("div.columns.medium-4", [
-              m("select", [
+              m("select#disaster-month", {onchange: ctrl.updateDateField}, [
                 _.range(0, 12).map(function(month){
-                  return m("option", helper.monthArray[month]);
+                  return m("option", {value: month+1}, helper.monthArray[month]);
                 })
               ])
             ]),
             m("div.columns.medium-4", [
-              m("select", [
+              m("select#disaster-day", {onchange: ctrl.updateDateField}, [
                 _.range(1, 32).map(function(day){
                   return m("option", day);
                 })
               ])
             ]),
             m("div.columns.medium-4", [
-              m("select", [
+              m("select#disaster-year", {onchange: ctrl.updateDateField}, [
                 _.range(2001, 2015).map(function(year){
                   return m("option", year);
                 })
@@ -54,7 +54,10 @@ projectCreation.view = function(ctrl){
         ),
         common.field(
           "Type",
-          m("select", {onchange: m.withAttr("value", ctrl.input.projectType), value: ctrl.input.projectType()}, ctrl.requestCreationInfo.projectTypes.map(function(e){return m("option", e)}))
+          m("select", {
+            onchange: m.withAttr("value", ctrl.input.projectType), 
+            value: ctrl.input.projectType()
+          }, ctrl.requestCreationInfo.projectTypes.map(function(e){return m("option", e)}))
         ),
 
         m.switch(ctrl.input.projectType())
