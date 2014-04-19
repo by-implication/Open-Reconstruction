@@ -19,12 +19,14 @@ object User extends UserGen {
           insert into users (
             user_id,
             user_handle,
+            user_name,
             user_password,
             agency_id,
             user_admin
           ) VALUES (
             DEFAULT,
             {handle},
+            {name},
             crypt({password}, gen_salt('bf')),
             {agencyId},
             {isAdmin}
@@ -32,6 +34,7 @@ object User extends UserGen {
         """).on(
           'id -> o.id,
           'handle -> o.handle,
+          'name -> o.name,
           'password -> o.password,
           'agencyId -> o.agencyId,
           'isAdmin -> o.isAdmin
@@ -43,12 +46,14 @@ object User extends UserGen {
           insert into users (
             user_id,
             user_handle,
+            user_name,
             user_password,
             agency_id,
             user_admin
           ) VALUES (
             {id},
             {handle},
+            {name},
             crypt({password}, gen_salt('bf')),
             {agencyId},
             {isAdmin}
@@ -56,6 +61,7 @@ object User extends UserGen {
         """).on(
           'id -> o.id,
           'handle -> o.handle,
+          'name -> o.name,
           'password -> o.password,
           'agencyId -> o.agencyId,
           'isAdmin -> o.isAdmin
@@ -68,12 +74,16 @@ object User extends UserGen {
     SQL("""
       update users set
         user_handle={handle},
+        user_name={name},
         agency_id={agencyId}
+        user_admin={isAdmin}
       where user_id={id}
     """).on(
       'id -> o.id,
       'handle -> o.handle,
-      'agencyId -> o.agencyId
+      'name -> o.name,
+      'agencyId -> o.agencyId,
+      'isAdmin -> o.isAdmin
     ).executeUpdate() > 0
   }
 
@@ -128,7 +138,7 @@ object User extends UserGen {
 case class User(
   id: Pk[Int] = NA,
   handle: String = "",
-  name: Option[String] = None,
+  name: String = "",
   password: String = "",
   agencyId: Int = 0,
   isAdmin: Boolean = false
@@ -140,7 +150,7 @@ case class User(
     if(!isAnonymous){
       Json.obj(
         "handle" -> handle,
-        "name" -> (name.getOrElse(""): String),
+        "name" -> name,
         "agency" -> Json.obj(
           "name" -> agency.name,
           "acronym" -> agency.acronym,
@@ -193,7 +203,7 @@ trait UserGen extends EntityCompanion[User] {
   val simple = {
     get[Pk[Int]]("user_id") ~
     get[String]("user_handle") ~
-    get[Option[String]]("user_name") ~
+    get[String]("user_name") ~
     get[String]("user_password") ~
     get[Int]("agency_id") ~
     get[Boolean]("user_admin") map {

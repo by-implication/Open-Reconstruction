@@ -33,20 +33,18 @@ object Users extends Controller with Secured {
     Secured.logout()
   }
 
-  def insert() = UserAction(){ implicit user => implicit request =>
-    if(user.isSuperAdmin || user.isAdmin){
+  def insert(agencyId: Int) = UserAction(){ implicit user => implicit request =>
+    if(user.isSuperAdmin || (user.isAdmin && user.agencyId == agencyId)){
 
       val createForm: Form[User] = Form(
         mapping(
+          "name" -> nonEmptyText,
           "handle" -> nonEmptyText,
           "password" -> nonEmptyText,
-          "agencyId" -> number.verifying(
-            "Can't add users to this agency",
-            agencyId => user.isSuperAdmin || agencyId == user.agencyId
-          ),
           "isAdmin" -> boolean
         )
-        ((handle, password, agencyId, isAdmin) => User(
+        ((name, handle, password, isAdmin) => User(
+          name = name,
           handle = handle,
           password = password,
           agencyId = agencyId,

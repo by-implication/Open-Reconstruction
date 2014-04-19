@@ -1,9 +1,9 @@
 # --- !Ups
 
 CREATE TYPE disaster_type AS ENUM(
-	'Earthquake',
-	'Flood',
 	'Typhoon',
+    'Earthquake',
+    'Flood',
 	'Landslide',
 	'Fire',
 	'Anthropogenic'

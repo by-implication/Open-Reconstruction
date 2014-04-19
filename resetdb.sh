@@ -5,5 +5,5 @@ else
 	DATABASE=$1
 fi
 echo $DATABASE
-psql -Upostgres -c"drop database $DATABASE"
-psql -Upostgres -c"create database $DATABASE"
+psql -Upostgres $DATABASE -c"drop schema public cascade"
+psql -Upostgres $DATABASE -c"create schema public"

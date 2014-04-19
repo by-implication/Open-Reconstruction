@@ -14,8 +14,10 @@ object Event extends EventGen {
 // GENERATED case class start
 case class Event(
   id: Pk[Int] = NA,
+  kind: String = "",
   date: Timestamp = Time.now,
-  projectId: Int = 0
+  content: Option[String] = None,
+  reqId: Int = 0
 ) extends EventCCGen with Entity[Event]
 // GENERATED case class end
 
@@ -23,10 +25,12 @@ case class Event(
 trait EventGen extends EntityCompanion[Event] {
   val simple = {
     get[Pk[Int]]("event_id") ~
+    get[String]("event_kind") ~
     get[Timestamp]("event_date") ~
-    get[Int]("project_id") map {
-      case id~date~projectId =>
-        Event(id, date, projectId)
+    get[Option[String]]("event_content") ~
+    get[Int]("req_id") map {
+      case id~kind~date~content~reqId =>
+        Event(id, kind, date, content, reqId)
     }
   }
 
@@ -52,17 +56,23 @@ trait EventGen extends EntityCompanion[Event] {
         val id = SQL("""
           insert into events (
             event_id,
+            event_kind,
             event_date,
-            project_id
+            event_content,
+            req_id
           ) VALUES (
             DEFAULT,
+            {kind},
             {date},
-            {projectId}
+            {content},
+            {reqId}
           )
         """).on(
           'id -> o.id,
+          'kind -> o.kind,
           'date -> o.date,
-          'projectId -> o.projectId
+          'content -> o.content,
+          'reqId -> o.reqId
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -70,17 +80,23 @@ trait EventGen extends EntityCompanion[Event] {
         SQL("""
           insert into events (
             event_id,
+            event_kind,
             event_date,
-            project_id
+            event_content,
+            req_id
           ) VALUES (
             {id},
+            {kind},
             {date},
-            {projectId}
+            {content},
+            {reqId}
           )
         """).on(
           'id -> o.id,
+          'kind -> o.kind,
           'date -> o.date,
-          'projectId -> o.projectId
+          'content -> o.content,
+          'reqId -> o.reqId
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -89,13 +105,17 @@ trait EventGen extends EntityCompanion[Event] {
   def update(o: Event): Boolean = DB.withConnection { implicit c =>
     SQL("""
       update events set
+        event_kind={kind},
         event_date={date},
-        project_id={projectId}
+        event_content={content},
+        req_id={reqId}
       where event_id={id}
     """).on(
       'id -> o.id,
+      'kind -> o.kind,
       'date -> o.date,
-      'projectId -> o.projectId
+      'content -> o.content,
+      'reqId -> o.reqId
     ).executeUpdate() > 0
   }
 

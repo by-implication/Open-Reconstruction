@@ -3,7 +3,7 @@ package controllers
 import com.redis.serialization.Parse.Implicits._
 import play.api.mvc.BodyParsers._
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{Action, BodyParser, Controller, Cookie, Request, RequestHeader, Result}
+import play.api.mvc._
 import scala.concurrent.duration._
 import recon.models._
 import recon.support._
@@ -116,7 +116,7 @@ object Secured {
     request.session.get("session_id").map { sessionId =>
       Redis.xaction(_.del("login-" + user.id + "-" + sessionId))
     }
-    Redirect(routes.Application.index).withNewSession.discardingCookies("logged_in")
+    Redirect(routes.Application.index).withNewSession.discardingCookies(DiscardingCookie("logged_in"))
   }
 
   def currentUser(implicit request: RequestHeader) = {

@@ -3,6 +3,7 @@ userCreation.controller = function(){
   this.slug = m.prop(m.route.param("id"));
   this.agency = m.prop({});
   this.input = {
+    name: m.prop(""),
     handle: m.prop(""),
     password: m.prop(""),
     agencyId: m.prop(0),
@@ -20,7 +21,7 @@ userCreation.controller = function(){
 
   this.submit = function(e){
     e.preventDefault();
-    m.request({method: "POST", url: "/users/new", data: this.input, config: app.xhrConfig}).then(function (r){
+    m.request({method: "POST", url: window.location.pathname, data: this.input, config: app.xhrConfig}).then(function (r){
       if(r.success){
         window.location = '/';
       } else if(r.reason == "form error"){
