@@ -6,7 +6,7 @@ projectCreation.controller = function(){
     attachments: m.prop([]),
     date: m.prop(""),
     description: m.prop(""),
-    disasterDate: m.prop("1/1/2001"),
+    disasterDate: m.prop("2001-1-1"),
     disasterName: m.prop(""),
     disasterType: m.prop(""),
     location: m.prop(""),
@@ -21,11 +21,11 @@ projectCreation.controller = function(){
     this.requestCreationInfo = data;
   }.bind(this));
 
-  this.disasterDate = [1, 1, 2001];
+  this.disasterDate = [2001, 1, 1];
   this.updateDateField = function(e){
-    var i = ["disaster-month", "disaster-day", "disaster-year"].indexOf(e.srcElement.id);
+    var i = ["disaster-year", "disaster-month", "disaster-day"].indexOf(e.srcElement.id);
     this.disasterDate[i] = e.srcElement.value;
-    this.input.disasterDate(this.disasterDate.join("/"));
+    this.input.disasterDate(this.disasterDate.join("-"));
   }.bind(this);
 
   this.submitNewRequest = function(e){
