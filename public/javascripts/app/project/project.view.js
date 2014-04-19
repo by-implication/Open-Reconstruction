@@ -216,7 +216,7 @@ project.listView = function(ctrl){
         if(!ctrl.currentFilter.projects()){
           return true;
         } else {
-          return p.type() == ctrl.currentFilter.projects();
+          return p.projectType == ctrl.currentFilter.projects();
         }
       })
       .sortBy(function(p){
