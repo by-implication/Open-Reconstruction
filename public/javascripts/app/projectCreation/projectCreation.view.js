@@ -81,7 +81,7 @@ projectCreation.view = function(ctrl){
         //   .render(),
         common.field(
           "Amount",
-          m("input", {type: "number"})
+          m("input", {type: "number", onchange: m.withAttr("value", ctrl.input.amount)})
         ),
         common.field(
           "Scope of Work",
