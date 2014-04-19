@@ -20,7 +20,7 @@ object User extends UserGen {
             user_id,
             user_handle,
             user_password,
-            user_kind
+            agency_id
           ) VALUES (
             DEFAULT,
             {handle},
@@ -41,7 +41,7 @@ object User extends UserGen {
             user_id,
             user_handle,
             user_password,
-            user_kind
+            agency_id
           ) VALUES (
             {id},
             {handle},
@@ -62,7 +62,7 @@ object User extends UserGen {
     SQL("""
       update users set
         user_handle={handle},
-        user_kind={agencyId}
+        agency_id={agencyId}
       where user_id={id}
     """).on(
       'id -> o.id,

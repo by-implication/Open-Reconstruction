@@ -17,7 +17,7 @@ userCreation.view = function(ctrl){
           common.field(
             "Privileges",
             m("label", [
-              m("input[type='checkbox']", {onchange: m.withAttr("value", ctrl.input.isAdmin)},""),
+              m("input[type='checkbox']", {onchange: m.withAttr("checked", ctrl.input.isAdmin)},""),
               m("span", "Make this user an admin for this agency")
             ]),
             "As an admin, this user will be able to add and delete users"
