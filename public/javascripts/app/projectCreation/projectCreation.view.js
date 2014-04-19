@@ -7,7 +7,7 @@ projectCreation.view = function(ctrl){
         m("h2", "Disaster"),
         common.field(
           "Type",
-          m("select", {onchange: m.withAttr("value", ctrl.input.disaster_type)}, ctrl.requestCreationInfo.disasterTypes.map(function(e){return m("option", e)}))
+          m("select", {onchange: m.withAttr("value", ctrl.input.disasterType)}, ctrl.requestCreationInfo.disasterTypes.map(function(e){return m("option", e)}))
         ),
         common.field(
           "Date",
@@ -37,7 +37,7 @@ projectCreation.view = function(ctrl){
         ),
         common.field(
           "Name",
-          m("input", {onchange: m.withAttr("value", ctrl.input.disaster_name), type: 'text', placeholder: 'Yolanda, Pepeng, Piping, Popong, etc...'}),
+          m("input", {onchange: m.withAttr("value", ctrl.input.disasterName), type: 'text', placeholder: 'Yolanda, Pepeng, Piping, Popong, etc...'}),
           "Only if it applies. Please be careful with spelling."
         )
       ],

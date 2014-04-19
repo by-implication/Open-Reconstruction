@@ -2,15 +2,16 @@ projectCreation.controller = function(){
   this.app = new app.controller();
   
   this.input = {
-    disaster_type: m.prop(""),
-    disaster_date: m.prop(""),
-    disaster_name: m.prop(""),
-    description: m.prop(""),
-    location: m.prop(""),
     amount: m.prop(0),
-    photographs: m.prop(""),
-    scopeOfWork: m.prop("Reconstruction"),
-    projectType: m.prop("Road")
+    attachments: m.prop([]),
+    date: m.prop(""),
+    description: m.prop(""),
+    disasterDate: m.prop(""),
+    disasterName: m.prop(""),
+    disasterType: m.prop(""),
+    location: m.prop(""),
+    projectType: m.prop("Road"),
+    scopeOfWork: m.prop("Reconstruction")
   }
 
   this.initMap = function(elem, isInit){
@@ -23,8 +24,14 @@ projectCreation.controller = function(){
   
   this.submitNewRequest = function(e){
     e.preventDefault();
-    m.request({method: "POST", url: "/requests/new", data: this.input}).then(function(r){
-      console.log(r);
+    m.request({method: "POST", url: "/requests/new", data: this.input, config: app.xhrConfig}).then(function(r){
+      if(r.success){
+        window.location = '/';
+      } else if(r.reason == "form error"){
+        alert("Request not created!");
+      } else {
+        alert(r.reason);
+      }
     })
   }.bind(this);
 }
