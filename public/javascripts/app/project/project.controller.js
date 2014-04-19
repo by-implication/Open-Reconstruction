@@ -9,15 +9,17 @@ project.controller = function(){
   this.id = m.route.param("id");
   this.project = m.prop({});
   this.author = m.prop({});
+  this.oldProject = m.prop({});
 
   this.dropzone = null;
 
   m.request({method: "GET", url: "/requests/"+this.id+"/meta"}).then(function(data){
-    // this.project(data.request);
+    this.project(data.request);
+    this.author(data.author);
   }.bind(this));
 
   database.pull().then(function(data){
-    this.project(database.projectList()[this.id - 1]);
+    this.oldProject(database.projectList()[this.id - 1]);
   }.bind(this))
 
   this.initMap = function(elem, isInit){

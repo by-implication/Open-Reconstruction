@@ -40,75 +40,41 @@ project.view = function(ctrl){
         ]),
         m("form", actions()[ctrl.tabs.currentTab() ? ctrl.tabs.currentTab() : "Comment"])
       ])
-    // } else {
-    //   return m("div", actions()["Comment"])
-    // }
   }
 
   return app.template(ctrl.app, {class: "detail"}, [
-    // m("div#detailMap", {config: ctrl.initMap}),
-
     m("section.summary", [
-      // m("div.row", [
-      //   m("div.columns.medium-12", [
-      //     m("div.prog", [
-      //       _.chain(process.steps())
-      //         .map(function(step, code, list){
-      //           var progress = ctrl.project().progress();
-      //           var code = parseInt(code);
-      //           var width = 100 / _.keys(list).length + "%";
-
-      //           if(progress > code){
-      //             return m("div.step.completed", {style: {width: width}}, step);
-      //           } else if (progress === code){
-      //             return m("div.step.pending", {style: {width: width}}, step);
-      //           } else {
-      //             return m("div.step", {style: {width: width}}, step);
-      //           }
-      //         })
-      //         .value()
-      //     ]),
-      //   ]),
-      // ]),
-      // m("div.row", [
-      //   m("div.columns.medium-12", [
-      //     "Project type"
-      //   ])
-      // ]),
-
       m("div.row", [
         m("div.columns.medium-4", [
           m("div.project-stub", [
             m("div.section.type", [
-              ctrl.project().type()
+              ctrl.project().projectType
             ]),
             m("div.section", [
-              m("h4", ctrl.project().description()),
-              // m("span.label", ctrl.project().type()),
+              m("h4", ctrl.project().description),
               m("p.meta", [
                 "Posted by ",
-                m("a",{href: "/user/"+ctrl.project().author().slug, config: m.route}, ctrl.project().author().name),
+                m("a",{href: "/users/"+ctrl.project().authorId, config: m.route}, ctrl.author().name),
                 m("br"),
-                " on "+ctrl.project().date().toDateString() + " ", // change this as people modify this. "Last edited by _____"
+                " on "+(new Date(ctrl.project().date).toString()), // change this as people modify this. "Last edited by _____"
               ]),
-                // renderErrorList(ctrl.project().errors())
             ]),
             m("hr"),
             m("div.section", [
               m("h5", [m("small", "Amount")]),
               m("h5.value", [
                 common.renderString(
-                  helper.commaize(ctrl.project().amount())
+                  helper.commaize(ctrl.project().amount)
                 )
               ]),
               m("h5", [m("small", "Disaster")]),
               m("h5.value", [
-                common.renderString(ctrl.project().disaster().type() + " " + ctrl.project().disaster().name() + ", in " + ctrl.project().disaster().date().toDateString())  
+                common.renderString(ctrl.project().disasterType + " " + ctrl.project().disasterName + ", in " + (new Date(ctrl.project().disasterDate).toString()))
               ]),
               m("h5", [m("small", "Location")]),
               m("h5.value", [
                 common.renderString(
-                  _.chain(ctrl.project().location())
+                  _.chain(ctrl.project().location)
                   .filter(function(entry){
                     return entry
                   })
@@ -182,13 +148,10 @@ project.view = function(ctrl){
               })
               .case("Activity", function(){
                 return m(".section", [
-                  historyEvent.calamity(ctrl.project().disaster()),
-                  ctrl.project().history().map(function(entry){
+                  historyEvent.calamity(ctrl.oldProject().disaster()),
+                  ctrl.oldProject().history().map(function(entry){
                     return historyEvent.project(entry);
-                  }),
-                  // m(".action", [
-                  //   userActions(ctrl)
-                  // ])
+                  })
                 ])
               })
               .render()
