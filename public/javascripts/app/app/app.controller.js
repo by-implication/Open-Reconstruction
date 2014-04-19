@@ -37,15 +37,16 @@ app.controller = function(){
         var drawControl = new L.Control.Draw({
           edit: {
             featureGroup: editableLayers,
-            edit: false
+            edit: false,
+            remove: false
           },
           draw: {
             polyline: false,
             polygon: false,
             rectangle: false,
             circle: false
-          }
-            
+          },
+          // position: 'topright' 
         });
         map.addControl(drawControl);
 
