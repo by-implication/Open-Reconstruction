@@ -9,6 +9,11 @@ import play.api.Play.current
 import recon.support._
 
 object Req extends ReqGen {
+
+  def indexList() = DB.withConnection { implicit c =>
+    SQL("SELECT * FROM reqs ORDER BY req_date DESC").list(simple)
+  }
+
 }
 
 // GENERATED case class start
@@ -35,7 +40,18 @@ case class Req(
 // GENERATED case class end
 {
 
+  lazy val author = User.findById(authorId).get
+
   def insertJson = Json.obj("id" -> id.get)
+
+  def indexJson = Json.obj(
+    "id" -> id.get,
+    "description" -> description,
+    "projectType" -> projectType.name,
+    "amount" -> amount,
+    "author" -> Map("agency" -> author.agency.name),
+    "errors" -> 0
+  )
   
 }
 

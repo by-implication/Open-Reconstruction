@@ -94,4 +94,11 @@ object Requests extends Controller with Secured {
     }.getOrElse(Rest.NO_FILE)
   }
 
+  def index() = UserAction(){ implicit user => implicit request =>
+    Ok(Json.obj(
+      "list" -> Req.indexList().map(_.indexJson),
+      "filters" -> ProjectType.jsonList
+    ))
+  }
+
 }

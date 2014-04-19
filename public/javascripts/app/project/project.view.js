@@ -211,7 +211,7 @@ project.listView = function(ctrl){
       ])
     ]),
     m("tbody", [
-      _.chain(ctrl.projectList())
+      _.chain(ctrl.projectList)
       .filter(function(p){
         if(!ctrl.currentFilter.projects()){
           return true;
@@ -220,22 +220,22 @@ project.listView = function(ctrl){
         }
       })
       .sortBy(function(p){
-        return p.date();
+        return p.date;
       })
       .map(function(project){
-        var url = "/projects/"+project.id();
+        var url = "/projects/"+project.id;
         return m("tr", [
-          m("td", project.id()),
+          m("td", project.id),
           m("td", [
-            m("a.name", {href: url, config: m.route}, project.description())
+            m("a.name", {href: url, config: m.route}, project.description)
           ]),
           m("td", [
-            m.if(project.author().department, project.author().department)
+            m.if(project.author.agency, project.author.agency)
           ]),
           m("td", [
-            project.errors().length ? m("span.label.alert", project.errors().length+" errors") : m("span.label.success", [m("i.fa.fa-check")])
+            project.errors.length ? m("span.label.alert", project.errors.length+" errors") : m("span.label.success", [m("i.fa.fa-check")])
           ]),
-          m("td.text-right", helper.commaize(project.amount()))
+          m("td.text-right", helper.commaize(project.amount))
         ])
       })
       .value()

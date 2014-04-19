@@ -24,9 +24,10 @@ projectListing.controller = function(){
     projects: m.prop("")
   };
 
-  database.pull().then(function(data){
-    // don't use data because you don't want to override new projects. this has already been used in database.pull
-    self.projectList = database.projectList;
-    self.projectFilters = database.projectFilters;
+  m.request({method: "GET", url: "/requests"}).then(function (r){
+
+    self.projectList = r.list;
+    self.projectFilters = r.filters;
   });
+
 }
