@@ -49,8 +49,7 @@ case class Req(
     "description" -> description,
     "projectType" -> projectType.name,
     "amount" -> amount,
-    "author" -> Map("agency" -> author.agency.name),
-    "errors" -> 0
+    "author" -> Map("agency" -> author.agency.name)
   )
   
 }

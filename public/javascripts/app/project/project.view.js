@@ -206,7 +206,6 @@ project.listView = function(ctrl){
         m("th", "id"),
         m("th", "name"),
         m("th", "dep"),
-        m("th", "data integrity"),
         m("th.text-right", "amount")
       ])
     ]),
@@ -231,9 +230,6 @@ project.listView = function(ctrl){
           ]),
           m("td", [
             m.if(project.author.agency, project.author.agency)
-          ]),
-          m("td", [
-            project.errors.length ? m("span.label.alert", project.errors.length+" errors") : m("span.label.success", [m("i.fa.fa-check")])
           ]),
           m("td.text-right", helper.commaize(project.amount))
         ])
