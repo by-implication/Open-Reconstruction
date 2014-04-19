@@ -6,7 +6,8 @@ CREATE TYPE disaster_type AS ENUM(
     'Flood',
 	'Landslide',
 	'Fire',
-	'Anthropogenic'
+	'Anthropogenic',
+    'None or Preventive'
 );;
 
 # --- !Downs
