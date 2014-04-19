@@ -20,18 +20,21 @@ object User extends UserGen {
             user_id,
             user_handle,
             user_password,
-            agency_id
+            agency_id,
+            user_admin
           ) VALUES (
             DEFAULT,
             {handle},
             crypt({password}, gen_salt('bf')),
-            {agencyId}
+            {agencyId},
+            {isAdmin}
           )
         """).on(
           'id -> o.id,
           'handle -> o.handle,
           'password -> o.password,
-          'agencyId -> o.agencyId
+          'agencyId -> o.agencyId,
+          'isAdmin -> o.isAdmin
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -41,18 +44,21 @@ object User extends UserGen {
             user_id,
             user_handle,
             user_password,
-            agency_id
+            agency_id,
+            user_admin
           ) VALUES (
             {id},
             {handle},
             crypt({password}, gen_salt('bf')),
-            {agencyId}
+            {agencyId},
+            {isAdmin}
           )
         """).on(
           'id -> o.id,
           'handle -> o.handle,
           'password -> o.password,
-          'agencyId -> o.agencyId
+          'agencyId -> o.agencyId,
+          'isAdmin -> o.isAdmin
         ).executeInsert().flatMap(x => Some(o))
       }
     }
