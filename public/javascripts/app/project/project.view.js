@@ -73,20 +73,7 @@ project.view = function(ctrl){
               ]),
               m("h5", [m("small", "Location")]),
               m("h5.value", [
-                common.renderString(
-                  _.chain(ctrl.project().location)
-                  .filter(function(entry){
-                    return entry
-                  })
-                  .reduce(function(memo, next){
-                    if(!memo){
-                      return next;
-                    } else {
-                      return memo + ", " + next;
-                    }
-                  }, "")
-                  .value()
-                )
+                common.renderString(ctrl.project().location)
               ])
             ]),
             m("div#detailMap", {config: ctrl.initMap})
