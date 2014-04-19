@@ -39,7 +39,7 @@ object Requests extends Controller with Secured {
         location, projectType, scope) => {
         Req(
           amount = BigDecimal(amount.getOrElse(0)),
-          attachments = attachments
+          attachments = attachments,
           description = description,
           disasterDate = disasterDate,
           disasterName = disasterName,
