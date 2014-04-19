@@ -3,9 +3,8 @@ projectCreation.controller = function(){
   this.projectType = m.prop("Road");
   this.scopeOfWork = m.prop("Reconstruction");
   this.initMap = function(elem, isInit){
-    this.app.initMap(elem, isInit, {scrollWheelZoom: false});
+    this.app.initMap(elem, isInit, {scrollWheelZoom: false}, true);
   }.bind(this);
-  database.pull();
   m.request({method: "GET", url: "/requests/info"}).then(function(data){
     this.requestCreationInfo = data;
   }.bind(this));
