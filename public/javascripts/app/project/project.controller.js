@@ -49,7 +49,7 @@ project.controller = function(){
       this.dropzone = new Dropzone(elem, {
         url: "/file/post", 
         previewTemplate: m.stringify(dropzonePreviewTemplate), 
-        dictDefaultMessage: "Drop files here, or click to browse files.",
+        dictDefaultMessage: "Drop photos here, or click to browse.",
         clickable: true,
         autoDiscover: false
       })
@@ -64,7 +64,7 @@ project.controller = function(){
       this.dropzone = new Dropzone(elem, {
         url: "/file/post", 
         previewTemplate: m.stringify(dropzonePreviewTemplate), 
-        dictDefaultMessage: "Drop files here, or click to browse files. Hi!",
+        dictDefaultMessage: "Drop documents here, or click to browse. We recommend pdfs and doc files.",
         clickable: true,
         autoDiscover: false
       })
