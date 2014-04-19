@@ -5,23 +5,19 @@ userCreation.view = function(ctrl){
       common.formSection(
         "fa-star",
         [
-          m("div", "for " + ctrl.agency().name)
-          // common.field(
-          //   "Agency Name",
-          //   m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.name)})
-          // ),
-          // common.field(
-          //   "Agency Acronym (optional)",
-          //   m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.acronym)})
-          // ),
-          // common.field(
-          //   "Agency Role",
-          //   m("select", {onchange: m.withAttr("value", ctrl.input.roleId)}, 
-          //     ctrl.roles().map(function(role){
-          //       return m("option", {value: role.id}, role.name)
-          //     }
-          //   ))
-          // )
+          m("div", "for " + ctrl.agency().name),
+          common.field(
+            "Username",
+            m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.handle)})
+          ),
+          common.field(
+            "Password",
+            m("input[type='password']", {onchange: m.withAttr("value", ctrl.input.password)})
+          ),
+          common.field(
+            "Admin",
+            m("input[type='checkbox']", {onchange: m.withAttr("value", ctrl.input.isAdmin)},"")
+          )
         ]
       ),
       common.formSection(
