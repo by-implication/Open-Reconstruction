@@ -195,7 +195,9 @@ m.switchObject = function(base, acc){
   }
   this.render = function(){
     // return the m()
-    return acc();
+    if(acc){
+      return acc();
+    }
   }
 }
 
