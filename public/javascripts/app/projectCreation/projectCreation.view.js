@@ -1,5 +1,7 @@
 projectCreation.view = function(ctrl){
 
+  function cancel(){ history.back(); }
+
   var sections = [
     {
       icon: "fa-cloud",
@@ -113,7 +115,7 @@ projectCreation.view = function(ctrl){
     {
       content: [
         m("button", "Submit"),
-        m("button", {type: "button", class: "alert"}, "Cancel"),
+        m("button", {type: "button", class: "alert", onclick: cancel}, "Cancel"),
       ]
     }
   ]
