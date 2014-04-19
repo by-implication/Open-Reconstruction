@@ -49,7 +49,9 @@ agency.view = function(ctrl){
                       u.handle
                     ]),
                     m("td", [
-                      u.isAdmin
+                      u.isAdmin ?
+                        "Admin"
+                      : "Normal"
                     ]),
                   ])
                 })
