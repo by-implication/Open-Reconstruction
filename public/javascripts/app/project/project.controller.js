@@ -8,8 +8,13 @@ project.controller = function(){
   this.tabs = new common.tabs.controller();
   this.id = m.route.param("id");
   this.project = m.prop({});
+  this.author = m.prop({});
 
   this.dropzone = null;
+
+  m.request({method: "GET", url: "/requests/"+this.id+"/meta"}).then(function(data){
+    // this.project(data.request);
+  }.bind(this));
 
   database.pull().then(function(data){
     this.project(database.projectList()[this.id - 1]);

@@ -19,6 +19,7 @@ GET     /users/:id/meta             controllers.Users.viewMeta(id: Int)
 GET		/requests					controllers.Requests.index()
 GET     /requests/info              controllers.Requests.createInfo()
 POST    /requests/new               controllers.Requests.insert()
+GET     /requests/:id/meta          controllers.Requests.viewMeta(id: Int)
 POST    /requests/:id/signoff       controllers.Requests.signoff(id: Int)
 POST    /requests/:id/attach        controllers.Requests.attach(id: Int)
 
