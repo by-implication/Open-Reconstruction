@@ -8,19 +8,18 @@ userCreation.controller = function(){
     agencyId: m.prop(0),
     isAdmin: m.prop(false)
   }
-  
+
   m.request({method: "GET", url: ("/agencies/" + this.slug() + "/meta"), config: app.xhrConfig}).then(function (r){
     if(r.success){
       this.agency(r.agency);
-      this.input.agencyId(agency.id);
+      this.input.agencyId(r.agency.id);
     } else {
       alert(r.reason);
     }
-  }.bind(this));
+  }.bind(this))
 
   this.submit = function(e){
     e.preventDefault();
-    console.log(this.input);
     m.request({method: "POST", url: "/users/new", data: this.input, config: app.xhrConfig}).then(function (r){
       if(r.success){
         window.location = '/';
