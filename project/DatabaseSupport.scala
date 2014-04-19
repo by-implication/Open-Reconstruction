@@ -1,19 +1,22 @@
 import java.sql.{Connection, DriverManager, ResultSet}
 import java.io.{File, FileWriter, FilenameFilter}
 import scala.io.Source
+import com.typesafe.config.{Config,ConfigFactory}
 
 object DatabaseSupport {
   Class.forName("org.postgresql.Driver")
 
-  val dbname = "recon_dev"
-  val username = "postgres"
-  val password = "postgres"
+  val config = ConfigFactory.parseFile(new File("conf/application.conf"))
+
+  val url = config.getString("db.default.url")
+  val user = config.getString("db.default.user")
+  val password = config.getString("db.default.password")
 
   var _conn: java.sql.Connection = null
 
   def conn = {
     if(_conn == null || _conn.isClosed()) {
-      _conn = DriverManager.getConnection("jdbc:postgresql:"+dbname, username, password)
+      _conn = DriverManager.getConnection(url, user, password)
     }
     _conn
   }
