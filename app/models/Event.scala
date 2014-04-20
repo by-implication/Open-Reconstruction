@@ -10,6 +10,13 @@ import recon.support._
 
 object Event extends EventGen {
 
+  def assign(agencyType: String, assign: Boolean, agency: Agency, reqId: Int, user: User) = Event(
+    kind = "assign",
+    content = Some(Seq(agency.name, agency.id, (if (assign) 1 else 0), agencyType).mkString(" ")),
+    reqId = reqId,
+    userId = user.id.toOption
+  )
+
   def findForRequest(id: Int) = DB.withConnection { implicit c =>
     SQL("SELECT * FROM events WHERE req_id = {reqId} ORDER BY event_date DESC")
     .on('reqId -> id).list(simple)

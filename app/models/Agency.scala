@@ -32,6 +32,10 @@ object Agency extends AgencyGen {
   def listAll: Seq[Agency] = DB.withConnection { implicit c =>
     SQL("select * from agencys").list(simple)
   }
+
+  def canAssess(a: Agency) = a.canDo(Permission.VALIDATE_REQUESTS)
+  def canImplement(a: Agency) = a.canDo(Permission.IMPLEMENT_REQUESTS)
+
 }
 
 // GENERATED case class start
@@ -54,9 +58,6 @@ case class Agency(
       "role" -> roleId // change this to role.toJson
     )
   }
-
-  def canAssess() = canDo(Permission.VALIDATE_REQUESTS)
-  def canImplement() = canDo(Permission.IMPLEMENT_REQUESTS)
 
   private def canDo(p: Permission): Boolean = DB.withConnection { implicit c =>
     SQL("""

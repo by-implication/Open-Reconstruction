@@ -170,7 +170,6 @@ case class User(
   lazy val isSuperAdmin = role.name == "OCD"
 
   lazy val role: Role = DB.withConnection { implicit c =>
-    play.Logger.info(agencyId + " " + id)
     SQL("""
       SELECT * FROM roles NATURAL JOIN agencys
       WHERE agency_id = {agencyId}
