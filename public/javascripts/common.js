@@ -1,5 +1,9 @@
 var common = {};
 
+common.displayDate = function(timestamp){
+  return new Date().toLocaleDateString("en-US", {month: "short", day: "numeric", year: "numeric"});
+}
+
 common.banner = function(text){
   return m("section.banner", [
     m("div", {class:"row"}, [

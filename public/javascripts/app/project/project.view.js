@@ -69,7 +69,7 @@ project.view = function(ctrl){
               ]),
               m("h5", [m("small", "Disaster")]),
               m("h5.value", [
-                common.renderString(ctrl.project().disasterType + " " + ctrl.project().disasterName + " in " + (new Date(ctrl.project().disasterDate).toLocaleDateString("en-US", {month: "short", day: "numeric", year: "numeric"})))
+                common.renderString(ctrl.project().disasterType + " " + ctrl.project().disasterName + " in " + common.displayDate(ctrl.project().disasterDate))
               ]),
               m("h5", [m("small", "Location")]),
               m("h5.value", [
@@ -137,24 +137,30 @@ project.view = function(ctrl){
                   m("table.doc-list", [
                     m("thead", [
                       m("tr", [
-                        m("td", "Document"),
-                        m("td", "Type"),
+                        m("td", "Filename"),
+                        m("td", "Date Uploaded"),
+                        m("td", "Uploader"),
                         m("td", "Actions")
                       ])
                     ]),
                     m("tbody", [
-                      m("tr", [
-                        m("td", "hi"),
-                        m("td", "BP202"),
-                        m("td", [
-                          m("a", {title: "Preview"}, [
-                            m("i.fa.fa-lg.fa-eye.fa-fw"),
+                      ctrl.attachments().map(function (a){
+                        return m("tr", [
+                          m("td", a.filename),
+                          m("td", common.displayDate(a.dateUploaded)),
+                          m("td", [
+                            m("a", {href: "/users/" + a.uploader.id}, a.uploader.name)
                           ]),
-                          m("a", {title: "Download"}, [
-                            m("i.fa.fa-lg.fa-download.fa-fw"),
-                          ]),
+                          m("td", [
+                            m("a", {title: "Preview", href: "/attachments/" + a.id + "/preview"}, [
+                              m("i.fa.fa-lg.fa-eye.fa-fw"),
+                            ]),
+                            m("a", {title: "Download", href: "/attachments/" + a.id + "/download"}, [
+                              m("i.fa.fa-lg.fa-download.fa-fw"),
+                            ]),
+                          ])
                         ])
-                      ])
+                      })
                     ])
                   ]),
                 ])

@@ -10,6 +10,7 @@ project.controller = function(){
   this.id = m.route.param("id");
   this.project = m.prop({});
   this.author = m.prop({});
+  this.attachments = m.prop({});
   this.oldProject = m.prop({});
   this.location = m.prop("");
   // this.coords = m.prop(null);
@@ -33,6 +34,7 @@ project.controller = function(){
   m.request({method: "GET", url: "/requests/"+this.id+"/meta"}).then(function(data){
     this.project(data.request);
     this.author(data.author);
+    this.attachments(data.attachments);
     parseLocation(data.request.location);
   }.bind(this));
 
