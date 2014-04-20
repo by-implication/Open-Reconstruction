@@ -115,14 +115,15 @@ historyEvent.attachment = function(data){
 
 historyEvent.comment = function(data){
   var date = new Date(data.date);
-  return m(".event", [
-    historyEvent.date(date),
+  return m(".event.comment", [
+    // historyEvent.date(date),
     m(".details", [
-      m("h3", "Comment"),
+      // m("h3", "Comment"),
       m("p", data.content),
       m("p.meta", [
         "posted by ",
         m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+        " ",
         helper.timeago(date)
       ])
     ])

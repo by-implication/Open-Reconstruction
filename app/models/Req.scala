@@ -76,6 +76,7 @@ case class Req(
     "amount" -> amount,
     "author" -> Map("agency" -> author.agency.name),
     "authorId" -> authorId,
+    "assessingAgencyId" -> assessingAgencyId,
     "canSignoff" -> user.canSignoff(this)
   )
 

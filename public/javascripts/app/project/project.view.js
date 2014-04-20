@@ -271,7 +271,7 @@ project.listView = function(ctrl){
           return p.canSignoff;
           break;
         case "For assigning assessor":
-          return p.level === 0;
+          return p.level === 0 && !p.assessingAgencyId;
           break;
         case "My requests":
           return p.authorId === ctrl.app.currentUser().agency.id;
