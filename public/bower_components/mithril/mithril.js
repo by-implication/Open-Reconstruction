@@ -290,6 +290,7 @@ new function(window) {
 	m.route.param = function(key) {return routeParams[key]}
 	m.route.mode = "search"
 	function routeByValue(root, router, path) {
+		m.route.path = path
 		routeParams = {}
 		for (var route in router) {
 			if (route == path) return !void m.module(root, router[route])

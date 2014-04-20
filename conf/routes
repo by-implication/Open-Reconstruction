@@ -39,8 +39,14 @@ POST    /agencies/:id/newUser       controllers.Users.insert(id: Int)
 # view routes (these all serve the index view)
 
 GET     /projects                   controllers.Application.index
+GET     /projects/all               controllers.Application.index
+GET     /projects/mine              controllers.Application.index
 GET     /projects/new               controllers.Application.index
 GET     /projects/:id               controllers.Application.index1(id: Int)
+GET     /projects/:id/assignments   controllers.Application.index1(id: Int)
+GET     /projects/:id/images        controllers.Application.index1(id: Int)
+GET     /projects/:id/documents     controllers.Application.index1(id: Int)
+GET     /projects/:id/activity      controllers.Application.index1(id: Int)
 GET     /dashboard                  controllers.Application.index
 GET     /users/:id                  controllers.Application.index1(id: Int)
 GET     /admin                      controllers.Application.index
