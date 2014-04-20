@@ -39,7 +39,8 @@ object Requests extends Controller with Secured {
             "imgs" -> imgs.map(tf),
             "docs" -> docs.map(tf)
           )
-        }
+        },
+        "history" -> Json.toJson(Event.findForRequest(id).map(_.listJson))
       )
     }.getOrElse(Rest.notFound())
     

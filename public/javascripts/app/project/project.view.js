@@ -216,12 +216,15 @@ project.view = function(ctrl){
                 ])
               })
               .case("Activity", function(){
-                return m(".section", [
+                return m(".section", ctrl.history().map(function (e){
+                  return historyEvent[e.kind](e);
+                }).concat([
                   historyEvent.calamity(ctrl.oldProject().disaster()),
                   ctrl.oldProject().history().map(function(entry){
                     return historyEvent.project(entry);
-                  })
-                ])
+                  }),
+                  ctrl.history()
+                ]))
               })
               .render()
           ]),

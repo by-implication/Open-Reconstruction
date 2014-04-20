@@ -9,6 +9,12 @@ import play.api.Play.current
 import recon.support._
 
 object Event extends EventGen {
+
+  def findForRequest(id: Int) = DB.withConnection { implicit c =>
+    SQL("SELECT * FROM events WHERE req_id = {reqId} ORDER BY event_date")
+    .on('reqId -> id).list(simple)
+  }
+
 }
 
 // GENERATED case class start
@@ -21,6 +27,19 @@ case class Event(
   userId: Option[Int] = None
 ) extends EventCCGen with Entity[Event]
 // GENERATED case class end
+{
+
+  def listJson = Json.obj(
+    "kind" -> kind,
+    "content" -> content,
+    "date" -> date,
+    "user" -> userId.map(User.findById(_).map(u => Json.obj(
+      "id" -> u.id.get,
+      "name" -> u.name
+    )))
+  )
+
+}
 
 // GENERATED object start
 trait EventGen extends EntityCompanion[Event] {

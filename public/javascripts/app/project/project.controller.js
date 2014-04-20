@@ -10,6 +10,7 @@ project.controller = function(){
   this.project = m.prop({});
   this.author = m.prop({});
   this.attachments = m.prop({});
+  this.history = m.prop({});
   this.oldProject = m.prop({});
   this.location = m.prop("");
   this.canSignoff = m.prop(false);
@@ -44,6 +45,7 @@ project.controller = function(){
     this.project(data.request);
     this.author(data.author);
     this.attachments(data.attachments);
+    this.history(data.history);
     this.assessingAgencies(data.assessingAgencies);
     this.implementingAgencies(data.implementingAgencies);
     this.assessingAgency(data.assessingAgency);
