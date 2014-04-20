@@ -196,8 +196,7 @@ project.view = function(ctrl){
                           m(".date", [
                             helper.timeago(new Date(img.dateUploaded)),
                           ]),
-                        ]),
-                        console.log(img)
+                        ])
                       ]);
                     }))
                   : m("h3.empty", [
@@ -254,7 +253,15 @@ project.view = function(ctrl){
                   ctrl.oldProject().history().map(function(entry){
                     return historyEvent.project(entry);
                   })
-                ]))
+                ]).concat(ctrl.app.currentUser() ? [
+                  m("form", {onsubmit: ctrl.submitComment}, [
+                    m("label", [
+                      "Comment",
+                      m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.comment)})
+                    ]),
+                    m("button", "Submit")
+                  ])
+                ] : []))
               })
               .render()
           ]),
