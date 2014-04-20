@@ -173,7 +173,7 @@ case class User(
     SQL("""
       SELECT * FROM roles NATURAL JOIN agencys
       WHERE agency_id = {agencyId}
-    """).on('agencyId -> agencyId).single(Role.simple)
+    """).on('agencyId -> agencyId).singleOpt(Role.simple).getOrElse(Role.VIEW_ONLY)
   }
 
   var sessionId = -1
