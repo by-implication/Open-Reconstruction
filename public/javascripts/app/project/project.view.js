@@ -229,6 +229,9 @@ project.listView = function(ctrl){
           return p.projectType == ctrl.currentFilter.projects();
         }
       })
+      .filter(function(p){
+        return (p.canSignoff || ctrl.tabs.currentTab() == "All")
+      })
       .sortBy(function(p){
         return p.date;
       })

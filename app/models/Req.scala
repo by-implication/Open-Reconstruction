@@ -64,12 +64,13 @@ case class Req(
 
   def insertJson = Json.obj("id" -> id.get)
 
-  def indexJson = Json.obj(
+  def indexJson(implicit user: User) = Json.obj(
     "id" -> id.get,
     "description" -> description,
     "projectType" -> projectType.name,
     "amount" -> amount,
-    "author" -> Map("agency" -> author.agency.name)
+    "author" -> Map("agency" -> author.agency.name),
+    "canSignoff" -> user.canSignoff(this)
   )
 
   def viewJson = Json.obj(
