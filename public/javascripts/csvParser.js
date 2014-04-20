@@ -163,12 +163,14 @@ csv2json.dsv(",", "text/plain", 1)("/assets/data/CF14-RQST-Sanitized.csv", funct
         delete row["AMT_RECOM"];
 
         var reqId = ++reqCount;
-        events.push({
-            reqId: reqId,
-            kind: "reviseAmount",
-            date: row["RECOM_DATE"] || row.date,
-            content: row["AMT_REQD"] + " " + row.amount
-        });
+        if(row["AMT_REQD"] && row.amount && (row["AMT_REQD"] != row.amount)){
+            events.push({
+                reqId: reqId,
+                kind: "reviseAmount",
+                date: row["RECOM_DATE"] || row.date,
+                content: row["AMT_REQD"] + " " + row.amount
+            });
+        }
         delete row["RECOM_DATE"];
         delete row["AMT_REQD"];
 

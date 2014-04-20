@@ -1,5 +1,40 @@
 var historyEvent = {}
 
+historyEvent.comment = function(data){
+  var date = new Date(data.date);
+  return m(".event", [
+    historyEvent.date(date),
+    m(".details", [
+      m("h3", "Comment"),
+      m("p", data.content),
+      m("p.meta", [
+        "posted by ",
+        m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+        helper.timeago(date)
+      ])
+    ])
+  ])
+}
+
+historyEvent.reviseAmount = function(data){
+  var date = new Date(data.date);
+  return m(".event", [
+    historyEvent.date(date),
+    m(".details", [
+      m("h3", "Amount Revised"),
+      m("p", "From " + data.content.split(" ")
+        .map(function (amt){ return "PHP " + amt; })
+        .join(" to ")),
+      m("p.meta", [
+        "changed by ",
+        user ? "unknown" :
+        m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+        helper.timeago(date)
+      ])
+    ])
+  ])
+}
+
 historyEvent.date = function(date){
   return m(".dateGroup", [
     m(".date", [
