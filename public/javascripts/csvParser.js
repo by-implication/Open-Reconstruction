@@ -66,8 +66,15 @@ csv2json.dsv(",", "text/plain", 1)("/assets/data/CF14-RQST-Sanitized.csv", funct
         delete row.PURPOSE;
 
         row.projectType = row.PURPOSE1 || "OTHERS";
-        if(row.projectType == "FA") row.projectType = "FINANCIAL AID";
-        if(row.projectType == "ROAD/BRIDGE") row.projectType = "ROAD";
+        switch(row.projectType){
+            case "FA":
+                row.projectType = "FINANCIAL AID"; break;
+            case "ROAD/BRIDGE":
+                row.projectType = "ROAD"; break;
+            case "HOUSE":
+            case "HOUSING UNITS":
+                row.projectType = "HOUSING"; break;
+        }
         row.projectType = row.projectType.split(" ")
             .map(function (s){ return s[0].toUpperCase() + s.slice(1).toLowerCase(); })
             .join(" ");
