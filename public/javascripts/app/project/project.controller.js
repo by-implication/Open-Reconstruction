@@ -98,21 +98,21 @@ project.controller = function(){
 
   var dropzonePreviewTemplate = m(".dz-preview.dz-file-preview", [
     m(".dz-details", [
+      m("img", {"data-dz-thumbnail": true}),
       m(".dz-filename", [
         m("span", {"data-dz-name": true}),
       ]),
       m(".dz-size", {"data-dz-size": true}),
-      m("img", {"data-dz-thumbnail": true}),
     ]),
     m(".dz-progress", [
       m("span.dz-upload", {"data-dz-uploadprogress": true}),
     ]),
-    m(".dz-success-mark", [
-      m("i.fa.fa-check"),
-    ]),
-    m(".dz-error-mark", [
-      m("i.fa.fa-times")
-    ]),
+    // m(".dz-success-mark", [
+    //   m("i.fa.fa-check"),
+    // ]),
+    // m(".dz-error-mark", [
+    //   m("i.fa.fa-times")
+    // ]),
     m(".dz-error-message", [
       m("span", {"data-dz-errormessage": true})
     ]),
@@ -126,7 +126,9 @@ project.controller = function(){
         previewTemplate: m.stringify(dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop photos here, or click to browse.",
         clickable: true,
-        autoDiscover: false
+        autoDiscover: false,
+        thumbnailWidth: 128,
+        thumbnailHeight: 128
       })
     }
   }.bind(this);
