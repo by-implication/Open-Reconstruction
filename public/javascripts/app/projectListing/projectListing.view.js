@@ -11,10 +11,10 @@ projectListing.view = function(ctrl){
                 {href: "/projects/new", config: m.route}, 
                 "New Request"
               )
-            : null,
+            : "",
             ctrl.app.currentUser() ?
               common.tabs.view(ctrl.tabs, {className: "left", config: ctrl.setCurrentTab})
-            : null
+            : ""
           ]),
           project.listView(ctrl)
         ]),

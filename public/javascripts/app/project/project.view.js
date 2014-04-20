@@ -1,7 +1,6 @@
 project.view = function(ctrl){
 
   return app.template(ctrl.app, {class: "detail"}, [
-    console.log(ctrl.isInvolved()),
     ctrl.isInvolved() ?
       m("section.approval", [
         m(".row", [
@@ -163,7 +162,6 @@ project.view = function(ctrl){
               })
               .case("Images", function(){
                 return m(".section", [
-                  // console.log(ctrl.project().level),
                   ctrl.curUserCanUpload() ?
                     m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
                   : "",
