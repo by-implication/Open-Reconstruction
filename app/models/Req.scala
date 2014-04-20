@@ -22,7 +22,7 @@ case class Req(
   description: String = "",
   projectType: ProjectType = ProjectType.BRIDGE,
   amount: BigDecimal = 0,
-  scope: ProjectScope = ProjectScope.REPAIR_AND_REHABILITATION,
+  scope: ProjectScope = ProjectScope.REPAIR,
   date: Timestamp = Time.now,
   level: Int = 0,
   isValidated: Boolean = false,

@@ -37,8 +37,9 @@ object ProjectType extends Enum[ProjectType] {
 
 sealed class ProjectScope(override val name: String) extends PGObject("project_scope", name) with ProjectScope.Value
 object ProjectScope extends Enum[ProjectScope] {
-  val REPAIR_AND_REHABILITATION = new ProjectScope("Repair and Rehabilitation")
   val RECONSTRUCTION = new ProjectScope("Reconstruction")
+  val REPAIR = new ProjectScope("Repair")
+  val PREVENTION = new ProjectScope("Prevention")
   val OTHER = new ProjectScope("Other")
-  val list = List(REPAIR_AND_REHABILITATION, RECONSTRUCTION, OTHER)
+  val list = List(RECONSTRUCTION, REPAIR, PREVENTION, OTHER)
 }

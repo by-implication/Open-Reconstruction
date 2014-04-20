@@ -2,6 +2,15 @@ projectCreation.view = function(ctrl){
 
   function cancel(){ history.back(); }
 
+  function scopeLabel(scope){
+    switch(scope){
+      case "Reconstruction": return "Completely destroyed, and we need to rebuild it";
+      case "Repair": return "Partially damaged, and we need to repair it";
+      case "Prevention": return "Does not currently exist, and we need to build it for prevention";
+      default: return scope;
+    }
+  }
+
   var sections = [
     {
       icon: "fa-cloud",
@@ -102,7 +111,11 @@ projectCreation.view = function(ctrl){
           .render(),
         common.field(
           "Scope of Work",
-          m("select", {onchange: m.withAttr("value", ctrl.input.scopeOfWork), value: ctrl.input.scopeOfWork()}, ctrl.requestCreationInfo.projectScopes.map(function(e){return m("option", e)})),
+          m("select", {onchange: m.withAttr("value", ctrl.input.scopeOfWork), value: ctrl.input.scopeOfWork()},
+            ctrl.requestCreationInfo.projectScopes.map(function (e){
+              return m("option", {value: e}, scopeLabel(e))
+            })
+          ),
           "Do we need to reconstruct this in its entirety? Or is this simply a repair job?"
         ),
         console.log(ctrl.input.location()),

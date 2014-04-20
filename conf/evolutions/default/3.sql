@@ -29,8 +29,9 @@ CREATE TYPE project_type AS ENUM(
 'Others');;
 
 CREATE TYPE project_scope AS ENUM(
-	'Repair and Rehabilitation',
 	'Reconstruction',
+	'Repair',
+	'Prevention',
 	'Other'
 );;
 
@@ -39,7 +40,7 @@ CREATE TABLE reqs (
 	req_description text NOT NULL,
 	req_project_type project_type NOT NULL,
 	req_amount numeric(15,2) NOT NULL,
-	req_scope project_scope NOT NULL DEFAULT 'Repair and Rehabilitation',
+	req_scope project_scope NOT NULL DEFAULT 'Repair',
 	req_date timestamp NOT NULL DEFAULT NOW(),
 	-- req_code text NOT NULL,
 	req_level int NOT NULL DEFAULT 0,
