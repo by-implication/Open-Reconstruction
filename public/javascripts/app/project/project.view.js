@@ -219,14 +219,13 @@ project.view = function(ctrl){
 }
 
 project.summary = function(ctrl){
-  // console.log(ctrl.app.isAuthorized(3));
   return m(".project-stub", [
     m(".section.type", [
       ctrl.project().projectType
     ]),
     m(".section", [
       displayEditGroup.view(
-        ctrl.app.isAuthorized(3),
+        ctrl.canEdit(),
         ctrl.degDescription,
         function(){ return m("h4", ctrl.project().description) }, 
         function(){
@@ -246,7 +245,7 @@ project.summary = function(ctrl){
     m("div.section", [
       m("h5", [m("small", "Amount")]),
       displayEditGroup.view(
-        ctrl.app.isAuthorized(3),
+        ctrl.canEdit(),
         ctrl.degAmount,
         function(){ return m("h5.value", [helper.commaize(ctrl.project().amount)]) }, 
         function(){ 
@@ -257,7 +256,7 @@ project.summary = function(ctrl){
       ),
       m("h5", [m("small", "Disaster")]),
       displayEditGroup.view(
-        ctrl.app.isAuthorized(3),
+        ctrl.canEdit(),
         ctrl.degDisaster, 
         function(){ return m("h5.value", [ctrl.project().disasterType + " " + ctrl.project().disasterName + " in " + common.displayDate(ctrl.project().disasterDate)]) }, 
         function(){ 
@@ -268,7 +267,7 @@ project.summary = function(ctrl){
       ),
       m("h5", [m("small", "Location")]),
       displayEditGroup.view(
-        ctrl.app.isAuthorized(3),
+        ctrl.canEdit(),
         ctrl.degLocation, 
         function(){ return m("h5.value", [ctrl.project().location]) }, 
         function(){ 
