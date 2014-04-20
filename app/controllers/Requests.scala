@@ -121,12 +121,20 @@ object Requests extends Controller with Secured {
   def assignAssessingAgency(reqId: Int, agencyId: Int) = UserAction(){ implicit user => implicit request =>
     if(user.isSuperAdmin){
       Req.findById(reqId).map { req =>
-        Agency.findById(agencyId).map { agency =>
-          if(agency.canAssess()){
-            req.copy(assessingAgencyId = Some(agencyId)).save().map(_ => Rest.success())
+        agencyId match {
+          case 0 => {
+            req.copy(assessingAgencyId = None).save().map(_ => Rest.success())
             .getOrElse(Rest.serverError())
-          } else Rest.error("Agency not authorized to assess.")
-        }.getOrElse(Rest.notFound())
+          }
+          case _ => {
+            Agency.findById(agencyId).map { agency =>
+              if(agency.canAssess()){
+                req.copy(assessingAgencyId = Some(agencyId)).save().map(_ => Rest.success())
+                .getOrElse(Rest.serverError())
+              } else Rest.error("Agency not authorized to assess.")
+            }.getOrElse(Rest.notFound())
+          }
+        }
       }.getOrElse(Rest.notFound())
     } else Rest.unauthorized()
   }
@@ -134,12 +142,20 @@ object Requests extends Controller with Secured {
   def assignImplementingAgency(reqId: Int, agencyId: Int) = UserAction(){ implicit user => implicit request =>
     if(user.isSuperAdmin){
       Req.findById(reqId).map { req =>
-        Agency.findById(agencyId).map { agency =>
-          if(agency.canImplement()){
-            req.copy(implementingAgencyId = Some(agencyId)).save().map(_ => Rest.success())
+        agencyId match {
+          case 0 => {
+            req.copy(implementingAgencyId = None).save().map(_ => Rest.success())
             .getOrElse(Rest.serverError())
-          } else Rest.error("Agency not authorized to implement.")
-        }.getOrElse(Rest.notFound())
+          }
+          case _ => {
+            Agency.findById(agencyId).map { agency =>
+              if(agency.canImplement()){
+                req.copy(implementingAgencyId = Some(agencyId)).save().map(_ => Rest.success())
+                .getOrElse(Rest.serverError())
+              } else Rest.error("Agency not authorized to implement.")
+            }.getOrElse(Rest.notFound())
+          }
+        }
       }.getOrElse(Rest.notFound())
     } else Rest.unauthorized()
   }

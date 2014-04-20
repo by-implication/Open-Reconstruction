@@ -12,7 +12,7 @@ CREATE TABLE roles (
 
 INSERT INTO roles VALUES
 	(1, 'LGU', '{1}'),
-	(2, 'OCD', '{2, 3, 5}'),
+	(2, 'OCD', '{3, 5}'),
     (3, 'OP', '{5}'),
 	(4, 'DPWH', '{1, 2, 3, 4, 5}'),
 	(5, 'DBM', '{1, 5, 6}'),

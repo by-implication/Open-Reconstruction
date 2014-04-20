@@ -95,7 +95,6 @@ project.view = function(ctrl){
             ]),
             m(".map-container", [
               m("#detailMap", {config: ctrl.initMap}),
-              console.log(ctrl.coords()),
               ctrl.coords() ?
                 null
               : m(".map-shroud", [
@@ -118,18 +117,24 @@ project.view = function(ctrl){
                     m("form", [
                       m("label", [
                         "Assessing Agency",
-                        m("select", {onchange: m.withAttr("value", ctrl.updateAssessingAgency), value: ctrl.input.assessingAgency()}, ctrl.assessingAgencies().map(function(agency){
-                          return m("option", {value: agency.id, selected: ctrl.input.assessingAgency() == agency.id}, agency.name)
-                        })),
+                        m("select", {onchange: m.withAttr("value", ctrl.updateAssessingAgency), value: ctrl.input.assessingAgency()}, 
+                          [m("option", {value: 0}, "None")]
+                          .concat(ctrl.assessingAgencies().map(function(agency){
+                            return m("option", {value: agency.id, selected: ctrl.input.assessingAgency() == agency.id}, agency.name)
+                          }
+                        ))),
                         m("p.help", [
                           "The Assessing Agency you assign will independently validate and assess the suitability of this request for execution. They will be the ones making the program of works, etc... If you are unsure about who to assign, it's generally best to assign DPWH."
                         ]),
                       ]),
                       m("label", [
                         "Implementing Agency",
-                        m("select", {onchange: m.withAttr("value", ctrl.updateImplementingAgency), value: ctrl.input.implementingAgency()}, ctrl.implementingAgencies().map(function(agency){
-                          return m("option", {value: agency.id, selected: ctrl.input.implementingAgency() == agency.id}, agency.name)
-                        })),
+                        m("select", {onchange: m.withAttr("value", ctrl.updateImplementingAgency), value: ctrl.input.implementingAgency()},
+                          [m("option", {value: 0}, "None")]
+                          .concat(ctrl.implementingAgencies().map(function(agency){
+                            return m("option", {value: agency.id, selected: ctrl.input.implementingAgency() == agency.id}, agency.name)
+                          }
+                          ))),
                         m("p.help", [
                           "The Implementing Agency will be responsible for the handling the money, and the completion of the project. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
                         ]),
