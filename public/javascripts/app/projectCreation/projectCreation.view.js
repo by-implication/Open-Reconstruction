@@ -19,6 +19,23 @@ projectCreation.view = function(ctrl){
 
   var sections = [
     {
+      icon: "fa-star",
+      content: [
+        m("h2", [
+          "Preamble"
+        ]),
+        common.field(
+          "Terms of Agreement",
+          m("div", [
+            m("input", {type: "checkbox"}),
+            m("span", [
+              "I have not requested for assistance for this project from any other source."
+            ])
+          ])
+        )
+      ]
+    },
+    {
       icon: "fa-cloud",
       content: [
         m("h2", "Disaster"),
