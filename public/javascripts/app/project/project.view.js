@@ -47,7 +47,7 @@ project.view = function(ctrl){
           m(".columns.medium-12", [
             m("div", [
               m("h4", [
-                "You are authorized to sign off on this request."
+                "Sign off on this request only if you feel the information is complete for your step in the approval process."
               ]),
               m("button", [
                 m("i.fa.fa-check"),
