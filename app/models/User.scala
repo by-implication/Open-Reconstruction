@@ -179,10 +179,10 @@ case class User(
   var sessionId = -1
 
   def isInvolvedWith(r: Req): Boolean = {
-    role.name match {
+    r.authorId == id.get || {role.name match {
       case "OCD" | "OP" | "DBM" => true
       case _ => r.assessingAgencyId.map(_ == agencyId).getOrElse(false)
-    }
+    }}
   }
 
   def hasSignedoff(r: Req): Boolean = {
