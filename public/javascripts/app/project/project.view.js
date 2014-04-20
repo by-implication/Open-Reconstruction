@@ -174,7 +174,7 @@ project.view = function(ctrl){
               })
               .case("Images", function(){
                 return m(".section", [
-                  ctrl.app.isAuthorized(3)?
+                  ctrl.currentUserBelongsToAssessingAgency() || ctrl.currentUserIsAuthor() ?
                     m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
                   : null,
 
@@ -207,7 +207,7 @@ project.view = function(ctrl){
               })
               .case("Documents", function(){
                 return m(".section", [
-                  ctrl.app.isAuthorized(3)?
+                  ctrl.currentUserBelongsToAssessingAgency() || ctrl.currentUserIsAuthor() ?
                     m("div.dropzone", {config: ctrl.initDocDropzone})
                   : null,
 
