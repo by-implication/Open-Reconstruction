@@ -63,6 +63,20 @@ project.controller = function(){
     return this.author().handle === this.app.getCurrentUserProp("handle");
   }
 
+  this.getBlockingAgency = function(){
+    var agency = process.levelToAgencyName()[this.project().level]
+
+    if(agency === "ASSESSING_AGENCY"){
+      if (this.assessingAgency()){
+        return this.assessingAgency();
+      } else {
+        return "AWAITING_ASSIGNMENT";
+      }
+    } else {
+      return agency;;
+    }
+  }
+
   m.request({method: "GET", url: "/requests/"+this.id+"/meta"}).then(function(data){
     this.project(data.request);
     this.author(data.author);

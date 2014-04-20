@@ -58,11 +58,29 @@ project.view = function(ctrl){
                 ]),
               ])
             : "",
-            ctrl.hasSignedoff() ?
+            ctrl.hasSignedoff()  ?
               m("div", [
                 m("h4", [
                   m("div", [m("i.fa.fa-thumbs-up.fa-2x")]),
                   "You've already signed off on this request."
+                ]),
+              ])
+            : "",
+            ctrl.currentUserIsAuthor() && !ctrl.hasSignedoff() ?
+              m("div", [
+                m("h4", [
+                  "You created this request."
+                ]),
+              ])
+            : "",
+            !ctrl.canSignoff() && !ctrl.hasSignedoff() ? // waiting for predecessor
+              m("div", [
+                m("h4", [
+                  ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
+                    ctrl.app.isSuperAdmin() ?
+                      "Please assign an agency to assess this request."
+                    : "Waiting for the Office of Civil Defense to assign an agency to assess this request."
+                  : "Waiting for " + ctrl.getBlockingAgency().name + " approval."
                 ]),
               ])
             : ""
