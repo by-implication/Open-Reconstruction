@@ -1,7 +1,8 @@
 project.view = function(ctrl){
 
   return app.template(ctrl.app, {class: "detail"}, [
-    ctrl.isInvolved ?
+    console.log(ctrl.isInvolved()),
+    ctrl.isInvolved() ?
       m("section.approval", [
         m(".row", [
           m(".columns.medium-12", [
