@@ -282,8 +282,7 @@ project.listView = function(ctrl){
           return true;
       }
     });
-  return filteredList.value().length ?
-    m("table", [
+  return m("table", [
       m("thead", [
         m("tr", [
           m("th", "Id"),
@@ -294,26 +293,28 @@ project.listView = function(ctrl){
         ])
       ]),
       m("tbody", [
-        filteredList
-        .sortBy(function(p){
-          return p.date;
-        })
-        .map(function(project){
-          var url = "/projects/"+project.id;
-          return m("tr", [
-            m("td", project.id),
-            m("td", [
-              m("a.name", {href: url, config: m.route}, project.description)
-            ]),
-            m("td", project.author.agency),
-            m("td", project.projectType),
-            m("td.text-right", helper.commaize(project.amount.toFixed(2)))
-          ])
-        })
-        .value()
+        filteredList.value().length ?
+          filteredList
+            .sortBy(function(p){
+              return p.date;
+            })
+            .map(function(project){
+              var url = "/projects/"+project.id;
+              return m("tr", [
+                m("td", project.id),
+                m("td", [
+                  m("a.name", {href: url, config: m.route}, project.description)
+                ]),
+                m("td", project.author.agency),
+                m("td", project.projectType),
+                m("td.text-right", helper.commaize(project.amount.toFixed(2)))
+              ])
+            })
+            .value()
+        : m("tr", [m("td", "No requests matched filter criteria")])
       ])
     ])
-    : m("h3.empty", [
-      "No requests matched filter criteria"
-    ])
+    // : m("h3.empty", [
+      
+    // ])
 }
