@@ -56,6 +56,7 @@ case class Agency(
   }
 
   def canAssess() = canDo(Permission.VALIDATE_REQUESTS)
+  def canImplement() = canDo(Permission.IMPLEMENT_REQUESTS)
 
   private def canDo(p: Permission): Boolean = DB.withConnection { implicit c =>
     SQL("""
