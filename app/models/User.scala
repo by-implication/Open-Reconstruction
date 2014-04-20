@@ -150,6 +150,7 @@ case class User(
     if(!isAnonymous){
       Json.obj(
         "handle" -> handle,
+        "id" -> id.get,
         "name" -> name,
         "agency" -> Json.obj(
           "name" -> agency.name,
