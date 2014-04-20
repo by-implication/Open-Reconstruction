@@ -305,7 +305,24 @@ project.listView = function(ctrl){
       }
     })
     .filter(function(p){
-      return (p.canSignoff || ctrl.tabs.currentTab() != "Assigned to Me")
+      // there's For signoff
+      // there's For assigning assessor
+      switch(ctrl.tabs.currentTab()){
+        case "For signoff":
+          return p.canSignoff;
+          break;
+        case "For assigning assessor":
+          return p.level == 0;
+          break;
+        default:
+          return true;
+      }
+
+      // TT project is authorized for signing off by current user, and the tab isn't signoff anyway. render everything.
+      // TF project is authorized for signing off by current user, and the tab is set to signoff. render only those that need to be signed off.
+      // FT project is not authorized for signing off by current user, and the tab is set to signoff. render everything.
+      // TT 
+      // return (p.canSignoff || ctrl.tabs.currentTab() != "For signoff")
     });
   return filteredList.value().length ?
     m("table", [

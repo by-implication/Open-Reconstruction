@@ -4,7 +4,7 @@ projectListing.view = function(ctrl){
     m("section", [
       m("div",{class: "row"}, [
         m("div", {class: "columns medium-9"}, [
-          m("div.clearfix", [
+          m(".clearfix", [
             ctrl.app.isAuthorized(1) ?
               m(
                 "a.button.left", 
@@ -13,7 +13,7 @@ projectListing.view = function(ctrl){
               )
             : null,
             ctrl.app.currentUser() ?
-              common.tabs.view(ctrl.tabs, {className: "right"})
+              common.tabs.view(ctrl.tabs, {className: "right", config: ctrl.setCurrentTab})
             : null
           ]),
           
@@ -21,12 +21,12 @@ projectListing.view = function(ctrl){
         ]),
         m("div", {class: "columns medium-3"}, [
           m("ul", [
-            m("li", { className: "" == ctrl.currentFilter.projects() ? 'selected' : '' }, [
+            m("li", [
               m("a", {onclick: ctrl.currentFilter.projects.bind(ctrl.currentFilter, "")}, "All")
             ]),
             _.chain(ctrl.projectFilters)
             .map(function(filter){
-              return m("li", { className: filter == ctrl.currentFilter.projects() ? 'selected' : '' }, [
+              return m("li", [
                 m("a", {onclick: ctrl.currentFilter.projects.bind(ctrl.currentFilter, filter)}, filter)
               ])
             })

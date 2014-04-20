@@ -59,16 +59,16 @@ common.tabs.view = function(ctrl, options){
 
   return m("dl.tabs[data-tab]", options, [
     ctrl.tabs().map(function(item, i){
-      var setActive = function(i){
+      var activeTab = function(i){
         if(ctrl.isActive(item.label, i)){
           return "active";
         } else {
           return "";
         }
       };
-      return m("dd", {class: setActive(i)}, [
+      return m("dd", {class: activeTab(i)}, [
         m("a", {onclick: function(){
-          ctrl.setActive(item.label);
+          ctrl.currentTab(item.label);
         }}, item.label)
       ]);
     })
@@ -76,21 +76,14 @@ common.tabs.view = function(ctrl, options){
 }
 
 common.tabs.controller = function(){
-  this.currentTab = m.prop("");
+  this.currentTab = m.prop();
   this.tabs = m.prop([]);
   this.isActive = function(label, index){
     if(!this.currentTab()){
-      if(index == 0){
-        return true;
-      }
-    } else if(this.currentTab() === label){
-      return true;
+      return index == 0
     } else {
-      return false;
+      return this.currentTab() === label
     }
-  }
-  this.setActive = function(label){
-    this.currentTab(label);
   }
 }
 
