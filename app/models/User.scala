@@ -201,8 +201,8 @@ case class User(
 
   def canEditRequest(r: Req): Boolean = DB.withConnection { implicit c =>
     isSuperAdmin ||
+    r.assessingAgencyId.map(_ == agencyId && r.level < 1).getOrElse(false) ||
     r.implementingAgencyId.map(_ == agencyId).getOrElse(false)
-    // todo add other conditions
   }
 
   def isAnonymous = id.get == -1
