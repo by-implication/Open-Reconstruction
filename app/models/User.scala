@@ -188,7 +188,7 @@ case class User(
   def hasSignedoff(r: Req): Boolean = {
     isInvolvedWith(r) && {
       val checks = List[Boolean](
-        (agencyId == r.assessingAgencyId),
+        (r.assessingAgencyId.map(_ == agencyId).getOrElse(false)),
         (role.name == "OCD"),
         (role.name == "OP"),
         (role.name == "DBM")
