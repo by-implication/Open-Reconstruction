@@ -51,15 +51,38 @@ projectCreation.view = function(ctrl){
         m("h2", "Basic Information"),
         common.field(
           "Description",
-          m("input", {onchange: m.withAttr("value", ctrl.input.description), type: "text", placeholder: "Seawall for this town"}),
-          "This is what everyone will see. Keep it short and clear."
+          m("input", {onchange: m.withAttr("value", ctrl.input.description), type: "text", placeholder: "e.g. Reconstruction of a seawall for barangay A"}),
+          "Please make sure that the description is as specific as can be."
         ),
+        common.field(
+          "Estimated Amount",
+          m("input", {type: "number", onchange: m.withAttr("value", ctrl.input.amount)}),
+          "Note that the agency assigned to evaluate this request may change the amount based on their costing."
+        ),
+        console.log(ctrl.requestCreationInfo.projectTypes),
         common.field(
           "Type",
           m("select", {
             onchange: m.withAttr("value", ctrl.input.projectType), 
             value: ctrl.input.projectType()
-          }, ctrl.requestCreationInfo.projectTypes.map(function(e){return m("option", e)}))
+          }, [
+            m("optgroup", {label: "Water"}, [
+              m("option", ctrl.requestCreationInfo.projectTypes[0]),
+              m("option", ctrl.requestCreationInfo.projectTypes[1]),
+              m("option", ctrl.requestCreationInfo.projectTypes[2]),
+              m("option", ctrl.requestCreationInfo.projectTypes[8]),
+              m("option", ctrl.requestCreationInfo.projectTypes[13]),
+            ]),
+            m("optgroup", {label: "Infrastructure"}, [
+              m("option", ctrl.requestCreationInfo.projectTypes[4]),
+              m("option", ctrl.requestCreationInfo.projectTypes[9]),
+            ]),
+            m("optgroup", {label: "Buildings"}, [
+              m("option", ctrl.requestCreationInfo.projectTypes[5]),
+              m("option", ctrl.requestCreationInfo.projectTypes[6]),
+              m("option", ctrl.requestCreationInfo.projectTypes[10]),
+            ]),
+          ])
         ),
 
         m.switch(ctrl.input.projectType())
@@ -77,11 +100,6 @@ projectCreation.view = function(ctrl){
             return "specify!";
           })
           .render(),
-
-        common.field(
-          "Amount",
-          m("input", {type: "number", onchange: m.withAttr("value", ctrl.input.amount)})
-        ),
         common.field(
           "Scope of Work",
           m("select", {onchange: m.withAttr("value", ctrl.input.scopeOfWork), value: ctrl.input.scopeOfWork()}, ctrl.requestCreationInfo.projectScopes.map(function(e){return m("option", e)})),
