@@ -1,10 +1,8 @@
 package controllers
 
-import java.io.File
 import play.api._
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.libs.Files.TemporaryFile
 import play.api.libs.json.{JsNull, Json}
 import play.api.mvc._
 import recon.models._
@@ -21,21 +19,32 @@ object Requests extends Controller with Secured {
   }
 
   def viewMeta(id: Int) = UserAction(){ implicit user => implicit request =>
-    Req.findById(id) match {
-      case Some(req) => Rest.success(
-        "request" -> req.toJson,
+    Req.findById(id).map { req =>
+      Rest.success(
+        "request" -> req.viewJson,
+        "canSignoff" -> Json.toJson(user.canSignoff(req)),
         "author" -> User.findById(req.authorId).map(_.infoJson).getOrElse(JsNull),
-        "assessingAgency" -> {req.assessingAgencyId match {
-          case Some(id) => Agency.findById(id).map(_.toJson).getOrElse(JsNull)
-          case None => JsNull
-        }},
-        "implementingAgency" -> {req.implementingAgencyId match {
-          case Some(id) => Agency.findById(id).map(_.toJson).getOrElse(JsNull)
-          case None => JsNull
-        }}
+        "assessingAgencies" -> Json.toJson(Agency.withPermission(Permission.VALIDATE_REQUESTS).map(_.toJson)),
+        "implementingAgencies" -> Json.toJson(Agency.withPermission(Permission.IMPLEMENT_REQUESTS).map(_.toJson)),
+        "assessingAgency" -> req.assessingAgencyId.map { aid =>
+          Agency.findById(aid).map(_.toJson).getOrElse(JsNull)
+        }.getOrElse(JsNull),
+        "implementingAgency" -> req.implementingAgencyId.map { aid =>
+          Agency.findById(aid).map(_.toJson).getOrElse(JsNull)
+        }.getOrElse(JsNull),
+        "attachments" -> Json.toJson(req.attachments.map { case (attachment, uploader) =>
+          Json.obj(
+            "id" -> attachment.id.get,
+            "filename" -> attachment.filename,
+            "dateUploaded" -> attachment.dateUploaded,
+            "uploader" -> Json.obj(
+              "id" -> uploader.id.get,
+              "name" -> uploader.name
+            )
+          )
+        })
       )
-      case None => Rest.notFound()
-    }
+    }.getOrElse(Rest.notFound())
     
   }
 
@@ -44,7 +53,6 @@ object Requests extends Controller with Secured {
     val createForm: Form[Req] = Form(
       mapping(
         "amount" -> optional(number),
-        "attachments" -> seq(number),
         "description" -> nonEmptyText,
         "disasterDate" -> date,
         "disasterName" -> optional(text),
@@ -53,12 +61,11 @@ object Requests extends Controller with Secured {
         "projectType" -> nonEmptyText,
         "scopeOfWork" -> nonEmptyText
       )
-      ((amount, attachments, description, 
+      ((amount, description, 
         disasterDate, disasterName, disasterType,
         location, projectType, scope) => {
         Req(
           amount = BigDecimal(amount.getOrElse(0)),
-          attachments = attachments,
           description = description,
           disasterDate = disasterDate,
           disasterName = disasterName,
@@ -84,39 +91,14 @@ object Requests extends Controller with Secured {
 
   def signoff(id: Int) = UserAction(){ implicit user => implicit request =>
     Req.findById(id).map { r =>
-      
-      val authorized = r.level match {
-        case 0 => r.assessingAgencyId.map(_ == user.agencyId).getOrElse(false)
-        case 1 => user.isSuperAdmin
-        case 2 => user.role.name == "OP"
-        case _ => false
-      }
 
-      if(authorized){
+      if(user.canSignoff(r)){
         r.copy(level = r.level + 1).save().map( r =>
           Rest.success()
         ).getOrElse(Rest.serverError())
       } else Rest.unauthorized()
 
     }.getOrElse(Rest.notFound())
-  }
-
-  def attach(id: Int) = UserAction(parse.multipartFormData){ implicit user => implicit request =>
-    request.body.file("file").map { upload =>
-      Req.findById(id) match {
-        case Some(req) => {
-          if(user.canEditRequest(req)){
-            Attachment(filename = upload.filename, uploaderId = user.id).create().map { a =>
-              upload.ref.moveTo(new File("attachments" + File.separator + a.dateUploaded), true)
-              req.copy(attachments = req.attachments.list :+ a.id.get).save().map(
-                _ => Rest.success()
-              ).getOrElse(Rest.serverError())
-            }.getOrElse(Rest.serverError())
-          } else Rest.unauthorized()
-        }
-        case None => Rest.notFound()
-      }
-    }.getOrElse(Rest.NO_FILE)
   }
 
   def index() = UserAction(){ implicit user => implicit request =>

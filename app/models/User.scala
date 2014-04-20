@@ -180,6 +180,15 @@ case class User(
 
   def canCreateRequests = canDo(Permission.CREATE_REQUESTS)
 
+  def canSignoff(r: Req): Boolean = {
+    r.level match {
+      case 0 => r.assessingAgencyId.map(_ == agencyId).getOrElse(false)
+      case 1 => isSuperAdmin
+      case 2 => role.name == "OP"
+      case _ => false
+    }
+  }
+
   private def canDo(p: Permission): Boolean = DB.withConnection { implicit c =>
     SQL("""
       SELECT * FROM users NATURAL JOIN agencys NATURAL JOIN roles
@@ -191,7 +200,9 @@ case class User(
   }
 
   def canEditRequest(r: Req): Boolean = DB.withConnection { implicit c =>
-    r.implementingAgencyId.map(_ == agencyId).getOrElse(false) // todo add other conditions
+    isSuperAdmin ||
+    r.implementingAgencyId.map(_ == agencyId).getOrElse(false)
+    // todo add other conditions
   }
 
   def isAnonymous = id.get == -1

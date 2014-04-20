@@ -41,7 +41,7 @@ project.view = function(ctrl){
   }
 
   return app.template(ctrl.app, {class: "detail"}, [
-    ctrl.app.isAuthorized(5) ?
+    ctrl.canSignoff() ?
       m("section.approval", [
         m(".row", [
           m(".columns.medium-12", [
@@ -49,7 +49,7 @@ project.view = function(ctrl){
               m("h4", [
                 "Sign off on this request only if you feel the information is complete for your step in the approval process."
               ]),
-              m("button", [
+              m("button", {onclick: ctrl.signoff}, [
                 m("i.fa.fa-check"),
               ]),
               m("button.alert", [
@@ -86,7 +86,7 @@ project.view = function(ctrl){
               ]),
               m("h5", [m("small", "Disaster")]),
               m("h5.value", [
-                common.renderString(ctrl.project().disasterType + " " + ctrl.project().disasterName + " in " + (new Date(ctrl.project().disasterDate).toLocaleDateString("en-US", {month: "short", day: "numeric", year: "numeric"})))
+                common.renderString(ctrl.project().disasterType + " " + ctrl.project().disasterName + " in " + common.displayDate(ctrl.project().disasterDate))
               ]),
               m("h5", [m("small", "Location")]),
               m("h5.value", [
@@ -108,15 +108,15 @@ project.view = function(ctrl){
                     m("form", [
                       m("label", [
                         "Assessing Agency",
-                        m("select", [
-                          m("option", "DPWH")
-                        ]),
+                        m("select", ctrl.assessingAgencies().map(function(agency){
+                          return m("option", {value: agency.id}, agency.name)
+                        }))
                       ]),
                       m("label", [
                         "Implementing Agency",
-                        m("select", [
-                          m("option", "DPWH")
-                        ]),
+                        m("select", ctrl.implementingAgencies().map(function(agency){
+                          return m("option", {value: agency.id}, agency.name)
+                        }))
                       ]),
                     ]),
                   ])
@@ -154,24 +154,30 @@ project.view = function(ctrl){
                   m("table.doc-list", [
                     m("thead", [
                       m("tr", [
-                        m("td", "Document"),
-                        m("td", "Type"),
+                        m("td", "Filename"),
+                        m("td", "Date Uploaded"),
+                        m("td", "Uploader"),
                         m("td", "Actions")
                       ])
                     ]),
                     m("tbody", [
-                      m("tr", [
-                        m("td", "hi"),
-                        m("td", "BP202"),
-                        m("td", [
-                          m("a", {title: "Preview"}, [
-                            m("i.fa.fa-lg.fa-eye.fa-fw"),
+                      ctrl.attachments().map(function (a){
+                        return m("tr", [
+                          m("td", a.filename),
+                          m("td", common.displayDate(a.dateUploaded)),
+                          m("td", [
+                            m("a", {href: "/users/" + a.uploader.id}, a.uploader.name)
                           ]),
-                          m("a", {title: "Download"}, [
-                            m("i.fa.fa-lg.fa-download.fa-fw"),
-                          ]),
+                          m("td", [
+                            m("a", {title: "Preview", href: "/attachments/" + a.id + "/preview"}, [
+                              m("i.fa.fa-lg.fa-eye.fa-fw"),
+                            ]),
+                            m("a", {title: "Download", href: "/attachments/" + a.id + "/download"}, [
+                              m("i.fa.fa-lg.fa-download.fa-fw"),
+                            ]),
+                          ])
                         ])
-                      ])
+                      })
                     ])
                   ]),
                 ])

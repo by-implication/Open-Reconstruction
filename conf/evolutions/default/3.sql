@@ -51,7 +51,7 @@ CREATE TABLE reqs (
 	implementing_agency_id int REFERENCES agencys(agency_id),
 	req_location text NOT NULL,
 	req_remarks text,
-	req_attachments int[] NOT NULL DEFAULT '{}',
+	req_attachment_ids int[] NOT NULL DEFAULT '{}',
 	req_disaster_type disaster_type NOT NULL DEFAULT 'Typhoon',
 	req_disaster_date timestamp NOT NULL,
 	req_disaster_name text

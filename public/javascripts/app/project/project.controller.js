@@ -10,9 +10,14 @@ project.controller = function(){
   this.id = m.route.param("id");
   this.project = m.prop({});
   this.author = m.prop({});
+  this.attachments = m.prop({});
   this.oldProject = m.prop({});
   this.location = m.prop("");
+  this.canSignoff = m.prop(false);
   // this.coords = m.prop(null);
+  
+  this.assessingAgencies = m.prop([]);
+  this.implementingAgencies = m.prop([]);
 
   function parseLocation(location){
     var split = location.split(',').map(function(coord){return parseFloat(coord)});
@@ -33,12 +38,22 @@ project.controller = function(){
   m.request({method: "GET", url: "/requests/"+this.id+"/meta"}).then(function(data){
     this.project(data.request);
     this.author(data.author);
+    this.attachments(data.attachments);
+    this.assessingAgencies(data.assessingAgencies);
+    this.implementingAgencies(data.implementingAgencies);
+    this.canSignoff(data.canSignoff);
     parseLocation(data.request.location);
   }.bind(this));
 
   database.pull().then(function(data){
     this.oldProject(database.projectList()[this.id - 1]);
   }.bind(this))
+
+  this.signoff = function(){
+    m.request({method: "POST", url: "/requests/"+this.id+"/signoff"}).then(function(data){
+      alert('Signoff successful! Replace this message with something more useful.');
+    }.bind(this));
+  }.bind(this);
 
   this.initMap = function(elem, isInit){
     if(!isInit){
@@ -83,12 +98,10 @@ project.controller = function(){
   ]);
 
   this.initImageDropzone = function(elem, isInit){
-    // this.dropzone = {};
-    // console.log(isInit);
     if(!isInit){
 
       this.dropzone = new Dropzone(elem, {
-        url: "/file/post", 
+        url: "/requests/" + this.id + "/attach",
         previewTemplate: m.stringify(dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop photos here, or click to browse.",
         clickable: true,
@@ -98,12 +111,10 @@ project.controller = function(){
   }.bind(this);
 
   this.initDocDropzone = function(elem, isInit){
-    // this.dropzone = {};
-    // console.log(isInit);
     if(!isInit){
 
       this.dropzone = new Dropzone(elem, {
-        url: "/file/post", 
+        url: "/requests/" + this.id + "/attach",
         previewTemplate: m.stringify(dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop documents here, or click to browse. We recommend pdfs and doc files.",
         clickable: true,

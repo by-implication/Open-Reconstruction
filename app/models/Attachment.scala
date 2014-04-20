@@ -2,6 +2,7 @@ package recon.models
 
 import anorm._
 import anorm.SqlParser._
+import java.io.File
 import java.sql.Timestamp
 import play.api.db._
 import play.api.libs.json._
@@ -19,6 +20,13 @@ case class Attachment(
   uploaderId: Int = 0
 ) extends AttachmentCCGen with Entity[Attachment]
 // GENERATED case class end
+{
+  lazy val file = new File(Seq(
+    "attachments",
+    dateUploaded.toString.split(" ")(0),
+    id)
+  .mkString(File.separator))
+}
 
 // GENERATED object start
 trait AttachmentGen extends EntityCompanion[Attachment] {
