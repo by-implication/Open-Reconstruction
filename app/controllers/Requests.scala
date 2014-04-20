@@ -32,7 +32,14 @@ object Requests extends Controller with Secured {
         "implementingAgency" -> req.implementingAgencyId.map { aid =>
           Agency.findById(aid).map(_.toJson).getOrElse(JsNull)
         }.getOrElse(JsNull),
-        "attachments" -> Json.toJson(req.attachments.map((Attachment.insertJson _).tupled))
+        "attachments" -> {
+          val (imgs, docs) = req.attachments.partition(_._1.isImage)
+          val tf = (Attachment.insertJson _).tupled
+          Json.obj(
+            "imgs" -> imgs.map(tf),
+            "docs" -> docs.map(tf)
+          )
+        }
       )
     }.getOrElse(Rest.notFound())
     

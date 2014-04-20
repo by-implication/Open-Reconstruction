@@ -25,9 +25,10 @@ POST	/requests/:id/comment		controllers.Requests.comment(id: Int)
 POST	/requests/:rid/assign/assessing/:aid	controllers.Requests.assignAssessingAgency(rid: Int, aid: Int)
 POST  /requests/:rid/assign/implementing/:aid  controllers.Requests.assignImplementingAgency(rid: Int, aid: Int)
 
-POST    /requests/:id/attach        controllers.Attachments.add(id: Int)
+POST    /requests/:id/attach/:type  controllers.Attachments.add(id: Int, type: String)
 GET	    /attachments/:id/preview    controllers.Attachments.preview(id: Int)
 GET	    /attachments/:id/download   controllers.Attachments.download(id: Int)
+GET	    /attachments/:id/thumb		controllers.Attachments.thumb(id: Int)
 
 GET     /agencies/all/meta          controllers.Agencies.allMeta()
 GET     /agencies/new/meta          controllers.Agencies.createMeta()

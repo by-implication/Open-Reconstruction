@@ -122,14 +122,21 @@ project.controller = function(){
     if(!isInit){
 
       this.dropzone = new Dropzone(elem, {
-        url: "/requests/" + this.id + "/attach",
+        url: "/requests/" + this.id + "/attach/img",
         previewTemplate: m.stringify(dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop photos here, or click to browse.",
         clickable: true,
         autoDiscover: false,
         thumbnailWidth: 128,
-        thumbnailHeight: 128
+        thumbnailHeight: 128,
+        acceptedFiles: "image/*"
       })
+
+      this.dropzone.on("success", function (_, r){
+        this.attachments().imgs.push(r.attachment);
+        m.redraw();
+      }.bind(this));
+
     }
   }.bind(this);
 
@@ -137,7 +144,7 @@ project.controller = function(){
     if(!isInit){
 
       this.dropzone = new Dropzone(elem, {
-        url: "/requests/" + this.id + "/attach",
+        url: "/requests/" + this.id + "/attach/doc",
         previewTemplate: m.stringify(dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop documents here, or click to browse. We recommend pdfs and doc files.",
         clickable: true,
@@ -145,7 +152,7 @@ project.controller = function(){
       });
 
       this.dropzone.on("success", function (_, r){
-        this.attachments().push(r.attachment);
+        this.attachments().docs.push(r.attachment);
         m.redraw();
       }.bind(this));
 
