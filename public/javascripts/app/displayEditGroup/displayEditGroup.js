@@ -1,9 +1,9 @@
 var displayEditGroup = {
-  controller: function(srcObject, srcName){
+  controller: function(req, field){
     this.isEditMode = m.prop(false);
     this.input = m.prop("");
-    this.srcObject = srcObject;
-    this.srcName = srcName;
+    this.req = req;
+    this.field = field;
   },
   view: function(ctrl, viewView, editView){
     return m(".display-edit-group",{className: ctrl.isEditMode() ? "edit-mode" : ""}, [
@@ -15,9 +15,18 @@ var displayEditGroup = {
       : m(".save-cancel-group", [
           m("button.micro.save-button", 
             {type: "button", onclick: function(){
-              // make a request and callback
-              ctrl.srcObject()[ctrl.srcName] = ctrl.input();
-              ctrl.isEditMode(false);
+              m.request({
+                method: "POST", url: "/requests/" + ctrl.req().id + "/edit/" + ctrl.field,
+                data: {input: ctrl.input},
+                config: app.xhrConfig
+              }).then(function (r){
+                if(r.success){
+                  ctrl.req()[ctrl.field] = ctrl.input();
+                } else {
+                  alert("Your input was invalid.");
+                }
+                ctrl.isEditMode(false);
+              });
             } }, 
             [ "Save Changes", m("i.fa.fa-check.fa-lg") ]
           ),

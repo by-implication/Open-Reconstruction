@@ -25,6 +25,7 @@ POST	  /requests/:id/comment		    controllers.Requests.comment(id: Int)
 POST    /requests/:id/reviseAmount  controllers.Requests.reviseAmount(id: Int)
 POST	  /requests/:rid/assign/assessing/:aid	   controllers.Requests.assignAssessingAgency(rid: Int, aid: Int)
 POST    /requests/:rid/assign/implementing/:aid  controllers.Requests.assignImplementingAgency(rid: Int, aid: Int)
+POST    /requests/:id/edit/:f       controllers.Requests.editField(id: Int, f: String)
 
 POST    /requests/:id/attach/:type  controllers.Attachments.add(id: Int, type: String)
 GET	    /attachments/:id/preview    controllers.Attachments.preview(id: Int)
