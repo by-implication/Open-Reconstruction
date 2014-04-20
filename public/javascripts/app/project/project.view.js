@@ -69,7 +69,7 @@ project.view = function(ctrl){
               ]),
               m("h5", [m("small", "Disaster")]),
               m("h5.value", [
-                common.renderString(ctrl.project().disasterType + " " + ctrl.project().disasterName + ", in " + (new Date(ctrl.project().disasterDate).toString()))
+                common.renderString(ctrl.project().disasterType + " " + ctrl.project().disasterName + " in " + (new Date(ctrl.project().disasterDate).toLocaleDateString("en-US", {month: "short", day: "numeric", year: "numeric"})))
               ]),
               m("h5", [m("small", "Location")]),
               m("h5.value", [
