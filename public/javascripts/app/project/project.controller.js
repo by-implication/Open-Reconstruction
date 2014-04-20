@@ -34,7 +34,7 @@ project.controller = function(){
     } else {
       this.coords(new L.LatLng(split[0], split[1]));
       window.setTimeout(function(){
-        map.setView(this.coords(), 8);
+        if(map) map.setView(this.coords(), 8);
         L.marker(this.coords()).addTo(map);
       }.bind(this), 200) // I'M SO SORRY
     }
@@ -42,8 +42,19 @@ project.controller = function(){
 
   this.dropzone = null;
 
+  this.curUserCanUpload = function(){
+    // if requester, you can only upload if the assessor hasn't approved it
+    return (this.currentUserIsAuthor() && this.project().level === 0)
+    ||
+    // if assesor, can only upload if you haven't approved it
+    (this.currentUserBelongsToAssessingAgency() && this.project().level === 0)
+    ||
+    // if OCD, can only upload if you haven't approved it
+    (this.app.isSuperAdmin() && this.project().level <= 1)
+  }
+
   this.currentUserBelongsToAssessingAgency = function(){
-    return (this.assessingAgency() ? this.assessingAgency().id : null) === (this.app.getCurrentUserProp("agency") ? this.app.getCurrentUserProp("agency").id : null) ;
+    return this.assessingAgency() && this.app.getCurrentUserProp("agency") && (this.assessingAgency().id === this.app.getCurrentUserProp("agency").id);
   }
 
   this.currentUserIsAuthor = function(){

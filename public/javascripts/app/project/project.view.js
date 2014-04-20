@@ -174,7 +174,8 @@ project.view = function(ctrl){
               })
               .case("Images", function(){
                 return m(".section", [
-                  ctrl.currentUserBelongsToAssessingAgency() || ctrl.currentUserIsAuthor() ?
+                  // console.log(ctrl.project().level),
+                  ctrl.curUserCanUpload() ?
                     m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
                   : null,
 
@@ -206,7 +207,7 @@ project.view = function(ctrl){
               })
               .case("Documents", function(){
                 return m(".section", [
-                  ctrl.currentUserBelongsToAssessingAgency() || ctrl.currentUserIsAuthor() ?
+                  ctrl.curUserCanUpload() ?
                     m("div.dropzone", {config: ctrl.initDocDropzone})
                   : null,
 
@@ -304,7 +305,7 @@ project.listView = function(ctrl){
             m("a.name", {href: url, config: m.route}, project.description)
           ]),
           m("td", [
-            project.author.agency ? project.author.agency: null
+            project.author.agency
           ]),
           m("td.text-right", helper.commaize(project.amount.toFixed(2)))
         ])
