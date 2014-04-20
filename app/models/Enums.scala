@@ -3,34 +3,6 @@ package recon.models
 
 import recon.support._
 
-sealed class ProjectType(override val name: String) extends PGObject("project_type", name) with ProjectType.Value
-object ProjectType extends Enum[ProjectType] {
-  val BRIDGE = new ProjectType("Bridge")
-  val WATER_SYSTEM = new ProjectType("Water System")
-  val OTHERS = new ProjectType("Others")
-  val FINANCIAL_AID = new ProjectType("Financial Aid")
-  val ROAD = new ProjectType("Road")
-  val FLOOD_CONTROL = new ProjectType("Flood Control")
-  val RIVER_CONTROL = new ProjectType("River Control")
-  val RIVERS = new ProjectType("Rivers")
-  val SCHOOL_BUILDING = new ProjectType("School Building")
-  val SEAWALL = new ProjectType("Seawall")
-  val EQUIPMENT = new ProjectType("Equipment")
-  val IRRIGATION_SYSTEM = new ProjectType("Irrigation System")
-  val BUILDING = new ProjectType("Building")
-  val HOUSE = new ProjectType("House")
-  val ROAD_OR_BRIDGE = new ProjectType("Road Or Bridge")
-  val HOUSING_UNITS = new ProjectType("Housing Units")
-  val EVAC_CENTER = new ProjectType("Evac Center")
-}
-
-sealed class ProjectScope(override val name: String) extends PGObject("project_scope", name) with ProjectScope.Value
-object ProjectScope extends Enum[ProjectScope] {
-  val REPAIR_AND_REHABILITATION = new ProjectScope("Repair and Rehabilitation")
-  val RECONSTRUCTION = new ProjectScope("Reconstruction")
-  val OTHER = new ProjectScope("Other")
-}
-
 sealed class DisasterType(override val name: String) extends PGObject("disaster_type", name) with DisasterType.Value
 object DisasterType extends Enum[DisasterType] {
   val TYPHOON = new DisasterType("Typhoon")
@@ -40,4 +12,31 @@ object DisasterType extends Enum[DisasterType] {
   val FIRE = new DisasterType("Fire")
   val ANTHROPOGENIC = new DisasterType("Anthropogenic")
   val NONE_OR_PREVENTIVE = new DisasterType("None or Preventive")
+}
+
+sealed class ProjectType(override val name: String) extends PGObject("project_type", name) with ProjectType.Value
+object ProjectType extends Enum[ProjectType] {
+  val BRIDGE = new ProjectType("Bridge")
+  val BUILDING = new ProjectType("Building")
+  val EQUIPMENT = new ProjectType("Equipment")
+  val EVAC_CENTER = new ProjectType("Evac Center")
+  val FINANCIAL_AID = new ProjectType("Financial Aid")
+  val FLOOD_CONTROL = new ProjectType("Flood Control")
+  val HOUSE = new ProjectType("House")
+  val HOUSING_UNITS = new ProjectType("Housing Units")
+  val IRRIGATION_SYSTEM = new ProjectType("Irrigation System")
+  val RIVER_CONTROL = new ProjectType("River Control")
+  val RIVERS = new ProjectType("Rivers")
+  val ROAD = new ProjectType("Road")
+  val SCHOOL_BUILDING = new ProjectType("School Building")
+  val SEAWALL = new ProjectType("Seawall")
+  val WATER_SYSTEM = new ProjectType("Water System")
+  val OTHERS = new ProjectType("Others")
+}
+
+sealed class ProjectScope(override val name: String) extends PGObject("project_scope", name) with ProjectScope.Value
+object ProjectScope extends Enum[ProjectScope] {
+  val REPAIR_AND_REHABILITATION = new ProjectScope("Repair and Rehabilitation")
+  val RECONSTRUCTION = new ProjectScope("Reconstruction")
+  val OTHER = new ProjectScope("Other")
 }
