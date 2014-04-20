@@ -196,8 +196,7 @@ project.view = function(ctrl){
                           m(".date", [
                             helper.timeago(new Date(img.dateUploaded)),
                           ]),
-                        ]),
-                        console.log(img)
+                        ])
                       ]);
                     }))
                   : m("h3.empty", [
