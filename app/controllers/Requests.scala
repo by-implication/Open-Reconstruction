@@ -22,6 +22,7 @@ object Requests extends Controller with Secured {
     Req.findById(id).map { req =>
       Rest.success(
         "request" -> req.viewJson,
+        "canEdit" -> Json.toJson(user.canEditRequest(req)),
         "isInvolved" -> Json.toJson(user.isInvolvedWith(req)),
         "hasSignedoff" -> Json.toJson(user.hasSignedoff(req)),
         "canSignoff" -> Json.toJson(user.canSignoff(req)),
