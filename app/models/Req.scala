@@ -51,6 +51,27 @@ case class Req(
     "amount" -> amount,
     "author" -> Map("agency" -> author.agency.name)
   )
+
+  def toJson = Json.obj(
+    "id" -> id.get,
+    "description" -> description,
+    "projectType" -> projectType.toString,
+    "amount" -> amount,
+    "scope" -> scope.toString,
+    "date" -> date,
+    "level" -> level,
+    "isValidated" -> isValidated,
+    "isRejected" -> isRejected,
+    "authorId" -> authorId,
+    "assessingAgencyId" -> (assessingAgencyId.getOrElse(0):Int),
+    "implementingAgencyId" -> (implementingAgencyId.getOrElse(0):Int),
+    "location" -> location,
+    "remarks" -> (remarks.getOrElse(""):String),
+    "attachments" -> attachments,
+    "disasterType" -> disasterType.toString,
+    "disasterDate" -> disasterDate,
+    "disasterName" -> (disasterName.getOrElse(""):String)
+  )
   
 }
 
