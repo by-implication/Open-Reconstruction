@@ -233,20 +233,21 @@ project.view = function(ctrl){
 }
 
 project.summary = function(ctrl){
-  var editButton = function(){
-    return m("button.micro.edit-button", [
-      m("i.fa.fa-edit.fa-lg"),
-    ])
-  }
+
   return m(".project-stub", [
     m(".section.type", [
       ctrl.project().projectType
     ]),
     m(".section", [
-      m("div.display-edit-group", [
-        editButton(),
-        m("h4", ctrl.project().description),
-      ]),
+      displayEditGroup.view(
+        ctrl.degDescription,
+        function(){ return m("h4", ctrl.project().description) }, 
+        function(){
+          return m("h4", [
+            "editing!"
+          ])
+        }
+      ),
       m("p.meta", [
         "Posted by ",
         m("a",{href: "/users/"+ctrl.project().authorId, config: m.route}, ctrl.author().name),
@@ -257,28 +258,35 @@ project.summary = function(ctrl){
     m("hr"),
     m("div.section", [
       m("h5", [m("small", "Amount")]),
-      m(".display-edit-group", [
-        editButton(),
-        m("h5.value", [
-          common.renderString(
-            helper.commaize(ctrl.project().amount)
-          )
-        ]),
-      ]),
+      displayEditGroup.view(
+        ctrl.degAmount,
+        function(){ return m("h5.value", [helper.commaize(ctrl.project().amount)]) }, 
+        function(){ 
+          return m("h5.value", [
+            "editing!"
+          ])
+        }
+      ),
       m("h5", [m("small", "Disaster")]),
-      m(".display-edit-group", [
-        editButton(),
-        m("h5.value", [
-          common.renderString(ctrl.project().disasterType + " " + ctrl.project().disasterName + " in " + common.displayDate(ctrl.project().disasterDate))
-        ]),
-      ]),
+      displayEditGroup.view(
+        ctrl.degDisaster, 
+        function(){ return m("h5.value", [ctrl.project().disasterType + " " + ctrl.project().disasterName + " in " + common.displayDate(ctrl.project().disasterDate)]) }, 
+        function(){ 
+          return m("h5.value", [
+            "editing!"
+          ])
+        }
+      ),
       m("h5", [m("small", "Location")]),
-      m(".display-edit-group", [
-        editButton(),
-        m("h5.value", [
-          common.renderString(ctrl.project().location)
-        ])
-      ]),
+      displayEditGroup.view(
+        ctrl.degLocation, 
+        function(){ return m("h5.value", [ctrl.project().location]) }, 
+        function(){ 
+          return m("h5.value", [
+            "editing!"
+          ])
+        }
+      ),
     ]),
     m(".map-container", [
       m("#detailMap", {config: ctrl.initMap}),
