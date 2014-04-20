@@ -12,6 +12,7 @@ project.controller = function(){
   this.author = m.prop({});
   this.oldProject = m.prop({});
   this.location = m.prop("");
+  this.canSignoff = m.prop(false);
   // this.coords = m.prop(null);
   
   this.assessingAgencies = m.prop([]);
@@ -38,12 +39,19 @@ project.controller = function(){
     this.author(data.author);
     this.assessingAgencies(data.assessingAgencies);
     this.implementingAgencies(data.implementingAgencies);
+    this.canSignoff(data.canSignoff);
     parseLocation(data.request.location);
   }.bind(this));
 
   database.pull().then(function(data){
     this.oldProject(database.projectList()[this.id - 1]);
   }.bind(this))
+
+  this.signoff = function(){
+    m.request({method: "POST", url: "/requests/"+this.id+"/signoff"}).then(function(data){
+      alert('Signoff successful! Replace this message with something more useful.');
+    }.bind(this));
+  }.bind(this);
 
   this.initMap = function(elem, isInit){
     if(!isInit){
