@@ -3,6 +3,7 @@ package controllers
 import play.api._
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.libs.json.Json
 import play.api.mvc._
 import recon.models._
 import recon.support._
@@ -65,7 +66,8 @@ object Users extends Controller with Secured {
   def viewMeta(id: Int): Action[AnyContent] = GenericAction(){ implicit currentUser => implicit request =>
     User.findById(id) match {
       case Some(user) => Rest.success(
-        "user" -> user.infoJson
+        "user" -> user.infoJson,
+        "requests" -> Json.toJson(user.authoredRequests.map(_.indexJson))
       )
       case None => Rest.notFound()
     }

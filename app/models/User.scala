@@ -184,6 +184,8 @@ case class User(
 
   var sessionId = -1
 
+  def authoredRequests: Seq[Req] = Req.authoredBy(id)
+
   def isInvolvedWith(r: Req): Boolean = {
     r.authorId == id.get || {role.name match {
       case OCD | OP | DBM => true
