@@ -178,6 +178,25 @@ case class User(
 
   var sessionId = -1
 
+  def isInvolvedWith(r: Req): Boolean = {
+    role.name match {
+      case "OCD" | "OP" | "DBM" => true
+      case _ => r.assessingAgencyId.map(_ == agencyId).getOrElse(false)
+    }
+  }
+
+  def hasSignedoff(r: Req): Boolean = {
+    isInvolvedWith(r) && {
+      val checks = List[Boolean](
+        (agencyId == r.assessingAgencyId),
+        (role.name == "OCD"),
+        (role.name == "OP"),
+        (role.name == "DBM")
+      )
+      checks.take(r.level).foldLeft(false)(_ || _)
+    }
+  }
+
   def canCreateRequests = canDo(Permission.CREATE_REQUESTS)
   def canAssignFunding = canDo(Permission.ASSIGN_FUNDING)
 
@@ -189,6 +208,7 @@ case class User(
         case 0 => r.assessingAgencyId.map(_ == agencyId).getOrElse(false)
         case 1 => isSuperAdmin
         case 2 => role.name == "OP"
+        case 3 => role.name == "DBM"
         case _ => false
       }
     }

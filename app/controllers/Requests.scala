@@ -22,6 +22,8 @@ object Requests extends Controller with Secured {
     Req.findById(id).map { req =>
       Rest.success(
         "request" -> req.viewJson,
+        "isInvolved" -> Json.toJson(user.isInvolvedWith(req)),
+        "hasSignedoff" -> Json.toJson(user.hasSignedoff(req)),
         "canSignoff" -> Json.toJson(user.canSignoff(req)),
         "author" -> User.findById(req.authorId).map(_.infoJson).getOrElse(JsNull),
         "assessingAgencies" -> Json.toJson(Agency.withPermission(Permission.VALIDATE_REQUESTS).map(_.toJson)),
