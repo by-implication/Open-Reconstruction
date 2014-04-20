@@ -83,12 +83,10 @@ project.controller = function(){
   ]);
 
   this.initImageDropzone = function(elem, isInit){
-    // this.dropzone = {};
-    // console.log(isInit);
     if(!isInit){
 
       this.dropzone = new Dropzone(elem, {
-        url: "/file/post", 
+        url: "/requests/" + this.id + "/attach",
         previewTemplate: m.stringify(dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop photos here, or click to browse.",
         clickable: true,
@@ -98,12 +96,10 @@ project.controller = function(){
   }.bind(this);
 
   this.initDocDropzone = function(elem, isInit){
-    // this.dropzone = {};
-    // console.log(isInit);
     if(!isInit){
 
       this.dropzone = new Dropzone(elem, {
-        url: "/file/post", 
+        url: "/requests/" + this.id + "/attach",
         previewTemplate: m.stringify(dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop documents here, or click to browse. We recommend pdfs and doc files.",
         clickable: true,

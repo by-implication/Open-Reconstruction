@@ -32,13 +32,21 @@ case class Req(
   implementingAgencyId: Option[Int] = None,
   location: String = "",
   remarks: Option[String] = None,
-  attachments: PGIntList = Nil,
+  attachmentIds: PGIntList = Nil,
   disasterType: DisasterType = DisasterType.TYPHOON,
   disasterDate: Timestamp = Time.now,
   disasterName: Option[String] = None
 ) extends ReqCCGen with Entity[Req]
 // GENERATED case class end
 {
+
+  lazy val attachments: Seq[(Attachment, User)] = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT * FROM attachments LEFT JOIN users ON uploader_id = user_id
+      WHERE attachment_id = ANY({attachmentIds})
+    """)
+    .on('attachmentIds -> attachmentIds).list(Attachment.simple ~ User.simple map(flatten))
+  }
 
   lazy val author = User.findById(authorId).get
 
@@ -52,7 +60,7 @@ case class Req(
     "author" -> Map("agency" -> author.agency.name)
   )
 
-  def toJson = Json.obj(
+  def viewJson = Json.obj(
     "id" -> id.get,
     "description" -> description,
     "projectType" -> projectType.toString,
@@ -63,12 +71,11 @@ case class Req(
     "isValidated" -> isValidated,
     "isRejected" -> isRejected,
     "authorId" -> authorId,
-    "assessingAgencyId" -> (assessingAgencyId.getOrElse(0):Int),
-    "implementingAgencyId" -> (implementingAgencyId.getOrElse(0):Int),
+    "assessingAgencyId" -> assessingAgencyId,
+    "implementingAgencyId" -> implementingAgencyId,
     "location" -> location,
     "remarks" -> (remarks.getOrElse(""):String),
-    "attachments" -> attachments,
-    "disasterType" -> disasterType.toString,
+    "disasterType" -> disasterType.name,
     "disasterDate" -> disasterDate,
     "disasterName" -> (disasterName.getOrElse(""):String)
   )
@@ -92,12 +99,12 @@ trait ReqGen extends EntityCompanion[Req] {
     get[Option[Int]]("implementing_agency_id") ~
     get[String]("req_location") ~
     get[Option[String]]("req_remarks") ~
-    get[PGIntList]("req_attachments") ~
+    get[PGIntList]("req_attachment_ids") ~
     get[DisasterType]("req_disaster_type") ~
     get[Timestamp]("req_disaster_date") ~
     get[Option[String]]("req_disaster_name") map {
-      case id~description~projectType~amount~scope~date~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachments~disasterType~disasterDate~disasterName =>
-        Req(id, description, projectType, amount, scope, date, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachments, disasterType, disasterDate, disasterName)
+      case id~description~projectType~amount~scope~date~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachmentIds~disasterType~disasterDate~disasterName =>
+        Req(id, description, projectType, amount, scope, date, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachmentIds, disasterType, disasterDate, disasterName)
     }
   }
 
@@ -136,7 +143,7 @@ trait ReqGen extends EntityCompanion[Req] {
             implementing_agency_id,
             req_location,
             req_remarks,
-            req_attachments,
+            req_attachment_ids,
             req_disaster_type,
             req_disaster_date,
             req_disaster_name
@@ -155,7 +162,7 @@ trait ReqGen extends EntityCompanion[Req] {
             {implementingAgencyId},
             {location},
             {remarks},
-            {attachments},
+            {attachmentIds},
             {disasterType},
             {disasterDate},
             {disasterName}
@@ -175,7 +182,7 @@ trait ReqGen extends EntityCompanion[Req] {
           'implementingAgencyId -> o.implementingAgencyId,
           'location -> o.location,
           'remarks -> o.remarks,
-          'attachments -> o.attachments,
+          'attachmentIds -> o.attachmentIds,
           'disasterType -> o.disasterType,
           'disasterDate -> o.disasterDate,
           'disasterName -> o.disasterName
@@ -199,7 +206,7 @@ trait ReqGen extends EntityCompanion[Req] {
             implementing_agency_id,
             req_location,
             req_remarks,
-            req_attachments,
+            req_attachment_ids,
             req_disaster_type,
             req_disaster_date,
             req_disaster_name
@@ -218,7 +225,7 @@ trait ReqGen extends EntityCompanion[Req] {
             {implementingAgencyId},
             {location},
             {remarks},
-            {attachments},
+            {attachmentIds},
             {disasterType},
             {disasterDate},
             {disasterName}
@@ -238,7 +245,7 @@ trait ReqGen extends EntityCompanion[Req] {
           'implementingAgencyId -> o.implementingAgencyId,
           'location -> o.location,
           'remarks -> o.remarks,
-          'attachments -> o.attachments,
+          'attachmentIds -> o.attachmentIds,
           'disasterType -> o.disasterType,
           'disasterDate -> o.disasterDate,
           'disasterName -> o.disasterName
@@ -263,7 +270,7 @@ trait ReqGen extends EntityCompanion[Req] {
         implementing_agency_id={implementingAgencyId},
         req_location={location},
         req_remarks={remarks},
-        req_attachments={attachments},
+        req_attachment_ids={attachmentIds},
         req_disaster_type={disasterType},
         req_disaster_date={disasterDate},
         req_disaster_name={disasterName}
@@ -283,7 +290,7 @@ trait ReqGen extends EntityCompanion[Req] {
       'implementingAgencyId -> o.implementingAgencyId,
       'location -> o.location,
       'remarks -> o.remarks,
-      'attachments -> o.attachments,
+      'attachmentIds -> o.attachmentIds,
       'disasterType -> o.disasterType,
       'disasterDate -> o.disasterDate,
       'disasterName -> o.disasterName
