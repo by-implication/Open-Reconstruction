@@ -23,6 +23,7 @@ GET     /requests/:id/meta          controllers.Requests.viewMeta(id: Int)
 POST    /requests/:id/signoff       controllers.Requests.signoff(id: Int)
 POST    /requests/:id/attach        controllers.Requests.attach(id: Int)
 POST	/requests/:id/comment		controllers.Requests.comment(id: Int)
+POST	/requests/:rid/assign/:aid	controllers.Requests.assignToAgency(rid: Int, aid: Int)
 
 GET     /agencies/all/meta          controllers.Agencies.allMeta()
 GET     /agencies/new/meta          controllers.Agencies.createMeta()

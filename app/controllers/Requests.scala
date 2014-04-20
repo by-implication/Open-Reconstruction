@@ -138,4 +138,17 @@ object Requests extends Controller with Secured {
 
   }
 
+  def assignToAgency(reqId: Int, agencyId: Int) = UserAction(){ implicit user => implicit request =>
+    if(user.isSuperAdmin){
+      Req.findById(reqId).map { req =>
+        Agency.findById(agencyId).map { agency =>
+          if(agency.canAssess()){
+            req.copy(assessingAgencyId = Some(agencyId)).save().map(_ => Rest.success())
+            .getOrElse(Rest.serverError())
+          } else Rest.error("Agency not authorized to assess.")
+        }.getOrElse(Rest.notFound())
+      }.getOrElse(Rest.notFound())
+    } else Rest.unauthorized()
+  }
+
 }

@@ -43,6 +43,19 @@ case class Agency(
       "role" -> roleId // change this to role.toJson
     )
   }
+
+  def canAssess() = canDo(Permission.VALIDATE_REQUESTS)
+
+  private def canDo(p: Permission): Boolean = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT * FROM agencys NATURAL JOIN roles
+      WHERE agency_id = {agencyId} AND {permission} = ANY(role_permissions)
+    """).on(
+      'agencyId -> id,
+      'permission -> p.value
+    ).list(Agency.simple).length > 0
+  }
+
 }
 // GENERATED object start
 trait AgencyGen extends EntityCompanion[Agency] {
