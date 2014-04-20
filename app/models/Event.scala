@@ -42,7 +42,7 @@ object Event extends EventGen {
   }
 
   def disaster()(implicit req: Req, user: User) = {
-    generate("disaster", req.disasterType + ":" + req.disasterName).copy(date = req.disasterDate)
+    generate("disaster", req.disasterName.getOrElse("") + ":" + req.disasterType).copy(date = req.disasterDate)
   }
 
   def findForRequest(id: Int) = DB.withConnection { implicit c =>
