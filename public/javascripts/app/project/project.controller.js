@@ -111,6 +111,13 @@ project.controller = function(){
     });
   }.bind(this);
 
+  this.submitAmountRevision = function(e){
+    e.preventDefault()
+    m.request({method: "POST", url: "/requests/" + this.id + "/reviseAmount", data: {amount: this.input.amount}, config: app.xhrConfig}).then(function(r){
+      console.log('Amount revision submitted!');
+    });
+  }.bind(this);
+
   this.updateAssessingAgency = function(e){
     this.input.assessingAgency(e);
     m.request({method: "POST", url: "/requests/" + this.id + "/assign/assessing/" + this.input.assessingAgency()}).then(function(r){

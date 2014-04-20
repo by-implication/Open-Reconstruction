@@ -118,6 +118,34 @@ object Requests extends Controller with Secured {
 
   }
 
+  def reviseAmount(id: Int) = UserAction(){ implicit user => implicit request =>
+    if(!user.isAnonymous){
+      Req.findById(id) match {
+        case Some(req) => {
+          Form("amount" -> text.verifying("Invalid amount",
+            _amount => {
+              try {
+                val amount = BigDecimal(_amount)
+                (amount >= 0)
+              } catch {
+                case e: NumberFormatException => false
+              }
+            }
+          )).bindFromRequest.fold(
+            Rest.formError(_),
+            amount => Event(kind = "reviseAmount", content = Some(amount), reqId = id, userId = Some(user.id)).create().map { c =>
+              req.copy(amount = BigDecimal(amount)).save().map{r =>
+                Rest.success()
+              }.getOrElse(Rest.serverError())
+            }.getOrElse(Rest.serverError())
+          )
+        }
+        case None => Rest.notFound()
+      }
+    } else Rest.unauthorized()
+
+  }
+
   def assignAssessingAgency(reqId: Int, agencyId: Int) = UserAction(){ implicit user => implicit request =>
     if(user.isSuperAdmin){
       Req.findById(reqId).map { req =>
