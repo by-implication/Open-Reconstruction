@@ -28,15 +28,24 @@ case class Attachment(
   id: Pk[Int] = NA,
   dateUploaded: Timestamp = Time.now,
   filename: String = "",
-  uploaderId: Int = 0
+  uploaderId: Int = 0,
+  isImage: Boolean = true
 ) extends AttachmentCCGen with Entity[Attachment]
 // GENERATED case class end
 {
-  lazy val file = new File(Seq(
-    "attachments",
-    dateUploaded.toString.split(" ")(0),
-    id)
-  .mkString(File.separator))
+  
+  private lazy val folderSeq = Seq("attachments", dateUploaded.toString.split(" ")(0))
+
+  lazy val path = (folderSeq :+ id.toString).mkString(File.separator)
+
+  lazy val file = new File(path)
+
+  lazy val thumbPath = {
+    (folderSeq :+ ("t" + id)).mkString(File.separator)
+  }
+
+  lazy val thumb = new File(thumbPath)
+
 }
 
 // GENERATED object start
@@ -45,9 +54,10 @@ trait AttachmentGen extends EntityCompanion[Attachment] {
     get[Pk[Int]]("attachment_id") ~
     get[Timestamp]("attachment_date_uploaded") ~
     get[String]("attachment_filename") ~
-    get[Int]("uploader_id") map {
-      case id~dateUploaded~filename~uploaderId =>
-        Attachment(id, dateUploaded, filename, uploaderId)
+    get[Int]("uploader_id") ~
+    get[Boolean]("attachment_image") map {
+      case id~dateUploaded~filename~uploaderId~isImage =>
+        Attachment(id, dateUploaded, filename, uploaderId, isImage)
     }
   }
 
@@ -75,18 +85,21 @@ trait AttachmentGen extends EntityCompanion[Attachment] {
             attachment_id,
             attachment_date_uploaded,
             attachment_filename,
-            uploader_id
+            uploader_id,
+            attachment_image
           ) VALUES (
             DEFAULT,
             {dateUploaded},
             {filename},
-            {uploaderId}
+            {uploaderId},
+            {isImage}
           )
         """).on(
           'id -> o.id,
           'dateUploaded -> o.dateUploaded,
           'filename -> o.filename,
-          'uploaderId -> o.uploaderId
+          'uploaderId -> o.uploaderId,
+          'isImage -> o.isImage
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -96,18 +109,21 @@ trait AttachmentGen extends EntityCompanion[Attachment] {
             attachment_id,
             attachment_date_uploaded,
             attachment_filename,
-            uploader_id
+            uploader_id,
+            attachment_image
           ) VALUES (
             {id},
             {dateUploaded},
             {filename},
-            {uploaderId}
+            {uploaderId},
+            {isImage}
           )
         """).on(
           'id -> o.id,
           'dateUploaded -> o.dateUploaded,
           'filename -> o.filename,
-          'uploaderId -> o.uploaderId
+          'uploaderId -> o.uploaderId,
+          'isImage -> o.isImage
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -118,13 +134,15 @@ trait AttachmentGen extends EntityCompanion[Attachment] {
       update attachments set
         attachment_date_uploaded={dateUploaded},
         attachment_filename={filename},
-        uploader_id={uploaderId}
+        uploader_id={uploaderId},
+        attachment_image={isImage}
       where attachment_id={id}
     """).on(
       'id -> o.id,
       'dateUploaded -> o.dateUploaded,
       'filename -> o.filename,
-      'uploaderId -> o.uploaderId
+      'uploaderId -> o.uploaderId,
+      'isImage -> o.isImage
     ).executeUpdate() > 0
   }
 

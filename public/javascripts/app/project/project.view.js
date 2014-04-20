@@ -171,17 +171,11 @@ project.view = function(ctrl){
                   ctrl.app.isAuthorized(3)?
                     m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
                   : null,
-                  m("ul.small-block-grid-3", [
-                    m("li", [
-                      m("img[src='http://placehold.it/400x300']")
-                    ]),
-                    m("li", [
-                      m("img[src='http://placehold.it/400x300']")
-                    ]),
-                    m("li", [
-                      m("img[src='http://placehold.it/400x300']")
-                    ])
-                  ]),
+                  m("ul.small-block-grid-3", ctrl.attachments().imgs.map(function (img){
+                    return m("li", [
+                      m("img", {src: "/attachments/" + img.id + "/thumb"})
+                    ]);
+                  }))
                 ])
               })
               .case("Documents", function(){
@@ -199,18 +193,18 @@ project.view = function(ctrl){
                       ])
                     ]),
                     m("tbody", [
-                      ctrl.attachments().map(function (a){
+                      ctrl.attachments().docs.map(function (doc){
                         return m("tr", [
-                          m("td", a.filename),
-                          m("td", common.displayDate(a.dateUploaded)),
+                          m("td", doc.filename),
+                          m("td", common.displayDate(doc.dateUploaded)),
                           m("td", [
-                            m("a", {href: "/users/" + a.uploader.id}, a.uploader.name)
+                            m("a", {href: "/users/" + doc.uploader.id}, doc.uploader.name)
                           ]),
                           m("td", [
-                            m("a", {title: "Preview", href: "/attachments/" + a.id + "/preview"}, [
+                            m("a", {title: "Preview", href: "/attachments/" + doc.id + "/preview"}, [
                               m("i.fa.fa-lg.fa-eye.fa-fw"),
                             ]),
-                            m("a", {title: "Download", href: "/attachments/" + a.id + "/download"}, [
+                            m("a", {title: "Download", href: "/attachments/" + doc.id + "/download"}, [
                               m("i.fa.fa-lg.fa-download.fa-fw"),
                             ]),
                           ])
