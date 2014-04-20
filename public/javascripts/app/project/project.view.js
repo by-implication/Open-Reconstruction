@@ -296,42 +296,47 @@ project.view = function(ctrl){
 }
 
 project.listView = function(ctrl){
-  return m("table", [
-    m("thead", [
-      m("tr", [
-        m("th", "id"),
-        m("th", "name"),
-        m("th", "dep"),
-        m("th.text-right", "amount")
-      ])
-    ]),
-    m("tbody", [
-      _.chain(ctrl.projectList)
-      .filter(function(p){
-        if(!ctrl.currentFilter.projects()){
-          return true;
-        } else {
-          return p.projectType == ctrl.currentFilter.projects();
-        }
-      })
-      .filter(function(p){
-        return (p.canSignoff || ctrl.tabs.currentTab() != "Assigned to Me")
-      })
-      .sortBy(function(p){
-        return p.date;
-      })
-      .map(function(project){
-        var url = "/projects/"+project.id;
-        return m("tr", [
-          m("td", project.id),
-          m("td", [
-            m("a.name", {href: url, config: m.route}, project.description)
-          ]),
-          m("td", project.author.agency),
-          m("td.text-right", helper.commaize(project.amount.toFixed(2)))
+  var filteredList = _.chain(ctrl.projectList)
+    .filter(function(p){
+      if(!ctrl.currentFilter.projects()){
+        return true;
+      } else {
+        return p.projectType == ctrl.currentFilter.projects();
+      }
+    })
+    .filter(function(p){
+      return (p.canSignoff || ctrl.tabs.currentTab() != "Assigned to Me")
+    });
+  return filteredList.value().length ?
+    m("table", [
+      m("thead", [
+        m("tr", [
+          m("th", "id"),
+          m("th", "name"),
+          m("th", "dep"),
+          m("th.text-right", "amount")
         ])
-      })
-      .value()
+      ]),
+      m("tbody", [
+        filteredList
+        .sortBy(function(p){
+          return p.date;
+        })
+        .map(function(project){
+          var url = "/projects/"+project.id;
+          return m("tr", [
+            m("td", project.id),
+            m("td", [
+              m("a.name", {href: url, config: m.route}, project.description)
+            ]),
+            m("td", project.author.agency),
+            m("td.text-right", helper.commaize(project.amount.toFixed(2)))
+          ])
+        })
+        .value()
+      ])
     ])
-  ])
+    : m("h3.empty", [
+      "No requests matched filter criteria"
+    ])
 }
