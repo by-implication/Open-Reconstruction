@@ -91,7 +91,6 @@ object ImageHandling {
 		op.rotate(degrees)
 		op.addImage(img)
 		(new MogrifyCmd()).run(op)
-		play.Logger.info("rotated " + img + " by " + degrees)
 	}
 
 }

@@ -132,6 +132,53 @@ object Requests extends Controller with Secured {
 
   }
 
+  private def assignAgency(
+      isAuthorized: Agency => Boolean,
+      assign: (Req, Int) => Req,
+      unassign: Req => (Req, Agency),
+      agencyType: String
+    )(reqId: Int, agencyId: Int) = UserAction(){ implicit user => implicit request =>
+    if(user.isSuperAdmin){
+      Req.findById(reqId).map { req =>
+        agencyId match {
+          case 0 => {
+            val (r, agency) = unassign(req)
+            r.save().map { r =>
+              Event.assign(agencyType, false, agency, reqId, user).create().map { _ =>
+                Rest.success()
+              }.getOrElse(Rest.serverError())
+            }.getOrElse(Rest.serverError())
+          }
+          case _ => {
+            Agency.findById(agencyId).map { agency =>
+              if(isAuthorized(agency)){
+                assign(req, agencyId).save().map { r =>
+                  Event.assign(agencyType, true, agency, reqId, user).create().map { _ =>
+                    Rest.success()
+                  }.getOrElse(Rest.serverError())
+                }.getOrElse(Rest.serverError())
+              } else Rest.error("Agency not authorized to assess.")
+            }.getOrElse(Rest.notFound())
+          }
+        }
+      }.getOrElse(Rest.notFound())
+    } else Rest.unauthorized()
+  }
+
+  def assignAssessingAgency = assignAgency(
+    Agency.canAssess,
+    (r, id) => r.copy(assessingAgencyId = Some(id)),
+    r => (r.copy(assessingAgencyId = None), Agency.findById(r.assessingAgencyId.get).get),
+    "assess"
+  ) _
+
+  def assignImplementingAgency = assignAgency(
+    Agency.canImplement,
+    (r, id) => r.copy(implementingAgencyId = Some(id)),
+    r => (r.copy(implementingAgencyId = None), Agency.findById(r.implementingAgencyId.get).get),
+    "implement"
+  ) _
+
   def reviseAmount(id: Int) = UserAction(){ implicit user => implicit request =>
     if(!user.isAnonymous){
       Req.findById(id) match {
@@ -158,48 +205,6 @@ object Requests extends Controller with Secured {
       }
     } else Rest.unauthorized()
 
-  }
-
-  def assignAssessingAgency(reqId: Int, agencyId: Int) = UserAction(){ implicit user => implicit request =>
-    if(user.isSuperAdmin){
-      Req.findById(reqId).map { req =>
-        agencyId match {
-          case 0 => {
-            req.copy(assessingAgencyId = None).save().map(_ => Rest.success())
-            .getOrElse(Rest.serverError())
-          }
-          case _ => {
-            Agency.findById(agencyId).map { agency =>
-              if(agency.canAssess()){
-                req.copy(assessingAgencyId = Some(agencyId)).save().map(_ => Rest.success())
-                .getOrElse(Rest.serverError())
-              } else Rest.error("Agency not authorized to assess.")
-            }.getOrElse(Rest.notFound())
-          }
-        }
-      }.getOrElse(Rest.notFound())
-    } else Rest.unauthorized()
-  }
-
-  def assignImplementingAgency(reqId: Int, agencyId: Int) = UserAction(){ implicit user => implicit request =>
-    if(user.isSuperAdmin){
-      Req.findById(reqId).map { req =>
-        agencyId match {
-          case 0 => {
-            req.copy(implementingAgencyId = None).save().map(_ => Rest.success())
-            .getOrElse(Rest.serverError())
-          }
-          case _ => {
-            Agency.findById(agencyId).map { agency =>
-              if(agency.canImplement()){
-                req.copy(implementingAgencyId = Some(agencyId)).save().map(_ => Rest.success())
-                .getOrElse(Rest.serverError())
-              } else Rest.error("Agency not authorized to implement.")
-            }.getOrElse(Rest.notFound())
-          }
-        }
-      }.getOrElse(Rest.notFound())
-    } else Rest.unauthorized()
   }
 
 }

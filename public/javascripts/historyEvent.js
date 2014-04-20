@@ -1,5 +1,36 @@
 var historyEvent = {}
 
+historyEvent.assign = function(data){
+  var date = new Date(data.date);
+  var c = data.content.split(" ");
+  var duty = c.pop()
+  var cduty = duty.split("");
+  cduty[0] = cduty[0].toUpperCase();
+  cduty = cduty.join("");
+  var isAssign = parseInt(c.pop());
+  var agencyId = c.pop();
+  var agencyName = c.join(" ");
+
+  var assignment = isAssign ? "assigned" : "unassigned";
+  var prepPhrase = isAssign ? " to " + duty : " from " + duty + "ing"
+
+  return m(".event", [
+    historyEvent.date(date),
+    m(".details", [
+      m("h3", cduty + "ing Agency " + assignment),
+      m("p", [
+        m("a", {href: "/agencies/" + agencyId}, agencyName),
+        " was " + assignment + prepPhrase + " this project."
+      ]),
+      m("p.meta", [
+        "assigned by ",
+        m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+        helper.timeago(date)
+      ])
+    ])
+  ])
+}
+
 historyEvent.signoff = function(data){
   var date = new Date(data.date);
   var c = data.content.split(" ");
