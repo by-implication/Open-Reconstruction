@@ -254,7 +254,7 @@ project.view = function(ctrl){
                   ctrl.oldProject().history().map(function(entry){
                     return historyEvent.project(entry);
                   })
-                ]).concat([
+                ]).concat(ctrl.app.currentUser() ? [
                   m("form", {onsubmit: ctrl.submitComment}, [
                     m("label", [
                       "Comment",
@@ -262,7 +262,7 @@ project.view = function(ctrl){
                     ]),
                     m("button", "Submit")
                   ])
-                ]))
+                ] : []))
               })
               .render()
           ]),
