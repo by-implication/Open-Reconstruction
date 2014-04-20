@@ -167,7 +167,13 @@ case class User(
 
   lazy val permissions = role.permissions
 
-  lazy val isSuperAdmin = role.name == "OCD"
+  private lazy val OCD = "OCD"
+  private lazy val OP = "OP"
+  private lazy val DBM = "DBM"
+
+  lazy val isSuperAdmin = role.name == OCD
+  lazy val isOP = role.name == OP
+  lazy val isDBM = role.name == DBM
 
   lazy val role: Role = DB.withConnection { implicit c =>
     SQL("""
@@ -180,7 +186,7 @@ case class User(
 
   def isInvolvedWith(r: Req): Boolean = {
     r.authorId == id.get || {role.name match {
-      case "OCD" | "OP" | "DBM" => true
+      case OCD | OP | DBM => true
       case _ => r.assessingAgencyId.map(_ == agencyId).getOrElse(false)
     }}
   }
@@ -189,9 +195,9 @@ case class User(
     isInvolvedWith(r) && {
       val checks = List[Boolean](
         (r.assessingAgencyId.map(_ == agencyId).getOrElse(false)),
-        (role.name == "OCD"),
-        (role.name == "OP"),
-        (role.name == "DBM")
+        isSuperAdmin,
+        isOP,
+        isDBM
       )
       checks.take(r.level).foldLeft(false)(_ || _)
     }
@@ -207,8 +213,8 @@ case class User(
       r.level match {
         case 0 => r.assessingAgencyId.map(_ == agencyId).getOrElse(false)
         case 1 => isSuperAdmin
-        case 2 => role.name == "OP"
-        case 3 => role.name == "DBM"
+        case 2 => isOP
+        case 3 => isDBM
         case _ => false
       }
     }
