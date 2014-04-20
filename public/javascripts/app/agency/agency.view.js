@@ -42,7 +42,9 @@ agency.view = function(ctrl){
               ctrl.users().map(function(u){
                 return m("tr", [
                   m("td", [
-                    u.name
+                    m("a", {href: "/users/" + u.id, config: m.route}, [
+                      u.name
+                    ]),
                   ]),
                   m("td", [
                     u.handle

@@ -4,7 +4,9 @@ user.view = function(ctrl){
     m(".row", [
       m(".colums.medium-9", [
         m("h1",[m("small", "List of projects requested by this user")]),
-        project.listView(ctrl)
+        ctrl.app.isAuthorized(1) ?
+          project.listView(ctrl)
+        : ""
       ])
     ])
   ])
