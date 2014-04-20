@@ -250,22 +250,29 @@ hr
     .dz-message
       margin-bottom: 40px
   .dz-preview
+    &.dz-processing
+      display: block
+      &.dz-success
+        display: none
     float: left
     // background-color: white
     margin-right: 20px
     cursor: default
     width: 128px
+    height: 256px
     img
       margin-bottom: 6px
     .dz-size
       color: $gray
     .dz-filename
       margin-bottom: 10px
-    // &.dz-processing
-    //   .dz-progress
-    //     background-color: #333
-    //     height: 36px
-    //     width: 100%
+    .dz-upload
+      background-color: #333
+      height: 24px
+      display: block
+    &.dz-success
+      .dz-upload
+        display: none
 
 .acronym
   margin-left: 10px
