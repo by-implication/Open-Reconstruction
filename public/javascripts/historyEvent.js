@@ -42,7 +42,8 @@ historyEvent.signoff = function(data){
       m("h3", "Sign off"),
       m("p", [
         m("a", {href: "/agencies/" + agencyId}, agencyName),
-        " signed off on this project."
+        agencyName == "Department of Budget and Management" ?
+        " has approved a SARO for this project." : " signed off on this project."
       ]),
       m("p.meta", [
         "signed off by ",
