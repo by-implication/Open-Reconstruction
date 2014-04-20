@@ -10,12 +10,24 @@ project.controller = function(){
   this.project = m.prop({});
   this.author = m.prop({});
   this.oldProject = m.prop({});
+  this.location = m.prop("");
+
+  function parseLocation(location){
+    var split = location.split(',').map(function(coord){return parseFloat(coord)});
+    if (_.contains(split, NaN) || (split.length % 2)) {
+      // display as plain string
+      return; 
+    } else {
+      // do leaflet stuff
+    }
+  }
 
   this.dropzone = null;
 
   m.request({method: "GET", url: "/requests/"+this.id+"/meta"}).then(function(data){
     this.project(data.request);
     this.author(data.author);
+    parseLocation(data.request.location);
   }.bind(this));
 
   database.pull().then(function(data){
