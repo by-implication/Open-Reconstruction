@@ -45,6 +45,15 @@ object Event extends EventGen {
     generate("disaster", req.disasterName.getOrElse("") + ":" + req.disasterType).copy(date = req.disasterDate)
   }
 
+  def editField(field: String)(implicit req: Req, user: User) = {
+    val fieldValue = field match {
+      case "amount" => req.amount
+      case "description" => req.description
+      case "location" => req.location
+    }
+    generate("editField", fieldValue + " " + field)
+  }
+
   def findForRequest(id: Int) = DB.withConnection { implicit c =>
     SQL("SELECT * FROM events WHERE req_id = {reqId} ORDER BY event_date DESC")
     .on('reqId -> id).list(simple)

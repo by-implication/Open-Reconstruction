@@ -1,5 +1,25 @@
 var historyEvent = {}
 
+historyEvent.editField = function(data){
+  var date = new Date(data.date);
+  var c = data.content.split(" ");
+  var field = c.pop();
+  var value = c.join(" ");
+  return m(".event", [
+    historyEvent.date(date),
+    m(".details", [
+      m("h3", "Project " + field + " updated"),
+      m("p", "Project " + field + " was set to \"" + value + "\""),
+      m("p.meta", [
+        "modified by ",
+        m("a", {href: "/user/" + data.user.id, config: m.route}, data.user.name),
+        " ",
+        helper.timeago(date)
+      ])
+    ]),
+  ])
+}
+
 historyEvent.disaster = function(data){
   var date = new Date(data.date);
   var c = data.content.split(":");

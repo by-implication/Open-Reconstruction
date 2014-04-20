@@ -233,7 +233,11 @@ object Requests extends Controller with Secured {
         if(user.canEditRequest(req)){
           editForm(field).bindFromRequest.fold(
             Rest.formError(_),
-            _.save().map(_ => Rest.success()).getOrElse(Rest.serverError())
+            _.save().map { implicit req =>
+              Event.editField(field).create().map { _ =>
+                Rest.success()
+              }.getOrElse(Rest.serverError())
+            }.getOrElse(Rest.serverError())
           )
         } else Rest.unauthorized()
       }.getOrElse(Rest.notFound())
