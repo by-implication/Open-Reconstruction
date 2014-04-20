@@ -323,10 +323,11 @@ project.listView = function(ctrl){
     m("table", [
       m("thead", [
         m("tr", [
-          m("th", "id"),
-          m("th", "name"),
-          m("th", "dep"),
-          m("th.text-right", "amount")
+          m("th", "Id"),
+          m("th", "Name"),
+          m("th", "Agency/LGU"),
+          m("th", "Type"),
+          m("th.text-right", "Amount")
         ])
       ]),
       m("tbody", [
@@ -342,6 +343,7 @@ project.listView = function(ctrl){
               m("a.name", {href: url, config: m.route}, project.description)
             ]),
             m("td", project.author.agency),
+            m("td", project.projectType),
             m("td.text-right", helper.commaize(project.amount.toFixed(2)))
           ])
         })
