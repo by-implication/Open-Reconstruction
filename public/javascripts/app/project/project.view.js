@@ -1,44 +1,4 @@
 project.view = function(ctrl){
-  var renderErrorList = function(errList){
-    if(errList.length){
-      return m("span", [
-        m("small", "With errors: "),
-        errList.map(function(e){
-          return m("span.label.alert", e);
-        })
-      ])
-    }
-  }
-
-  var userActions = function(ctrl){
-
-    var actions = m.prop({
-      "Comment": [
-        m("h3", "Leave a comment"),
-        m("textarea"),
-        m("button", "Submit")
-      ],
-      "Approve": [
-        m("h3", "Approve"),
-        m("div", "insert amount revision"),
-        m("div", "insert remarks"),
-        m("button", "Approve")
-      ],
-      "Reject": [
-        m("h3", "Reject"),
-        m("div", "insert remakrs"),
-        m("button", "Reject")
-      ]
-    })
-    return m("div", [
-      common.tabs.view(ctrl.tabs, [
-        {label: "Comment"},
-        {label: "Approve"},
-        {label: "Reject"}
-      ]),
-      m("form", actions()[ctrl.tabs.currentTab() ? ctrl.tabs.currentTab() : "Comment"])
-    ])
-  }
 
   return app.template(ctrl.app, {class: "detail"}, [
     ctrl.isInvolved ?
