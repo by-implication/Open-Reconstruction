@@ -14,6 +14,9 @@ project.controller = function(){
   this.oldProject = m.prop({});
   this.location = m.prop("");
   // this.coords = m.prop(null);
+  
+  this.assessingAgencies = m.prop([]);
+  this.implementingAgencies = m.prop([]);
 
   function parseLocation(location){
     var split = location.split(',').map(function(coord){return parseFloat(coord)});
@@ -35,6 +38,8 @@ project.controller = function(){
     this.project(data.request);
     this.author(data.author);
     this.attachments(data.attachments);
+    this.assessingAgencies(data.assessingAgencies);
+    this.implementingAgencies(data.implementingAgencies);
     parseLocation(data.request.location);
   }.bind(this));
 

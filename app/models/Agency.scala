@@ -9,6 +9,17 @@ import play.api.Play.current
 import recon.support._
 
 object Agency extends AgencyGen {
+
+  def withPermission(permission: Permission) = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT * from agencys
+      NATURAL JOIN roles
+      WHERE {permission} = ANY(roles.role_permissions)
+    """).on(
+      'permission -> permission.value
+    ).list(simple)
+  }
+
   def users(id: Int): Seq[User] = DB.withConnection { implicit c =>
     SQL("""
       SELECT * from users
