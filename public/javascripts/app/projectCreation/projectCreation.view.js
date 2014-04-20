@@ -87,6 +87,7 @@ projectCreation.view = function(ctrl){
           m("select", {onchange: m.withAttr("value", ctrl.input.scopeOfWork), value: ctrl.input.scopeOfWork()}, ctrl.requestCreationInfo.projectScopes.map(function(e){return m("option", e)})),
           "Do we need to reconstruct this in its entirety? Or is this simply a repair job?"
         ),
+        console.log(ctrl.input.location()),
         common.field(
           "Location",
           m("div", {id: "map", config: ctrl.initMap}),
@@ -95,23 +96,6 @@ projectCreation.view = function(ctrl){
       ],
       // help: "Now tell us about this project. Please be as brief as you can when describing your project. Making it simple and easy to understand will make your project more likely to be approved."
     },
-    // {
-    //   icon: "fa-paperclip",
-    //   content: [
-    //     m("h2", "Attachment"),
-    //     m("h3", "Endorsements"),
-    //     m("button", {type: "button"}, "Upload"),
-    //     m("h3", "Costing Estimates"),
-    //     m("button", {type: "button"}, "Upload"),
-    //     m("h3", "Inspection Reports"),
-    //     m("button", {type: "button"}, "Upload"),
-    //     m("h3", "Photos/Diagrams"),
-    //     m("button", {type: "button"}, "Upload"),
-    //     m("h3", "Other"),
-    //     m("button", {type: "button"}, "Upload"),
-    //   ],
-    //   // help: "We need your attachments to help your case. Certificates from engineers, endorsements from politicians, and photographs of the area are extremely helpful."
-    // },
     {
       content: [
         m("button", "Submit"),

@@ -50,13 +50,17 @@ projectCreation.controller = function(){
         map.on('draw:created', function (e) {
           var type = e.layerType,
             layer = e.layer;
+          var coords = layer._latlng
+          var strCoords = coords.lat+","+coords.lng
 
+          layer.bindPopup("<h5>Location Saved!</h5>Your coordinates are<br/>" + strCoords);
           editableLayers.clearLayers();
           editableLayers.addLayer(layer);
+          editableLayers.openPopup();
 
           // console.log(layer);
-          var coords = layer._latlng
-          self.input.location(coords.lat+","+coords.lng);
+          
+          self.input.location(strCoords);
         });
       }, 100)
     }
