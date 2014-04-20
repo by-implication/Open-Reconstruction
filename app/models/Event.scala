@@ -10,10 +10,38 @@ import recon.support._
 
 object Event extends EventGen {
 
-  def assign(agencyType: String, assign: Boolean, agency: Agency, reqId: Int, user: User) = Event(
+  def signoff()(implicit req: Req, user: User) = Event(
+    kind = "signoff",
+    content = Some(user.agency.name + " " + user.agency.id),
+    reqId = req.id,
+    userId = user.id.toOption
+  )
+
+  def attachment(a: Attachment)()(implicit req: Req, user: User) = Event(
+    kind = "attachment",
+    content = Some(Seq(a.filename, if(a.isImage) 1 else 0, a.id).mkString(" ")),
+    reqId = req.id,
+    userId = user.id.toOption
+  )
+
+  def comment(content: String)()(implicit req: Req, user: User) = Event(
+    kind = "comment",
+    content = Some(content),
+    reqId = req.id,
+    userId = user.id.toOption
+  )
+
+  def reviseAmount(amount: String)()(implicit req: Req, user: User) = Event(
+    kind = "reviseAmount",
+    content = Some(amount),
+    reqId = req.id,
+    userId = Some(user.id)
+  )
+
+  def assign(agencyType: String, assign: Boolean, agency: Agency)(implicit req: Req, user: User) = Event(
     kind = "assign",
     content = Some(Seq(agency.name, agency.id, (if (assign) 1 else 0), agencyType).mkString(" ")),
-    reqId = reqId,
+    reqId = req.id,
     userId = user.id.toOption
   )
 
