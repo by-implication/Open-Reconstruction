@@ -125,11 +125,19 @@ project.controller = function(){
     }
   }.bind(this)
 
+  this.refreshHistory = function(){
+    m.request({method: "GET", url: "/requests/"+this.id+"/meta"}).then(function(data){
+      this.history(data.history);
+      m.redraw();
+    }.bind(this))
+  }
+
   this.submitComment = function(e){
     e.preventDefault()
     m.request({method: "POST", url: "/requests/" + this.id + "/comment", data: {content: this.input.comment}, config: app.xhrConfig}).then(function(r){
       console.log('Comment submitted!');
-    });
+      this.refreshHistory();
+    }.bind(this));
   }.bind(this);
 
   this.submitAmountRevision = function(e){
