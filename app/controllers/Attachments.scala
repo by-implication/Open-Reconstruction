@@ -17,9 +17,9 @@ object Attachments extends Controller with Secured {
             Attachment(filename = upload.filename, uploaderId = user.id).create().map { a =>
               a.file.getParentFile().mkdirs()
               upload.ref.moveTo(a.file, true)
-              req.copy(attachmentIds = req.attachmentIds.list :+ a.id.get).save().map(
-                _ => Rest.success()
-              ).getOrElse(Rest.serverError())
+              if(req.addToAttachments(a.id.get)){
+                Rest.success("attachment" -> Attachment.insertJson(a, user))
+              } else Rest.serverError()
             }.getOrElse(Rest.serverError())
           } else Rest.unauthorized()
         }

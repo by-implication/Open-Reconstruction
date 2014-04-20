@@ -10,6 +10,17 @@ import play.api.Play.current
 import recon.support._
 
 object Attachment extends AttachmentGen {
+
+  def insertJson(attachment: Attachment, uploader: User) = Json.obj(
+    "id" -> attachment.id.get,
+    "filename" -> attachment.filename,
+    "dateUploaded" -> attachment.dateUploaded,
+    "uploader" -> Json.obj(
+      "id" -> uploader.id.get,
+      "name" -> uploader.name
+    )
+  )
+
 }
 
 // GENERATED case class start
