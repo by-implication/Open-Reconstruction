@@ -142,7 +142,13 @@ project.controller = function(){
         dictDefaultMessage: "Drop documents here, or click to browse. We recommend pdfs and doc files.",
         clickable: true,
         autoDiscover: false
-      })
+      });
+
+      this.dropzone.on("success", function (_, r){
+        this.attachments().push(r.attachment);
+        m.redraw();
+      }.bind(this));
+
     }
   }.bind(this);
 }
