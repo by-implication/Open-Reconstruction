@@ -40,6 +40,18 @@ case class Req(
 // GENERATED case class end
 {
 
+  def addToAttachments(attachmentId: Int): Boolean = DB.withConnection { implicit c =>
+    SQL("""
+      UPDATE reqs
+      SET req_attachment_ids = array_append(req_attachment_ids, {attachmentId})
+      WHERE req_id = {reqId}
+    """)
+    .on(
+      'reqId -> id,
+      'attachmentId -> attachmentId
+    ).executeUpdate() > 0
+  }
+
   lazy val attachments: Seq[(Attachment, User)] = DB.withConnection { implicit c =>
     SQL("""
       SELECT * FROM attachments LEFT JOIN users ON uploader_id = user_id
