@@ -162,10 +162,10 @@ csv2json.dsv(",", "text/plain", 1)("/assets/data/CF14-RQST-Sanitized.csv", funct
         row.amount = row["AMT_RECOM"];
         delete row["AMT_RECOM"];
 
-        var reqId = ++reqCount;
+        row.id = ++reqCount;
         if(row["AMT_REQD"] && row.amount && (row["AMT_REQD"] != row.amount)){
             events.push({
-                reqId: reqId,
+                reqId: row.id,
                 kind: "reviseAmount",
                 date: row["RECOM_DATE"] || row.date,
                 content: row["AMT_REQD"] + " " + row.amount
@@ -176,7 +176,7 @@ csv2json.dsv(",", "text/plain", 1)("/assets/data/CF14-RQST-Sanitized.csv", funct
 
         if(row["ACT_DATE1"]){
             events.push({
-                reqId: reqId,
+                reqId: row.id,
                 kind: "comment",
                 date: row["ACT_DATE1"] || row.date,
                 content: row.REMARKS
@@ -260,6 +260,24 @@ csv2json.dsv(",", "text/plain", 1)("/assets/data/CF14-RQST-Sanitized.csv", funct
             e.reqId,
             e.kind == "comment" ? 2 : "null" // generated comments are attached to OCD account
         ].join(", ") + ")";
-    }).join(",<br/>") + ";;");
+    }).concat(reqs.map(function (req){
+        return "(" + [
+            'DEFAULT',
+            q("newRequest"),
+            q(req.date),
+            q(req.description),
+            req.id,
+            req.authorId
+        ].join(", ") + ")";
+    })).concat(reqs.map(function (req){
+        return "(" + [
+            'DEFAULT',
+            q("disaster"),
+            q(req.date),
+            q(req.disasterName + ":Typhoon"),
+            req.id,
+            "null"
+        ].join(", ") + ")";
+    })).join(",<br/>") + ";;");
 
 });

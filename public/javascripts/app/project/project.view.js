@@ -277,12 +277,7 @@ project.view = function(ctrl){
               .case("Activity", function(){
                 return m(".section", ctrl.history().map(function (e){
                   return historyEvent[e.kind](e);
-                }).concat(ctrl.oldProject() ? [
-                  historyEvent.calamity(ctrl.oldProject().disaster()),
-                  ctrl.oldProject().history().map(function(entry){
-                    return historyEvent.project(entry);
-                  })
-                ] : "").concat(ctrl.app.currentUser() ? [
+                }).concat(ctrl.app.currentUser() ? [
                   m("form", {onsubmit: ctrl.submitComment}, [
                     m("label", [
                       "Comment",
