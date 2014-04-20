@@ -40,7 +40,7 @@ project.view = function(ctrl){
                     ctrl.app.isSuperAdmin() ?
                       "Please assign an agency to assess this request."
                     : "Waiting for the Office of Civil Defense to assign an agency to assess this request."
-                  : "Waiting for " + ctrl.getBlockingAgency().name + " approval."
+                  : "Waiting for " + ctrl.getBlockingAgency() + " approval."
                 ]),
               ])
             : ""

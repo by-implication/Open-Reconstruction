@@ -65,15 +65,16 @@ project.controller = function(){
 
   this.getBlockingAgency = function(){
     var agency = process.levelToAgencyName()[this.project().level]
-
     if(agency === "ASSESSING_AGENCY"){
       if (this.assessingAgency()){
-        return this.assessingAgency();
+        return this.assessingAgency().name;
       } else {
         return "AWAITING_ASSIGNMENT";
       }
     } else {
-      return agency;;
+      // console.log(process.levelToAgencyName()[this.project().level]);
+      // console.log(agency)
+      return agency;
     }
   }
 
