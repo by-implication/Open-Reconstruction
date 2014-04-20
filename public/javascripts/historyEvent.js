@@ -8,7 +8,6 @@ historyEvent.editField = function(data){
   return m(".event", [
     historyEvent.date(date),
     m(".details", [
-      m("h3", "Project " + field + " updated"),
       m("p", "Project " + field + " was set to \"" + value + "\""),
       m("p.meta", [
         "modified by ",
@@ -29,7 +28,7 @@ historyEvent.disaster = function(data){
   return m(".event", [
     historyEvent.date(date),
     m(".details", [
-      m("h3", title),
+      m("p", title),
       m("p.meta", helper.timeago(date))
     ]),
   ])
@@ -40,8 +39,8 @@ historyEvent.newRequest = function(data){
   return m(".event", [
     historyEvent.date(date),
     m(".details", [
-      m("h3", "Request posted"),
-      m("p", data.content),
+      // m("h3", "Request posted"),
+      m("p", "Request posted: " + data.content),
       m("p.meta", [
         "posted by ",
         m("a", {href: "/user/" + data.user.id, config: m.route}, data.user.name),
