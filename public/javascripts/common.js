@@ -1,13 +1,12 @@
 var common = {};
 
 common.displayDate = function(timestamp){
-  return new Date().toLocaleDateString("en-US", {month: "short", day: "numeric", year: "numeric"});
+  return new Date(timestamp).toLocaleDateString("en-US", {month: "short", day: "numeric", year: "numeric"});
 }
 
 common.banner = function(text){
   return m("section.banner", [
     m("div", {class:"row"}, [
-      // 
       m("div", {class: "columns medium-12"}, [
         m("h1", text)
       ])
@@ -58,17 +57,20 @@ common.tabs.view = function(ctrl, options){
   }
 
   return m("dl.tabs[data-tab]", options, [
-    ctrl.tabs().map(function(item, i){
-      var setActive = function(i){
+    ctrl.tabs().filter(function(item){
+      return item.when ? item.when() : true;
+    })
+    .map(function(item, i){
+      var activeTab = function(i){
         if(ctrl.isActive(item.label, i)){
           return "active";
         } else {
           return "";
         }
       };
-      return m("dd", {class: setActive(i)}, [
+      return m("dd", {class: activeTab(i)}, [
         m("a", {onclick: function(){
-          ctrl.setActive(item.label);
+          ctrl.currentTab(item.label);
         }}, item.label)
       ]);
     })
@@ -76,21 +78,14 @@ common.tabs.view = function(ctrl, options){
 }
 
 common.tabs.controller = function(){
-  this.currentTab = m.prop("");
+  this.currentTab = m.prop();
   this.tabs = m.prop([]);
   this.isActive = function(label, index){
     if(!this.currentTab()){
-      if(index == 0){
-        return true;
-      }
-    } else if(this.currentTab() === label){
-      return true;
+      return index == 0
     } else {
-      return false;
+      return this.currentTab() === label
     }
-  }
-  this.setActive = function(label){
-    this.currentTab(label);
   }
 }
 

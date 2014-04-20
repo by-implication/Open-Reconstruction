@@ -27,6 +27,13 @@ process.rolePermissions = m.prop({
   "6": "ASSIGN_FUNDING",
 })
 
+process.levelToAgencyName = m.prop([
+  "ASSESSING_AGENCY",
+  "Office of Civil Defense",
+  "Office of the President",
+  "Department of Budget and Management"
+])
+
 // process.titles = m.prop([
 //   "MAYOR",
 //   "CONG",

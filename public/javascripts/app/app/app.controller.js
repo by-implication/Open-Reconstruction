@@ -6,10 +6,19 @@ app.controller = function(){
     url: "/users/info"
   }).then(function(r){
     this.currentUser(r);
+    this.whenUserInfoLoads();
   }.bind(this));
+
+  this.whenUserInfoLoads = function(func){
+    return null;
+  }
 
   this.isAuthorized = function(permission){
     return this.currentUser() && _.contains(this.currentUser().permissions, permission);
+  }
+
+  this.isUserAuthorized = function(user, permission){
+    return user && _.contains(user.permissions, permission);
   }
 
   this.isSuperAdmin = function(){

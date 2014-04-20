@@ -1,61 +1,49 @@
 project.view = function(ctrl){
-  var renderErrorList = function(errList){
-    if(errList.length){
-      return m("span", [
-        m("small", "With errors: "),
-        errList.map(function(e){
-          return m("span.label.alert", e);
-        })
-      ])
-    }
-  }
-
-  var userActions = function(ctrl){
-
-    var actions = m.prop({
-      "Comment": [
-        m("h3", "Leave a comment"),
-        m("textarea"),
-        m("button", "Submit")
-      ],
-      "Approve": [
-        m("h3", "Approve"),
-        m("div", "insert amount revision"),
-        m("div", "insert remarks"),
-        m("button", "Approve")
-      ],
-      "Reject": [
-        m("h3", "Reject"),
-        m("div", "insert remakrs"),
-        m("button", "Reject")
-      ]
-    })
-    return m("div", [
-      common.tabs.view(ctrl.tabs, [
-        {label: "Comment"},
-        {label: "Approve"},
-        {label: "Reject"}
-      ]),
-      m("form", actions()[ctrl.tabs.currentTab() ? ctrl.tabs.currentTab() : "Comment"])
-    ])
-  }
 
   return app.template(ctrl.app, {class: "detail"}, [
-    ctrl.canSignoff() ?
+    ctrl.isInvolved() ?
       m("section.approval", [
         m(".row", [
           m(".columns.medium-12", [
-            m("div", [
-              m("h4", [
-                "Sign off on this request only if you feel the information is complete for your step in the approval process."
-              ]),
-              m("button", {onclick: ctrl.signoff}, [
-                m("i.fa.fa-check"),
-              ]),
-              m("button.alert", [
-                m("i.fa.fa-times"),
-              ]),
-            ]),
+            ctrl.canSignoff() ?
+              m("div", [
+                m("h4", [
+                  "Sign off on this request only if you feel the information is complete for your step in the approval process."
+                ]),
+                m("button", {onclick: ctrl.signoff}, [
+                  m("i.fa.fa-check"),
+                ]),
+                m("button.alert", [
+                  m("i.fa.fa-times"),
+                ]),
+              ])
+            : "",
+            ctrl.hasSignedoff()  ?
+              m("div", [
+                m("h4", [
+                  m("div", [m("i.fa.fa-thumbs-up.fa-2x")]),
+                  "You've already signed off on this request."
+                ]),
+              ])
+            : "",
+            ctrl.currentUserIsAuthor() && !ctrl.hasSignedoff() ?
+              m("div", [
+                m("h4", [
+                  "You created this request."
+                ]),
+              ])
+            : "",
+            !ctrl.canSignoff() && !ctrl.hasSignedoff() ? // waiting for predecessor
+              m("div", [
+                m("h4", [
+                  ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
+                    ctrl.app.isSuperAdmin() ?
+                      "Please assign an agency to assess this request."
+                    : "Waiting for the Office of Civil Defense to assign an agency to assess this request."
+                  : "Waiting for " + ctrl.getBlockingAgency() + " approval."
+                ]),
+              ])
+            : ""
           ]),
         ])
       ])
@@ -134,7 +122,6 @@ project.view = function(ctrl){
               })
               .case("Images", function(){
                 return m(".section", [
-                  // console.log(ctrl.project().level),
                   ctrl.curUserCanUpload() ?
                     m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
                   : "",
@@ -209,19 +196,18 @@ project.view = function(ctrl){
               .case("Activity", function(){
                 return m(".section", ctrl.history().map(function (e){
                   return historyEvent[e.kind](e);
-                }).concat([
-                  historyEvent.calamity(ctrl.oldProject().disaster()),
-                  ctrl.oldProject().history().map(function(entry){
-                    return historyEvent.project(entry);
-                  })
-                ]).concat(ctrl.app.currentUser() ? [
-                  m("form", {onsubmit: ctrl.submitComment}, [
-                    m("label", [
-                      "Comment",
-                      m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.comment)})
-                    ]),
-                    m("button", "Submit")
-                  ])
+                })
+                .reverse()
+                .concat(ctrl.app.currentUser() ? [
+                  m(".event", [
+                    m("form.details", {onsubmit: ctrl.submitComment}, [
+                      m("label", [
+                        "Comment",
+                        m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.comment)})
+                      ]),
+                      m("button", "Submit")
+                    ])
+                  ]),
                 ] : []))
               })
               .render()
@@ -302,42 +288,62 @@ project.summary = function(ctrl){
 }
 
 project.listView = function(ctrl){
-  return m("table", [
-    m("thead", [
-      m("tr", [
-        m("th", "id"),
-        m("th", "name"),
-        m("th", "dep"),
-        m("th.text-right", "amount")
-      ])
-    ]),
-    m("tbody", [
-      _.chain(ctrl.projectList)
-      .filter(function(p){
-        if(!ctrl.currentFilter.projects()){
+  var filteredList = _.chain(ctrl.projectList)
+    .filter(function(p){
+      if(!ctrl.currentFilter.projects()){
+        return true;
+      } else {
+        return p.projectType == ctrl.currentFilter.projects();
+      }
+    })
+    .filter(function(p){
+      switch(ctrl.tabs.currentTab()){
+        case "For signoff":
+          return p.canSignoff;
+          break;
+        case "For assigning assessor":
+          return p.level === 0 && !p.assessingAgencyId;
+          break;
+        case "My requests":
+          return p.authorId === ctrl.app.currentUser().agency.id;
+          break;
+        default:
           return true;
-        } else {
-          return p.projectType == ctrl.currentFilter.projects();
-        }
-      })
-      .filter(function(p){
-        return (p.canSignoff || ctrl.tabs.currentTab() != "Assigned to Me")
-      })
-      .sortBy(function(p){
-        return p.date;
-      })
-      .map(function(project){
-        var url = "/projects/"+project.id;
-        return m("tr", [
-          m("td", project.id),
-          m("td", [
-            m("a.name", {href: url, config: m.route}, project.description)
-          ]),
-          m("td", project.author.agency),
-          m("td.text-right", helper.commaize(project.amount.toFixed(2)))
+      }
+    });
+  return m("table", [
+      m("thead", [
+        m("tr", [
+          m("th", "Id"),
+          m("th", "Name"),
+          m("th", "Agency/LGU"),
+          m("th", "Type"),
+          m("th.text-right", "Amount")
         ])
-      })
-      .value()
+      ]),
+      m("tbody", [
+        filteredList.value().length ?
+          filteredList
+            .sortBy(function(p){
+              return p.date;
+            })
+            .map(function(project){
+              var url = "/projects/"+project.id;
+              return m("tr", [
+                m("td", project.id),
+                m("td", [
+                  m("a.name", {href: url, config: m.route}, project.description)
+                ]),
+                m("td", project.author.agency),
+                m("td", project.projectType),
+                m("td.text-right", helper.commaize(project.amount.toFixed(2)))
+              ])
+            })
+            .value()
+        : m("tr", [m("td", "No requests matched filter criteria")])
+      ])
     ])
-  ])
+    // : m("h3.empty", [
+      
+    // ])
 }

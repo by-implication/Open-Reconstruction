@@ -22,6 +22,8 @@ object Requests extends Controller with Secured {
     Req.findById(id).map { req =>
       Rest.success(
         "request" -> req.viewJson,
+        "isInvolved" -> Json.toJson(user.isInvolvedWith(req)),
+        "hasSignedoff" -> Json.toJson(user.hasSignedoff(req)),
         "canSignoff" -> Json.toJson(user.canSignoff(req)),
         "author" -> User.findById(req.authorId).map(_.infoJson).getOrElse(JsNull),
         "assessingAgencies" -> Json.toJson(Agency.withPermission(Permission.VALIDATE_REQUESTS).map(_.toJson)),
@@ -79,8 +81,12 @@ object Requests extends Controller with Secured {
   	if(user.canCreateRequests){
   		createForm.bindFromRequest.fold(
   			Rest.formError(_),
-  			_.copy(authorId = user.id).save().map { r =>
-  				Rest.success("id" -> r.insertJson)
+  			_.copy(authorId = user.id).save().map { implicit r =>
+          Event.newRequest().create().map { _ =>
+            Event.disaster().create().map { _ =>
+  				    Rest.success("id" -> r.insertJson)
+            }.getOrElse(Rest.serverError())
+          }.getOrElse(Rest.serverError())
   			}.getOrElse(Rest.serverError())
 			)
   	} else Rest.unauthorized()
@@ -91,13 +97,8 @@ object Requests extends Controller with Secured {
     Req.findById(id).map { r =>
 
       if(user.canSignoff(r)){
-        r.copy(level = r.level + 1).save().map( r =>
-          Event(
-            kind = "signoff",
-            content = Some(user.agency.name + " " + user.agency.id),
-            reqId = id,
-            userId = user.id.toOption
-          ).create().map { _ =>
+        r.copy(level = r.level + 1).save().map( implicit r =>
+          Event.signoff(user.agency).create().map { _ =>
             Rest.success()
           }.getOrElse(Rest.serverError())
         ).getOrElse(Rest.serverError())
@@ -115,62 +116,43 @@ object Requests extends Controller with Secured {
 
   def comment(id: Int) = UserAction(){ implicit user => implicit request =>
     if(!user.isAnonymous){
-      Form("content" -> nonEmptyText).bindFromRequest.fold(
-        Rest.formError(_),
-        content => Event(
-          kind = "comment",
-          content = Some(content),
-          reqId = id,
-          userId = user.id.toOption
-        ).create().map { _ =>
-          Rest.success()
-        }.getOrElse(Rest.serverError())
-      )
+      Req.findById(id).map { implicit req =>
+        Form("content" -> nonEmptyText).bindFromRequest.fold(
+          Rest.formError(_),
+          content => Event.comment(content).create().map { _ =>
+            Rest.success()
+          }.getOrElse(Rest.serverError())
+        )
+      }.getOrElse(Rest.notFound())
     } else Rest.unauthorized()
 
   }
 
-  def reviseAmount(id: Int) = UserAction(){ implicit user => implicit request =>
-    if(!user.isAnonymous){
-      Req.findById(id) match {
-        case Some(req) => {
-          Form("amount" -> text.verifying("Invalid amount",
-            _amount => {
-              try {
-                val amount = BigDecimal(_amount)
-                (amount >= 0)
-              } catch {
-                case e: NumberFormatException => false
-              }
-            }
-          )).bindFromRequest.fold(
-            Rest.formError(_),
-            amount => Event(kind = "reviseAmount", content = Some(amount), reqId = id, userId = Some(user.id)).create().map { c =>
-              req.copy(amount = BigDecimal(amount)).save().map{r =>
+  private def assignAgency(
+      isAuthorized: Agency => Boolean,
+      assign: (Req, Int) => Req,
+      unassign: Req => (Req, Agency),
+      agencyType: String
+    )(reqId: Int, agencyId: Int) = UserAction(){ implicit user => implicit request =>
+    if(user.isSuperAdmin){
+      Req.findById(reqId).map { implicit req =>
+        agencyId match {
+          case 0 => {
+            val (r, agency) = unassign(req)
+            r.save().map { _ =>
+              Event.assign(agencyType, false, agency).create().map { _ =>
                 Rest.success()
               }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())
-          )
-        }
-        case None => Rest.notFound()
-      }
-    } else Rest.unauthorized()
-
-  }
-
-  def assignAssessingAgency(reqId: Int, agencyId: Int) = UserAction(){ implicit user => implicit request =>
-    if(user.isSuperAdmin){
-      Req.findById(reqId).map { req =>
-        agencyId match {
-          case 0 => {
-            req.copy(assessingAgencyId = None).save().map(_ => Rest.success())
-            .getOrElse(Rest.serverError())
           }
           case _ => {
             Agency.findById(agencyId).map { agency =>
-              if(agency.canAssess()){
-                req.copy(assessingAgencyId = Some(agencyId)).save().map(_ => Rest.success())
-                .getOrElse(Rest.serverError())
+              if(isAuthorized(agency)){
+                assign(req, agencyId).save().map { _ =>
+                  Event.assign(agencyType, true, agency).create().map { _ =>
+                    Rest.success()
+                  }.getOrElse(Rest.serverError())
+                }.getOrElse(Rest.serverError())
               } else Rest.error("Agency not authorized to assess.")
             }.getOrElse(Rest.notFound())
           }
@@ -179,25 +161,43 @@ object Requests extends Controller with Secured {
     } else Rest.unauthorized()
   }
 
-  def assignImplementingAgency(reqId: Int, agencyId: Int) = UserAction(){ implicit user => implicit request =>
-    if(user.isSuperAdmin){
-      Req.findById(reqId).map { req =>
-        agencyId match {
-          case 0 => {
-            req.copy(implementingAgencyId = None).save().map(_ => Rest.success())
-            .getOrElse(Rest.serverError())
+  def assignAssessingAgency = assignAgency(
+    Agency.canAssess,
+    (r, id) => r.copy(assessingAgencyId = Some(id)),
+    r => (r.copy(assessingAgencyId = None), Agency.findById(r.assessingAgencyId.get).get),
+    "assess"
+  ) _
+
+  def assignImplementingAgency = assignAgency(
+    Agency.canImplement,
+    (r, id) => r.copy(implementingAgencyId = Some(id)),
+    r => (r.copy(implementingAgencyId = None), Agency.findById(r.implementingAgencyId.get).get),
+    "implement"
+  ) _
+
+  def reviseAmount(id: Int) = UserAction(){ implicit user => implicit request =>
+    if(!user.isAnonymous){
+      Req.findById(id).map { req =>
+        Form("amount" -> text.verifying("Invalid amount",
+          _amount => {
+            try {
+              val amount = BigDecimal(_amount)
+              (amount >= 0)
+            } catch {
+              case e: NumberFormatException => false
+            }
           }
-          case _ => {
-            Agency.findById(agencyId).map { agency =>
-              if(agency.canImplement()){
-                req.copy(implementingAgencyId = Some(agencyId)).save().map(_ => Rest.success())
-                .getOrElse(Rest.serverError())
-              } else Rest.error("Agency not authorized to implement.")
-            }.getOrElse(Rest.notFound())
-          }
-        }
+        )).bindFromRequest.fold(
+          Rest.formError(_),
+          amount => req.copy(amount = BigDecimal(amount)).save().map { implicit req =>
+            Event.reviseAmount(amount).create().map { _ =>
+              Rest.success()
+            }.getOrElse(Rest.serverError())
+          }.getOrElse(Rest.serverError())
+        )
       }.getOrElse(Rest.notFound())
     } else Rest.unauthorized()
+
   }
 
   private def editForm(field: String)(implicit req: Req): Form[Req] = Form(field match {

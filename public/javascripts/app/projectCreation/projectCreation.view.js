@@ -27,7 +27,7 @@ projectCreation.view = function(ctrl){
         common.field(
           "Terms of Agreement",
           m("div", [
-            m("input", {type: "checkbox"}),
+            m("input", {type: "checkbox", onchange: ctrl.preamble}),
             m("span", [
               "I have not requested for assistance for this project from any other source."
             ])
@@ -136,7 +136,6 @@ projectCreation.view = function(ctrl){
           ),
           "Tell us the extent of the work that needs to be done."
         ),
-        console.log(ctrl.input.location()),
         common.field(
           "Location",
           m("div", {id: "map", config: ctrl.initMap}),

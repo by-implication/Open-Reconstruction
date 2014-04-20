@@ -6,7 +6,7 @@ agency.view = function(ctrl){
         m("span.acronym", [
           "(" + ctrl.agency().acronym + ")"
         ])
-      : null
+      : ""
     ]),
     m("section", [
       m(".row", [
@@ -19,7 +19,7 @@ agency.view = function(ctrl){
               }, 
               ["Add new user"]
             )
-          : null
+          : ""
         ]),
       ]),
       m(".row", [
@@ -42,7 +42,9 @@ agency.view = function(ctrl){
               ctrl.users().map(function(u){
                 return m("tr", [
                   m("td", [
-                    u.name
+                    m("a", {href: "/users/" + u.id, config: m.route}, [
+                      u.name
+                    ]),
                   ]),
                   m("td", [
                     u.handle

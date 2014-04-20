@@ -1,5 +1,69 @@
 var historyEvent = {}
 
+historyEvent.disaster = function(data){
+  var date = new Date(data.date);
+  var c = data.content.split(":");
+  var disasterType = c.pop();
+  var disasterName = c.join(":");
+  var title = disasterName ? (disasterName + " (" + disasterType + ")") : disasterType
+  return m(".event", [
+    historyEvent.date(date),
+    m(".details", [
+      m("h3", title),
+      m("p.meta", helper.timeago(date))
+    ]),
+  ])
+}
+
+historyEvent.newRequest = function(data){
+  var date = new Date(data.date);
+  return m(".event", [
+    historyEvent.date(date),
+    m(".details", [
+      m("h3", "Request posted"),
+      m("p", data.content),
+      m("p.meta", [
+        "posted by ",
+        m("a", {href: "/user/" + data.user.id, config: m.route}, data.user.name),
+        " ",
+        helper.timeago(date)
+      ])
+    ])
+  ])
+}
+
+historyEvent.assign = function(data){
+  var date = new Date(data.date);
+  var c = data.content.split(" ");
+  var duty = c.pop()
+  var cduty = duty.split("");
+  cduty[0] = cduty[0].toUpperCase();
+  cduty = cduty.join("");
+  var isAssign = parseInt(c.pop());
+  var agencyId = c.pop();
+  var agencyName = c.join(" ");
+
+  var assignment = isAssign ? "assigned" : "unassigned";
+  var prepPhrase = isAssign ? " to " + duty : " from " + duty + "ing"
+
+  return m(".event", [
+    historyEvent.date(date),
+    m(".details", [
+      // m("h3", cduty + "ing Agency " + assignment),
+      m("p", [
+        m("a", {href: "/agencies/" + agencyId}, agencyName),
+        " was " + assignment + prepPhrase + " this project."
+      ]),
+      m("p.meta", [
+        "assigned by ",
+        m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+        " ",
+        helper.timeago(date)
+      ])
+    ])
+  ])
+}
+
 historyEvent.signoff = function(data){
   var date = new Date(data.date);
   var c = data.content.split(" ");
@@ -11,11 +75,13 @@ historyEvent.signoff = function(data){
       m("h3", "Sign off"),
       m("p", [
         m("a", {href: "/agencies/" + agencyId}, agencyName),
-        " signed off on this project."
+        agencyName == "Department of Budget and Management" ?
+        " has approved a SARO for this project." : " signed off on this project."
       ]),
       m("p.meta", [
         "signed off by ",
         m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+        " ",
         helper.timeago(date)
       ])
     ])
@@ -44,6 +110,7 @@ historyEvent.attachment = function(data){
       m("p.meta", [
         "attached by ",
         m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+        " ",
         helper.timeago(date)
       ])
     ])
@@ -52,14 +119,15 @@ historyEvent.attachment = function(data){
 
 historyEvent.comment = function(data){
   var date = new Date(data.date);
-  return m(".event", [
-    historyEvent.date(date),
+  return m(".event.comment", [
+    // historyEvent.date(date),
     m(".details", [
-      m("h3", "Comment"),
+      // m("h3", "Comment"),
       m("p", data.content),
       m("p.meta", [
         "posted by ",
         m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+        " ",
         helper.timeago(date)
       ])
     ])
@@ -89,42 +157,13 @@ historyEvent.date = function(date){
   return m(".dateGroup", [
     m(".date", [
       m("div.month", helper.monthArray[date.getMonth()]),
-      m("h4.day", date.getDate()),
+      m("h5.day", date.getDate()),
       m("div.year", date.getFullYear())
     ]),
     m(".divider")
   ])
 }
-historyEvent.calamity = function(data){
-  return m(".event", [
-    historyEvent.date(data.date()),
-    m(".details", [
-      m("h3", data.type() + " " + data.name()),
-      m("p.meta", helper.timeago(data.date()))
-    ]),
-  ])
-}
-historyEvent.project = function(data){
-  var pastTense = function(type){
-    switch(type){
-      case "POST":
-        return "posted";
-        break;
-    }
-  }
-  return m(".event", [
-    historyEvent.date(data.timestamp()),
-    m(".details", [
-      m("h3", data.title()),
-      m("p", data.description()),
-      m("p.meta", [
-        pastTense(data.type()) + " by ",
-        m("a", {href: "/user/" + data.editor().slug, config: m.route}, data.editor().name),
-        helper.timeago(data.timestamp())
-      ])
-    ])
-  ])
-}
+
 historyEvent.Event = function(data){
   for(prop in data){
     this[prop] = m.prop(data[prop]);

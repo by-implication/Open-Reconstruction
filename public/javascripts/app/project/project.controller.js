@@ -13,7 +13,9 @@ project.controller = function(){
   this.history = m.prop({});
   this.oldProject = m.prop({});
   this.location = m.prop("");
+  this.isInvolved = m.prop(false);
   this.canSignoff = m.prop(false);
+  this.hasSignedoff = m.prop(false);
   this.input = {
     assessingAgency: m.prop(),
     implementingAgency: m.prop(),
@@ -67,6 +69,21 @@ project.controller = function(){
     return this.author().handle === this.app.getCurrentUserProp("handle");
   }
 
+  this.getBlockingAgency = function(){
+    var agency = process.levelToAgencyName()[this.project().level]
+    if(agency === "ASSESSING_AGENCY"){
+      if (this.assessingAgency()){
+        return this.assessingAgency().name;
+      } else {
+        return "AWAITING_ASSIGNMENT";
+      }
+    } else {
+      // console.log(process.levelToAgencyName()[this.project().level]);
+      // console.log(agency)
+      return agency;
+    }
+  }
+
   m.request({method: "GET", url: "/requests/"+this.id+"/meta"}).then(function(data){
     this.project(data.request);
     this.author(data.author);
@@ -80,6 +97,8 @@ project.controller = function(){
     this.input.assessingAgency(data.request.assessingAgencyId);
     this.input.implementingAgency(data.request.implementingAgencyId);  
 
+    this.isInvolved(data.isInvolved);
+    this.hasSignedoff(data.hasSignedoff)
     this.canSignoff(data.canSignoff);
     parseLocation(data.request.location);
   }.bind(this));
@@ -91,6 +110,7 @@ project.controller = function(){
   this.signoff = function(){
     m.request({method: "POST", url: "/requests/"+this.id+"/signoff"}).then(function(data){
       this.canSignoff(false);
+      this.hasSignedoff(true);
       // m.redraw();
       alert('Signoff successful! Replace this message with something more useful.');
     }.bind(this));
@@ -112,11 +132,19 @@ project.controller = function(){
     }
   }.bind(this)
 
+  this.refreshHistory = function(){
+    m.request({method: "GET", url: "/requests/"+this.id+"/meta"}).then(function(data){
+      this.history(data.history);
+      m.redraw();
+    }.bind(this))
+  }
+
   this.submitComment = function(e){
     e.preventDefault()
     m.request({method: "POST", url: "/requests/" + this.id + "/comment", data: {content: this.input.comment}, config: app.xhrConfig}).then(function(r){
       console.log('Comment submitted!');
-    });
+      this.refreshHistory();
+    }.bind(this));
   }.bind(this);
 
   this.submitAmountRevision = function(e){

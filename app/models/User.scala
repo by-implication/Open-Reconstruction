@@ -150,6 +150,7 @@ case class User(
     if(!isAnonymous){
       Json.obj(
         "handle" -> handle,
+        "id" -> id.get,
         "name" -> name,
         "agency" -> Json.obj(
           "name" -> agency.name,
@@ -167,7 +168,13 @@ case class User(
 
   lazy val permissions = role.permissions
 
-  lazy val isSuperAdmin = role.name == "OCD"
+  private lazy val OCD = "OCD"
+  private lazy val OP = "OP"
+  private lazy val DBM = "DBM"
+
+  lazy val isSuperAdmin = !isAnonymous && role.name == OCD
+  lazy val isOP = !isAnonymous && role.name == OP
+  lazy val isDBM = !isAnonymous && role.name == DBM
 
   lazy val role: Role = DB.withConnection { implicit c =>
     SQL("""
@@ -177,6 +184,27 @@ case class User(
   }
 
   var sessionId = -1
+
+  def authoredRequests: Seq[Req] = Req.authoredBy(id)
+
+  def isInvolvedWith(r: Req): Boolean = {
+    !isAnonymous && (r.authorId == id.get || {role.name match {
+      case OCD | OP | DBM => true
+      case _ => r.assessingAgencyId.map(_ == agencyId).getOrElse(false)
+    }})
+  }
+
+  def hasSignedoff(r: Req): Boolean = {
+    isInvolvedWith(r) && {
+      val checks = List[Boolean](
+        (r.assessingAgencyId.map(_ == agencyId).getOrElse(false)),
+        isSuperAdmin,
+        isOP,
+        isDBM
+      )
+      checks.take(r.level).foldLeft(false)(_ || _)
+    }
+  }
 
   def canCreateRequests = canDo(Permission.CREATE_REQUESTS)
   def canAssignFunding = canDo(Permission.ASSIGN_FUNDING)
@@ -188,7 +216,8 @@ case class User(
       r.level match {
         case 0 => r.assessingAgencyId.map(_ == agencyId).getOrElse(false)
         case 1 => isSuperAdmin
-        case 2 => role.name == "OP"
+        case 2 => isOP
+        case 3 => isDBM
         case _ => false
       }
     }

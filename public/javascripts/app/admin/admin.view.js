@@ -35,7 +35,7 @@ admin.view = function(ctrl){
                           m("span.acronym", [
                             "("+a.acronym+")"
                           ])
-                        : null
+                        : ""
                       ]),
                     ]),
                     m("td", [
@@ -51,6 +51,6 @@ admin.view = function(ctrl){
           ]),
         ]),
       ])
-    : null
+    : ""
   ])
 }
