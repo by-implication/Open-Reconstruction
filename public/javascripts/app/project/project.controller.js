@@ -15,6 +15,7 @@ project.controller = function(){
   this.location = m.prop("");
   this.isInvolved = m.prop(false);
   this.canSignoff = m.prop(false);
+  this.canEdit = m.prop(false);
   this.hasSignedoff = m.prop(false);
   this.input = {
     assessingAgency: m.prop(),
@@ -98,6 +99,7 @@ project.controller = function(){
     this.isInvolved(data.isInvolved);
     this.hasSignedoff(data.hasSignedoff)
     this.canSignoff(data.canSignoff);
+    this.canEdit(data.canEdit);
     parseLocation(data.request.location);
   }.bind(this));
 
