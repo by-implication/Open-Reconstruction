@@ -81,8 +81,10 @@ object Requests extends Controller with Secured {
   	if(user.canCreateRequests){
   		createForm.bindFromRequest.fold(
   			Rest.formError(_),
-  			_.copy(authorId = user.id).save().map { r =>
-  				Rest.success("id" -> r.insertJson)
+  			_.copy(authorId = user.id).save().map { implicit r =>
+          Event.newRequest().create().map { _ =>
+  				  Rest.success("id" -> r.insertJson)
+          }.getOrElse(Rest.serverError())
   			}.getOrElse(Rest.serverError())
 			)
   	} else Rest.unauthorized()
@@ -94,7 +96,7 @@ object Requests extends Controller with Secured {
 
       if(user.canSignoff(r)){
         r.copy(level = r.level + 1).save().map( implicit r =>
-          Event.signoff().create().map { _ =>
+          Event.signoff(user.agency).create().map { _ =>
             Rest.success()
           }.getOrElse(Rest.serverError())
         ).getOrElse(Rest.serverError())
