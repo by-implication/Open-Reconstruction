@@ -41,7 +41,7 @@ project.view = function(ctrl){
   }
 
   return app.template(ctrl.app, {class: "detail"}, [
-    ctrl.app.isAuthorized(5) ?
+    ctrl.canSignoff() ?
       m("section.approval", [
         m(".row", [
           m(".columns.medium-12", [
@@ -49,7 +49,7 @@ project.view = function(ctrl){
               m("h4", [
                 "Sign off on this request only if you feel the information is complete for your step in the approval process."
               ]),
-              m("button", [
+              m("button", {onclick: ctrl.signoff}, [
                 m("i.fa.fa-check"),
               ]),
               m("button.alert", [
