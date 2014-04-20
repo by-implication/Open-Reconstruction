@@ -108,14 +108,14 @@ project.view = function(ctrl){
                     m("form", [
                       m("label", [
                         "Assessing Agency",
-                        m("select", ctrl.assessingAgencies().map(function(agency){
-                          return m("option", {value: agency.id}, agency.name)
+                        m("select", {onchange: m.withAttr("value", ctrl.input.assessingAgency), value: ctrl.input.assessingAgency()}, ctrl.assessingAgencies().map(function(agency){
+                          return m("option", {value: agency.id, selected: ctrl.input.assessingAgency() == agency.id}, agency.name)
                         }))
                       ]),
                       m("label", [
                         "Implementing Agency",
-                        m("select", ctrl.implementingAgencies().map(function(agency){
-                          return m("option", {value: agency.id}, agency.name)
+                        m("select", {onchange: m.withAttr("value", ctrl.input.implementingAgency), value: ctrl.input.implementingAgency()}, ctrl.implementingAgencies().map(function(agency){
+                          return m("option", {value: agency.id, selected: ctrl.input.implementingAgency() == agency.id}, agency.name)
                         }))
                       ]),
                     ]),
