@@ -86,7 +86,7 @@ object Requests extends Controller with Secured {
     Req.findById(id).map { r =>
       
       val authorized = r.level match {
-        case 0 => r.implementingAgencyId.map(_ == user.agencyId).getOrElse(false)
+        case 0 => r.assessingAgencyId.map(_ == user.agencyId).getOrElse(false)
         case 1 => user.isSuperAdmin
         case 2 => user.role.name == "approver"
         case _ => false
