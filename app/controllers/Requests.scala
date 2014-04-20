@@ -1,10 +1,8 @@
 package controllers
 
-import java.io.File
 import play.api._
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.libs.Files.TemporaryFile
 import play.api.libs.json.{JsNull, Json}
 import play.api.mvc._
 import recon.models._
@@ -105,30 +103,6 @@ object Requests extends Controller with Secured {
       } else Rest.unauthorized()
 
     }.getOrElse(Rest.notFound())
-  }
-
-  def attach(id: Int) = UserAction(parse.multipartFormData){ implicit user => implicit request =>
-    request.body.file("file").map { upload =>
-      Req.findById(id) match {
-        case Some(req) => {
-          if(user.canEditRequest(req)){
-            Attachment(filename = upload.filename, uploaderId = user.id).create().map { a =>
-              val f = new File(Seq(
-                "attachments",
-                a.dateUploaded.toString.split(" ")(0),
-                a.id)
-              .mkString(File.separator))
-              f.getParentFile().mkdirs()
-              upload.ref.moveTo(f, true)
-              req.copy(attachmentIds = req.attachmentIds.list :+ a.id.get).save().map(
-                _ => Rest.success()
-              ).getOrElse(Rest.serverError())
-            }.getOrElse(Rest.serverError())
-          } else Rest.unauthorized()
-        }
-        case None => Rest.notFound()
-      }
-    }.getOrElse(Rest.NO_FILE)
   }
 
   def index() = UserAction(){ implicit user => implicit request =>
