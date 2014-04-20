@@ -1,5 +1,27 @@
 var historyEvent = {}
 
+historyEvent.signoff = function(data){
+  var date = new Date(data.date);
+  var c = data.content.split(" ");
+  var agencyId = c.pop();
+  var agencyName = c.join(" ");
+  return m(".event", [
+    historyEvent.date(date),
+    m(".details", [
+      m("h3", "Sign off"),
+      m("p", [
+        m("a", {href: "/agencies/" + agencyId}, agencyName),
+        " signed off on this project."
+      ]),
+      m("p.meta", [
+        "signed off by ",
+        m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+        helper.timeago(date)
+      ])
+    ])
+  ])
+}
+
 historyEvent.attachment = function(data){
   var date = new Date(data.date);
   var c = data.content.split(" ");

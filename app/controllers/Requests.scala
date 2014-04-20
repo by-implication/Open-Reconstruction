@@ -92,7 +92,14 @@ object Requests extends Controller with Secured {
 
       if(user.canSignoff(r)){
         r.copy(level = r.level + 1).save().map( r =>
-          Rest.success()
+          Event(
+            kind = "signoff",
+            content = Some(user.agency.name + " " + user.agency.id),
+            reqId = id,
+            userId = user.id.toOption
+          ).create().map { _ =>
+            Rest.success()
+          }.getOrElse(Rest.serverError())
         ).getOrElse(Rest.serverError())
       } else Rest.unauthorized()
 
@@ -110,10 +117,43 @@ object Requests extends Controller with Secured {
     if(!user.isAnonymous){
       Form("content" -> nonEmptyText).bindFromRequest.fold(
         Rest.formError(_),
-        content => Event(kind = "comment", content = Some(content), reqId = id, userId = Some(user.id)).create().map { c =>
+        content => Event(
+          kind = "comment",
+          content = Some(content),
+          reqId = id,
+          userId = user.id.toOption
+        ).create().map { _ =>
           Rest.success()
         }.getOrElse(Rest.serverError())
       )
+    } else Rest.unauthorized()
+
+  }
+
+  def reviseAmount(id: Int) = UserAction(){ implicit user => implicit request =>
+    if(!user.isAnonymous){
+      Req.findById(id) match {
+        case Some(req) => {
+          Form("amount" -> text.verifying("Invalid amount",
+            _amount => {
+              try {
+                val amount = BigDecimal(_amount)
+                (amount >= 0)
+              } catch {
+                case e: NumberFormatException => false
+              }
+            }
+          )).bindFromRequest.fold(
+            Rest.formError(_),
+            amount => Event(kind = "reviseAmount", content = Some(amount), reqId = id, userId = Some(user.id)).create().map { c =>
+              req.copy(amount = BigDecimal(amount)).save().map{r =>
+                Rest.success()
+              }.getOrElse(Rest.serverError())
+            }.getOrElse(Rest.serverError())
+          )
+        }
+        case None => Rest.notFound()
+      }
     } else Rest.unauthorized()
 
   }
