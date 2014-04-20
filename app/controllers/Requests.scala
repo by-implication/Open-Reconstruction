@@ -24,6 +24,7 @@ object Requests extends Controller with Secured {
     Req.findById(id) match {
       case Some(req) => Rest.success(
         "request" -> req.toJson,
+        "canSignoff" -> Json.toJson(user.canSignoff(req)),
         "author" -> User.findById(req.authorId).map(_.infoJson).getOrElse(JsNull),
         "assessingAgencies" -> Json.toJson(Agency.withPermission(Permission.VALIDATE_REQUESTS).map(_.toJson)),
         "implementingAgencies" -> Json.toJson(Agency.withPermission(Permission.IMPLEMENT_REQUESTS).map(_.toJson)),
@@ -86,15 +87,8 @@ object Requests extends Controller with Secured {
 
   def signoff(id: Int) = UserAction(){ implicit user => implicit request =>
     Req.findById(id).map { r =>
-      
-      val authorized = r.level match {
-        case 0 => r.assessingAgencyId.map(_ == user.agencyId).getOrElse(false)
-        case 1 => user.isSuperAdmin
-        case 2 => user.role.name == "OP"
-        case _ => false
-      }
 
-      if(authorized){
+      if(user.canSignoff(r)){
         r.copy(level = r.level + 1).save().map( r =>
           Rest.success()
         ).getOrElse(Rest.serverError())
