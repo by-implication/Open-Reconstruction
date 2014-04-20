@@ -217,7 +217,7 @@ project.view = function(ctrl){
                             m("a", {href: "/users/" + doc.uploader.id}, doc.uploader.name)
                           ]),
                           m("td", [
-                            m("a", {title: "Preview", href: "/attachments/" + doc.id + "/preview"}, [
+                            m("a", {title: "Preview", href: "/attachments/" + doc.id + "/preview", target: "_blank"}, [
                               m("i.fa.fa-lg.fa-eye.fa-fw"),
                             ]),
                             m("a", {title: "Download", href: "/attachments/" + doc.id + "/download"}, [
