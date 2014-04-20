@@ -18,6 +18,8 @@ project.controller = function(){
     assessingAgency: m.prop(),
     implementingAgency: m.prop()
   };
+  this.assessingAgency = m.prop();
+  this.implementingAgency = m.prop();
   
   this.assessingAgencies = m.prop([]);
   this.implementingAgencies = m.prop([]);
@@ -44,6 +46,8 @@ project.controller = function(){
     this.attachments(data.attachments);
     this.assessingAgencies(data.assessingAgencies);
     this.implementingAgencies(data.implementingAgencies);
+    this.assessingAgency(data.assessingAgency);
+    this.implementingAgency(data.implementingAgency);
 
     this.input.assessingAgency(data.request.assessingAgencyId);
     this.input.implementingAgency(data.request.implementingAgencyId);  
