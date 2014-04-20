@@ -241,13 +241,15 @@ project.view = function(ctrl){
                 })
                 .reverse()
                 .concat(ctrl.app.currentUser() ? [
-                  m("form", {onsubmit: ctrl.submitComment}, [
-                    m("label", [
-                      "Comment",
-                      m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.comment)})
-                    ]),
-                    m("button", "Submit")
-                  ])
+                  m(".event", [
+                    m("form.details", {onsubmit: ctrl.submitComment}, [
+                      m("label", [
+                        "Comment",
+                        m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.comment)})
+                      ]),
+                      m("button", "Submit")
+                    ])
+                  ]),
                 ] : []))
               })
               .render()
