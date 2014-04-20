@@ -1,5 +1,6 @@
 project.controller = function(){
-  // var self = this;
+  var self = this;
+  var map;
   this.app = new app.controller();
   this.projectTabs = new common.tabs.controller();
   this.projectTabs.tabs([{label: "Images"}, {label: "Documents"}, {label: "Activity"}]);
@@ -11,6 +12,7 @@ project.controller = function(){
   this.author = m.prop({});
   this.oldProject = m.prop({});
   this.location = m.prop("");
+  // this.coords = m.prop(null);
 
   function parseLocation(location){
     var split = location.split(',').map(function(coord){return parseFloat(coord)});
@@ -18,7 +20,11 @@ project.controller = function(){
       // display as plain string
       return; 
     } else {
-      // do leaflet stuff
+      var coords = new L.LatLng(split[0], split[1])
+      window.setTimeout(function(){
+        map.setView(coords, 8);
+        L.marker(coords).addTo(map);
+      }, 200) // I'M SO SORRY
     }
   }
 
@@ -35,7 +41,23 @@ project.controller = function(){
   }.bind(this))
 
   this.initMap = function(elem, isInit){
-    this.app.initMap(elem, isInit, {scrollWheelZoom: false});
+    if(!isInit){
+      window.setTimeout(function(){
+        map = L.map(elem, {scrollWheelZoom: false}).setView([11.3333, 123.0167], 5);
+        // if(self.coords()){
+        //   map.setView(self.coords, 8);
+        // }
+        // create the tile layer with correct attribution
+        var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+        var osm = new L.TileLayer(osmUrl, {minZoom: 5, maxZoom: 19, attribution: osmAttrib}).addTo(map);   
+
+        var editableLayers = new L.FeatureGroup();
+        map.addLayer(editableLayers);
+
+        // Initialise the draw control and pass it the FeatureGroup of editable layers
+      }, 100) // I'M SO SORRY
+    }
   }.bind(this)
 
   var dropzonePreviewTemplate = m(".dz-preview.dz-file-preview", [
