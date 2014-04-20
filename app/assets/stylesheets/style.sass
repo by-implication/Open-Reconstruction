@@ -315,6 +315,9 @@ button.micro
   padding: 6px 8px
 
 .display-edit-group
+  &.edit-mode
+    .edit-button
+      display: block
   &:hover
     background-color: rgba(black, 0.05)
     .edit-button
@@ -322,5 +325,11 @@ button.micro
   .edit-button
     display: none
     float: right
+  .save-cancel-group
+    +clearfix
+    .cancel-button
+      float: right
+    .save-button
+      float: left
 
   

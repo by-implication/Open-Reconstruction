@@ -243,8 +243,8 @@ project.summary = function(ctrl){
         ctrl.degDescription,
         function(){ return m("h4", ctrl.project().description) }, 
         function(){
-          return m("h4", [
-            "editing!"
+          return m("div", [
+            m("input", {type: "text", value: ctrl.project().description}),
           ])
         }
       ),
