@@ -262,8 +262,8 @@ project.summary = function(ctrl){
         ctrl.degAmount,
         function(){ return m("h5.value", [helper.commaize(ctrl.project().amount)]) }, 
         function(){ 
-          return m("h5.value", [
-            "editing!"
+          return m("div", [
+            m("input", {type: "text", value: ctrl.project().amount}),
           ])
         }
       ),
@@ -272,8 +272,8 @@ project.summary = function(ctrl){
         ctrl.degDisaster, 
         function(){ return m("h5.value", [ctrl.project().disasterType + " " + ctrl.project().disasterName + " in " + common.displayDate(ctrl.project().disasterDate)]) }, 
         function(){ 
-          return m("h5.value", [
-            "editing!"
+          return m("div", [
+            "needs disaster type and stuff from projectCreation."
           ])
         }
       ),
@@ -282,8 +282,8 @@ project.summary = function(ctrl){
         ctrl.degLocation, 
         function(){ return m("h5.value", [ctrl.project().location]) }, 
         function(){ 
-          return m("h5.value", [
-            "editing!"
+          return m("div", [
+            m("input", {type: "text", value: ctrl.project().location}),
           ])
         }
       ),
