@@ -9,6 +9,9 @@ import play.api.Play.current
 import recon.support._
 
 object Role extends RoleGen {
+
+  def VIEW_ONLY = Role(Id(-1))
+
 }
 
 // GENERATED case class start

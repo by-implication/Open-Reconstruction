@@ -322,4 +322,27 @@ label
   margin-top: 20px
   text-align: center
   color: $gray
+
+button.micro
+  @extend .tiny
+  padding: 6px 8px
+
+.display-edit-group
+  &.edit-mode
+    .edit-button
+      display: block
+  &:hover
+    background-color: rgba(black, 0.05)
+    .edit-button
+      display: block
+  .edit-button
+    display: none
+    float: right
+  .save-cancel-group
+    +clearfix
+    .cancel-button
+      float: right
+    .save-button
+      float: left
+
   

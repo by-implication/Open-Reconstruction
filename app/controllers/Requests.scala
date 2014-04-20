@@ -200,4 +200,44 @@ object Requests extends Controller with Secured {
 
   }
 
+  private def editForm(field: String)(implicit req: Req): Form[Req] = Form(field match {
+    case "description" => {
+      mapping(
+        "input" -> nonEmptyText
+      )(v => req.copy(description = v)
+      )(_ => None)
+    }
+    case "amount" => {
+      mapping(
+        "input" -> number
+      )(v => req.copy(amount = v)
+      )(_ => None)
+    }
+    case "location" => {
+      mapping(
+        "input" -> nonEmptyText
+      )(v => req.copy(location = v)
+      )(_ => None)
+    }
+    case _ => {
+      mapping(
+        "input" -> text.verifying("Invalid field", _ => false)
+      )(v => req
+      )(_ => None)
+    }
+  })
+
+  def editField(id: Int, field: String) = UserAction(){ implicit user => implicit request =>
+    if(!user.isAnonymous){
+      Req.findById(id).map { implicit req =>
+        if(user.canEditRequest(req)){
+          editForm(field).bindFromRequest.fold(
+            Rest.formError(_),
+            _.save().map(_ => Rest.success()).getOrElse(Rest.serverError())
+          )
+        } else Rest.unauthorized()
+      }.getOrElse(Rest.notFound())
+    } else Rest.unauthorized()
+  }
+
 }

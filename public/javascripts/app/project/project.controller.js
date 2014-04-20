@@ -28,6 +28,12 @@ project.controller = function(){
   this.assessingAgencies = m.prop([]);
   this.implementingAgencies = m.prop([]);
 
+  // displayEditGroups
+  this.degDescription = new displayEditGroup.controller(this.project, "description");
+  this.degAmount = new displayEditGroup.controller(this.project, "amount");
+  this.degDisaster = new displayEditGroup.controller(this.project, "disaster");
+  this.degLocation = new displayEditGroup.controller(this.project, "location");
+
   var parseLocation = function(location){
     var split = location.split(',').map(function(coord){return parseFloat(coord)});
     if (_.contains(split, NaN) || (split.length % 2)) {

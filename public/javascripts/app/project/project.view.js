@@ -51,47 +51,7 @@ project.view = function(ctrl){
     m("section", [
       m(".row", [
         m(".columns.medium-4", [
-          m(".project-stub", [
-            m(".section.type", [
-              ctrl.project().projectType
-            ]),
-            m(".section", [
-              m("h4", ctrl.project().description),
-              m("p.meta", [
-                "Posted by ",
-                m("a",{href: "/users/"+ctrl.project().authorId, config: m.route}, ctrl.author().name),
-                m("br"),
-                " on "+(new Date(ctrl.project().date).toString()), // change this as people modify this. "Last edited by _____"
-              ]),
-            ]),
-            m("hr"),
-            m("div.section", [
-              m("h5", [m("small", "Amount")]),
-              m("h5.value", [
-                common.renderString(
-                  helper.commaize(ctrl.project().amount)
-                )
-              ]),
-              m("h5", [m("small", "Disaster")]),
-              m("h5.value", [
-                common.renderString(ctrl.project().disasterType + " " + ctrl.project().disasterName + " in " + common.displayDate(ctrl.project().disasterDate))
-              ]),
-              m("h5", [m("small", "Location")]),
-              m("h5.value", [
-                common.renderString(ctrl.project().location)
-              ])
-            ]),
-            m(".map-container", [
-              m("#detailMap", {config: ctrl.initMap}),
-              ctrl.coords() ?
-                ""
-              : m(".map-shroud", [
-                  m("h3", [
-                    "Map unavailable because requester did not supply coordinates"
-                  ]),
-                ])
-            ]),
-          ])
+          project.summary(ctrl)
         ]),
         m("div.columns.medium-8", [
           m(".card", [
@@ -254,6 +214,75 @@ project.view = function(ctrl){
           ]),
         ])
       ])
+    ]),
+  ])
+}
+
+project.summary = function(ctrl){
+
+  return m(".project-stub", [
+    m(".section.type", [
+      ctrl.project().projectType
+    ]),
+    m(".section", [
+      displayEditGroup.view(
+        ctrl.degDescription,
+        function(){ return m("h4", ctrl.project().description) }, 
+        function(){
+          return m("div", [
+            m("input", {type: "text", value: ctrl.project().description, onchange: m.withAttr("value", ctrl.degDescription.input)}),
+          ])
+        }
+      ),
+      m("p.meta", [
+        "Posted by ",
+        m("a",{href: "/users/"+ctrl.project().authorId, config: m.route}, ctrl.author().name),
+        m("br"),
+        " on "+(new Date(ctrl.project().date).toString()), // change this as people modify this. "Last edited by _____"
+      ]),
+    ]),
+    m("hr"),
+    m("div.section", [
+      m("h5", [m("small", "Amount")]),
+      displayEditGroup.view(
+        ctrl.degAmount,
+        function(){ return m("h5.value", [helper.commaize(ctrl.project().amount)]) }, 
+        function(){ 
+          return m("div", [
+            m("input", {type: "text", value: ctrl.project().amount, onchange: m.withAttr("value", ctrl.degAmount.input)}),
+          ])
+        }
+      ),
+      m("h5", [m("small", "Disaster")]),
+      displayEditGroup.view(
+        ctrl.degDisaster, 
+        function(){ return m("h5.value", [ctrl.project().disasterType + " " + ctrl.project().disasterName + " in " + common.displayDate(ctrl.project().disasterDate)]) }, 
+        function(){ 
+          return m("div", [
+            "needs disaster type and stuff from projectCreation."
+          ])
+        }
+      ),
+      m("h5", [m("small", "Location")]),
+      displayEditGroup.view(
+        ctrl.degLocation, 
+        function(){ return m("h5.value", [ctrl.project().location]) }, 
+        function(){ 
+          return m("div", [
+            m("input", {type: "text", value: ctrl.project().location, onchange: m.withAttr("value", ctrl.degLocation.input)}),
+          ])
+        }
+      ),
+    ]),
+    m(".map-container", [
+      m("#detailMap", {config: ctrl.initMap}),
+      ctrl.coords() ?
+        ""
+      : m(".map-shroud", [
+          m("h3", [
+            "Map unavailable because requester did not supply coordinates"
+          ]),
+        ])
     ]),
   ])
 }
