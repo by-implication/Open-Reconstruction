@@ -227,8 +227,15 @@ project.view = function(ctrl){
                   historyEvent.calamity(ctrl.oldProject().disaster()),
                   ctrl.oldProject().history().map(function(entry){
                     return historyEvent.project(entry);
-                  }),
-                  ctrl.history()
+                  })
+                ]).concat([
+                  m("form", {onsubmit: ctrl.submitComment}, [
+                    m("label", [
+                      "Comment",
+                      m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.comment)})
+                    ]),
+                    m("button", "Submit")
+                  ])
                 ]))
               })
               .render()

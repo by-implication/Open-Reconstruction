@@ -110,7 +110,7 @@ object Requests extends Controller with Secured {
     if(!user.isAnonymous){
       Form("content" -> nonEmptyText).bindFromRequest.fold(
         Rest.formError(_),
-        content => Event(kind = "comment", content = Some(content), reqId = id).create().map { c =>
+        content => Event(kind = "comment", content = Some(content), reqId = id, userId = Some(user.id)).create().map { c =>
           Rest.success()
         }.getOrElse(Rest.serverError())
       )

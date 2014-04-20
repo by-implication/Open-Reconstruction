@@ -16,7 +16,8 @@ project.controller = function(){
   this.canSignoff = m.prop(false);
   this.input = {
     assessingAgency: m.prop(),
-    implementingAgency: m.prop()
+    implementingAgency: m.prop(),
+    comment: m.prop()
   };
   this.assessingAgency = m.prop();
   this.implementingAgency = m.prop();
@@ -83,6 +84,13 @@ project.controller = function(){
       }, 100) // I'M SO SORRY
     }
   }.bind(this)
+
+  this.submitComment = function(e){
+    e.preventDefault()
+    m.request({method: "POST", url: "/requests/" + this.id + "/comment", data: {content: this.input.comment}, config: app.xhrConfig}).then(function(r){
+      console.log('Comment submitted!');
+    });
+  }.bind(this);
 
   this.updateAssessingAgency = function(e){
     this.input.assessingAgency(e);
