@@ -130,9 +130,9 @@ project.view = function(ctrl){
               })
               .case("Images", function(){
                 return m(".section", [
-                  m.if(ctrl.app.isAuthorized(3),
+                  ctrl.app.isAuthorized(3)?
                     m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
-                  ),  
+                  : null,
                   m("ul.small-block-grid-3", [
                     m("li", [
                       m("img[src='http://placehold.it/400x300']")
@@ -148,9 +148,9 @@ project.view = function(ctrl){
               })
               .case("Documents", function(){
                 return m(".section", [
-                  m.if(ctrl.app.isAuthorized(3),
+                  ctrl.app.isAuthorized(3)?
                     m("div.dropzone", {config: ctrl.initDocDropzone})
-                  ),
+                  : null,
                   m("table.doc-list", [
                     m("thead", [
                       m("tr", [
@@ -222,7 +222,7 @@ project.listView = function(ctrl){
             m("a.name", {href: url, config: m.route}, project.description)
           ]),
           m("td", [
-            m.if(project.author.agency, project.author.agency)
+            project.author.agency ? project.author.agency: null
           ]),
           m("td.text-right", helper.commaize(project.amount.toFixed(2)))
         ])
