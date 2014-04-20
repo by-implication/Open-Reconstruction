@@ -95,7 +95,6 @@ project.view = function(ctrl){
             ]),
             m(".map-container", [
               m("#detailMap", {config: ctrl.initMap}),
-              console.log(ctrl.coords()),
               ctrl.coords() ?
                 null
               : m(".map-shroud", [
