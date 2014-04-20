@@ -24,7 +24,7 @@ agencyCreation.view = function(ctrl){
         ]
       ),
       common.formSection(
-        null,
+        "",
         [
           m("button", "Submit")
         ]
