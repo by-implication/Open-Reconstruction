@@ -227,8 +227,7 @@ project.view = function(ctrl){
                   historyEvent.calamity(ctrl.oldProject().disaster()),
                   ctrl.oldProject().history().map(function(entry){
                     return historyEvent.project(entry);
-                  }),
-                  ctrl.history()
+                  })
                 ]))
               })
               .render()
