@@ -92,7 +92,14 @@ object Requests extends Controller with Secured {
 
       if(user.canSignoff(r)){
         r.copy(level = r.level + 1).save().map( r =>
-          Rest.success()
+          Event(
+            kind = "signoff",
+            content = Some(user.agency.name + " " + user.agency.id),
+            reqId = id,
+            userId = user.id.toOption
+          ).create().map { _ =>
+            Rest.success()
+          }.getOrElse(Rest.serverError())
         ).getOrElse(Rest.serverError())
       } else Rest.unauthorized()
 
@@ -110,7 +117,12 @@ object Requests extends Controller with Secured {
     if(!user.isAnonymous){
       Form("content" -> nonEmptyText).bindFromRequest.fold(
         Rest.formError(_),
-        content => Event(kind = "comment", content = Some(content), reqId = id, userId = Some(user.id)).create().map { c =>
+        content => Event(
+          kind = "comment",
+          content = Some(content),
+          reqId = id,
+          userId = user.id.toOption
+        ).create().map { _ =>
           Rest.success()
         }.getOrElse(Rest.serverError())
       )
