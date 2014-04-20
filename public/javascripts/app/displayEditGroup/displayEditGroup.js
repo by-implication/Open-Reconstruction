@@ -3,7 +3,7 @@ var displayEditGroup = {
     this.isEditMode = m.prop(false);
   },
   view: function(ctrl, viewView, editView){
-    return m(".display-edit-group",{className: ctrl.isEditMode ? "edit-mode" : ""}, [
+    return m(".display-edit-group",{className: ctrl.isEditMode() ? "edit-mode" : ""}, [
       !ctrl.isEditMode() ? 
         m("button.micro.edit-button", 
           {type: "button", onclick: function(){ ctrl.isEditMode(true); }}, 
