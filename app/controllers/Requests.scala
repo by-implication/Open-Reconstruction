@@ -22,6 +22,8 @@ object Requests extends Controller with Secured {
     Req.findById(id).map { req =>
       Rest.success(
         "request" -> req.viewJson,
+        "isInvolved" -> Json.toJson(user.isInvolvedWith(req)),
+        "hasSignedoff" -> Json.toJson(user.hasSignedoff(req)),
         "canSignoff" -> Json.toJson(user.canSignoff(req)),
         "author" -> User.findById(req.authorId).map(_.infoJson).getOrElse(JsNull),
         "assessingAgencies" -> Json.toJson(Agency.withPermission(Permission.VALIDATE_REQUESTS).map(_.toJson)),
@@ -176,5 +178,33 @@ object Requests extends Controller with Secured {
     r => (r.copy(implementingAgencyId = None), Agency.findById(r.implementingAgencyId.get).get),
     "implement"
   ) _
+
+  def reviseAmount(id: Int) = UserAction(){ implicit user => implicit request =>
+    if(!user.isAnonymous){
+      Req.findById(id) match {
+        case Some(req) => {
+          Form("amount" -> text.verifying("Invalid amount",
+            _amount => {
+              try {
+                val amount = BigDecimal(_amount)
+                (amount >= 0)
+              } catch {
+                case e: NumberFormatException => false
+              }
+            }
+          )).bindFromRequest.fold(
+            Rest.formError(_),
+            amount => Event(kind = "reviseAmount", content = Some(amount), reqId = id, userId = Some(user.id)).create().map { c =>
+              req.copy(amount = BigDecimal(amount)).save().map{r =>
+                Rest.success()
+              }.getOrElse(Rest.serverError())
+            }.getOrElse(Rest.serverError())
+          )
+        }
+        case None => Rest.notFound()
+      }
+    } else Rest.unauthorized()
+
+  }
 
 }

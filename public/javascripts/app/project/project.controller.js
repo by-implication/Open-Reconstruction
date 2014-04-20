@@ -84,6 +84,8 @@ project.controller = function(){
 
   this.signoff = function(){
     m.request({method: "POST", url: "/requests/"+this.id+"/signoff"}).then(function(data){
+      this.canSignoff(false);
+      // m.redraw();
       alert('Signoff successful! Replace this message with something more useful.');
     }.bind(this));
   }.bind(this);
@@ -108,6 +110,13 @@ project.controller = function(){
     e.preventDefault()
     m.request({method: "POST", url: "/requests/" + this.id + "/comment", data: {content: this.input.comment}, config: app.xhrConfig}).then(function(r){
       console.log('Comment submitted!');
+    });
+  }.bind(this);
+
+  this.submitAmountRevision = function(e){
+    e.preventDefault()
+    m.request({method: "POST", url: "/requests/" + this.id + "/reviseAmount", data: {amount: this.input.amount}, config: app.xhrConfig}).then(function(r){
+      console.log('Amount revision submitted!');
     });
   }.bind(this);
 
