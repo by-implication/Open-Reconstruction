@@ -89,6 +89,7 @@ project.controller = function(){
   this.signoff = function(){
     m.request({method: "POST", url: "/requests/"+this.id+"/signoff"}).then(function(data){
       this.canSignoff(false);
+      this.hasSignedoff(true);
       // m.redraw();
       alert('Signoff successful! Replace this message with something more useful.');
     }.bind(this));

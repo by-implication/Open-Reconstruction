@@ -41,12 +41,11 @@ project.view = function(ctrl){
   }
 
   return app.template(ctrl.app, {class: "detail"}, [
-    console.log(ctrl.project()),
-    ctrl.project().isInvolved ?
+    ctrl.isInvolved ?
       m("section.approval", [
         m(".row", [
           m(".columns.medium-12", [
-            ctrl.canSignoff ?
+            ctrl.canSignoff() ?
               m("div", [
                 m("h4", [
                   "Sign off on this request only if you feel the information is complete for your step in the approval process."
@@ -59,10 +58,10 @@ project.view = function(ctrl){
                 ]),
               ])
             : "",
-            ctrl.project().hasSignedOff ?
+            ctrl.hasSignedoff() ?
               m("div", [
                 m("h4", [
-                  m("i.fa.fa-like"),
+                  m("div", [m("i.fa.fa-thumbs-up.fa-2x")]),
                   "You've already signed off on this request."
                 ]),
               ])
