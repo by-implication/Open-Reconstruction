@@ -60,7 +60,7 @@ project.view = function(ctrl){
         ])
       ])
     : null,
-    m("section.summary", [
+    m("section", [
       m(".row", [
         m(".columns.medium-4", [
           m(".project-stub", [
