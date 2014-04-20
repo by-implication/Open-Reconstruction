@@ -3,7 +3,7 @@ project.controller = function(){
   var map;
   this.app = new app.controller();
   this.projectTabs = new common.tabs.controller();
-  this.projectTabs.tabs([{label: "Images"}, {label: "Documents"}, {label: "Activity"}]);
+  this.projectTabs.tabs([{label: "Assignments"}, {label: "Images"}, {label: "Documents"}, {label: "Activity"}]);
   this.projectTabs.currentTab(this.projectTabs.tabs()[0].label)
 
   this.tabs = new common.tabs.controller();
