@@ -5,7 +5,7 @@ import play.api._
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.Files.TemporaryFile
-import play.api.libs.json.Json
+import play.api.libs.json.{JsNull, Json}
 import play.api.mvc._
 import recon.models._
 import recon.support._
@@ -18,6 +18,25 @@ object Requests extends Controller with Secured {
       "projectTypes" -> ProjectType.jsonList,
       "projectScopes" -> ProjectScope.jsonList
     ))
+  }
+
+  def viewMeta(id: Int) = UserAction(){ implicit user => implicit request =>
+    Req.findById(id) match {
+      case Some(req) => Rest.success(
+        "request" -> req.toJson,
+        "author" -> User.findById(req.authorId).map(_.infoJson).getOrElse(JsNull),
+        "assessingAgency" -> {req.assessingAgencyId match {
+          case Some(id) => Agency.findById(id).map(_.toJson).getOrElse(JsNull)
+          case None => JsNull
+        }},
+        "implementingAgency" -> {req.implementingAgencyId match {
+          case Some(id) => Agency.findById(id).map(_.toJson).getOrElse(JsNull)
+          case None => JsNull
+        }}
+      )
+      case None => Rest.notFound()
+    }
+    
   }
 
   def insert() = UserAction(){ implicit user => implicit request =>
@@ -67,7 +86,7 @@ object Requests extends Controller with Secured {
     Req.findById(id).map { r =>
       
       val authorized = r.level match {
-        case 0 => r.implementingAgencyId.map(_ == user.agencyId).getOrElse(false)
+        case 0 => r.assessingAgencyId.map(_ == user.agencyId).getOrElse(false)
         case 1 => user.isSuperAdmin
         case 2 => user.role.name == "approver"
         case _ => false
