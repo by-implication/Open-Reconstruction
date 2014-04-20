@@ -7,7 +7,6 @@ common.displayDate = function(timestamp){
 common.banner = function(text){
   return m("section.banner", [
     m("div", {class:"row"}, [
-      // 
       m("div", {class: "columns medium-12"}, [
         m("h1", text)
       ])
@@ -58,7 +57,10 @@ common.tabs.view = function(ctrl, options){
   }
 
   return m("dl.tabs[data-tab]", options, [
-    ctrl.tabs().map(function(item, i){
+    ctrl.tabs().filter(function(item){
+      return item.when ? item.when() : true;
+    })
+    .map(function(item, i){
       var activeTab = function(i){
         if(ctrl.isActive(item.label, i)){
           return "active";
