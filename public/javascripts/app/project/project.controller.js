@@ -5,12 +5,6 @@ project.controller = function(){
   this.projectTabs.tabs([{label: "Assignments"}, {label: "Images"}, {label: "Documents"}, {label: "Activity"}]);
   this.projectTabs.currentTab(this.projectTabs.tabs()[0].label)
 
-  // displayEditGroups
-  this.degDescription = new displayEditGroup.controller();
-  this.degAmount = new displayEditGroup.controller();
-  this.degDisaster = new displayEditGroup.controller();
-  this.degLocation = new displayEditGroup.controller();
-
   this.tabs = new common.tabs.controller();
   this.id = m.route.param("id");
   this.project = m.prop({});
@@ -31,6 +25,12 @@ project.controller = function(){
   
   this.assessingAgencies = m.prop([]);
   this.implementingAgencies = m.prop([]);
+
+  // displayEditGroups
+  this.degDescription = new displayEditGroup.controller(this.project, "description");
+  this.degAmount = new displayEditGroup.controller(this.project, "amount");
+  this.degDisaster = new displayEditGroup.controller(this.project, "disaster");
+  this.degLocation = new displayEditGroup.controller(this.project, "location");
 
   var parseLocation = function(location){
     var split = location.split(',').map(function(coord){return parseFloat(coord)});

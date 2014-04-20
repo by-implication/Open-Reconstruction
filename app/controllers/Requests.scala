@@ -200,4 +200,12 @@ object Requests extends Controller with Secured {
     } else Rest.unauthorized()
   }
 
+  def editField(id: Int, field: String) = UserAction(){ implicit user => implicit request =>
+    Req.findById(id).map { implicit req =>
+      if(user.canEditRequest(req)){
+        Ok("")
+      } else Rest.unauthorized()
+    }.getOrElse(Rest.notFound())
+  }
+
 }

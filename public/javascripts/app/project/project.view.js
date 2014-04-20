@@ -244,7 +244,7 @@ project.summary = function(ctrl){
         function(){ return m("h4", ctrl.project().description) }, 
         function(){
           return m("div", [
-            m("input", {type: "text", value: ctrl.project().description}),
+            m("input", {type: "text", value: ctrl.project().description, onchange: m.withAttr("value", ctrl.degDescription.input)}),
           ])
         }
       ),
@@ -263,7 +263,7 @@ project.summary = function(ctrl){
         function(){ return m("h5.value", [helper.commaize(ctrl.project().amount)]) }, 
         function(){ 
           return m("div", [
-            m("input", {type: "text", value: ctrl.project().amount}),
+            m("input", {type: "text", value: ctrl.project().amount, onchange: m.withAttr("value", ctrl.degAmount.input)}),
           ])
         }
       ),
@@ -283,7 +283,7 @@ project.summary = function(ctrl){
         function(){ return m("h5.value", [ctrl.project().location]) }, 
         function(){ 
           return m("div", [
-            m("input", {type: "text", value: ctrl.project().location}),
+            m("input", {type: "text", value: ctrl.project().location, onchange: m.withAttr("value", ctrl.degLocation.input)}),
           ])
         }
       ),
