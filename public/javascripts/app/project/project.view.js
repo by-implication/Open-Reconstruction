@@ -171,9 +171,25 @@ project.view = function(ctrl){
                   ctrl.app.isAuthorized(3)?
                     m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
                   : null,
-                  m("ul.small-block-grid-3", ctrl.attachments().imgs.map(function (img){
+                  m("ul.attachments-images.small-block-grid-4", ctrl.attachments().imgs.map(function (img){
                     return m("li", [
-                      m("img", {src: "/attachments/" + img.id + "/thumb"})
+                      m("img", {src: "/attachments/" + img.id + "/thumb"}),
+                      m(".filename", [
+                        m("a", {title: "Preview", href: "/attachments/" + img.id + "/preview", target: "_blank"}, [
+                          img.filename
+                        ]),
+                      ]),
+                      
+                      m(".uploader", [
+                        "Uploaded by ",
+                        m("a", {href: "/users/" + img.uploader.id ,config: m.route},[
+                          img.uploader.name
+                        ]),
+                        m(".date", [
+                          helper.timeago(new Date(img.dateUploaded)),
+                        ]),
+                      ]),
+                      console.log(img)
                     ]);
                   }))
                 ])
