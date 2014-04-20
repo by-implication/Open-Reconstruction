@@ -1,5 +1,4 @@
 project.controller = function(){
-  var self = this;
   var map;
   this.app = new app.controller();
   this.projectTabs = new common.tabs.controller();
@@ -20,23 +19,24 @@ project.controller = function(){
   };
   this.assessingAgency = m.prop();
   this.implementingAgency = m.prop();
+  this.coords = m.prop();
   
   this.assessingAgencies = m.prop([]);
   this.implementingAgencies = m.prop([]);
 
-  function parseLocation(location){
+  var parseLocation = function(location){
     var split = location.split(',').map(function(coord){return parseFloat(coord)});
     if (_.contains(split, NaN) || (split.length % 2)) {
       // display as plain string
       return; 
     } else {
-      var coords = new L.LatLng(split[0], split[1])
+      this.coords(new L.LatLng(split[0], split[1]));
       window.setTimeout(function(){
-        map.setView(coords, 8);
-        L.marker(coords).addTo(map);
-      }, 200) // I'M SO SORRY
+        map.setView(this.coords(), 8);
+        L.marker(this.coords()).addTo(map);
+      }.bind(this), 200) // I'M SO SORRY
     }
-  }
+  }.bind(this)
 
   this.dropzone = null;
 
@@ -70,10 +70,6 @@ project.controller = function(){
     if(!isInit){
       window.setTimeout(function(){
         map = L.map(elem, {scrollWheelZoom: false}).setView([11.3333, 123.0167], 5);
-        // if(self.coords()){
-        //   map.setView(self.coords, 8);
-        // }
-        // create the tile layer with correct attribution
         var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
         var osm = new L.TileLayer(osmUrl, {minZoom: 5, maxZoom: 19, attribution: osmAttrib}).addTo(map);   

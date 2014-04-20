@@ -93,7 +93,17 @@ project.view = function(ctrl){
                 common.renderString(ctrl.project().location)
               ])
             ]),
-            m("div#detailMap", {config: ctrl.initMap})
+            m(".map-container", [
+              m("#detailMap", {config: ctrl.initMap}),
+              console.log(ctrl.coords()),
+              ctrl.coords() ?
+                null
+              : m(".map-shroud", [
+                  m("h3", [
+                    "Map unavailable because requester did not supply coordinates"
+                  ]),
+                ])
+            ]),
           ])
         ]),
         m("div.columns.medium-8", [
