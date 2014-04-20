@@ -23,8 +23,7 @@ object ProjectType extends Enum[ProjectType] {
   val EVAC_CENTER = new ProjectType("Evac Center")
   val FINANCIAL_AID = new ProjectType("Financial Aid")
   val FLOOD_CONTROL = new ProjectType("Flood Control")
-  val HOUSE = new ProjectType("House")
-  val HOUSING_UNITS = new ProjectType("Housing Units")
+  val HOUSING = new ProjectType("Housing")
   val IRRIGATION_SYSTEM = new ProjectType("Irrigation System")
   val RIVER_CONTROL = new ProjectType("River Control")
   val RIVERS = new ProjectType("Rivers")
@@ -33,7 +32,7 @@ object ProjectType extends Enum[ProjectType] {
   val SEAWALL = new ProjectType("Seawall")
   val WATER_SYSTEM = new ProjectType("Water System")
   val OTHERS = new ProjectType("Others")
-  val list = List(BRIDGE, BUILDING, EQUIPMENT, EVAC_CENTER, FINANCIAL_AID, FLOOD_CONTROL, HOUSE, HOUSING_UNITS, IRRIGATION_SYSTEM, RIVER_CONTROL, RIVERS, ROAD, SCHOOL_BUILDING, SEAWALL, WATER_SYSTEM, OTHERS)
+  val list = List(BRIDGE, BUILDING, EQUIPMENT, EVAC_CENTER, FINANCIAL_AID, FLOOD_CONTROL, HOUSING, IRRIGATION_SYSTEM, RIVER_CONTROL, RIVERS, ROAD, SCHOOL_BUILDING, SEAWALL, WATER_SYSTEM, OTHERS)
 }
 
 sealed class ProjectScope(override val name: String) extends PGObject("project_scope", name) with ProjectScope.Value

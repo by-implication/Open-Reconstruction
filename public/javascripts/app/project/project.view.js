@@ -85,6 +85,32 @@ project.view = function(ctrl){
               common.tabs.view(ctrl.projectTabs)
             ]),
             m.switch(ctrl.projectTabs.currentTab())
+              .case("Assignments", function(){
+                if(ctrl.app.isSuperAdmin()){
+                  return m(".section", [
+                    m("form", [
+                      m("label", [
+                        "Assessing Agency",
+                        m("select", [
+                          m("option", "DPWH")
+                        ]),
+                      ]),
+                      m("label", [
+                        "Implementing Agency",
+                        m("select", [
+                          m("option", "DPWH")
+                        ]),
+                      ]),
+                    ]),
+                  ])
+                } else {
+                  return m(".section", [
+                    "OCD Personnel working on this case",
+                    "Assessing agency assigned to this case",
+                    "Implementing Agency assigned to this case"
+                  ])
+                }
+              })
               .case("Images", function(){
                 return m(".section", [
                   m.if(ctrl.app.isAuthorized(3),
