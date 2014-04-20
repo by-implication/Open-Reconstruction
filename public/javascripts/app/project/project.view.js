@@ -174,7 +174,8 @@ project.view = function(ctrl){
               })
               .case("Images", function(){
                 return m(".section", [
-                  ctrl.currentUserBelongsToAssessingAgency() || ctrl.currentUserIsAuthor() ?
+                  // console.log(ctrl.project().level),
+                  ctrl.curUserCanUpload() ?
                     m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
                   : "",
 
@@ -206,7 +207,7 @@ project.view = function(ctrl){
               })
               .case("Documents", function(){
                 return m(".section", [
-                  ctrl.currentUserBelongsToAssessingAgency() || ctrl.currentUserIsAuthor() ?
+                  ctrl.curUserCanUpload() ?
                     m("div.dropzone", {config: ctrl.initDocDropzone})
                   : "",
 
