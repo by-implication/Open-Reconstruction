@@ -14,7 +14,10 @@ project.controller = function(){
   this.oldProject = m.prop({});
   this.location = m.prop("");
   this.canSignoff = m.prop(false);
-  // this.coords = m.prop(null);
+  this.input = {
+    assessingAgency: m.prop(),
+    implementingAgency: m.prop()
+  };
   
   this.assessingAgencies = m.prop([]);
   this.implementingAgencies = m.prop([]);
@@ -41,6 +44,10 @@ project.controller = function(){
     this.attachments(data.attachments);
     this.assessingAgencies(data.assessingAgencies);
     this.implementingAgencies(data.implementingAgencies);
+
+    this.input.assessingAgency(data.request.assessingAgencyId);
+    this.input.implementingAgency(data.request.implementingAgencyId);  
+
     this.canSignoff(data.canSignoff);
     parseLocation(data.request.location);
   }.bind(this));
