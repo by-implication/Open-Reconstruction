@@ -25,6 +25,8 @@ object Requests extends Controller with Secured {
       case Some(req) => Rest.success(
         "request" -> req.toJson,
         "author" -> User.findById(req.authorId).map(_.infoJson).getOrElse(JsNull),
+        "assessingAgencies" -> Json.toJson(Agency.withPermission(Permission.VALIDATE_REQUESTS).map(_.toJson)),
+        "implementingAgencies" -> Json.toJson(Agency.withPermission(Permission.IMPLEMENT_REQUESTS).map(_.toJson)),
         "assessingAgency" -> {req.assessingAgencyId match {
           case Some(id) => Agency.findById(id).map(_.toJson).getOrElse(JsNull)
           case None => JsNull
