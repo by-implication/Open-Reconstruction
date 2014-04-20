@@ -82,6 +82,20 @@ project.controller = function(){
     }
   }.bind(this)
 
+  this.updateAssessingAgency = function(e){
+    this.input.assessingAgency(e);
+    m.request({method: "POST", url: "/requests/" + this.id + "/assign/assessing/" + this.input.assessingAgency()}).then(function(r){
+      console.log('Assessing agency submitted!');
+    })
+  }.bind(this);
+
+  this.updateImplementingAgency = function(e){
+    this.input.implementingAgency(e);
+    m.request({method: "POST", url: "/requests/" + this.id + "/assign/implementing/" + this.input.implementingAgency()}).then(function(r){
+      console.log('Implementing agency submitted!');
+    })
+  }.bind(this);
+
   var dropzonePreviewTemplate = m(".dz-preview.dz-file-preview", [
     m(".dz-details", [
       m(".dz-filename", [

@@ -110,7 +110,7 @@ object Requests extends Controller with Secured {
 
   }
 
-  def assignToAgency(reqId: Int, agencyId: Int) = UserAction(){ implicit user => implicit request =>
+  def assignAssessingAgency(reqId: Int, agencyId: Int) = UserAction(){ implicit user => implicit request =>
     if(user.isSuperAdmin){
       Req.findById(reqId).map { req =>
         Agency.findById(agencyId).map { agency =>
@@ -118,6 +118,19 @@ object Requests extends Controller with Secured {
             req.copy(assessingAgencyId = Some(agencyId)).save().map(_ => Rest.success())
             .getOrElse(Rest.serverError())
           } else Rest.error("Agency not authorized to assess.")
+        }.getOrElse(Rest.notFound())
+      }.getOrElse(Rest.notFound())
+    } else Rest.unauthorized()
+  }
+
+  def assignImplementingAgency(reqId: Int, agencyId: Int) = UserAction(){ implicit user => implicit request =>
+    if(user.isSuperAdmin){
+      Req.findById(reqId).map { req =>
+        Agency.findById(agencyId).map { agency =>
+          if(agency.canImplement()){
+            req.copy(implementingAgencyId = Some(agencyId)).save().map(_ => Rest.success())
+            .getOrElse(Rest.serverError())
+          } else Rest.error("Agency not authorized to implement.")
         }.getOrElse(Rest.notFound())
       }.getOrElse(Rest.notFound())
     } else Rest.unauthorized()
