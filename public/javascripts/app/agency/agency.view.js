@@ -6,7 +6,7 @@ agency.view = function(ctrl){
         m("span.acronym", [
           "(" + ctrl.agency().acronym + ")"
         ])
-      : null
+      : ""
     ]),
     m("section", [
       m(".row", [
@@ -19,7 +19,7 @@ agency.view = function(ctrl){
               }, 
               ["Add new user"]
             )
-          : null
+          : ""
         ]),
       ]),
       m(".row", [

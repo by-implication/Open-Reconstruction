@@ -1,8 +1,8 @@
 user.view = function(ctrl){
   return app.template(ctrl.app, [
     common.banner(ctrl.user().name),
-    m("div", {class: "row"}, [
-      m("div", {class: "columns medium-9"}, [
+    m(".row", [
+      m(".colums.medium-9", [
         m("h1",[m("small", "List of projects requested by this user")]),
         project.listView(ctrl)
       ])

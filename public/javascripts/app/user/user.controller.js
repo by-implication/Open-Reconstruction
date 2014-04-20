@@ -6,11 +6,11 @@ user.controller = function(){
   this.projectList = m.prop([]);
   this.currentFilter = {projects: function(){return null}};
 
-  m.request({method: "GET", url: ("/users/" + this.id + "/meta"), config: app.xhrConfig}).then(function (r){
+  m.request({method: "GET", url: ("/users/" + self.id + "/meta"), config: app.xhrConfig}).then(function (r){
     if(r.success){
-      self.user(r.user)
+      this.user(r.user)
     } else {
       alert(r.reason);
     }
-  })
+  }.bind(this))
 }
