@@ -30,27 +30,44 @@ project.view = function(ctrl){
         m("button", "Reject")
       ]
     })
-
-    // if(ctrl.isCurrentUserAuthorized()){
-      return m("div", [
-        common.tabs.view(ctrl.tabs, [
-          {label: "Comment"},
-          {label: "Approve"},
-          {label: "Reject"}
-        ]),
-        m("form", actions()[ctrl.tabs.currentTab() ? ctrl.tabs.currentTab() : "Comment"])
-      ])
+    return m("div", [
+      common.tabs.view(ctrl.tabs, [
+        {label: "Comment"},
+        {label: "Approve"},
+        {label: "Reject"}
+      ]),
+      m("form", actions()[ctrl.tabs.currentTab() ? ctrl.tabs.currentTab() : "Comment"])
+    ])
   }
 
   return app.template(ctrl.app, {class: "detail"}, [
-    m("section.summary", [
-      m("div.row", [
-        m("div.columns.medium-4", [
-          m("div.project-stub", [
-            m("div.section.type", [
+    ctrl.app.isAuthorized(5) ?
+      m("section.approval", [
+        m(".row", [
+          m(".columns.medium-12", [
+            m("div", [
+              m("h4", [
+                "Sign off on this request only if you feel the information is complete for your step in the approval process."
+              ]),
+              m("button", [
+                m("i.fa.fa-check"),
+              ]),
+              m("button.alert", [
+                m("i.fa.fa-times"),
+              ]),
+            ]),
+          ]),
+        ])
+      ])
+    : null,
+    m("section", [
+      m(".row", [
+        m(".columns.medium-4", [
+          m(".project-stub", [
+            m(".section.type", [
               ctrl.project().projectType
             ]),
-            m("div.section", [
+            m(".section", [
               m("h4", ctrl.project().description),
               m("p.meta", [
                 "Posted by ",
@@ -168,7 +185,7 @@ project.view = function(ctrl){
                 ])
               })
               .render()
-          ])
+          ]),
         ])
       ])
     ]),
