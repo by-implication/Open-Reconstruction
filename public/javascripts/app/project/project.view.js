@@ -201,7 +201,7 @@ project.view = function(ctrl){
                       ]);
                     }))
                   : m("h3.empty", [
-                      "No images yet."
+                      "No images have been uploaded yet."
                     ])
                 ])
               })
@@ -242,7 +242,7 @@ project.view = function(ctrl){
                       ])
                     ])
                   : m("h3.empty", [
-                      "No documents yet."
+                      "No documents have been uploaded yet."
                     ])
                 ])
               })
