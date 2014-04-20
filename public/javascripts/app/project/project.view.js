@@ -112,7 +112,7 @@ project.view = function(ctrl){
                           return m("option", {value: agency.id, selected: ctrl.input.assessingAgency() == agency.id}, agency.name)
                         })),
                         m("p.help", [
-                          "The Assessing Agency you assign will independently validate and assess the suitability of this request for execution. They will be the ones making the program of works, etc... If you are unsure about who to assign, it's generall best to assign DPWH."
+                          "The Assessing Agency you assign will independently validate and assess the suitability of this request for execution. They will be the ones making the program of works, etc... If you are unsure about who to assign, it's generally best to assign DPWH."
                         ]),
                       ]),
                       m("label", [
