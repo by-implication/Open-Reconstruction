@@ -21,12 +21,12 @@ projectListing.view = function(ctrl){
         ]),
         m("div", {class: "columns medium-3"}, [
           m("ul", [
-            m("li", [
+            m("li", { className: "" == ctrl.currentFilter.projects() ? 'selected' : '' }, [
               m("a", {onclick: ctrl.currentFilter.projects.bind(ctrl.currentFilter, "")}, "All")
             ]),
             _.chain(ctrl.projectFilters)
             .map(function(filter){
-              return m("li", [
+              return m("li", { className: filter == ctrl.currentFilter.projects() ? 'selected' : '' }, [
                 m("a", {onclick: ctrl.currentFilter.projects.bind(ctrl.currentFilter, filter)}, filter)
               ])
             })
