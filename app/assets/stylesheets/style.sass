@@ -232,12 +232,13 @@ hr
   margin-bottom: 0px
 
 .dropzone
+  +clearfix
   padding: 40px
   background-color: #eee
   margin-bottom: 20px
   cursor: pointer
   &:hover
-    background-color: #ddd
+    // background-color: #ddd
     .dz-message
       color: #aaa
   .dz-message
@@ -245,6 +246,26 @@ hr
     text-align: center
     color: #ccc
     font-weight: 300
+  &.dz-started
+    .dz-message
+      margin-bottom: 40px
+  .dz-preview
+    float: left
+    // background-color: white
+    margin-right: 20px
+    cursor: default
+    width: 128px
+    img
+      margin-bottom: 6px
+    .dz-size
+      color: $gray
+    .dz-filename
+      margin-bottom: 10px
+    // &.dz-processing
+    //   .dz-progress
+    //     background-color: #333
+    //     height: 36px
+    //     width: 100%
 
 .acronym
   margin-left: 10px
