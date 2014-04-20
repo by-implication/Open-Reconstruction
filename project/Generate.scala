@@ -33,11 +33,14 @@ object GenerateSource {
 
     def generateEnum(e: Enum) = {
       val t = NameMapping.toClassCase(e.name)
+      def name(v: String) = v.toUpperCase.replaceAll(" ", "_")
+      val valueNames = e.values.map(_.toUpperCase.replaceAll(" ", "_"))
       "sealed class "+t+"(override val name: String) extends PGObject(\""+e.name+"\", name) with "+t+".Value\n"+
       "object "+t+" extends Enum["+t+"] {\n"+
       e.values.map { v =>
-        "  val "+v.toUpperCase.replaceAll(" ", "_")+" = new "+t+"(\""+v+"\")"
+        "  val "+name(v)+" = new "+t+"(\""+v+"\")"
       }.reduceOption(_+"\n"+_).getOrElse("")+"\n"+
+      "  val list = " + e.values.map(name) + "\n" +
       "}"+"\n"
     }
 
