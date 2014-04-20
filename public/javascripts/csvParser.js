@@ -28,7 +28,7 @@ csv2json.dsv(",", "text/plain", 1)("/assets/data/CF14-RQST-Sanitized.csv", funct
         "DATE_REQD"
     ].forEach(function (x){ uselessColumns[x] = true; });
 
-    var projectTypes = {'Bridges': true};
+    var projectTypes = {'Bridge': true};
     var agencies = [];
     var agencyNames = [];
     var municipalities = [];
