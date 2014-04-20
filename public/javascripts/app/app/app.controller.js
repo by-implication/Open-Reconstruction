@@ -17,6 +17,10 @@ app.controller = function(){
     return this.currentUser() && _.contains(this.currentUser().permissions, permission);
   }
 
+  this.isUserAuthorized = function(user, permission){
+    return user && _.contains(user.permissions, permission);
+  }
+
   this.isSuperAdmin = function(){
     return this.currentUser() && this.currentUser().isSuperAdmin;
   }
