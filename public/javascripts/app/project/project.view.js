@@ -112,7 +112,7 @@ project.view = function(ctrl){
                           return m("option", {value: agency.id, selected: ctrl.input.assessingAgency() == agency.id}, agency.name)
                         })),
                         m("p.help", [
-                          "The Assessing Agency you assign will help independently validate and assess the suitability of this request for execution. They will be the ones making the program of works, etc... If you are unsure about who to assign, it's generall best to assign DPWH."
+                          "The Assessing Agency you assign will independently validate and assess the suitability of this request for execution. They will be the ones making the program of works, etc... If you are unsure about who to assign, it's generall best to assign DPWH."
                         ]),
                       ]),
                       m("label", [
@@ -128,15 +128,32 @@ project.view = function(ctrl){
                   ])
                 } else {
                   return m(".section", [
-                    m("div", [
+                    m("p", [
                       "Assessing Agency",
                       m("h4", [
-                        // ctrl.
+                        ctrl.assessingAgency() ?
+                          m("a", {href: "/agencies/"+ctrl.assessingAgency().id, config: m.route}, [
+                            ctrl.assessingAgency().name
+                          ])
+                        : "Unassigned"
+                      ]),
+                      m("p.help", [
+                        "The Assessing Agency will independently validate and assess the suitability of this request for execution. They will be the ones making the program of works, etc..."
                       ]),
                     ]),
-                    "OCD Personnel working on this case",
-                    "Assessing agency assigned to this case",
-                    "Implementing Agency assigned to this case"
+                    m("p", [
+                      "Implementing Agency",
+                      m("h4", [
+                        ctrl.implementingAgency() ?
+                          m("a", {href: "/agencies/"+ctrl.implementingAgency().id, config: m.route}, [
+                            ctrl.implementingAgency().name
+                          ])
+                        : "Unassigned"
+                      ]),
+                      m("p.help", [
+                        "The Implementing Agency will be responsible for the handling the money, and the completion of the project. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
+                      ]),
+                    ]),
                   ])
                 }
               })
@@ -230,7 +247,7 @@ project.listView = function(ctrl){
         }
       })
       .filter(function(p){
-        return (p.canSignoff || ctrl.tabs.currentTab() == "All")
+        return (p.canSignoff || ctrl.tabs.currentTab() != "Assigned to Me")
       })
       .sortBy(function(p){
         return p.date;
