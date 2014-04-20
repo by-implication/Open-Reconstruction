@@ -57,8 +57,6 @@ projectCreation.controller = function(){
           editableLayers.clearLayers();
           editableLayers.addLayer(layer);
           editableLayers.openPopup();
-
-          // console.log(layer);
           
           self.input.location(strCoords);
         });
