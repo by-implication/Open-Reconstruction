@@ -78,8 +78,6 @@ project.controller = function(){
         return "AWAITING_ASSIGNMENT";
       }
     } else {
-      // console.log(process.levelToAgencyName()[this.project().level]);
-      // console.log(agency)
       return agency;
     }
   }
