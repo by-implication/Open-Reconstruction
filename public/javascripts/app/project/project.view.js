@@ -59,7 +59,7 @@ project.view = function(ctrl){
           ]),
         ])
       ])
-    : null,
+    : "",
     m("section", [
       m(".row", [
         m(".columns.medium-4", [
@@ -96,7 +96,7 @@ project.view = function(ctrl){
             m(".map-container", [
               m("#detailMap", {config: ctrl.initMap}),
               ctrl.coords() ?
-                null
+                ""
               : m(".map-shroud", [
                   m("h3", [
                     "Map unavailable because requester did not supply coordinates"
@@ -177,7 +177,7 @@ project.view = function(ctrl){
                   // console.log(ctrl.project().level),
                   ctrl.curUserCanUpload() ?
                     m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
-                  : null,
+                  : "",
 
                   ctrl.attachments().imgs.length ?
                     m("ul.attachments-images.small-block-grid-4", ctrl.attachments().imgs.map(function (img){
@@ -209,7 +209,7 @@ project.view = function(ctrl){
                 return m(".section", [
                   ctrl.curUserCanUpload() ?
                     m("div.dropzone", {config: ctrl.initDocDropzone})
-                  : null,
+                  : "",
 
                   ctrl.attachments().docs.length ?
                     m("table.doc-list", [
@@ -304,9 +304,7 @@ project.listView = function(ctrl){
           m("td", [
             m("a.name", {href: url, config: m.route}, project.description)
           ]),
-          m("td", [
-            project.author.agency
-          ]),
+          m("td", project.author.agency),
           m("td.text-right", helper.commaize(project.amount.toFixed(2)))
         ])
       })

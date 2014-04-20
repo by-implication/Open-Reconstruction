@@ -170,6 +170,7 @@ case class User(
   lazy val isSuperAdmin = role.name == "OCD"
 
   lazy val role: Role = DB.withConnection { implicit c =>
+    play.Logger.info(agencyId + " " + id)
     SQL("""
       SELECT * FROM roles NATURAL JOIN agencys
       WHERE agency_id = {agencyId}
@@ -181,11 +182,15 @@ case class User(
   def canCreateRequests = canDo(Permission.CREATE_REQUESTS)
 
   def canSignoff(r: Req): Boolean = {
-    r.level match {
-      case 0 => r.assessingAgencyId.map(_ == agencyId).getOrElse(false)
-      case 1 => isSuperAdmin
-      case 2 => role.name == "OP"
-      case _ => false
+    if(isAnonymous) {
+      false
+    } else {
+      r.level match {
+        case 0 => r.assessingAgencyId.map(_ == agencyId).getOrElse(false)
+        case 1 => isSuperAdmin
+        case 2 => role.name == "OP"
+        case _ => false
+      }
     }
   }
 
