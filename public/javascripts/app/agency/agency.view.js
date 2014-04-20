@@ -22,44 +22,42 @@ agency.view = function(ctrl){
           : null
         ]),
       ]),
-      ctrl.app.isAgencyAdmin(ctrl.agency().id) ?
-        m(".row", [
-          m(".columns.medium-9", [
-            m("table", [
-              m("thead", [
-                m("tr", [
+      m(".row", [
+        m(".columns.medium-9", [
+          m("table", [
+            m("thead", [
+              m("tr", [
+                m("td", [
+                  "Name"
+                ]),
+                m("td", [
+                  "Username"
+                ]),
+                m("td", [
+                  "Type"
+                ]),
+              ])
+            ]),
+            m("tbody", [
+              ctrl.users().map(function(u){
+                return m("tr", [
                   m("td", [
-                    "Name"
+                    u.name
                   ]),
                   m("td", [
-                    "Username"
+                    u.handle
                   ]),
                   m("td", [
-                    "Type"
+                    u.isAdmin ?
+                      "Admin"
+                    : "Normal"
                   ]),
                 ])
-              ]),
-              m("tbody", [
-                ctrl.users().map(function(u){
-                  return m("tr", [
-                    m("td", [
-                      u.name
-                    ]),
-                    m("td", [
-                      u.handle
-                    ]),
-                    m("td", [
-                      u.isAdmin ?
-                        "Admin"
-                      : "Normal"
-                    ]),
-                  ])
-                })
-              ]),
+              })
             ]),
           ]),
-        ])
-      : null
+        ]),
+      ])
     ]),
   ])
 }

@@ -93,7 +93,17 @@ project.view = function(ctrl){
                 common.renderString(ctrl.project().location)
               ])
             ]),
-            m("div#detailMap", {config: ctrl.initMap})
+            m(".map-container", [
+              m("#detailMap", {config: ctrl.initMap}),
+              console.log(ctrl.coords()),
+              ctrl.coords() ?
+                null
+              : m(".map-shroud", [
+                  m("h3", [
+                    "Map unavailable because requester did not supply coordinates"
+                  ]),
+                ])
+            ]),
           ])
         ]),
         m("div.columns.medium-8", [
@@ -110,21 +120,50 @@ project.view = function(ctrl){
                         "Assessing Agency",
                         m("select", {onchange: m.withAttr("value", ctrl.updateAssessingAgency), value: ctrl.input.assessingAgency()}, ctrl.assessingAgencies().map(function(agency){
                           return m("option", {value: agency.id, selected: ctrl.input.assessingAgency() == agency.id}, agency.name)
-                        }))
+                        })),
+                        m("p.help", [
+                          "The Assessing Agency you assign will independently validate and assess the suitability of this request for execution. They will be the ones making the program of works, etc... If you are unsure about who to assign, it's generally best to assign DPWH."
+                        ]),
                       ]),
                       m("label", [
                         "Implementing Agency",
                         m("select", {onchange: m.withAttr("value", ctrl.updateImplementingAgency), value: ctrl.input.implementingAgency()}, ctrl.implementingAgencies().map(function(agency){
                           return m("option", {value: agency.id, selected: ctrl.input.implementingAgency() == agency.id}, agency.name)
-                        }))
+                        })),
+                        m("p.help", [
+                          "The Implementing Agency will be responsible for the handling the money, and the completion of the project. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
+                        ]),
                       ]),
                     ]),
                   ])
                 } else {
                   return m(".section", [
-                    "OCD Personnel working on this case",
-                    "Assessing agency assigned to this case",
-                    "Implementing Agency assigned to this case"
+                    m("p", [
+                      "Assessing Agency",
+                      m("h4", [
+                        ctrl.assessingAgency() ?
+                          m("a", {href: "/agencies/"+ctrl.assessingAgency().id, config: m.route}, [
+                            ctrl.assessingAgency().name
+                          ])
+                        : "Unassigned"
+                      ]),
+                      m("p.help", [
+                        "The Assessing Agency will independently validate and assess the suitability of this request for execution. They will be the ones making the program of works, etc..."
+                      ]),
+                    ]),
+                    m("p", [
+                      "Implementing Agency",
+                      m("h4", [
+                        ctrl.implementingAgency() ?
+                          m("a", {href: "/agencies/"+ctrl.implementingAgency().id, config: m.route}, [
+                            ctrl.implementingAgency().name
+                          ])
+                        : "Unassigned"
+                      ]),
+                      m("p.help", [
+                        "The Implementing Agency will be responsible for the handling the money, and the completion of the project. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
+                      ]),
+                    ]),
                   ])
                 }
               })
@@ -210,6 +249,9 @@ project.listView = function(ctrl){
         } else {
           return p.projectType == ctrl.currentFilter.projects();
         }
+      })
+      .filter(function(p){
+        return (p.canSignoff || ctrl.tabs.currentTab() != "Assigned to Me")
       })
       .sortBy(function(p){
         return p.date;
