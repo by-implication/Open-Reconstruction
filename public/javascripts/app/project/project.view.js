@@ -41,21 +41,32 @@ project.view = function(ctrl){
   }
 
   return app.template(ctrl.app, {class: "detail"}, [
-    ctrl.canSignoff() ?
+    console.log(ctrl.project()),
+    ctrl.project().isInvolved ?
       m("section.approval", [
         m(".row", [
           m(".columns.medium-12", [
-            m("div", [
-              m("h4", [
-                "Sign off on this request only if you feel the information is complete for your step in the approval process."
-              ]),
-              m("button", {onclick: ctrl.signoff}, [
-                m("i.fa.fa-check"),
-              ]),
-              m("button.alert", [
-                m("i.fa.fa-times"),
-              ]),
-            ]),
+            ctrl.canSignoff ?
+              m("div", [
+                m("h4", [
+                  "Sign off on this request only if you feel the information is complete for your step in the approval process."
+                ]),
+                m("button", {onclick: ctrl.signoff}, [
+                  m("i.fa.fa-check"),
+                ]),
+                m("button.alert", [
+                  m("i.fa.fa-times"),
+                ]),
+              ])
+            : "",
+            ctrl.project().hasSignedOff ?
+              m("div", [
+                m("h4", [
+                  m("i.fa.fa-like"),
+                  "You've already signed off on this request."
+                ]),
+              ])
+            : ""
           ]),
         ])
       ])
