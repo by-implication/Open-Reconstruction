@@ -2,7 +2,7 @@ admin.view = function(ctrl){
   
   return app.template(ctrl.app, [
     common.banner("Administrative Interface"),
-    m.if(ctrl.app.isSuperAdmin(),
+    ctrl.app.isSuperAdmin()?
       m("section", [
         m(".row", [
           // create agencies
@@ -31,11 +31,11 @@ admin.view = function(ctrl){
                     m("td", [
                       m("a", {href: "/agencies/"+a.id, config: m.route}, [
                         a.name,
-                        m.if(a.acronym, 
+                        a.acronym ?
                           m("span.acronym", [
                             "("+a.acronym+")"
                           ])
-                        )
+                        : null
                       ]),
                     ]),
                     m("td", [
@@ -51,7 +51,6 @@ admin.view = function(ctrl){
           ]),
         ]),
       ])
-    )
-      
+    : null
   ])
 }

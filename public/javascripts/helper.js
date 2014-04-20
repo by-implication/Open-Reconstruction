@@ -173,14 +173,6 @@ helper.timeago = function (time, local, raw) {
 };
 helper.monthArray = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 
-m.if = function(bool, ifElem, elseElem){
-  if(bool){
-    return ifElem;
-  } else {
-    return elseElem ? elseElem : null;
-  }
-}
-
 m.switchObject = function(base, acc){
   this.case = function(cond, elem){
     if(base === cond){

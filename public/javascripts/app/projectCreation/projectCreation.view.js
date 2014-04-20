@@ -11,6 +11,12 @@ projectCreation.view = function(ctrl){
     }
   }
 
+  function projectTypeGroups(indexArr){
+    return indexArr.map(function(t){
+      return m("option", ctrl.requestCreationInfo.projectTypes[t])
+    });
+  }
+
   var sections = [
     {
       icon: "fa-cloud",
@@ -68,28 +74,23 @@ projectCreation.view = function(ctrl){
           m("input", {type: "number", onchange: m.withAttr("value", ctrl.input.amount)}),
           "Note that the agency assigned to evaluate this request may change the amount based on their costing."
         ),
-        console.log(ctrl.requestCreationInfo.projectTypes),
         common.field(
           "Type",
           m("select", {
             onchange: m.withAttr("value", ctrl.input.projectType), 
             value: ctrl.input.projectType()
           }, [
-            m("optgroup", {label: "Water"}, [
-              m("option", ctrl.requestCreationInfo.projectTypes[0]),
-              m("option", ctrl.requestCreationInfo.projectTypes[1]),
-              m("option", ctrl.requestCreationInfo.projectTypes[2]),
-              m("option", ctrl.requestCreationInfo.projectTypes[8]),
-              m("option", ctrl.requestCreationInfo.projectTypes[13]),
-            ]),
             m("optgroup", {label: "Infrastructure"}, [
-              m("option", ctrl.requestCreationInfo.projectTypes[4]),
-              m("option", ctrl.requestCreationInfo.projectTypes[9]),
+              projectTypeGroups([0, 10])
+            ]),
+            m("optgroup", {label: "Water"}, [
+              projectTypeGroups([5, 7, 8, 9, 12, 13])
             ]),
             m("optgroup", {label: "Buildings"}, [
-              m("option", ctrl.requestCreationInfo.projectTypes[5]),
-              m("option", ctrl.requestCreationInfo.projectTypes[6]),
-              m("option", ctrl.requestCreationInfo.projectTypes[10]),
+              projectTypeGroups([1, 3, 6, 11])
+            ]),
+            m("optgroup", {label: "Other"}, [
+              projectTypeGroups([2, 4, 14])
             ]),
           ])
         ),
@@ -116,7 +117,7 @@ projectCreation.view = function(ctrl){
               return m("option", {value: e}, scopeLabel(e))
             })
           ),
-          "Do we need to reconstruct this in its entirety? Or is this simply a repair job?"
+          "Tell us the extent of the work that needs to be done."
         ),
         console.log(ctrl.input.location()),
         common.field(
