@@ -32,17 +32,7 @@ object Requests extends Controller with Secured {
         "implementingAgency" -> req.implementingAgencyId.map { aid =>
           Agency.findById(aid).map(_.toJson).getOrElse(JsNull)
         }.getOrElse(JsNull),
-        "attachments" -> Json.toJson(req.attachments.map { case (attachment, uploader) =>
-          Json.obj(
-            "id" -> attachment.id.get,
-            "filename" -> attachment.filename,
-            "dateUploaded" -> attachment.dateUploaded,
-            "uploader" -> Json.obj(
-              "id" -> uploader.id.get,
-              "name" -> uploader.name
-            )
-          )
-        })
+        "attachments" -> Json.toJson(req.attachments.map((Attachment.insertJson _).tupled))
       )
     }.getOrElse(Rest.notFound())
     
