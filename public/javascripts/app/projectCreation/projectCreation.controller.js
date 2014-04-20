@@ -1,7 +1,8 @@
 projectCreation.controller = function(){
   var self = this;
   this.app = new app.controller();
-  
+
+  this.preamble = m.prop(false);  
   this.input = {
     amount: m.prop(0),
     attachments: m.prop([]),
@@ -79,14 +80,18 @@ projectCreation.controller = function(){
 
   this.submitNewRequest = function(e){
     e.preventDefault();
-    m.request({method: "POST", url: "/requests/new", data: this.input, config: app.xhrConfig}).then(function(r){
-      if(r.success){
-        window.location = '/';
-      } else if(r.reason == "form error"){
-        alert("Request not created!");
-      } else {
-        alert(r.reason);
-      }
-    })
+    if(this.preamble()) {
+      m.request({method: "POST", url: "/requests/new", data: this.input, config: app.xhrConfig}).then(function(r){
+        if(r.success){
+          window.location = '/';
+        } else if(r.reason == "form error"){
+          alert("Request not created!");
+        } else {
+          alert(r.reason);
+        }
+      })
+    } else {
+      alert('To avoid double-budgeting, please make sure to request for assistance only once!');
+    }
   }.bind(this);
 }
