@@ -238,7 +238,9 @@ project.view = function(ctrl){
               .case("Activity", function(){
                 return m(".section", ctrl.history().map(function (e){
                   return historyEvent[e.kind](e);
-                }).concat(ctrl.app.currentUser() ? [
+                })
+                .reverse()
+                .concat(ctrl.app.currentUser() ? [
                   m("form", {onsubmit: ctrl.submitComment}, [
                     m("label", [
                       "Comment",
