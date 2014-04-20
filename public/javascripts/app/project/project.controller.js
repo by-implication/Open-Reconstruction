@@ -13,7 +13,9 @@ project.controller = function(){
   this.history = m.prop({});
   this.oldProject = m.prop({});
   this.location = m.prop("");
+  this.isInvolved = m.prop(false);
   this.canSignoff = m.prop(false);
+  this.hasSignedoff = m.prop(false);
   this.input = {
     assessingAgency: m.prop(),
     implementingAgency: m.prop(),
@@ -74,6 +76,8 @@ project.controller = function(){
     this.input.assessingAgency(data.request.assessingAgencyId);
     this.input.implementingAgency(data.request.implementingAgencyId);  
 
+    this.isInvolved(data.isInvolved);
+    this.hasSignedoff(data.hasSignedoff)
     this.canSignoff(data.canSignoff);
     parseLocation(data.request.location);
   }.bind(this));
