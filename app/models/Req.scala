@@ -14,6 +14,10 @@ object Req extends ReqGen {
     SQL("SELECT * FROM reqs ORDER BY req_date DESC").list(simple)
   }
 
+  def authoredBy(id: Int) = DB.withConnection { implicit c =>
+    SQL("SELECT * FROM reqs WHERE author_id = {id} ORDER BY req_date DESC").on('id -> id).list(simple)
+  }
+
 }
 
 // GENERATED case class start

@@ -171,9 +171,9 @@ case class User(
   private lazy val OP = "OP"
   private lazy val DBM = "DBM"
 
-  lazy val isSuperAdmin = role.name == OCD
-  lazy val isOP = role.name == OP
-  lazy val isDBM = role.name == DBM
+  lazy val isSuperAdmin = !isAnonymous && role.name == OCD
+  lazy val isOP = !isAnonymous && role.name == OP
+  lazy val isDBM = !isAnonymous && role.name == DBM
 
   lazy val role: Role = DB.withConnection { implicit c =>
     SQL("""
@@ -184,11 +184,13 @@ case class User(
 
   var sessionId = -1
 
+  def authoredRequests: Seq[Req] = Req.authoredBy(id)
+
   def isInvolvedWith(r: Req): Boolean = {
-    role.name match {
+    !isAnonymous && (r.authorId == id.get || {role.name match {
       case OCD | OP | DBM => true
       case _ => r.assessingAgencyId.map(_ == agencyId).getOrElse(false)
-    }
+    }})
   }
 
   def hasSignedoff(r: Req): Boolean = {
