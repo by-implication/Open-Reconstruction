@@ -108,15 +108,15 @@ project.view = function(ctrl){
                     m("form", [
                       m("label", [
                         "Assessing Agency",
-                        m("select", [
-                          m("option", "DPWH")
-                        ]),
+                        m("select", ctrl.assessingAgencies().map(function(agency){
+                          return m("option", {value: agency.id}, agency.name)
+                        }))
                       ]),
                       m("label", [
                         "Implementing Agency",
-                        m("select", [
-                          m("option", "DPWH")
-                        ]),
+                        m("select", ctrl.implementingAgencies().map(function(agency){
+                          return m("option", {value: agency.id}, agency.name)
+                        }))
                       ]),
                     ]),
                   ])
