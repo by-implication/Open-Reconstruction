@@ -136,7 +136,6 @@ projectCreation.view = function(ctrl){
           ),
           "Tell us the extent of the work that needs to be done."
         ),
-        console.log(ctrl.input.location()),
         common.field(
           "Location",
           m("div", {id: "map", config: ctrl.initMap}),
