@@ -21,7 +21,7 @@ admin.view = function(ctrl){
                     "Users"
                   ]),
                   m("td", [
-                    "Permissions"
+                    "Role"
                   ]),
                 ]),
               ]),
@@ -42,7 +42,7 @@ admin.view = function(ctrl){
                       a.totalUsers
                     ]),
                     m("td", [
-                      a.role
+                      ctrl.roles()[a.role]
                     ])
                   ]);
                 })

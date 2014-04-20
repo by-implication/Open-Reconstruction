@@ -174,50 +174,76 @@ project.view = function(ctrl){
               })
               .case("Images", function(){
                 return m(".section", [
-                  ctrl.app.isAuthorized(3)?
+                  ctrl.currentUserBelongsToAssessingAgency() || ctrl.currentUserIsAuthor() ?
                     m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
                   : null,
-                  m("ul.small-block-grid-3", ctrl.attachments().imgs.map(function (img){
-                    return m("li", [
-                      m("img", {src: "/attachments/" + img.id + "/thumb"})
-                    ]);
-                  }))
+
+                  ctrl.attachments().imgs.length ?
+                    m("ul.attachments-images.small-block-grid-4", ctrl.attachments().imgs.map(function (img){
+                      return m("li", [
+                        m("img", {src: "/attachments/" + img.id + "/thumb"}),
+                        m(".filename", [
+                          m("a", {title: "Preview", href: "/attachments/" + img.id + "/preview", target: "_blank"}, [
+                            img.filename
+                          ]),
+                        ]),
+                        
+                        m(".uploader", [
+                          "Uploaded by ",
+                          m("a", {href: "/users/" + img.uploader.id ,config: m.route},[
+                            img.uploader.name
+                          ]),
+                          m(".date", [
+                            helper.timeago(new Date(img.dateUploaded)),
+                          ]),
+                        ]),
+                        console.log(img)
+                      ]);
+                    }))
+                  : m("h3.empty", [
+                      "No images have been uploaded yet."
+                    ])
                 ])
               })
               .case("Documents", function(){
                 return m(".section", [
-                  ctrl.app.isAuthorized(3)?
+                  ctrl.currentUserBelongsToAssessingAgency() || ctrl.currentUserIsAuthor() ?
                     m("div.dropzone", {config: ctrl.initDocDropzone})
                   : null,
-                  m("table.doc-list", [
-                    m("thead", [
-                      m("tr", [
-                        m("td", "Filename"),
-                        m("td", "Date Uploaded"),
-                        m("td", "Uploader"),
-                        m("td", "Actions")
-                      ])
-                    ]),
-                    m("tbody", [
-                      ctrl.attachments().docs.map(function (doc){
-                        return m("tr", [
-                          m("td", doc.filename),
-                          m("td", common.displayDate(doc.dateUploaded)),
-                          m("td", [
-                            m("a", {href: "/users/" + doc.uploader.id}, doc.uploader.name)
-                          ]),
-                          m("td", [
-                            m("a", {title: "Preview", href: "/attachments/" + doc.id + "/preview"}, [
-                              m("i.fa.fa-lg.fa-eye.fa-fw"),
-                            ]),
-                            m("a", {title: "Download", href: "/attachments/" + doc.id + "/download"}, [
-                              m("i.fa.fa-lg.fa-download.fa-fw"),
-                            ]),
-                          ])
+
+                  ctrl.attachments().docs.length ?
+                    m("table.doc-list", [
+                      m("thead", [
+                        m("tr", [
+                          m("td", "Filename"),
+                          m("td", "Date Uploaded"),
+                          m("td", "Uploader"),
+                          m("td", "Actions")
                         ])
-                      })
+                      ]),
+                      m("tbody", [
+                        ctrl.attachments().docs.map(function (doc){
+                          return m("tr", [
+                            m("td", doc.filename),
+                            m("td", common.displayDate(doc.dateUploaded)),
+                            m("td", [
+                              m("a", {href: "/users/" + doc.uploader.id}, doc.uploader.name)
+                            ]),
+                            m("td", [
+                              m("a", {title: "Preview", href: "/attachments/" + doc.id + "/preview", target: "_blank"}, [
+                                m("i.fa.fa-lg.fa-eye.fa-fw"),
+                              ]),
+                              m("a", {title: "Download", href: "/attachments/" + doc.id + "/download"}, [
+                                m("i.fa.fa-lg.fa-download.fa-fw"),
+                              ]),
+                            ])
+                          ])
+                        })
+                      ])
                     ])
-                  ]),
+                  : m("h3.empty", [
+                      "No documents have been uploaded yet."
+                    ])
                 ])
               })
               .case("Activity", function(){

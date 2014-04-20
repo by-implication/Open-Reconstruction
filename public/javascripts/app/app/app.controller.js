@@ -19,6 +19,10 @@ app.controller = function(){
   this.isAgencyAdmin = function(agencyId){
     return this.isSuperAdmin() || this.currentUser() && this.currentUser().isAdmin && this.currentUser().agency.id === agencyId;
   }
+
+  this.getCurrentUserProp = function(prop){
+    return this.currentUser() ? this.currentUser()[prop] : null
+  }
   
   this.initMap = function(elem, isInit, config, isEditable){
     if(!isInit){

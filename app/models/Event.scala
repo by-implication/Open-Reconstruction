@@ -11,7 +11,7 @@ import recon.support._
 object Event extends EventGen {
 
   def findForRequest(id: Int) = DB.withConnection { implicit c =>
-    SQL("SELECT * FROM events WHERE req_id = {reqId} ORDER BY event_date")
+    SQL("SELECT * FROM events WHERE req_id = {reqId} ORDER BY event_date DESC")
     .on('reqId -> id).list(simple)
   }
 

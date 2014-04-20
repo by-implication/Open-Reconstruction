@@ -1,5 +1,33 @@
 var historyEvent = {}
 
+historyEvent.attachment = function(data){
+  var date = new Date(data.date);
+  var c = data.content.split(" ");
+  var attachmentId = c.pop();
+  var isImage = parseInt(c.pop());
+  var filename = c.join(" ");
+  return m(".event", [
+    historyEvent.date(date),
+    m(".details", [
+      m("h3", isImage ? "Image" : "Document"),
+      m("p", [
+        filename,
+        m("a", {title: "Preview", href: "/attachments/" + attachmentId + "/preview"}, [
+          m("i.fa.fa-lg.fa-eye.fa-fw"),
+        ]),
+        m("a", {title: "Download", href: "/attachments/" + attachmentId + "/download"}, [
+          m("i.fa.fa-lg.fa-download.fa-fw"),
+        ]),
+      ]),
+      m("p.meta", [
+        "attached by ",
+        m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+        helper.timeago(date)
+      ])
+    ])
+  ])
+}
+
 historyEvent.comment = function(data){
   var date = new Date(data.date);
   return m(".event", [

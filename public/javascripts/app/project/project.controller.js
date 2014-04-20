@@ -42,6 +42,14 @@ project.controller = function(){
 
   this.dropzone = null;
 
+  this.currentUserBelongsToAssessingAgency = function(){
+    return (this.assessingAgency() ? this.assessingAgency().id : null) === (this.app.getCurrentUserProp("agency") ? this.app.getCurrentUserProp("agency").id : null) ;
+  }
+
+  this.currentUserIsAuthor = function(){
+    return this.author().handle === this.app.getCurrentUserProp("handle");
+  }
+
   m.request({method: "GET", url: "/requests/"+this.id+"/meta"}).then(function(data){
     this.project(data.request);
     this.author(data.author);
