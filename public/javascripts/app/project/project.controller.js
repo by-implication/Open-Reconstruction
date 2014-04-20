@@ -42,7 +42,7 @@ project.controller = function(){
   this.dropzone = null;
 
   this.currentUserBelongsToAssessingAgency = function(){
-    return this.assessingAgency().id === (this.app.getCurrentUserProp("agency") ? this.app.getCurrentUserProp("agency").id : null) ;
+    return (this.assessingAgency() ? this.assessingAgency().id : null) === (this.app.getCurrentUserProp("agency") ? this.app.getCurrentUserProp("agency").id : null) ;
   }
 
   this.currentUserIsAuthor = function(){
