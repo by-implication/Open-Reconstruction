@@ -10,12 +10,40 @@ import recon.support._
 
 object Event extends EventGen {
 
-  def assign(agencyType: String, assign: Boolean, agency: Agency, reqId: Int, user: User) = Event(
-    kind = "assign",
-    content = Some(Seq(agency.name, agency.id, (if (assign) 1 else 0), agencyType).mkString(" ")),
-    reqId = reqId,
+  private def generate(kind: String, content: String)(implicit req: Req, user: User) = Event(
+    kind = kind,
+    content = Some(content),
+    reqId = req.id,
     userId = user.id.toOption
   )
+
+  def signoff(agency: Agency)(implicit req: Req, user: User) = {
+    generate("signoff", agency.name + " " + agency.id)
+  }
+
+  def attachment(a: Attachment)(implicit req: Req, user: User) = {
+    generate("attachment", Seq(a.filename, if(a.isImage) 1 else 0, a.id).mkString(" "))
+  }
+
+  def comment(content: String)(implicit req: Req, user: User) = {
+    generate("comment", content)
+  }
+
+  def reviseAmount(amount: String)(implicit req: Req, user: User) = {
+    generate("reviseAmount", amount)
+  }
+
+  def assign(agencyType: String, assign: Boolean, agency: Agency)(implicit req: Req, user: User) = {
+    generate("assign", Seq(agency.name, agency.id, (if (assign) 1 else 0), agencyType).mkString(" "))
+  }
+
+  def newRequest()(implicit req: Req, user: User) = {
+    generate("newRequest", req.description)
+  }
+
+  def disaster()(implicit req: Req, user: User) = {
+    generate("disaster", req.disasterName.getOrElse("") + ":" + req.disasterType).copy(date = req.disasterDate)
+  }
 
   def findForRequest(id: Int) = DB.withConnection { implicit c =>
     SQL("SELECT * FROM events WHERE req_id = {reqId} ORDER BY event_date DESC")

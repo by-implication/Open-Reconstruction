@@ -81,8 +81,12 @@ object Requests extends Controller with Secured {
   	if(user.canCreateRequests){
   		createForm.bindFromRequest.fold(
   			Rest.formError(_),
-  			_.copy(authorId = user.id).save().map { r =>
-  				Rest.success("id" -> r.insertJson)
+  			_.copy(authorId = user.id).save().map { implicit r =>
+          Event.newRequest().create().map { _ =>
+            Event.disaster().create().map { _ =>
+  				    Rest.success("id" -> r.insertJson)
+            }.getOrElse(Rest.serverError())
+          }.getOrElse(Rest.serverError())
   			}.getOrElse(Rest.serverError())
 			)
   	} else Rest.unauthorized()
@@ -93,13 +97,8 @@ object Requests extends Controller with Secured {
     Req.findById(id).map { r =>
 
       if(user.canSignoff(r)){
-        r.copy(level = r.level + 1).save().map( r =>
-          Event(
-            kind = "signoff",
-            content = Some(user.agency.name + " " + user.agency.id),
-            reqId = id,
-            userId = user.id.toOption
-          ).create().map { _ =>
+        r.copy(level = r.level + 1).save().map( implicit r =>
+          Event.signoff(user.agency).create().map { _ =>
             Rest.success()
           }.getOrElse(Rest.serverError())
         ).getOrElse(Rest.serverError())
@@ -117,17 +116,14 @@ object Requests extends Controller with Secured {
 
   def comment(id: Int) = UserAction(){ implicit user => implicit request =>
     if(!user.isAnonymous){
-      Form("content" -> nonEmptyText).bindFromRequest.fold(
-        Rest.formError(_),
-        content => Event(
-          kind = "comment",
-          content = Some(content),
-          reqId = id,
-          userId = user.id.toOption
-        ).create().map { _ =>
-          Rest.success()
-        }.getOrElse(Rest.serverError())
-      )
+      Req.findById(id).map { implicit req =>
+        Form("content" -> nonEmptyText).bindFromRequest.fold(
+          Rest.formError(_),
+          content => Event.comment(content).create().map { _ =>
+            Rest.success()
+          }.getOrElse(Rest.serverError())
+        )
+      }.getOrElse(Rest.notFound())
     } else Rest.unauthorized()
 
   }
@@ -139,12 +135,12 @@ object Requests extends Controller with Secured {
       agencyType: String
     )(reqId: Int, agencyId: Int) = UserAction(){ implicit user => implicit request =>
     if(user.isSuperAdmin){
-      Req.findById(reqId).map { req =>
+      Req.findById(reqId).map { implicit req =>
         agencyId match {
           case 0 => {
             val (r, agency) = unassign(req)
-            r.save().map { r =>
-              Event.assign(agencyType, false, agency, reqId, user).create().map { _ =>
+            r.save().map { _ =>
+              Event.assign(agencyType, false, agency).create().map { _ =>
                 Rest.success()
               }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())
@@ -152,8 +148,8 @@ object Requests extends Controller with Secured {
           case _ => {
             Agency.findById(agencyId).map { agency =>
               if(isAuthorized(agency)){
-                assign(req, agencyId).save().map { r =>
-                  Event.assign(agencyType, true, agency, reqId, user).create().map { _ =>
+                assign(req, agencyId).save().map { _ =>
+                  Event.assign(agencyType, true, agency).create().map { _ =>
                     Rest.success()
                   }.getOrElse(Rest.serverError())
                 }.getOrElse(Rest.serverError())
@@ -181,28 +177,25 @@ object Requests extends Controller with Secured {
 
   def reviseAmount(id: Int) = UserAction(){ implicit user => implicit request =>
     if(!user.isAnonymous){
-      Req.findById(id) match {
-        case Some(req) => {
-          Form("amount" -> text.verifying("Invalid amount",
-            _amount => {
-              try {
-                val amount = BigDecimal(_amount)
-                (amount >= 0)
-              } catch {
-                case e: NumberFormatException => false
-              }
+      Req.findById(id).map { req =>
+        Form("amount" -> text.verifying("Invalid amount",
+          _amount => {
+            try {
+              val amount = BigDecimal(_amount)
+              (amount >= 0)
+            } catch {
+              case e: NumberFormatException => false
             }
-          )).bindFromRequest.fold(
-            Rest.formError(_),
-            amount => Event(kind = "reviseAmount", content = Some(amount), reqId = id, userId = Some(user.id)).create().map { c =>
-              req.copy(amount = BigDecimal(amount)).save().map{r =>
-                Rest.success()
-              }.getOrElse(Rest.serverError())
+          }
+        )).bindFromRequest.fold(
+          Rest.formError(_),
+          amount => req.copy(amount = BigDecimal(amount)).save().map { implicit req =>
+            Event.reviseAmount(amount).create().map { _ =>
+              Rest.success()
             }.getOrElse(Rest.serverError())
-          )
-        }
-        case None => Rest.notFound()
-      }
+          }.getOrElse(Rest.serverError())
+        )
+      }.getOrElse(Rest.notFound())
     } else Rest.unauthorized()
 
   }
