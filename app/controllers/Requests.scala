@@ -107,4 +107,16 @@ object Requests extends Controller with Secured {
     ))
   }
 
+  def comment(id: Int) = UserAction(){ implicit user => implicit request =>
+    if(!user.isAnonymous){
+      Form("content" -> nonEmptyText).bindFromRequest.fold(
+        Rest.formError(_),
+        content => Event(kind = "comment", content = Some(content), reqId = id).create().map { c =>
+          Rest.success()
+        }.getOrElse(Rest.serverError())
+      )
+    } else Rest.unauthorized()
+
+  }
+
 }

@@ -244,7 +244,8 @@ csv2json.dsv(",", "text/plain", 1)("/assets/data/CF14-RQST-Sanitized.csv", funct
             q(e.kind),
             q(e.date),
             q(e.content),
-            e.reqId
+            e.reqId,
+            e.kind == "comment" ? 2 : "null" // generated comments are attached to OCD account
         ].join(", ") + ")";
     }).join(",<br/>") + ";;");
 

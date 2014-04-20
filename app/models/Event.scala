@@ -17,7 +17,8 @@ case class Event(
   kind: String = "",
   date: Timestamp = Time.now,
   content: Option[String] = None,
-  reqId: Int = 0
+  reqId: Int = 0,
+  userId: Option[Int] = None
 ) extends EventCCGen with Entity[Event]
 // GENERATED case class end
 
@@ -28,9 +29,10 @@ trait EventGen extends EntityCompanion[Event] {
     get[String]("event_kind") ~
     get[Timestamp]("event_date") ~
     get[Option[String]]("event_content") ~
-    get[Int]("req_id") map {
-      case id~kind~date~content~reqId =>
-        Event(id, kind, date, content, reqId)
+    get[Int]("req_id") ~
+    get[Option[Int]]("user_id") map {
+      case id~kind~date~content~reqId~userId =>
+        Event(id, kind, date, content, reqId, userId)
     }
   }
 
@@ -59,20 +61,23 @@ trait EventGen extends EntityCompanion[Event] {
             event_kind,
             event_date,
             event_content,
-            req_id
+            req_id,
+            user_id
           ) VALUES (
             DEFAULT,
             {kind},
             {date},
             {content},
-            {reqId}
+            {reqId},
+            {userId}
           )
         """).on(
           'id -> o.id,
           'kind -> o.kind,
           'date -> o.date,
           'content -> o.content,
-          'reqId -> o.reqId
+          'reqId -> o.reqId,
+          'userId -> o.userId
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -83,20 +88,23 @@ trait EventGen extends EntityCompanion[Event] {
             event_kind,
             event_date,
             event_content,
-            req_id
+            req_id,
+            user_id
           ) VALUES (
             {id},
             {kind},
             {date},
             {content},
-            {reqId}
+            {reqId},
+            {userId}
           )
         """).on(
           'id -> o.id,
           'kind -> o.kind,
           'date -> o.date,
           'content -> o.content,
-          'reqId -> o.reqId
+          'reqId -> o.reqId,
+          'userId -> o.userId
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -108,14 +116,16 @@ trait EventGen extends EntityCompanion[Event] {
         event_kind={kind},
         event_date={date},
         event_content={content},
-        req_id={reqId}
+        req_id={reqId},
+        user_id={userId}
       where event_id={id}
     """).on(
       'id -> o.id,
       'kind -> o.kind,
       'date -> o.date,
       'content -> o.content,
-      'reqId -> o.reqId
+      'reqId -> o.reqId,
+      'userId -> o.userId
     ).executeUpdate() > 0
   }
 

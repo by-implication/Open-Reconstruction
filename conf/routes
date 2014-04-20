@@ -21,6 +21,7 @@ GET     /requests/info              controllers.Requests.createInfo()
 POST    /requests/new               controllers.Requests.insert()
 POST    /requests/:id/signoff       controllers.Requests.signoff(id: Int)
 POST    /requests/:id/attach        controllers.Requests.attach(id: Int)
+POST	/requests/:id/comment		controllers.Requests.comment(id: Int)
 
 GET     /agencies/all/meta          controllers.Agencies.allMeta()
 GET     /agencies/new/meta          controllers.Agencies.createMeta()
