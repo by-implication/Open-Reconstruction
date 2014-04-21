@@ -72,8 +72,6 @@ case class Evolutions(sql: String, root: File) {
     import scala.collection.JavaConversions._
 
     println("[info] Reapplying evolutions to dummy database, PostgreSQL errors may follow")
-    DatabaseSupport.conn.createStatement().execute("CREATE SCHEMA IF NOT EXISTS codegen")
-    DatabaseSupport.conn.createStatement().execute("SET search_path TO codegen,public")
     var stmt = DatabaseSupport.conn.createStatement
     println(sql.replaceAll(";;", ";"))
     stmt.execute(sql.replaceAll(";;", ";"))
@@ -84,8 +82,6 @@ case class Evolutions(sql: String, root: File) {
     val fws = new FileWriter(hashFile)
     fws.write(sql.hashCode.toString)
     fws.close()
-    DatabaseSupport.conn.createStatement().execute("SET search_path TO public")
-    DatabaseSupport.conn.createStatement().execute("DROP SCHEMA codegen CASCADE")
     DatabaseSupport.conn.close();
   }
 }

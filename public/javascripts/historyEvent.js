@@ -11,7 +11,7 @@ historyEvent.editField = function(data){
       m("p", "Project " + field + " was set to \"" + value + "\""),
       m("p.meta", [
         "modified by ",
-        m("a", {href: "/user/" + data.user.id, config: m.route}, data.user.name),
+        m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
         " ",
         helper.timeago(date)
       ])
@@ -43,7 +43,7 @@ historyEvent.newRequest = function(data){
       m("p", "Request posted: " + data.content),
       m("p.meta", [
         "posted by ",
-        m("a", {href: "/user/" + data.user.id, config: m.route}, data.user.name),
+        m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
         " ",
         helper.timeago(date)
       ])
