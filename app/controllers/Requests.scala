@@ -210,7 +210,9 @@ object Requests extends Controller with Secured {
     }
     case "amount" => {
       mapping(
-        "input" -> number
+        "input" -> bigDecimal(15, 2).verifying("Invalid amount",
+          amount => (amount >= 0 && amount < 100000000)
+        )
       )(v => req.copy(amount = v)
       )(_ => None)
     }
