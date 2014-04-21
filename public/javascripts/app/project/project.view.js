@@ -261,7 +261,7 @@ project.summary = function(ctrl){
         function(){ return m("h5.value", [ctrl.project().disasterType + " " + ctrl.project().disasterName + " in " + common.displayDate(ctrl.project().disasterDate)]) }, 
         function(){ 
           return m("div", [
-            "needs disaster type and stuff from projectCreation."
+            "Sorry, editing disaster is not yet supported."
           ])
         }
       ),
