@@ -116,9 +116,8 @@ historyEvent.attachment = function(data){
   return m(".event", [
     historyEvent.date(date),
     m(".details", [
-      m("h3", isImage ? "Image" : "Document"),
       m("p", [
-        filename,
+        (isImage ? "Image" : "Document") + " uploaded: " + filename,
         m("a", {title: "Preview", href: "/attachments/" + attachmentId + "/preview"}, [
           m("i.fa.fa-lg.fa-eye.fa-fw"),
         ]),
