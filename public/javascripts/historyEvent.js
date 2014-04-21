@@ -11,7 +11,7 @@ historyEvent.editField = function(data){
       m("p", "Project " + field + " was set to \"" + value + "\""),
       m("p.meta", [
         "modified by ",
-        m("a", {href: "/user/" + data.user.id, config: m.route}, data.user.name),
+        m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
         " ",
         helper.timeago(date)
       ])
@@ -43,7 +43,7 @@ historyEvent.newRequest = function(data){
       m("p", "Request posted: " + data.content),
       m("p.meta", [
         "posted by ",
-        m("a", {href: "/user/" + data.user.id, config: m.route}, data.user.name),
+        m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
         " ",
         helper.timeago(date)
       ])
@@ -116,9 +116,8 @@ historyEvent.attachment = function(data){
   return m(".event", [
     historyEvent.date(date),
     m(".details", [
-      m("h3", isImage ? "Image" : "Document"),
       m("p", [
-        filename,
+        (isImage ? "Image" : "Document") + " uploaded: " + filename,
         m("a", {title: "Preview", href: "/attachments/" + attachmentId + "/preview"}, [
           m("i.fa.fa-lg.fa-eye.fa-fw"),
         ]),
