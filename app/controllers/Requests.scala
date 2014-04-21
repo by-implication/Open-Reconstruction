@@ -10,6 +10,10 @@ import recon.support._
 
 object Requests extends Controller with Secured {
 
+  private lazy val projectAmount = bigDecimal(15, 2).verifying("Invalid amount",
+    amount => (amount >= 0 && amount < 100000000)
+  )
+
   def createInfo() = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
       "disasterTypes" -> DisasterType.jsonList,
@@ -53,7 +57,7 @@ object Requests extends Controller with Secured {
 
     val createForm: Form[Req] = Form(
       mapping(
-        "amount" -> optional(number),
+        "amount" -> optional(projectAmount),
         "description" -> nonEmptyText,
         "disasterDate" -> date,
         "disasterName" -> optional(text),
@@ -66,7 +70,7 @@ object Requests extends Controller with Secured {
         disasterDate, disasterName, disasterType,
         location, projectType, scope) => {
         Req(
-          amount = BigDecimal(amount.getOrElse(0)),
+          amount = amount.getOrElse(0),
           description = description,
           disasterDate = disasterDate,
           disasterName = disasterName,
@@ -210,9 +214,7 @@ object Requests extends Controller with Secured {
     }
     case "amount" => {
       mapping(
-        "input" -> bigDecimal(15, 2).verifying("Invalid amount",
-          amount => (amount >= 0 && amount < 100000000)
-        )
+        "input" -> projectAmount
       )(v => req.copy(amount = v)
       )(_ => None)
     }
