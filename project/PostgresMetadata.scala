@@ -110,7 +110,7 @@ object PostgresMetadata {
   }
 
   def list() = {
-    val statement = conn.prepareStatement("select tablename from pg_tables where schemaname='public' and not tablename='play_evolutions'")
+    val statement = conn.prepareStatement("select tablename from pg_tables where schemaname='codegen' and not tablename='play_evolutions'")
     val result = statement.executeQuery()
     var tables: Seq[String] = Seq.empty
     while(result.next) {

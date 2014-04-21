@@ -199,7 +199,10 @@ object GenerateSource {
     }
     else {
       try {
+        DatabaseSupport.conn.createStatement().execute("CREATE SCHEMA IF NOT EXISTS codegen")
+        DatabaseSupport.conn.createStatement().execute("SET search_path TO codegen,public")
         evolutions.apply()
+        DatabaseSupport.conn.createStatement().execute("SET search_path TO codegen,public")
         val newTables = PostgresMetadata.list()
           .filter(!_.isManyToMany)
           .map(Model(_))
@@ -227,7 +230,11 @@ object GenerateSource {
 
         (newTables ++ newEnums).map(t => new File(modelRoot, t._1+".scala")).toSeq
 
-      } finally { DatabaseSupport.conn.close() }
+      } finally {
+        DatabaseSupport.conn.createStatement().execute("SET search_path TO public")
+        DatabaseSupport.conn.createStatement().execute("DROP SCHEMA codegen CASCADE")
+        DatabaseSupport.conn.close()
+      }
     }
   }
 }
