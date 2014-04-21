@@ -10,9 +10,7 @@ import recon.support._
 
 object Requests extends Controller with Secured {
 
-  private lazy val projectAmount = bigDecimal(15, 2).verifying("Invalid amount",
-    amount => (amount >= 0 && amount < 100000000)
-  )
+  private lazy val projectAmount = bigDecimal(15, 2).verifying("Invalid amount", _ >= 0)
 
   def createInfo() = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
