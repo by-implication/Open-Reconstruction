@@ -13,7 +13,7 @@ object Attachments extends Controller with Secured {
     request.body.file("file").map { upload =>
       Req.findById(id).map { implicit req =>
         if(user.canEditRequest(req)){
-          Attachment(filename = upload.filename, uploaderId = user.id, isImage = typ == "img")
+          Attachment(filename = upload.filename, uploaderId = user.id, isImage = typ == "img", reqId = id)
               .create().map { a =>
             a.file.getParentFile().mkdirs()
             upload.ref.moveTo(a.file, true)
@@ -42,6 +42,16 @@ object Attachments extends Controller with Secured {
     Attachment.findById(id).map { attachment =>
       Ok.sendFile(attachment.thumb, true, _ => attachment.filename)
     }.getOrElse(NotFound)
+  }
+
+  def archive(id: Int) = UserAction(){ implicit user => implicit request =>
+    Attachment.findById(id).map { a =>
+      if(user.canEditRequest(a.req)){
+        if(a.archive()){
+          Rest.success()
+        } else Rest.serverError()
+      } else Rest.unauthorized()
+    }.getOrElse(Rest.notFound())
   }
 
 }

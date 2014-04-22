@@ -178,11 +178,15 @@ project.view = function(ctrl){
                             ]),
                             m("td", [
                               m("a", {title: "Preview", href: "/attachments/" + doc.id + "/preview", target: "_blank"}, [
-                                m("i.fa.fa-lg.fa-eye.fa-fw"),
+                                m("i.fa.fa-lg.fa-fw.fa-eye"),
                               ]),
                               m("a", {title: "Download", href: "/attachments/" + doc.id + "/download"}, [
-                                m("i.fa.fa-lg.fa-download.fa-fw"),
+                                m("i.fa.fa-lg.fa-fw.fa-download"),
                               ]),
+                              ctrl.canEdit() ?
+                                m("a", {title: "Archive", onclick: ctrl.archiveDoc.bind(ctrl, doc) }, [
+                                  m("i.fa.fa-lg.fa-fw.fa-archive"),
+                                ]) : ""
                             ])
                           ])
                         })

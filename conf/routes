@@ -31,6 +31,7 @@ POST    /requests/:id/attach/:type  controllers.Attachments.add(id: Int, type: S
 GET	    /attachments/:id/preview    controllers.Attachments.preview(id: Int)
 GET	    /attachments/:id/download   controllers.Attachments.download(id: Int)
 GET	    /attachments/:id/thumb		controllers.Attachments.thumb(id: Int)
+POST    /attachments/:id/archive    controllers.Attachments.archive(id: Int)
 
 GET     /agencies/all/meta          controllers.Agencies.allMeta()
 GET     /agencies/new/meta          controllers.Agencies.createMeta()

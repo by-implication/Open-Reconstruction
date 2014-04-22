@@ -128,7 +128,8 @@ CREATE TABLE attachments (
 	attachment_date_uploaded timestamp NOT NULL DEFAULT NOW(),
 	attachment_filename text NOT NULL,
 	uploader_id int NOT NULL REFERENCES users(user_id),
-	attachment_image boolean NOT NULL
+	attachment_image boolean NOT NULL,
+	req_id int NOT NULL REFERENCES reqs
 );;
 
 # --- !Downs
