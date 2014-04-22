@@ -35,13 +35,6 @@ project.controller = function(){
   this.degDisaster = new displayEditGroup.controller(this.project, "disaster");
   this.degLocation = new displayEditGroup.controller(this.project, "location");
 
-  this.archiveDoc = function(doc){
-    m.request({method: "POST", url: "/attachments/" + doc.id + "/archive"}).then(function (r){
-      var a = this.attachments();
-      a.docs.splice(a.docs.indexOf(doc), 1);
-    }.bind(this))
-  }
-
   var parseLocation = function(location){
     var split = location.split(',').map(function(coord){return parseFloat(coord)});
     if (_.contains(split, NaN) || (split.length % 2)) {

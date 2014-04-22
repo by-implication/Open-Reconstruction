@@ -17,12 +17,14 @@ object Event extends EventGen {
     userId = user.id.toOption
   )
 
+  private def asContent(a: Attachment) = Seq(a.filename, if(a.isImage) 1 else 0, a.id).mkString(" ")
+
   def signoff(agency: Agency)(implicit req: Req, user: User) = {
     generate("signoff", agency.name + " " + agency.id)
   }
 
   def attachment(a: Attachment)(implicit req: Req, user: User) = {
-    generate("attachment", Seq(a.filename, if(a.isImage) 1 else 0, a.id).mkString(" "))
+    generate("attachment", asContent(a))
   }
 
   def comment(content: String)(implicit req: Req, user: User) = {
@@ -43,6 +45,10 @@ object Event extends EventGen {
 
   def disaster()(implicit req: Req, user: User) = {
     generate("disaster", req.disasterName.getOrElse("") + ":" + req.disasterType).copy(date = req.disasterDate)
+  }
+
+  def archiveAttachment(a: Attachment)(implicit req: Req, user: User) = {
+    generate("archiveAttachment", asContent(a))
   }
 
   def editField(field: String)(implicit req: Req, user: User) = {

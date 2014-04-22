@@ -1,5 +1,27 @@
 var historyEvent = {}
 
+historyEvent.archiveAttachment = function(data){
+  var date = new Date(data.date);
+  var c = data.content.split(" ");
+  var attachmentId = c.pop();
+  var isImage = parseInt(c.pop());
+  var filename = c.join(" ");
+  return m(".event", [
+    historyEvent.date(date),
+    m(".details", [
+      m("p", [(isImage ? "Image" : "Document") + " archived: " + filename].concat(
+        common.attachmentActions.bind(this)({id: attachmentId})
+      )),
+      m("p.meta", [
+        "attached by ",
+        m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+        " ",
+        helper.timeago(date)
+      ])
+    ])
+  ])
+}
+
 historyEvent.editField = function(data){
   var date = new Date(data.date);
   var c = data.content.split(" ");
@@ -118,12 +140,7 @@ historyEvent.attachment = function(data){
     m(".details", [
       m("p", [
         (isImage ? "Image" : "Document") + " uploaded: " + filename,
-        m("a", {title: "Preview", href: "/attachments/" + attachmentId + "/preview"}, [
-          m("i.fa.fa-lg.fa-eye.fa-fw"),
-        ]),
-        m("a", {title: "Download", href: "/attachments/" + attachmentId + "/download"}, [
-          m("i.fa.fa-lg.fa-download.fa-fw"),
-        ]),
+        common.attachmentActions.bind(this)({id: attachmentId})
       ]),
       m("p.meta", [
         "attached by ",

@@ -176,18 +176,7 @@ project.view = function(ctrl){
                             m("td", [
                               m("a", {href: "/users/" + doc.uploader.id}, doc.uploader.name)
                             ]),
-                            m("td", [
-                              m("a", {title: "Preview", href: "/attachments/" + doc.id + "/preview", target: "_blank"}, [
-                                m("i.fa.fa-lg.fa-fw.fa-eye"),
-                              ]),
-                              m("a", {title: "Download", href: "/attachments/" + doc.id + "/download"}, [
-                                m("i.fa.fa-lg.fa-fw.fa-download"),
-                              ]),
-                              ctrl.canEdit() ?
-                                m("a", {title: "Archive", onclick: ctrl.archiveDoc.bind(ctrl, doc) }, [
-                                  m("i.fa.fa-lg.fa-fw.fa-archive"),
-                                ]) : ""
-                            ])
+                            m("td", common.attachmentActions.bind(ctrl)(doc))
                           ])
                         })
                       ])
@@ -199,7 +188,7 @@ project.view = function(ctrl){
               })
               .case("Activity", function(){
                 return m(".section", ctrl.history().map(function (e){
-                  return historyEvent[e.kind](e);
+                  return historyEvent[e.kind].bind(ctrl)(e);
                 })
                 .reverse()
                 .concat(ctrl.app.currentUser() ? [

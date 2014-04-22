@@ -1,5 +1,25 @@
 var common = {};
 
+common.attachmentActions = function(attachment){
+  return [
+    m("a", {title: "Preview", href: "/attachments/" + attachment + "/preview", target: "_blank"}, [
+      m("i.fa.fa-lg.fa-fw.fa-eye"),
+    ]),
+    m("a", {title: "Download", href: "/attachments/" + attachment + "/download"}, [
+      m("i.fa.fa-lg.fa-fw.fa-download"),
+    ]),
+    this.canEdit() ?
+      m("a", {title: "Archive", onclick: function(){
+        m.request({method: "POST", url: "/attachments/" + attachment.id + "/archive"}).then(function (r){
+          var docs = this.attachments().docs;
+          docs.splice(docs.indexOf(attachment), 1);
+        }.bind(this))
+      }.bind(this) }, [
+        m("i.fa.fa-lg.fa-fw.fa-archive"),
+      ]) : ""
+  ];
+}
+
 common.displayDate = function(timestamp){
   return new Date(timestamp).toLocaleDateString("en-US", {month: "short", day: "numeric", year: "numeric"});
 }
