@@ -37,9 +37,11 @@ case class Attachment(
 
   lazy val req = Req.findById(reqId).get
 
-  def archive(): Boolean = DB.withConnection { implicit c =>
+  def archive(archive: Boolean): Boolean = DB.withConnection { implicit c =>
     SQL("""
-      UPDATE reqs SET req_attachment_ids = array_remove(req_attachment_ids, {attachmentId})
+      UPDATE reqs SET req_attachment_ids = array_""" +
+      (if(archive) "append" else "remove") + """
+      (req_attachment_ids, {attachmentId})
       WHERE req_id = {reqId}
     """).on('reqId -> reqId, 'attachmentId -> id).executeUpdate() > 0
   }

@@ -13,7 +13,7 @@ historyEvent.archiveAttachment = function(data){
         common.attachmentActions.bind(this)({id: attachmentId})
       )),
       m("p.meta", [
-        "attached by ",
+        "archived by ",
         m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
         " ",
         helper.timeago(date)

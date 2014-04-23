@@ -51,6 +51,15 @@ object Event extends EventGen {
     generate("archiveAttachment", asContent(a))
   }
 
+  def unarchiveAttachment(a: Attachment) = DB.withConnection { implicit c =>
+    SQL("""
+      DELETE FROM attachments
+      WHERE req_id = {reqId}
+      AND event_kind = 'archiveAttachment'
+      AND event_content ilike '% {attachmentId}'
+    """).on('reqId -> a.reqId, 'attachmentId -> a.id).executeUpdate > 0
+  }
+
   def editField(field: String)(implicit req: Req, user: User) = {
     val fieldValue = field match {
       case "amount" => req.amount

@@ -44,17 +44,24 @@ object Attachments extends Controller with Secured {
     }.getOrElse(NotFound)
   }
 
-  def archive(id: Int) = UserAction(){ implicit user => implicit request =>
+  private def _archive(archive: Boolean)(id: Int) = UserAction(){ implicit user => implicit request =>
     Attachment.findById(id).map { a =>
       implicit val req = a.req
       if(user.canEditRequest(req)){
-        if(a.archive()){
-          Event.archiveAttachment(a).create().map { _ =>
+        if(a.archive(archive)){
+          if(archive){
+            Event.archiveAttachment(a).create().map { _ =>
+              Rest.success()
+            }.getOrElse(Rest.serverError())
+          } else if(Event.unarchiveAttachment(a)){
             Rest.success()
-          }.getOrElse(Rest.serverError())
+          } else Rest.serverError()
         } else Rest.serverError()
       } else Rest.unauthorized()
     }.getOrElse(Rest.notFound())
   }
+
+  def archive = _archive(true) _
+  def unarchive = _archive(false) _
 
 }
