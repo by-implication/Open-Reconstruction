@@ -9,6 +9,7 @@ m.route(document, window.location.pathname == "/" ? "/projects" : window.locatio
   "/dashboard": dashboard,
   "/users/:id": user,
   "/admin": admin,
+  "/admin/lgus": lguListing,
   "/agencies/new": agencyCreation,
   "/agencies/:id/newUser": userCreation,
   "/agencies/:id": agency,

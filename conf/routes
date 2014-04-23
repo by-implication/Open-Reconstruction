@@ -40,6 +40,8 @@ GET     /agencies/:id/meta          controllers.Agencies.viewMeta(id: Int)
 POST    /agencies/new               controllers.Agencies.insert()
 POST    /agencies/:id/newUser       controllers.Users.insert(id: Int)
 
+GET     /agencies/lgus/list         controllers.Agencies.lguListing()
+
 # view routes (these all serve the index view)
 
 GET     /projects                   controllers.Application.index
@@ -48,6 +50,7 @@ GET     /projects/:id               controllers.Application.index1(id: Int)
 GET     /dashboard                  controllers.Application.index
 GET     /users/:id                  controllers.Application.index1(id: Int)
 GET     /admin                      controllers.Application.index
+GET     /admin/lgus                 controllers.Application.index
 GET     /agencies/new               controllers.Application.index
 GET     /agencies/:id/newUser       controllers.Application.index1(id: Int)
 GET     /agencies/:id               controllers.Application.index1(id: Int)

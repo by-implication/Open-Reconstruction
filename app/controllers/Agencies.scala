@@ -48,4 +48,11 @@ object Agencies extends Controller with Secured {
     } else Rest.unauthorized()
   }
 
+  def lguListing = UserAction(){ implicit user => implicit request =>
+    Ok(Json.obj(
+      "regions" -> Json.toJson(Lgu.REGIONS.map(_.toJson)),
+      "lgus" -> Lgu.jsonList
+    ))
+  }
+
 }
