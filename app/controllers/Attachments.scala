@@ -19,9 +19,10 @@ object Attachments extends Controller with Secured {
             upload.ref.moveTo(a.file, true)
             if (a.isImage) ImageHandling.generateThumbnail(a)
             if(req.addToAttachments(a.id.get)){
-              Event.attachment(a).create().map(
-                _ => Rest.success("attachment" -> Attachment.insertJson(a, user))
-              ).getOrElse(Rest.serverError())
+              Event.attachment(a).create().map { e => Rest.success(
+                "attachment" -> Attachment.insertJson(a, user),
+                "event" -> e.listJson
+              )}.getOrElse(Rest.serverError())
             } else Rest.serverError()
           }.getOrElse(Rest.serverError())
         } else Rest.unauthorized()

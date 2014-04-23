@@ -205,6 +205,7 @@ project.controller = function(){
 
       this.dropzone.on("success", function (_, r){
         this.attachments().imgs.push(r.attachment);
+        this.history().unshift(r.event);
         m.redraw();
       }.bind(this));
 
@@ -224,6 +225,7 @@ project.controller = function(){
 
       this.dropzone.on("success", function (_, r){
         this.attachments().docs.push(r.attachment);
+        this.history().unshift(r.event);
         m.redraw();
       }.bind(this));
 
