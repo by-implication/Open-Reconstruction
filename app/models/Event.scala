@@ -53,11 +53,11 @@ object Event extends EventGen {
 
   def unarchiveAttachment(a: Attachment) = DB.withConnection { implicit c =>
     SQL("""
-      DELETE FROM attachments
+      DELETE FROM events
       WHERE req_id = {reqId}
       AND event_kind = 'archiveAttachment'
-      AND event_content ilike '% {attachmentId}'
-    """).on('reqId -> a.reqId, 'attachmentId -> a.id).executeUpdate > 0
+      AND event_content ilike '% """ + a.id + """'
+    """).on('reqId -> a.reqId).executeUpdate > 0
   }
 
   def editField(field: String)(implicit req: Req, user: User) = {

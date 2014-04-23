@@ -10,7 +10,7 @@ historyEvent.archiveAttachment = function(data){
     historyEvent.date(date),
     m(".details", [
       m("p", [(isImage ? "Image" : "Document") + " archived: " + filename].concat(
-        common.attachmentActions.bind(this)({id: attachmentId})
+        common.attachmentActions.bind(this)({id: attachmentId, isArchived: true})
       )),
       m("p.meta", [
         "archived by ",

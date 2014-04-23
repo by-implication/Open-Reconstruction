@@ -35,12 +35,16 @@ case class Attachment(
 // GENERATED case class end
 {
 
+  lazy val uploader = User.findById(uploaderId).get
+
+  def insertJson = Attachment.insertJson(this, uploader)
+
   lazy val req = Req.findById(reqId).get
 
   def archive(archive: Boolean): Boolean = DB.withConnection { implicit c =>
     SQL("""
       UPDATE reqs SET req_attachment_ids = array_""" +
-      (if(archive) "append" else "remove") + """
+      (if(archive) "remove" else "append") + """
       (req_attachment_ids, {attachmentId})
       WHERE req_id = {reqId}
     """).on('reqId -> reqId, 'attachmentId -> id).executeUpdate() > 0

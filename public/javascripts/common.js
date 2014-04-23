@@ -1,6 +1,6 @@
 var common = {};
 
-common.attachmentActions = function(attachment, unarchive){
+common.attachmentActions = function(attachment){
   return [
     m("a", {title: "Preview", href: "/attachments/" + attachment.id + "/preview", target: "_blank"}, [
       m("i.fa.fa-lg.fa-fw.fa-eye"),
@@ -8,26 +8,28 @@ common.attachmentActions = function(attachment, unarchive){
     m("a", {title: "Download", href: "/attachments/" + attachment.id + "/download"}, [
       m("i.fa.fa-lg.fa-fw.fa-download"),
     ]),
-    this.canEdit() ? unarchive ?
-      m("a", {title: "Archive", onclick: function(){
+    this.canEdit() ? attachment.isArchived ?
+      m("a", {title: "Unarchive", onclick: function(){
+        m.request({method: "POST", url: "/attachments/" + attachment.id + "/unarchive"}).then(function (r){
+          alert("Succesfully unarchived document.");
+          this.attachments().docs.push(r.doc);
+          this.history(this.history().filter(function (e){
+            var attachmentId = e.content.split(" ").pop();
+            return !(e.kind == 'archiveAttachment' && attachmentId == attachment.id);
+          }));
+        }.bind(this))
+      }.bind(this) }, [
+        m("i.fa.fa-lg.fa-fw.fa-upload")
+      ]) : m("a", {title: "Archive", onclick: function(){
         m.request({method: "POST", url: "/attachments/" + attachment.id + "/archive"}).then(function (r){
           alert("Succesfully archived document.");
           var docs = this.attachments().docs;
           docs.splice(docs.indexOf(attachment), 1);
+          this.history().unshift(r.event);
         }.bind(this))
       }.bind(this) }, [
-        m("i.fa.fa-lg.fa-fw.fa-archive"),
-      ]) : m("a", {title: "Unarchive", onclick: function(){
-        // m.request({method: "POST", url: "/attachments/" + attachment.id + "/archive"}).then(function (r){
-        //   alert("Succesfully archived document.");
-        //   var docs = this.attachments().docs;
-        //   docs.splice(docs.indexOf(attachment), 1);
-        // }.bind(this))
-        console.log(this);
-      }.bind(this) }, [
-        m("i.fa.fa-lg.fa-fw.fa-unarchive"),
-      ])
-      : ""
+        m("i.fa.fa-lg.fa-fw.fa-archive")
+      ]) : ""
   ];
 }
 

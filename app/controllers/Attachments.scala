@@ -50,11 +50,11 @@ object Attachments extends Controller with Secured {
       if(user.canEditRequest(req)){
         if(a.archive(archive)){
           if(archive){
-            Event.archiveAttachment(a).create().map { _ =>
-              Rest.success()
+            Event.archiveAttachment(a).create().map { e =>
+              Rest.success("event" -> e.listJson)
             }.getOrElse(Rest.serverError())
           } else if(Event.unarchiveAttachment(a)){
-            Rest.success()
+            Rest.success("doc" -> a.insertJson)
           } else Rest.serverError()
         } else Rest.serverError()
       } else Rest.unauthorized()
