@@ -15,7 +15,7 @@ app.template = function(a, b, c){
     m("head", [
       m("title", [ "Open Reconstruction" ]),
       m("link[href='/assets/stylesheets/style.css'][rel='stylesheet'][type='text/css']"),
-      m("link[href='//fonts.googleapis.com/css?family=Roboto+Condensed:400,300,700'][rel='stylesheet'][type='text/css']"),
+      m("link[href='/assets/stylesheets/fonts.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/bower_components/font-awesome/css/font-awesome.min.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/bower_components/leaflet/leaflet.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/bower_components/leaflet-draw/leaflet.draw.css'][rel='stylesheet'][type='text/css']")
