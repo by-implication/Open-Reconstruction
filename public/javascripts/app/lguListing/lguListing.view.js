@@ -2,7 +2,7 @@ lguListing.view = function(ctrl){
 
   function renderLGU(lgu){
     return m("div", [
-      m("span", lgu.name),
+      m("a", {href: "/agencies/" + lgu.id}, lgu.name),
       m("a", {href: "/lgus/new/" + lgu.id}, "+")
     ].concat((lgu.children && lgu.children.map(renderLGU)) || []));
   }
