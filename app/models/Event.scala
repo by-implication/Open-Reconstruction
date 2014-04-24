@@ -19,8 +19,8 @@ object Event extends EventGen {
 
   private def asContent(a: Attachment) = Seq(a.filename, if(a.isImage) 1 else 0, a.id).mkString(" ")
 
-  def signoff(agency: Agency)(implicit req: Req, user: User) = {
-    generate("signoff", agency.name + " " + agency.id)
+  def signoff(govUnit: GovUnit)(implicit req: Req, user: User) = {
+    generate("signoff", govUnit.name + " " + govUnit.id)
   }
 
   def attachment(a: Attachment)(implicit req: Req, user: User) = {
@@ -35,8 +35,8 @@ object Event extends EventGen {
     generate("reviseAmount", amount)
   }
 
-  def assign(agencyType: String, assign: Boolean, agency: Agency)(implicit req: Req, user: User) = {
-    generate("assign", Seq(agency.name, agency.id, (if (assign) 1 else 0), agencyType).mkString(" "))
+  def assign(agencyType: String, assign: Boolean, govUnit: GovUnit)(implicit req: Req, user: User) = {
+    generate("assign", Seq(govUnit.name, govUnit.id, (if (assign) 1 else 0), agencyType).mkString(" "))
   }
 
   def newRequest()(implicit req: Req, user: User) = {

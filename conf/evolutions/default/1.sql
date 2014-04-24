@@ -8,16 +8,19 @@ CREATE TABLE roles (
     role_permissions int[] NOT NULL
 );;
 
-CREATE TABLE agencys (
-    agency_id serial PRIMARY KEY,
-    agency_name text NOT NULL,
-    agency_acronym text,
+CREATE TABLE gov_units (
+    gov_unit_id serial PRIMARY KEY,
+    gov_unit_name text NOT NULL,
+    gov_unit_acronym text,
     role_id int NOT NULL REFERENCES roles
 );;
 
-CREATE TABLE municipalitys (
-    municipality_id serial PRIMARY KEY REFERENCES agencys(agency_id),
-    municipality_nthClass int NOT NULL
+CREATE TABLE lgus (
+    lgu_id serial PRIMARY KEY REFERENCES gov_units(gov_unit_id),
+    lgu_level int NOT NULL,
+    lgu_parent_region int NOT NULL,
+    parent_lgu_id int REFERENCES lgus(lgu_id),
+    lgu_municipality_class int
 );;
 
 CREATE TABLE users (
@@ -25,7 +28,7 @@ CREATE TABLE users (
     user_handle text NOT NULL,
     user_name text NOT NULL,
     user_password text NOT NULL,
-    agency_id int NOT NULL REFERENCES agencys,
+    gov_unit_id int NOT NULL REFERENCES gov_units,
     user_admin boolean NOT NULL DEFAULT false
 );;
 
@@ -33,9 +36,9 @@ CREATE TABLE users (
 
 DROP TABLE IF EXISTS users;;
 
-DROP TABLE IF EXISTS municipalitys;;
+DROP TABLE IF EXISTS lgus;;
 
-DROP TABLE IF EXISTS agencys;;
+DROP TABLE IF EXISTS gov_units;;
 
 DROP TABLE IF EXISTS roles;;
 

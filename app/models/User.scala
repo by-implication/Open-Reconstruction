@@ -28,7 +28,7 @@ object User extends UserGen {
             {handle},
             {name},
             crypt({password}, gen_salt('bf')),
-            {agencyId},
+            {govUnitId},
             {isAdmin}
           )
         """).on(
@@ -36,7 +36,7 @@ object User extends UserGen {
           'handle -> o.handle,
           'name -> o.name,
           'password -> o.password,
-          'agencyId -> o.agencyId,
+          'govUnitId -> o.govUnitId,
           'isAdmin -> o.isAdmin
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
@@ -55,7 +55,7 @@ object User extends UserGen {
             {handle},
             {name},
             crypt({password}, gen_salt('bf')),
-            {agencyId},
+            {govUnitId},
             {isAdmin}
           )
         """).on(
@@ -63,7 +63,7 @@ object User extends UserGen {
           'handle -> o.handle,
           'name -> o.name,
           'password -> o.password,
-          'agencyId -> o.agencyId,
+          'govUnitId -> o.govUnitId,
           'isAdmin -> o.isAdmin
         ).executeInsert().flatMap(x => Some(o))
       }
@@ -75,14 +75,14 @@ object User extends UserGen {
       update users set
         user_handle={handle},
         user_name={name},
-        agency_id={agencyId}
+        agency_id={govUnitId}
         user_admin={isAdmin}
       where user_id={id}
     """).on(
       'id -> o.id,
       'handle -> o.handle,
       'name -> o.name,
-      'agencyId -> o.agencyId,
+      'govUnitId -> o.govUnitId,
       'isAdmin -> o.isAdmin
     ).executeUpdate() > 0
   }
@@ -140,7 +140,7 @@ case class User(
   handle: String = "",
   name: String = "",
   password: String = "",
-  agencyId: Int = 0,
+  govUnitId: Int = 0,
   isAdmin: Boolean = false
 ) extends UserCCGen with Entity[User]
 // GENERATED case class end
@@ -153,9 +153,9 @@ case class User(
         "id" -> id.get,
         "name" -> name,
         "agency" -> Json.obj(
-          "name" -> agency.name,
-          "acronym" -> agency.acronym,
-          "id" -> agency.id.get
+          "name" -> govUnit.name,
+          "acronym" -> govUnit.acronym,
+          "id" -> govUnit.id.get
         ),
         "isAdmin" -> isAdmin,
         "isSuperAdmin" -> isSuperAdmin,
@@ -164,7 +164,7 @@ case class User(
     } else JsNull
   }
 
-  lazy val agency = Agency.findById(agencyId).get
+  lazy val govUnit = GovUnit.findById(govUnitId).get
 
   lazy val permissions = role.permissions
 
@@ -179,8 +179,8 @@ case class User(
   lazy val role: Role = DB.withConnection { implicit c =>
     SQL("""
       SELECT * FROM roles NATURAL JOIN agencys
-      WHERE agency_id = {agencyId}
-    """).on('agencyId -> agencyId).singleOpt(Role.simple).getOrElse(Role.VIEW_ONLY)
+      WHERE agency_id = {govUnitId}
+    """).on('govUnitId -> govUnitId).singleOpt(Role.simple).getOrElse(Role.VIEW_ONLY)
   }
 
   var sessionId = -1
@@ -190,14 +190,14 @@ case class User(
   def isInvolvedWith(r: Req): Boolean = {
     !isAnonymous && (r.authorId == id.get || {role.name match {
       case OCD | OP | DBM => true
-      case _ => r.assessingAgencyId.map(_ == agencyId).getOrElse(false)
+      case _ => r.assessingAgencyId.map(_ == govUnitId).getOrElse(false)
     }})
   }
 
   def hasSignedoff(r: Req): Boolean = {
     isInvolvedWith(r) && {
       val checks = List[Boolean](
-        (r.assessingAgencyId.map(_ == agencyId).getOrElse(false)),
+        (r.assessingAgencyId.map(_ == govUnitId).getOrElse(false)),
         isSuperAdmin,
         isOP,
         isDBM
@@ -214,7 +214,7 @@ case class User(
       false
     } else {
       r.level match {
-        case 0 => r.assessingAgencyId.map(_ == agencyId).getOrElse(false)
+        case 0 => r.assessingAgencyId.map(_ == govUnitId).getOrElse(false)
         case 1 => isSuperAdmin
         case 2 => isOP
         case 3 => isDBM
@@ -235,8 +235,8 @@ case class User(
 
   def canEditRequest(r: Req): Boolean = DB.withConnection { implicit c =>
     isSuperAdmin ||
-    r.assessingAgencyId.map(_ == agencyId && r.level < 1).getOrElse(false) ||
-    r.implementingAgencyId.map(_ == agencyId).getOrElse(false)
+    r.assessingAgencyId.map(_ == govUnitId && r.level < 1).getOrElse(false) ||
+    r.implementingAgencyId.map(_ == govUnitId).getOrElse(false)
   }
 
   def isAnonymous = id.get == -1
@@ -250,10 +250,10 @@ trait UserGen extends EntityCompanion[User] {
     get[String]("user_handle") ~
     get[String]("user_name") ~
     get[String]("user_password") ~
-    get[Int]("agency_id") ~
+    get[Int]("gov_unit_id") ~
     get[Boolean]("user_admin") map {
-      case id~handle~name~password~agencyId~isAdmin =>
-        User(id, handle, name, password, agencyId, isAdmin)
+      case id~handle~name~password~govUnitId~isAdmin =>
+        User(id, handle, name, password, govUnitId, isAdmin)
     }
   }
 
@@ -282,14 +282,14 @@ trait UserGen extends EntityCompanion[User] {
             user_handle,
             user_name,
             user_password,
-            agency_id,
+            gov_unit_id,
             user_admin
           ) VALUES (
             DEFAULT,
             {handle},
             {name},
             {password},
-            {agencyId},
+            {govUnitId},
             {isAdmin}
           )
         """).on(
@@ -297,7 +297,7 @@ trait UserGen extends EntityCompanion[User] {
           'handle -> o.handle,
           'name -> o.name,
           'password -> o.password,
-          'agencyId -> o.agencyId,
+          'govUnitId -> o.govUnitId,
           'isAdmin -> o.isAdmin
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
@@ -309,14 +309,14 @@ trait UserGen extends EntityCompanion[User] {
             user_handle,
             user_name,
             user_password,
-            agency_id,
+            gov_unit_id,
             user_admin
           ) VALUES (
             {id},
             {handle},
             {name},
             {password},
-            {agencyId},
+            {govUnitId},
             {isAdmin}
           )
         """).on(
@@ -324,7 +324,7 @@ trait UserGen extends EntityCompanion[User] {
           'handle -> o.handle,
           'name -> o.name,
           'password -> o.password,
-          'agencyId -> o.agencyId,
+          'govUnitId -> o.govUnitId,
           'isAdmin -> o.isAdmin
         ).executeInsert().flatMap(x => Some(o))
       }
@@ -337,7 +337,7 @@ trait UserGen extends EntityCompanion[User] {
         user_handle={handle},
         user_name={name},
         user_password={password},
-        agency_id={agencyId},
+        gov_unit_id={govUnitId},
         user_admin={isAdmin}
       where user_id={id}
     """).on(
@@ -345,7 +345,7 @@ trait UserGen extends EntityCompanion[User] {
       'handle -> o.handle,
       'name -> o.name,
       'password -> o.password,
-      'agencyId -> o.agencyId,
+      'govUnitId -> o.govUnitId,
       'isAdmin -> o.isAdmin
     ).executeUpdate() > 0
   }

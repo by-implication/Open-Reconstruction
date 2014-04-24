@@ -49,8 +49,8 @@ object Lgu extends LguGen {
   def jsonList = DB.withConnection { implicit c =>
     Json.toJson(SQL("""
       SELECT * FROM lgus LEFT JOIN agencys ON lgu_id = agency_id
-    """).list(Agency.simple ~ simple map(flatten)).map {
-      case (agency, lgu) => agency.toJson ++ Json.obj("parentId" -> lgu.parentId)
+    """).list(GovUnit.simple ~ simple map(flatten)).map {
+      case (govUnit, lgu) => govUnit.toJson ++ Json.obj("parentId" -> lgu.parentLguId)
     })
   }
 
@@ -59,7 +59,10 @@ object Lgu extends LguGen {
 // GENERATED case class start
 case class Lgu(
   id: Pk[Int] = NA,
-  parentId: Int = 0
+  level: Int = 0,
+  parentRegion: Int = 0,
+  parentLguId: Option[Int] = None,
+  municipalityClass: Option[Int] = None
 ) extends LguCCGen with Entity[Lgu]
 // GENERATED case class end
 
@@ -67,9 +70,12 @@ case class Lgu(
 trait LguGen extends EntityCompanion[Lgu] {
   val simple = {
     get[Pk[Int]]("lgu_id") ~
-    get[Int]("parent_id") map {
-      case id~parentId =>
-        Lgu(id, parentId)
+    get[Int]("lgu_level") ~
+    get[Int]("lgu_parent_region") ~
+    get[Option[Int]]("parent_lgu_id") ~
+    get[Option[Int]]("lgu_municipality_class") map {
+      case id~level~parentRegion~parentLguId~municipalityClass =>
+        Lgu(id, level, parentRegion, parentLguId, municipalityClass)
     }
   }
 
@@ -95,14 +101,23 @@ trait LguGen extends EntityCompanion[Lgu] {
         val id = SQL("""
           insert into lgus (
             lgu_id,
-            parent_id
+            lgu_level,
+            lgu_parent_region,
+            parent_lgu_id,
+            lgu_municipality_class
           ) VALUES (
             DEFAULT,
-            {parentId}
+            {level},
+            {parentRegion},
+            {parentLguId},
+            {municipalityClass}
           )
         """).on(
           'id -> o.id,
-          'parentId -> o.parentId
+          'level -> o.level,
+          'parentRegion -> o.parentRegion,
+          'parentLguId -> o.parentLguId,
+          'municipalityClass -> o.municipalityClass
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -110,14 +125,23 @@ trait LguGen extends EntityCompanion[Lgu] {
         SQL("""
           insert into lgus (
             lgu_id,
-            parent_id
+            lgu_level,
+            lgu_parent_region,
+            parent_lgu_id,
+            lgu_municipality_class
           ) VALUES (
             {id},
-            {parentId}
+            {level},
+            {parentRegion},
+            {parentLguId},
+            {municipalityClass}
           )
         """).on(
           'id -> o.id,
-          'parentId -> o.parentId
+          'level -> o.level,
+          'parentRegion -> o.parentRegion,
+          'parentLguId -> o.parentLguId,
+          'municipalityClass -> o.municipalityClass
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -126,11 +150,17 @@ trait LguGen extends EntityCompanion[Lgu] {
   def update(o: Lgu): Boolean = DB.withConnection { implicit c =>
     SQL("""
       update lgus set
-        parent_id={parentId}
+        lgu_level={level},
+        lgu_parent_region={parentRegion},
+        parent_lgu_id={parentLguId},
+        lgu_municipality_class={municipalityClass}
       where lgu_id={id}
     """).on(
       'id -> o.id,
-      'parentId -> o.parentId
+      'level -> o.level,
+      'parentRegion -> o.parentRegion,
+      'parentLguId -> o.parentLguId,
+      'municipalityClass -> o.municipalityClass
     ).executeUpdate() > 0
   }
 

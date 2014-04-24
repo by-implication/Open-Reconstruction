@@ -8,29 +8,29 @@ import play.api.mvc._
 import recon.models._
 import recon.support._
 
-object Agencies extends Controller with Secured {
+object GovUnits extends Controller with Secured {
 
   def viewMeta(id: Int): Action[AnyContent] = GenericAction(){ implicit user => implicit request =>
-    Agency.findById(id) match {
-      case Some(agency) => Rest.success(
-        "agency" -> agency.toJson,
-        "users" -> Json.toJson(agency.users.map(_.infoJson))
+    GovUnit.findById(id) match {
+      case Some(govUnit) => Rest.success(
+        "agency" -> govUnit.toJson,
+        "users" -> Json.toJson(govUnit.users.map(_.infoJson))
       )
       case None => Rest.notFound()
     }
   }
 
   def allMeta(): Action[AnyContent] = GenericAction(){ implicit user => implicit request =>
-    Rest.success("agencies" ->  Json.toJson(Agency.listAll.map(_.toJson)))
+    Rest.success("agencies" ->  Json.toJson(GovUnit.listAll.map(_.toJson)))
   }
 
-  lazy val createForm: Form[Agency] = Form(
+  lazy val createForm: Form[GovUnit] = Form(
     mapping(
       "name" -> nonEmptyText,
       "acronym" -> optional(text),
       "roleId" -> number
     )
-    ((name, acronym, roleId) => Agency(name = name, acronym = acronym, roleId = roleId))
+    ((name, acronym, roleId) => GovUnit(name = name, acronym = acronym, roleId = roleId))
     (_ => None)
   )
 
@@ -59,18 +59,18 @@ object Agencies extends Controller with Secured {
     Role.findOne("role_name", "LGU").get.id
   }
 
-  lazy val lguForm: Form[Agency] = Form(
+  lazy val lguForm: Form[GovUnit] = Form(
     mapping(
       "name" -> nonEmptyText,
       "acronym" -> optional(text)
     )
-    ((name, acronym) => Agency(name = name, acronym = acronym, roleId = LGUroleId))
+    ((name, acronym) => GovUnit(name = name, acronym = acronym, roleId = LGUroleId))
     (_ => None)
   )
 
   def lguCreationMeta(parentId: Int) = UserAction(){ implicit user => implicit request =>
     val parentName: Option[String] = Lgu.PROVINCES.get(parentId).map(p => Some(p.name))
-      .getOrElse(Agency.findById(parentId).map(_.name))
+      .getOrElse(GovUnit.findById(parentId).map(_.name))
 
     parentName.map { p =>
       Rest.success("parentName" -> Json.toJson(p))

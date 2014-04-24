@@ -8,7 +8,7 @@ import play.api.libs.json._
 import play.api.Play.current
 import recon.support._
 
-object Agency extends AgencyGen {
+object GovUnit extends GovUnitGen {
 
   def withPermission(permission: Permission) = DB.withConnection { implicit c =>
     SQL("""
@@ -29,25 +29,26 @@ object Agency extends AgencyGen {
     ).list(User.simple)
   }
 
-  def listAll: Seq[Agency] = DB.withConnection { implicit c =>
+  def listAll: Seq[GovUnit] = DB.withConnection { implicit c =>
     SQL("select * from agencys").list(simple)
   }
 
-  def canAssess(a: Agency) = a.canDo(Permission.VALIDATE_REQUESTS)
-  def canImplement(a: Agency) = a.canDo(Permission.IMPLEMENT_REQUESTS)
+  def canAssess(a: GovUnit) = a.canDo(Permission.VALIDATE_REQUESTS)
+  def canImplement(a: GovUnit) = a.canDo(Permission.IMPLEMENT_REQUESTS)
 
 }
 
 // GENERATED case class start
-case class Agency(
+case class GovUnit(
   id: Pk[Int] = NA,
   name: String = "",
   acronym: Option[String] = None,
   roleId: Int = 0
-) extends AgencyCCGen with Entity[Agency]
+) extends GovUnitCCGen with Entity[GovUnit]
 // GENERATED case class end
 {
-  def users:Seq[User] = Agency.users(id)
+
+  def users:Seq[User] = GovUnit.users(id)
 
   def toJson: JsObject = {
     Json.obj(
@@ -66,46 +67,47 @@ case class Agency(
     """).on(
       'agencyId -> id,
       'permission -> p.value
-    ).list(Agency.simple).length > 0
+    ).list(GovUnit.simple).length > 0
   }
 
 }
+
 // GENERATED object start
-trait AgencyGen extends EntityCompanion[Agency] {
+trait GovUnitGen extends EntityCompanion[GovUnit] {
   val simple = {
-    get[Pk[Int]]("agency_id") ~
-    get[String]("agency_name") ~
-    get[Option[String]]("agency_acronym") ~
+    get[Pk[Int]]("gov_unit_id") ~
+    get[String]("gov_unit_name") ~
+    get[Option[String]]("gov_unit_acronym") ~
     get[Int]("role_id") map {
       case id~name~acronym~roleId =>
-        Agency(id, name, acronym, roleId)
+        GovUnit(id, name, acronym, roleId)
     }
   }
 
-  def lazyFind(column: String, value: Any) = SQL("select * from agencys where "+column+" = {value}").on('value -> value)
+  def lazyFind(column: String, value: Any) = SQL("select * from gov_units where "+column+" = {value}").on('value -> value)
 
-  def findOne(column: String, value: Any): Option[Agency] = DB.withConnection { implicit c =>
+  def findOne(column: String, value: Any): Option[GovUnit] = DB.withConnection { implicit c =>
     lazyFind(column, value).singleOpt(simple)
   }
 
-  def findAll(column: String, value: Any): Seq[Agency] = DB.withConnection { implicit c =>
+  def findAll(column: String, value: Any): Seq[GovUnit] = DB.withConnection { implicit c =>
     lazyFind(column, value).list(simple)
   }
 
-  def findById(id: Int): Option[Agency] = findOne("agency_id", id)
+  def findById(id: Int): Option[GovUnit] = findOne("gov_unit_id", id)
 
-  def list(count: Int = 10, offset: Int = 0): Seq[Agency] = DB.withConnection { implicit c =>
-    SQL("select * from agencys limit {count} offset {offset}").on('count -> count, 'offset -> offset).list(simple)
+  def list(count: Int = 10, offset: Int = 0): Seq[GovUnit] = DB.withConnection { implicit c =>
+    SQL("select * from gov_units limit {count} offset {offset}").on('count -> count, 'offset -> offset).list(simple)
   }
 
-  def insert(o: Agency): Option[Agency] = DB.withConnection { implicit c =>
+  def insert(o: GovUnit): Option[GovUnit] = DB.withConnection { implicit c =>
     o.id match {
       case NotAssigned => {
         val id = SQL("""
-          insert into agencys (
-            agency_id,
-            agency_name,
-            agency_acronym,
+          insert into gov_units (
+            gov_unit_id,
+            gov_unit_name,
+            gov_unit_acronym,
             role_id
           ) VALUES (
             DEFAULT,
@@ -123,10 +125,10 @@ trait AgencyGen extends EntityCompanion[Agency] {
       }
       case Id(n) => {
         SQL("""
-          insert into agencys (
-            agency_id,
-            agency_name,
-            agency_acronym,
+          insert into gov_units (
+            gov_unit_id,
+            gov_unit_name,
+            gov_unit_acronym,
             role_id
           ) VALUES (
             {id},
@@ -144,13 +146,13 @@ trait AgencyGen extends EntityCompanion[Agency] {
     }
   }
 
-  def update(o: Agency): Boolean = DB.withConnection { implicit c =>
+  def update(o: GovUnit): Boolean = DB.withConnection { implicit c =>
     SQL("""
-      update agencys set
-        agency_name={name},
-        agency_acronym={acronym},
+      update gov_units set
+        gov_unit_name={name},
+        gov_unit_acronym={acronym},
         role_id={roleId}
-      where agency_id={id}
+      where gov_unit_id={id}
     """).on(
       'id -> o.id,
       'name -> o.name,
@@ -160,12 +162,12 @@ trait AgencyGen extends EntityCompanion[Agency] {
   }
 
   def delete(id: Int): Boolean = DB.withConnection { implicit c =>
-    SQL("delete from agencys where agency_id={id}").on('id -> id).executeUpdate() > 0
+    SQL("delete from gov_units where gov_unit_id={id}").on('id -> id).executeUpdate() > 0
   }
 }
 
-trait AgencyCCGen {
-  val companion = Agency
+trait GovUnitCCGen {
+  val companion = GovUnit
 }
 // GENERATED object end
 

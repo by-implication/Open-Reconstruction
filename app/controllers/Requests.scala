@@ -29,13 +29,13 @@ object Requests extends Controller with Secured {
         "hasSignedoff" -> Json.toJson(user.hasSignedoff(req)),
         "canSignoff" -> Json.toJson(user.canSignoff(req)),
         "author" -> User.findById(req.authorId).map(_.infoJson).getOrElse(JsNull),
-        "assessingAgencies" -> Json.toJson(Agency.withPermission(Permission.VALIDATE_REQUESTS).map(_.toJson)),
-        "implementingAgencies" -> Json.toJson(Agency.withPermission(Permission.IMPLEMENT_REQUESTS).map(_.toJson)),
+        "assessingAgencies" -> Json.toJson(GovUnit.withPermission(Permission.VALIDATE_REQUESTS).map(_.toJson)),
+        "implementingAgencies" -> Json.toJson(GovUnit.withPermission(Permission.IMPLEMENT_REQUESTS).map(_.toJson)),
         "assessingAgency" -> req.assessingAgencyId.map { aid =>
-          Agency.findById(aid).map(_.toJson).getOrElse(JsNull)
+          GovUnit.findById(aid).map(_.toJson).getOrElse(JsNull)
         }.getOrElse(JsNull),
         "implementingAgency" -> req.implementingAgencyId.map { aid =>
-          Agency.findById(aid).map(_.toJson).getOrElse(JsNull)
+          GovUnit.findById(aid).map(_.toJson).getOrElse(JsNull)
         }.getOrElse(JsNull),
         "attachments" -> {
           val (imgs, docs) = req.attachments.partition(_._1.isImage)
@@ -101,7 +101,7 @@ object Requests extends Controller with Secured {
 
       if(user.canSignoff(r)){
         r.copy(level = r.level + 1).save().map( implicit r =>
-          Event.signoff(user.agency).create().map { _ =>
+          Event.signoff(user.govUnit).create().map { _ =>
             Rest.success()
           }.getOrElse(Rest.serverError())
         ).getOrElse(Rest.serverError())
@@ -131,32 +131,32 @@ object Requests extends Controller with Secured {
 
   }
 
-  private def assignAgency(
-      isAuthorized: Agency => Boolean,
+  private def assignGovUnit(
+      isAuthorized: GovUnit => Boolean,
       assign: (Req, Int) => Req,
-      unassign: Req => (Req, Agency),
+      unassign: Req => (Req, GovUnit),
       agencyType: String
-    )(reqId: Int, agencyId: Int) = UserAction(){ implicit user => implicit request =>
+    )(reqId: Int, govUnitId: Int) = UserAction(){ implicit user => implicit request =>
     if(user.isSuperAdmin){
       Req.findById(reqId).map { implicit req =>
-        agencyId match {
+        govUnitId match {
           case 0 => {
-            val (r, agency) = unassign(req)
+            val (r, govUnit) = unassign(req)
             r.save().map { _ =>
-              Event.assign(agencyType, false, agency).create().map { _ =>
+              Event.assign(agencyType, false, govUnit).create().map { _ =>
                 Rest.success()
               }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())
           }
           case _ => {
-            Agency.findById(agencyId).map { agency =>
-              if(isAuthorized(agency)){
-                assign(req, agencyId).save().map { _ =>
-                  Event.assign(agencyType, true, agency).create().map { _ =>
+            GovUnit.findById(govUnitId).map { govUnit =>
+              if(isAuthorized(govUnit)){
+                assign(req, govUnitId).save().map { _ =>
+                  Event.assign(agencyType, true, govUnit).create().map { _ =>
                     Rest.success()
                   }.getOrElse(Rest.serverError())
                 }.getOrElse(Rest.serverError())
-              } else Rest.error("Agency not authorized to assess.")
+              } else Rest.error("GovUnit not authorized to assess.")
             }.getOrElse(Rest.notFound())
           }
         }
@@ -164,17 +164,17 @@ object Requests extends Controller with Secured {
     } else Rest.unauthorized()
   }
 
-  def assignAssessingAgency = assignAgency(
-    Agency.canAssess,
+  def assignAssessingAgency = assignGovUnit(
+    GovUnit.canAssess,
     (r, id) => r.copy(assessingAgencyId = Some(id)),
-    r => (r.copy(assessingAgencyId = None), Agency.findById(r.assessingAgencyId.get).get),
+    r => (r.copy(assessingAgencyId = None), GovUnit.findById(r.assessingAgencyId.get).get),
     "assess"
   ) _
 
-  def assignImplementingAgency = assignAgency(
-    Agency.canImplement,
+  def assignImplementingAgency = assignGovUnit(
+    GovUnit.canImplement,
     (r, id) => r.copy(implementingAgencyId = Some(id)),
-    r => (r.copy(implementingAgencyId = None), Agency.findById(r.implementingAgencyId.get).get),
+    r => (r.copy(implementingAgencyId = None), GovUnit.findById(r.implementingAgencyId.get).get),
     "implement"
   ) _
 

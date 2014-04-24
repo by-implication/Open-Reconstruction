@@ -34,8 +34,8 @@ object Users extends Controller with Secured {
     Secured.logout()
   }
 
-  def insert(agencyId: Int) = UserAction(){ implicit user => implicit request =>
-    if(user.isSuperAdmin || (user.isAdmin && user.agencyId == agencyId)){
+  def insert(govUnitId: Int) = UserAction(){ implicit user => implicit request =>
+    if(user.isSuperAdmin || (user.isAdmin && user.govUnitId == govUnitId)){
 
       val createForm: Form[User] = Form(
         mapping(
@@ -48,7 +48,7 @@ object Users extends Controller with Secured {
           name = name,
           handle = handle,
           password = password,
-          agencyId = agencyId,
+          govUnitId = govUnitId,
           isAdmin = isAdmin
         ))
         (_ => None)

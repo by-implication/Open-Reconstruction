@@ -34,15 +34,15 @@ GET	    /attachments/:id/thumb		controllers.Attachments.thumb(id: Int)
 POST    /attachments/:id/archive    controllers.Attachments.archive(id: Int)
 POST    /attachments/:id/unarchive  controllers.Attachments.unarchive(id: Int)
 
-GET     /agencies/all/meta          controllers.Agencies.allMeta()
-GET     /agencies/new/meta          controllers.Agencies.createMeta()
-GET     /agencies/:id/meta          controllers.Agencies.viewMeta(id: Int)
-POST    /agencies/new               controllers.Agencies.insert()
+GET     /agencies/all/meta          controllers.GovUnits.allMeta()
+GET     /agencies/new/meta          controllers.GovUnits.createMeta()
+GET     /agencies/:id/meta          controllers.GovUnits.viewMeta(id: Int)
+POST    /agencies/new               controllers.GovUnits.insert()
 POST    /agencies/:id/newUser       controllers.Users.insert(id: Int)
 
-GET     /agencies/lgus/list         controllers.Agencies.lguListing()
-GET     /lgus/new/:id/meta          controllers.Agencies.lguCreationMeta(id: Int)
-POST    /lgus/new/:id               controllers.Agencies.lguInsert(id: Int)
+GET     /agencies/lgus/list         controllers.GovUnits.lguListing()
+GET     /lgus/new/:id/meta          controllers.GovUnits.lguCreationMeta(id: Int)
+POST    /lgus/new/:id               controllers.GovUnits.lguInsert(id: Int)
 
 # view routes (these all serve the index view)
 
