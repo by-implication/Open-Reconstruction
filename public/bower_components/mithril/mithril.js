@@ -426,6 +426,7 @@ new function(window) {
 		var deferred = m.deferred()
 		var serialize = xhrOptions.serialize || JSON.stringify
 		var deserialize = xhrOptions.deserialize || JSON.parse
+		xhrOptions.url = xhrOptions.url || window.location.href
 		xhrOptions.url = parameterizeUrl(xhrOptions.url, xhrOptions.data)
 		xhrOptions = bindData(xhrOptions, xhrOptions.data, serialize)
 		xhrOptions.onload = xhrOptions.onerror = function(e) {
