@@ -1,10 +1,13 @@
 lguListing.view = function(ctrl){
 
   function renderLGU(lgu){
-    return m("div", [
-      m("a", {href: "/agencies/" + lgu.id}, lgu.name),
-      m("a", {href: "/lgus/new/" + lgu.id}, "+")
-    ].concat((lgu.children && lgu.children.map(renderLGU)) || []));
+    return m(".lgu", [
+      m(".info", [
+        m("a", {href: "/agencies/" + lgu.id}, lgu.name),
+        m("a", {href: "/lgus/new/" + lgu.id}, "+")
+      ]),
+      m(".children", (lgu.children && lgu.children.map(renderLGU)) || []),
+    ])
   }
   
   return app.template(ctrl.app, [
