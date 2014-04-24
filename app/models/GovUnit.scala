@@ -12,7 +12,7 @@ object GovUnit extends GovUnitGen {
 
   def withPermission(permission: Permission) = DB.withConnection { implicit c =>
     SQL("""
-      SELECT * from agencys
+      SELECT * FROM gov_units
       NATURAL JOIN roles
       WHERE {permission} = ANY(roles.role_permissions)
     """).on(
@@ -23,14 +23,14 @@ object GovUnit extends GovUnitGen {
   def users(id: Int): Seq[User] = DB.withConnection { implicit c =>
     SQL("""
       SELECT * from users
-      WHERE agency_id = {id}
+      WHERE gov_unit_id = {id}
     """).on(
       'id -> id
     ).list(User.simple)
   }
 
   def listAll: Seq[GovUnit] = DB.withConnection { implicit c =>
-    SQL("select * from agencys").list(simple)
+    SQL("select * FROM gov_units").list(simple)
   }
 
   def canAssess(a: GovUnit) = a.canDo(Permission.VALIDATE_REQUESTS)
@@ -62,10 +62,10 @@ case class GovUnit(
 
   private def canDo(p: Permission): Boolean = DB.withConnection { implicit c =>
     SQL("""
-      SELECT * FROM agencys NATURAL JOIN roles
-      WHERE agency_id = {agencyId} AND {permission} = ANY(role_permissions)
+      SELECT * FROM gov_units NATURAL JOIN roles
+      WHERE gov_unit_id = {govUnitId} AND {permission} = ANY(role_permissions)
     """).on(
-      'agencyId -> id,
+      'govUnitId -> id,
       'permission -> p.value
     ).list(GovUnit.simple).length > 0
   }

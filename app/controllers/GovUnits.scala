@@ -77,14 +77,12 @@ object GovUnits extends Controller with Secured {
     }.getOrElse(Rest.notFound())
   }
 
-
-
   def lguInsert(parentId: Int) = UserAction(){ implicit user => implicit request =>
     if(user.isSuperAdmin){
       lguForm.bindFromRequest.fold(
         Rest.formError(_),
-        _.create().map { agency =>
-          Lgu(agency.id, parentId).create().map { _ =>
+        _.create().map { govUnit =>
+          Lgu(govUnit.id, parentId).create().map { _ =>
             Rest.success()
           }.getOrElse(Rest.serverError())
         }.getOrElse(Rest.serverError())

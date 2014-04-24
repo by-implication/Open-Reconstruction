@@ -48,7 +48,7 @@ object Lgu extends LguGen {
 
   def jsonList = DB.withConnection { implicit c =>
     Json.toJson(SQL("""
-      SELECT * FROM lgus LEFT JOIN agencys ON lgu_id = agency_id
+      SELECT * FROM lgus LEFT join gov_units ON lgu_id = gov_unit_id
     """).list(GovUnit.simple ~ simple map(flatten)).map {
       case (govUnit, lgu) => govUnit.toJson ++ Json.obj("parentId" -> lgu.parentLguId)
     })

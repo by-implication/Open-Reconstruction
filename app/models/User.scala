@@ -21,7 +21,7 @@ object User extends UserGen {
             user_handle,
             user_name,
             user_password,
-            agency_id,
+            gov_unit_id,
             user_admin
           ) VALUES (
             DEFAULT,
@@ -48,7 +48,7 @@ object User extends UserGen {
             user_handle,
             user_name,
             user_password,
-            agency_id,
+            gov_unit_id,
             user_admin
           ) VALUES (
             {id},
@@ -75,7 +75,7 @@ object User extends UserGen {
       update users set
         user_handle={handle},
         user_name={name},
-        agency_id={govUnitId}
+        gov_unit_id={govUnitId}
         user_admin={isAdmin}
       where user_id={id}
     """).on(
@@ -178,8 +178,8 @@ case class User(
 
   lazy val role: Role = DB.withConnection { implicit c =>
     SQL("""
-      SELECT * FROM roles NATURAL JOIN agencys
-      WHERE agency_id = {govUnitId}
+      SELECT * FROM roles NATURAL join gov_units
+      WHERE gov_unit_id = {govUnitId}
     """).on('govUnitId -> govUnitId).singleOpt(Role.simple).getOrElse(Role.VIEW_ONLY)
   }
 
@@ -225,7 +225,7 @@ case class User(
 
   private def canDo(p: Permission): Boolean = DB.withConnection { implicit c =>
     SQL("""
-      SELECT * FROM users NATURAL JOIN agencys NATURAL JOIN roles
+      SELECT * FROM users NATURAL join gov_units NATURAL JOIN roles
       WHERE user_id = {userId} AND {permission} = ANY(role_permissions)
     """).on(
       'userId -> id,
