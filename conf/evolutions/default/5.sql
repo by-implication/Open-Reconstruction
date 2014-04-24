@@ -1,14 +1,13 @@
 # --- !Ups
-
-CREATE EXTENSION ltree;;
+-- convention for parent id:
+-- negative values reference provinces as defined in Lgu.scala
+-- positive values reference existing LGUs
 
 CREATE TABLE lgus (
     lgu_id serial PRIMARY KEY REFERENCES agencys(agency_id),
-    lgu_ancestors ltree NOT NULL
+    parent_id int NOT NULL
 );;
 
 # --- !Downs
 
 DROP TABLE IF EXISTS lgus;;
-
-DROP EXTENSION IF EXISTS ltree;;

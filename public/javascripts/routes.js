@@ -11,6 +11,7 @@ m.route(document, window.location.pathname == "/" ? "/projects" : window.locatio
   "/admin": admin,
   "/admin/lgus": lguListing,
   "/agencies/new": agencyCreation,
+  "/lgus/new/:parentId": lguCreation,
   "/agencies/:id/newUser": userCreation,
   "/agencies/:id": agency,
   "/login": login

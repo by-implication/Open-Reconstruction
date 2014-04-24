@@ -55,4 +55,41 @@ object Agencies extends Controller with Secured {
     ))
   }
 
+  lazy val LGUroleId = {
+    Role.findOne("role_name", "LGU").get.id
+  }
+
+  lazy val lguForm: Form[Agency] = Form(
+    mapping(
+      "name" -> nonEmptyText,
+      "acronym" -> optional(text)
+    )
+    ((name, acronym) => Agency(name = name, acronym = acronym, roleId = LGUroleId))
+    (_ => None)
+  )
+
+  def lguCreationMeta(parentId: Int) = UserAction(){ implicit user => implicit request =>
+    val parentName: Option[String] = Lgu.PROVINCES.get(parentId).map(p => Some(p.name))
+      .getOrElse(Agency.findById(parentId).map(_.name))
+
+    parentName.map { p =>
+      Rest.success("parentName" -> Json.toJson(p))
+    }.getOrElse(Rest.notFound())
+  }
+
+
+
+  def lguInsert(parentId: Int) = UserAction(){ implicit user => implicit request =>
+    if(user.isSuperAdmin){
+      lguForm.bindFromRequest.fold(
+        Rest.formError(_),
+        _.create().map { agency =>
+          Lgu(agency.id, parentId).create().map { _ =>
+            Rest.success()
+          }.getOrElse(Rest.serverError())
+        }.getOrElse(Rest.serverError())
+      )
+    } else Rest.unauthorized()
+  }
+
 }

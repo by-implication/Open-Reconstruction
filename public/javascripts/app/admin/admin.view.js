@@ -11,6 +11,9 @@ admin.view = function(ctrl){
             m("a.button", {href: "/agencies/new", config: m.route}, [
               "New agency"
             ]),
+            m("a.button", {href: "/admin/lgus", config: m.route}, [
+              "LGU Manager"
+            ]),
             m("table", [
               m("thead", [
                 m("tr", [
