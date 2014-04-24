@@ -97,8 +97,9 @@ object PostgresMetadata {
         from pg_attribute
           join pg_class on pg_class.oid=attrelid
           join pg_type on pg_type.oid=atttypid
+          join pg_namespace on pg_namespace.oid=relnamespace
           left join pg_attrdef on adrelid=attrelid and adnum=attnum
-        where relname=? and attnum > 0;
+        where relname=? and nspname='codegen' and attnum > 0;
       """)
     queryStatement.setString(1, table)
     val result = queryStatement.executeQuery()
