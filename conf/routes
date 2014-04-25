@@ -47,8 +47,16 @@ POST    /lgus/new/:l/:id            controllers.GovUnits.lguInsert(l: Int, id: I
 # view routes (these all serve the index view)
 
 GET     /projects                   controllers.Application.index
+GET     /projects/all               controllers.Application.index
+GET     /projects/mine              controllers.Application.index
+GET     /projects/assessor          controllers.Application.index
+GET     /projects/signoff           controllers.Application.index
 GET     /projects/new               controllers.Application.index
 GET     /projects/:x                controllers.Application.index1(x: Int)
+GET     /projects/:x/assignments    controllers.Application.index1(x: Int)
+GET     /projects/:x/images         controllers.Application.index1(x: Int)
+GET     /projects/:x/documents      controllers.Application.index1(x: Int)
+GET     /projects/:x/activity       controllers.Application.index1(x: Int)
 GET     /dashboard                  controllers.Application.index
 GET     /users/:x                   controllers.Application.index1(x: Int)
 GET     /admin                      controllers.Application.index
