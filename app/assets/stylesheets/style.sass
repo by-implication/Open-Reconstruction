@@ -351,4 +351,18 @@ button.micro, .button.micro
   .info
     line-height: 28px
 
+.expander
+  display: inline-block
+  .control
+    +transition(all 0.2s)
+    display: inline-block
+    // width: 28px
+    // height: 28px
+    text-align: center
+  input[type="checkbox"]
+    display: none
+    &:checked + .control
+      +transform(rotateZ(90deg))
+      +transform-origin(center)
+
   
