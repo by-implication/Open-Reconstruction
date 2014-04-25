@@ -90,35 +90,35 @@ common.tabs.view = function(ctrl, options){
   }
 
   return m("dl.tabs[data-tab]", options, [
-    ctrl.tabs().filter(function(item){
-      return item.when ? item.when() : true;
-    })
-    .map(function(item, i){
-      var activeTab = function(i){
-        if(ctrl.isActive(item.label, i)){
+    ctrl.tabs().map(function(item, i){
+      var setActive = function(item){
+        if(ctrl.isActive(item.label)){
           return "active";
         } else {
           return "";
         }
       };
-      return m("dd", {class: activeTab(i)}, [
-        m("a", {onclick: function(){
-          ctrl.currentTab(item.label);
-        }}, item.label)
+      return m("dd", {class: setActive(item)}, [
+        m("a", { href: ctrl.absolute(item.href), config: m.route }, item.label)
       ]);
     })
   ])
 }
 
-common.tabs.controller = function(){
-  this.currentTab = m.prop();
+common.tabs.controller = function(basePath){
+  var absolute = this.absolute = function(href) {
+    return basePath + '/' + href;
+  }
   this.tabs = m.prop([]);
-  this.isActive = function(label, index){
-    if(!this.currentTab()){
-      return index == 0
-    } else {
-      return this.currentTab() === label
+  this.currentTab = function() {
+    var item = _.find(this.tabs(), function(tab) { return absolute(tab.href) == m.route.path });
+    if(item == undefined) {
+      item = _.head(this.tabs());
     }
+    return item.label;
+  }
+  this.isActive = function(label){
+    return this.currentTab() == label;
   }
 }
 

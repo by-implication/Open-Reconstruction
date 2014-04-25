@@ -1,18 +1,18 @@
 projectListing.controller = function(){
   var self = this;
   this.app = new app.controller();
-  this.tabs = new common.tabs.controller();
+  this.tabs = new common.tabs.controller("/projects");
   this.tabs.tabs = m.prop([
-    {label: "All"},
+    {label: "All", href: "all"},
     {label: "For signoff", when: function(){
       return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 5);
-    }},
+    }, href: "signoff"},
     {label: "For assigning assessor", when: function(){
       return self.app.isSuperAdmin();
-    }},
+    }, href: "assessor"},
     {label: "My requests", when: function(){
       return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 1);
-    }}
+    }, href: "mine"}
   ]);
   // this.tabs.currentTab("For signoff");
   this.projectList = m.prop([]);

@@ -1,8 +1,13 @@
 project.controller = function(){
   var map;
   this.app = new app.controller();
-  this.projectTabs = new common.tabs.controller();
-  this.projectTabs.tabs([{label: "Assignments"}, {label: "Images"}, {label: "Documents"}, {label: "Activity"}]);
+  this.projectTabs = new common.tabs.controller('/projects/'+m.route.param('id'));
+  this.projectTabs.tabs([
+    {label: "Assignments", href: 'assignments'},
+    {label: "Images", href: 'images'},
+    {label: "Documents", href: 'documents'},
+    {label: "Activity", href: 'activity'}
+  ]);
   this.projectTabs.currentTab(this.projectTabs.tabs()[0].label)
 
   this.tabs = new common.tabs.controller();
