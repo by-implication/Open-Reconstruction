@@ -68,6 +68,9 @@ lguListing.view = function(ctrl){
       m("section", [
         m(".row", [
           m(".columns.medium-8", [
+            m("button", {onclick: ctrl.expandAll.bind(ctrl)}, [
+              "Expand all"
+            ]),
             m("ul", [
               ctrl.regions().map(renderLGU)
             ]),

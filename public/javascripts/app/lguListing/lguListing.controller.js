@@ -33,4 +33,18 @@ lguListing.controller = function(){
 
   }.bind(this));
 
+  this.expandAll = function(){
+    var expandRecurse = function(node){
+      if (node.children().length) {
+        node.isExpanded(true);
+        node.children().forEach(function(n){
+          expandRecurse(n);
+        })
+      }
+    }
+    this.regions().forEach(function(r){
+      expandRecurse(r);
+    })
+  }
+
 }
