@@ -10,7 +10,7 @@ lguListing.view = function(ctrl){
           m("a", {href: "/agencies/" + lgu.id}, lgu.name) :
           m("span", lgu.name)
         ),
-        (lgu.level < 3 ?
+        (level < 3 ?
           m("a", {href: "/lgus/new/" + level + "/" + lgu.id}, "+") :
           ""
         )
