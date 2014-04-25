@@ -18,6 +18,25 @@ lguListing.view = function(ctrl){
           m("a", {href: "/agencies/" + lgu.id()}, lgu.name()) :
           m("span", lgu.name())
         ),
+        lgu.children().length ? 
+          m("span", [
+            " (",
+            lgu.children().length,
+            " ",
+            m.switch(level)
+              .case(0, function(){
+                return "provinces"
+              })
+              .case(1, function(){
+                return "cities"
+              })
+              .case(2, function(){
+                return "barangays"
+              })
+              .render(),
+            ")"
+          ])
+        : null,
         (level < 3 ?
           m("a.add.button.micro", {href: "/lgus/new/" + level + "/" + lgu.id()}, [
             m.switch(level)
