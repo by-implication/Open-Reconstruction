@@ -4,7 +4,7 @@ lguListing.view = function(ctrl){
     // lgu.isExpanded = false;
     var level = lgu.level();
 
-    return m(".lgu", [
+    return m("li.lgu", [
       m(".info", [
         level < 3 ?
           m("label.expander", [
@@ -19,12 +19,26 @@ lguListing.view = function(ctrl){
           m("span", lgu.name())
         ),
         (level < 3 ?
-          m("a.button.micro", {href: "/lgus/new/" + level + "/" + lgu.id()}, "+") :
+          m("a.add.button.micro", {href: "/lgus/new/" + level + "/" + lgu.id()}, [
+            m.switch(level)
+              .case(0, function(){
+                return "Add Province"
+              })
+              .case(1, function(){
+                return "Add City/Municipality"
+              })
+              .case(2, function(){
+                return "Add Barangay"
+              })
+              .render()
+          ]) :
           ""
         )
       ]),
       lgu.isExpanded() ?
-        m(".children", (lgu.children && lgu.children() && lgu.children().map(renderLGU)) || []) :
+        m("ul.children", [
+          (lgu.children && lgu.children() && lgu.children().map(renderLGU)) || []
+        ]) :
         null
     ])
   }
@@ -34,7 +48,11 @@ lguListing.view = function(ctrl){
     ctrl.app.isSuperAdmin()?
       m("section", [
         m(".row", [
-          m(".columns.medium-8", ctrl.regions().map(renderLGU)),
+          m(".columns.medium-8", [
+            m("ul", [
+              ctrl.regions().map(renderLGU)
+            ]),
+          ]),
         ]),
       ]) : ""
   ])
