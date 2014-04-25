@@ -1,7 +1,7 @@
 lguListing.controller = function(){
-  
   this.app = new app.controller();
-  
+  this.tabs = new common.tabs.controller();
+  this.tabs.tabs = m.prop([{label: "Agencies"}, {label: "LGUs"}]);
   this.regions = m.prop([]);
 
   m.request({method: "GET", url: ("/agencies/lgus/list"), config: app.xhrConfig}).then(function (r){

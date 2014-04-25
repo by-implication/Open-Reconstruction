@@ -63,10 +63,13 @@ lguListing.view = function(ctrl){
   }
   
   return app.template(ctrl.app, [
-    common.banner("LGU Manager"),
+    common.banner("Administrative Interface"),
     ctrl.app.isSuperAdmin()?
       m("section", [
         m(".row", [
+          m("columns.medium-4", [
+            common.tabs.view(ctrl.tabs, {className: "vertical"})
+          ]),
           m(".columns.medium-8", [
             m("button", {onclick: ctrl.expandAll.bind(ctrl)}, [
               "Expand all"
