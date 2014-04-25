@@ -7,7 +7,7 @@ lguListing.view = function(ctrl){
     return m("li.lgu", [
       m(".info", [
         level < 3 ?
-          m("label.expander", [
+          m("label.expander", {className: lgu.isExpanded ? "expanded" : ""}, [
             m("input", {type: "checkbox", onchange: m.withAttr("checked", lgu.isExpanded)}),
             m(".control", [
               m("i.fa.fa-caret-right.fa-fw")

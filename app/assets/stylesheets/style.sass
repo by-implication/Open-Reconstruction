@@ -362,15 +362,27 @@ button.micro, .button.micro
 
 .expander
   display: inline-block
-  width: 14px
+  text-align: center
+  margin-right: 10px
+  cursor: default
+  width: 24px
+  &.expanded
+    cursor: pointer
   .control
-    +transition(all 0.2s)
     display: inline-block
     text-align: center
+    width: 24px
+    height: 24px
+    border-radius: 2px
+    &:hover
+      background-color: #eee
+    i
+      +transition(all 0.2s)
   input[type="checkbox"]
     display: none
     &:checked + .control
-      +transform(rotateZ(90deg))
-      +transform-origin(center)
+      i
+        +transform(rotateZ(90deg))
+        +transform-origin(center)
 
   
