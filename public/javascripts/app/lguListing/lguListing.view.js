@@ -7,8 +7,7 @@ lguListing.view = function(ctrl){
     return m(".lgu", [
       m(".info", [
         m("label", [
-          m("input", {type: "checkbox"}),
-
+          m("input", {type: "checkbox", onchange: m.withAttr("checked", lgu.isExpanded)}),
         ]),
         (level ?
           m("a", {href: "/agencies/" + lgu.id()}, lgu.name()) :
@@ -19,7 +18,9 @@ lguListing.view = function(ctrl){
           ""
         )
       ]),
-      m(".children", (lgu.children && lgu.children() && lgu.children().map(renderLGU)) || []),
+      lgu.isExpanded() ?
+        m(".children", (lgu.children && lgu.children() && lgu.children().map(renderLGU)) || []) :
+        null
     ])
   }
   
