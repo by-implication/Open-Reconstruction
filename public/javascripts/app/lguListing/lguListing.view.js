@@ -6,12 +6,14 @@ lguListing.view = function(ctrl){
 
     return m(".lgu", [
       m(".info", [
-        m("label.expander", [
-          m("input", {type: "checkbox", onchange: m.withAttr("checked", lgu.isExpanded)}),
-          m(".control", [
-            m("i.fa.fa-caret-right.fa-fw")
-          ]),
-        ]),
+        level < 3 ?
+          m("label.expander", [
+            m("input", {type: "checkbox", onchange: m.withAttr("checked", lgu.isExpanded)}),
+            m(".control", [
+              m("i.fa.fa-caret-right.fa-fw")
+            ]),
+          ])
+        : m("label.expander", []),
         (level ?
           m("a", {href: "/agencies/" + lgu.id()}, lgu.name()) :
           m("span", lgu.name())
