@@ -85,7 +85,7 @@ object GovUnits extends Controller with Secured {
   }
 
   def lguInsert(level: Int, parentId: Int) = UserAction(){ implicit user => implicit request =>
-    if(level < 3){
+    if(level >= 0 && level < 3){
       if(user.isSuperAdmin){
         lguForm.bindFromRequest.fold(
           Rest.formError(_),
