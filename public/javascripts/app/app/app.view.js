@@ -13,7 +13,7 @@ app.template = function(a, b, c){
 
   return m("html", [
     m("head", [
-      m("title", [ "Open Reconstruction" ]),
+      m("title", [ "Open Reconstruction - testing" ]),
       m("link[href='/assets/stylesheets/style.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='//fonts.googleapis.com/css?family=Roboto+Condensed:400,300,700'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/bower_components/font-awesome/css/font-awesome.min.css'][rel='stylesheet'][type='text/css']"),
