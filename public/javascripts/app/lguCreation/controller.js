@@ -26,7 +26,7 @@ lguCreation.controller = function(){
     e.preventDefault();
     m.request({method: "POST", data: this.input, config: app.xhrConfig}).then(function (r){
       if(r.success){
-        window.location = '/';
+        window.location = "/admin/lgus";
       } else if(r.reason == "form error"){
         alert("Agency not created!");
       } else {
