@@ -1,21 +1,25 @@
 lguListing.view = function(ctrl){
 
   function renderLGU(lgu){
-
-    var level = lgu.level || 0;
+    // lgu.isExpanded = false;
+    var level = lgu.level();
 
     return m(".lgu", [
       m(".info", [
+        m("label", [
+          m("input", {type: "checkbox"}),
+
+        ]),
         (level ?
-          m("a", {href: "/agencies/" + lgu.id}, lgu.name) :
-          m("span", lgu.name)
+          m("a", {href: "/agencies/" + lgu.id()}, lgu.name()) :
+          m("span", lgu.name())
         ),
         (level < 3 ?
-          m("a", {href: "/lgus/new/" + level + "/" + lgu.id}, "+") :
+          m("a.button.micro", {href: "/lgus/new/" + level + "/" + lgu.id()}, "+") :
           ""
         )
       ]),
-      m(".children", (lgu.children && lgu.children.map(renderLGU)) || []),
+      m(".children", (lgu.children && lgu.children() && lgu.children().map(renderLGU)) || []),
     ])
   }
   
