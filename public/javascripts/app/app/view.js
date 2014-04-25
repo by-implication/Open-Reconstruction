@@ -14,6 +14,7 @@ app.template = function(a, b, c){
   return m("html", [
     m("head", [
       m("title", [ "Open Reconstruction" ]),
+      m("meta", {name: "google", value: "notranslate"}),
       m("link[href='/assets/stylesheets/style.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/stylesheets/fonts.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/bower_components/font-awesome/css/font-awesome.min.css'][rel='stylesheet'][type='text/css']"),
