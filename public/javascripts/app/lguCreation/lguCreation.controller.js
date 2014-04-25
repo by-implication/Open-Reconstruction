@@ -7,10 +7,18 @@ lguCreation.controller = function(){
     acronym: m.prop("")
   }
 
+  this.level = parseInt(m.route.param("level"));
   this.parentId = m.route.param("parentId");
   this.parentName = m.prop("");
+  this.lguType = m.prop("");
 
-  m.request({method: "GET", url: "/lgus/new/" + this.parentId + "/meta"}).then(function (r){
+  switch(this.level){
+    case 0: this.lguType("Province"); break;
+    case 1: this.lguType("City / Municipality"); break;
+    case 2: this.lguType("Barangay"); break;
+  }
+
+  m.request({method: "GET", url: "/lgus/new/" + this.level + "/" + this.parentId + "/meta"}).then(function (r){
     this.parentName(r.parentName);
   }.bind(this));
 

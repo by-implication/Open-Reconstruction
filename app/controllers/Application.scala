@@ -9,7 +9,8 @@ object Application extends Controller {
     Ok(views.html.index())
   }
 
-  def index1(id: Int) = index
+  def index1(x: Int) = index
+  def index2(x: Int, y: Int) = index
 
   def csvParser() = Action {
     Ok(views.html.csvParser())

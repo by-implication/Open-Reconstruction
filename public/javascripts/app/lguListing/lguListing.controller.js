@@ -5,27 +5,24 @@ lguListing.controller = function(){
   this.regions = m.prop([]);
 
   m.request({method: "GET", url: ("/agencies/lgus/list"), config: app.xhrConfig}).then(function (r){
-    
-    var provinces = [];
+
+    var regions = [];
     r.regions.forEach(function (region){
-        region.provinces.forEach(function (province){
-            provinces[province.id] = province;
-        });
+      regions[region.id] = region;
     });
 
     var lgus = [];
     r.lgus.forEach(function (lgu){
-        lgus[lgu.id] = lgu;
+      lgus[lgu.id] = lgu;
     });
 
     r.lgus.forEach(function (lgu){
-        var p = lgu.parentId < 0 ? provinces[lgu.parentId] : lgus[lgu.parentId];
-        p.children = p.children || [];
-        p.children.push(lgu);
+      var parent = lgu.parentLGU ? lgus[lgu.parentLGU] : regions[lgu.parentRegion];
+      parent.children = parent.children || [];
+      parent.children.push(lgu);
     });
 
-    console.log(r.regions);
-    this.regions(r.regions);
+    this.regions(regions);
 
   }.bind(this));
 

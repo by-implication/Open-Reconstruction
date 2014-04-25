@@ -50,7 +50,9 @@ object GovUnits extends Controller with Secured {
 
   def lguListing = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
-      "regions" -> Json.toJson(Lgu.REGIONS.map(_.toJson)),
+      "regions" -> Json.toJson(Lgu.REGIONS.toSeq.map {
+        case (id, name) => Json.obj("id" -> id, "name" -> name)
+      }),
       "lgus" -> Lgu.jsonList
     ))
   }
@@ -68,23 +70,36 @@ object GovUnits extends Controller with Secured {
     (_ => None)
   )
 
-  def lguCreationMeta(parentId: Int) = UserAction(){ implicit user => implicit request =>
-    val parentName: Option[String] = Lgu.PROVINCES.get(parentId).map(p => Some(p.name))
-      .getOrElse(GovUnit.findById(parentId).map(_.name))
+  def lguCreationMeta(level: Int, parentId: Int) = UserAction(){ implicit user => implicit request =>
+    
+    val parentName: Option[String] = if(level > 0){
+      GovUnit.findById(parentId).map(_.name)
+    } else {
+      Lgu.REGIONS.get(parentId)
+    }
 
     parentName.map { p =>
       Rest.success("parentName" -> Json.toJson(p))
     }.getOrElse(Rest.notFound())
+
   }
 
-  def lguInsert(parentId: Int) = UserAction(){ implicit user => implicit request =>
+  def lguInsert(level: Int, parentId: Int) = UserAction(){ implicit user => implicit request =>
     if(user.isSuperAdmin){
       lguForm.bindFromRequest.fold(
         Rest.formError(_),
         _.create().map { govUnit =>
-          Lgu(govUnit.id, parentId).create().map { _ =>
+          
+          val lgu = if (level > 0){
+            Lgu(govUnit.id, level + 1, parentLguId = Some(parentId))
+          } else {
+            Lgu(govUnit.id, level + 1, parentRegionId = Some(parentId))
+          }
+
+          lgu.create().map { _ =>
             Rest.success()
           }.getOrElse(Rest.serverError())
+
         }.getOrElse(Rest.serverError())
       )
     } else Rest.unauthorized()

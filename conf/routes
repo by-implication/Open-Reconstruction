@@ -41,20 +41,20 @@ POST    /agencies/new               controllers.GovUnits.insert()
 POST    /agencies/:id/newUser       controllers.Users.insert(id: Int)
 
 GET     /agencies/lgus/list         controllers.GovUnits.lguListing()
-GET     /lgus/new/:id/meta          controllers.GovUnits.lguCreationMeta(id: Int)
-POST    /lgus/new/:id               controllers.GovUnits.lguInsert(id: Int)
+GET     /lgus/new/:l/:id/meta       controllers.GovUnits.lguCreationMeta(l: Int, id: Int)
+POST    /lgus/new/:l/:id            controllers.GovUnits.lguInsert(l: Int, id: Int)
 
 # view routes (these all serve the index view)
 
 GET     /projects                   controllers.Application.index
 GET     /projects/new               controllers.Application.index
-GET     /projects/:id               controllers.Application.index1(id: Int)
+GET     /projects/:x                controllers.Application.index1(x: Int)
 GET     /dashboard                  controllers.Application.index
-GET     /users/:id                  controllers.Application.index1(id: Int)
+GET     /users/:x                   controllers.Application.index1(x: Int)
 GET     /admin                      controllers.Application.index
 GET     /admin/lgus                 controllers.Application.index
 GET     /agencies/new               controllers.Application.index
-GET     /agencies/:id/newUser       controllers.Application.index1(id: Int)
-GET     /agencies/:id               controllers.Application.index1(id: Int)
+GET     /agencies/:x/newUser        controllers.Application.index1(x: Int)
+GET     /agencies/:x                controllers.Application.index1(x: Int)
 GET     /login                      controllers.Application.index
-GET     /lgus/new/:id               controllers.Application.index1(id: Int)
+GET     /lgus/new/:x/:y             controllers.Application.index2(x: Int, y: Int)

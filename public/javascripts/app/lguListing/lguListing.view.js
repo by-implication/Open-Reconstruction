@@ -1,10 +1,16 @@
 lguListing.view = function(ctrl){
 
   function renderLGU(lgu){
+
+    var level = lgu.level || 0;
+
     return m(".lgu", [
       m(".info", [
-        m("a", {href: "/agencies/" + lgu.id}, lgu.name),
-        m("a", {href: "/lgus/new/" + lgu.id}, "+")
+        (level ?
+          m("a", {href: "/agencies/" + lgu.id}, lgu.name) :
+          m("span", lgu.name)
+        ),
+        m("a", {href: "/lgus/new/" + level + "/" + lgu.id}, "+")
       ]),
       m(".children", (lgu.children && lgu.children.map(renderLGU)) || []),
     ])
@@ -15,16 +21,7 @@ lguListing.view = function(ctrl){
     ctrl.app.isSuperAdmin()?
       m("section", [
         m(".row", [
-          m(".columns.medium-8", ctrl.regions().map(function (region){
-            return m("div.region", [
-              m("div.name", region.name)].concat(region.provinces.map(function (prov){
-                return m("div.province",  [
-                  m("span.name", prov.name),
-                  m("a", {href: "/lgus/new/" + prov.id}, "+")
-                ].concat((prov.children && prov.children.map(renderLGU)) || []));
-              })
-            ))
-          })),
+          m(".columns.medium-8", ctrl.regions().map(renderLGU)),
         ]),
       ]) : ""
   ])
