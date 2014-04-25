@@ -30,7 +30,7 @@ app.navbar = function(ctrl){
     m("ul.title-area", [
       m("li.name", [
         m("h1", [
-          m("a", {href: "/projects", config: m.route}, "Open Reconstruction - plzwork")
+          m("a", {href: "/projects", config: m.route}, "Open Reconstruction")
         ])
       ])
     ]),
