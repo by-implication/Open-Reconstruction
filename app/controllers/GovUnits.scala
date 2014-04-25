@@ -85,24 +85,26 @@ object GovUnits extends Controller with Secured {
   }
 
   def lguInsert(level: Int, parentId: Int) = UserAction(){ implicit user => implicit request =>
-    if(user.isSuperAdmin){
-      lguForm.bindFromRequest.fold(
-        Rest.formError(_),
-        _.create().map { govUnit =>
-          
-          val lgu = if (level > 0){
-            Lgu(govUnit.id, level + 1, parentLguId = Some(parentId))
-          } else {
-            Lgu(govUnit.id, level + 1, parentRegionId = Some(parentId))
-          }
+    if(level < 3){
+      if(user.isSuperAdmin){
+        lguForm.bindFromRequest.fold(
+          Rest.formError(_),
+          _.create().map { govUnit =>
+            
+            val lgu = if (level > 0){
+              Lgu(govUnit.id, level + 1, parentLguId = Some(parentId))
+            } else {
+              Lgu(govUnit.id, level + 1, parentRegionId = Some(parentId))
+            }
 
-          lgu.create().map { _ =>
-            Rest.success()
+            lgu.create().map { _ =>
+              Rest.success()
+            }.getOrElse(Rest.serverError())
+
           }.getOrElse(Rest.serverError())
-
-        }.getOrElse(Rest.serverError())
-      )
-    } else Rest.unauthorized()
+        )
+      } else Rest.unauthorized()
+    } else Rest.error("invalid level")
   }
 
 }
