@@ -71,6 +71,9 @@ lguListing.view = function(ctrl){
             m("button", {onclick: ctrl.expandAll.bind(ctrl)}, [
               "Expand all"
             ]),
+            m("button", {onclick: ctrl.collapseAll.bind(ctrl)}, [
+              "Collapse all"
+            ]),
             m("ul", [
               ctrl.regions().map(renderLGU)
             ]),

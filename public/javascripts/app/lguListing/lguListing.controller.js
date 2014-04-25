@@ -33,18 +33,23 @@ lguListing.controller = function(){
 
   }.bind(this));
 
-  this.expandAll = function(){
-    var expandRecurse = function(node){
-      if (node.children().length) {
-        node.isExpanded(true);
-        node.children().forEach(function(n){
-          expandRecurse(n);
-        })
-      }
+  var expandCollapseRecurse = function(node, ec){
+    if (node.children().length) {
+      node.isExpanded(ec);
+      node.children().forEach(function(n){
+        expandCollapseRecurse(n, ec);
+      })
     }
-    this.regions().forEach(function(r){
-      expandRecurse(r);
-    })
   }
 
+  this.expandAll = function(){
+    this.regions().forEach(function(r){
+      expandCollapseRecurse(r, true);
+    })
+  }
+  this.collapseAll = function(){
+    this.regions().forEach(function(r){
+      expandCollapseRecurse(r, false);
+    })
+  }
 }
