@@ -7,7 +7,7 @@ user.controller = function(){
   this.currentFilter = {projects: function(){return null}};
 
   this.tabs = new common.tabs.controller();
-  this.tabs.tabs = m.prop([]);
+  this.tabs.tabs = m.prop([{}]);
 
   m.request({method: "GET", url: ("/users/" + self.id + "/meta"), config: app.xhrConfig}).then(function (r){
     if(r.success){
