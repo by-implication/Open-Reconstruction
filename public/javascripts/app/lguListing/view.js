@@ -8,7 +8,7 @@ lguListing.view = function(ctrl){
       m(".info", [
         level < 3 && lgu.children().length ?
           m("label.expander", {className: lgu.isExpanded ? "expanded" : ""}, [
-            m("input", {type: "checkbox", onchange: m.withAttr("checked", lgu.isExpanded)}),
+            m("input", {type: "checkbox", onchange: m.withAttr("checked", lgu.isExpanded), checked: lgu.isExpanded()}),
             m(".control", [
               m("i.fa.fa-caret-right.fa-fw")
             ]),
@@ -67,10 +67,8 @@ lguListing.view = function(ctrl){
     ctrl.app.isSuperAdmin()?
       m("section", [
         m(".row", [
-          m("columns.medium-4", [
-            common.tabs.view(ctrl.tabs, {className: "vertical"})
-          ]),
-          m(".columns.medium-8", [
+          common.tabs.view(ctrl.tabs, {className: "vertical"}),
+          m(".tabs-content.vertical", [
             m("button", {onclick: ctrl.expandAll.bind(ctrl)}, [
               "Expand all"
             ]),

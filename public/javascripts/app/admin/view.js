@@ -7,10 +7,8 @@ admin.view = function(ctrl){
         m(".row", [
           // create agencies
           // list of agencies
-          m("columns.medium-4", [
-            common.tabs.view(ctrl.tabs, {className: "vertical"})
-          ]),
-          m(".columns.medium-8", [
+          common.tabs.view(ctrl.tabs, {className: "vertical"}),
+          m(".tabs-content.vertical", [
             m("a.button", {href: "/agencies/new", config: m.route}, [
               "New agency"
             ]),
