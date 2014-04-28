@@ -1,5 +1,18 @@
 var historyEvent = {}
 
+historyEvent.meta = function(verbed, user, date){
+  return m("p.meta", [
+    verbed,
+    " by ",
+    m("a", {href: "/users/" + user.id, config: m.route}, user.name),
+    ", of ",
+    console.log(user),
+    // user.agency.name,
+    " ",
+    helper.timeago(date)
+  ])
+}
+
 historyEvent.archiveAttachment = function(data){
   var date = new Date(data.date);
   var c = data.content.split(" ");
@@ -63,12 +76,7 @@ historyEvent.newRequest = function(data){
     m(".details", [
       // m("h3", "Request posted"),
       m("p", "Request posted: " + data.content),
-      m("p.meta", [
-        "posted by ",
-        m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
-        " ",
-        helper.timeago(date)
-      ])
+      historyEvent.meta("Posted", data.user, date)
     ])
   ])
 }
@@ -159,12 +167,7 @@ historyEvent.comment = function(data){
     m(".details", [
       // m("h3", "Comment"),
       m("p", data.content),
-      m("p.meta", [
-        "posted by ",
-        m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
-        " ",
-        helper.timeago(date)
-      ])
+      historyEvent.meta("Posted", data.user, date)
     ])
   ])
 }
