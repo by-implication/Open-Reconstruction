@@ -125,6 +125,7 @@ project.controller = function(){
         this.hasSignedoff(true);
         alert('Signoff successful!');
         this.signoffModal.close();
+        this.history().unshift(r.event);
       } else {
         alert("Failed to signoff: " + r.messages.password);
       }
