@@ -416,16 +416,21 @@ button.micro, .button.micro
   margin-top: 20px
 
 .modal
+  +transition(all 0.2s)
   padding: 0
   width: 100%
   position: absolute
   z-index: 1020
+  opacity: 0
   .curtain
     position: absolute
     width: 100%
     height: 100%
     background-color: rgba(black, 0.5)
   .dialog
+    +transition(all 0.2s)
+    position: relative
+    top: -999px
     padding-top: 40px
 
 .top-bar-section

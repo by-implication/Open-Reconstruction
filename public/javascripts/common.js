@@ -133,13 +133,23 @@ common.modal.controller = function(){
     this.isVisible(false);
   }
   this.password = m.prop("");
+  this.config = function(elem){
+    window.setTimeout(function(){
+      elem.style.opacity = 1;
+    }, 0); 
+  }
+  this.dialogConfig = function(elem){
+    window.setTimeout(function(){
+      elem.style.top = "0px";
+    }, 0); 
+  }
 }
 common.modal.view = function(ctrl, content){
   if (ctrl.isVisible()) {
-    return m("section.modal", {style: {height: ctrl.height()+"px"}}, [
+    return m("section.modal", {style: {height: ctrl.height()+"px"}, config: ctrl.config}, [
       m(".curtain", {onclick: ctrl.close.bind(ctrl)}),
       m(".row", [
-        m(".columns.medium-6.medium-centered.dialog", [
+        m(".columns.medium-6.medium-centered.dialog", {config: ctrl.dialogConfig}, [
           m(".card", [
             content(ctrl)
           ]),
