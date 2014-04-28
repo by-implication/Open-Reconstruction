@@ -19,6 +19,7 @@ CREATE TABLE events (
 );;
 
 CREATE TABLE checkpoints (
+    checkpoint_id serial PRIMARY KEY,
     req_id int NOT NULL REFERENCES reqs(req_id),
     gov_unit_id int NOT NULL REFERENCES gov_units(gov_unit_id),
     user_id int REFERENCES users(user_id),

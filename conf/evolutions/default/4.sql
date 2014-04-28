@@ -342,12 +342,16 @@ INSERT INTO events VALUES
 
 # --- !Downs
 
-TRUNCATE events;;
+TRUNCATE events CASCADE;;
+ALTER SEQUENCE events_event_id_seq RESTART WITH 1;;
 
-TRUNCATE reqs;;
+TRUNCATE reqs CASCADE;;
+ALTER SEQUENCE reqs_req_id_seq RESTART WITH 1;;
 
-TRUNCATE users;;
+TRUNCATE users CASCADE;;
+ALTER SEQUENCE users_user_id_seq RESTART WITH 1;;
 
-TRUNCATE gov_units;;
+TRUNCATE gov_units CASCADE;;
+ALTER SEQUENCE gov_units_gov_unit_id_seq RESTART WITH 1;;
 
-TRUNCATE roles;;
+TRUNCATE roles CASCADE;;
