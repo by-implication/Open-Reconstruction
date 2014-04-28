@@ -4,10 +4,10 @@ projectListing.view = function(ctrl){
     m("section", [
       ctrl.app.currentUser() ?
         m(".row", [
-          m(".columns.medium-8", [
+          m(".columns.medium-9", [
             common.tabs.view(ctrl.tabs, {className: "left", config: ctrl.setCurrentTab})
           ]),
-          m(".columns.medium-4", [
+          m(".columns.medium-3", [
             ctrl.app.isAuthorized(1) ?
               m(
                 "a.button", 
