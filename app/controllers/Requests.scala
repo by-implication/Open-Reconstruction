@@ -125,9 +125,16 @@ object Requests extends Controller with Secured {
   }
 
   def index() = UserAction(){ implicit user => implicit request =>
+    val allRequests = Req.indexList()
     Ok(Json.obj(
-      "list" -> Req.indexList().map(_.indexJson),
-      "filters" -> ProjectType.jsonList
+      "list" -> allRequests.map(_.indexJson),
+      "filters" -> ProjectType.jsonList,
+      "counts" -> Json.obj(
+        "all" -> allRequests.length,
+        "signoff" -> allRequests.filter(req => user.canSignoff(req)).length,
+        "assessor" -> allRequests.filter(req => (req.level == 0 && !req.assessingAgencyId.isDefined)).length,
+        "mine" -> allRequests.filter(req => (req.authorId == user.govUnitId)).length
+      )
     ))
   }
 

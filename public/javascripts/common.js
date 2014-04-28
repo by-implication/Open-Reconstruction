@@ -99,7 +99,7 @@ common.tabs.view = function(ctrl, options){
         }
       };
       return m("dd", {class: setActive(item)}, [
-        m("a", { href: ctrl.absolute(item.href), config: m.route }, item.label)
+        m("a", { href: ctrl.absolute(item.href), config: m.route }, [item.label, item.badge ? item.badge() : ""])
       ]);
     })
   ])
