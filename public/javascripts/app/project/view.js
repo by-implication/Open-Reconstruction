@@ -1,6 +1,7 @@
 project.view = function(ctrl){
 
-  return app.template(ctrl.app, {class: "detail"}, [
+  return app.template(ctrl.app, {class: "detail"}, [common.modal.view(ctrl.signoffModal)], [
+    // common.modal.view(ctrl.signoffModal),
     ctrl.isInvolved() ?
       m("section.approval", [
         m(".row", [

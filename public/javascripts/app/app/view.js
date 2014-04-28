@@ -1,14 +1,25 @@
-app.template = function(a, b, c){
+app.template = function(a, b, c, d){
   var ctrl, attrs, content;
 
-  if(arguments.length === 2){
-    ctrl = arguments[0];
-    content = arguments[1];
-    attrs = {class: ""};
-  } else if (arguments.length === 3){
-    ctrl = arguments[0];
-    attrs = arguments[1];
-    content = arguments[2];
+  switch(arguments.length){
+    case 2:
+      ctrl = arguments[0];
+      content = arguments[1];
+      attrs = {class: ""};
+      modals = [];
+      break;
+    case 3:
+      ctrl = arguments[0];
+      attrs = arguments[1];
+      content = arguments[2];
+      modals = [];
+      break;
+    case 4:
+      ctrl = arguments[0];
+      attrs = arguments[1];
+      modals = arguments[2];
+      content = arguments[3];
+      break;
   }
 
   return m("html", [
@@ -21,7 +32,7 @@ app.template = function(a, b, c){
       m("link[href='/assets/bower_components/leaflet/leaflet.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/bower_components/leaflet-draw/leaflet.draw.css'][rel='stylesheet'][type='text/css']")
     ]),
-    m("body", attrs, [app.navbar(ctrl)].concat(content))
+    m("body", attrs, modals.concat(app.navbar(ctrl), content))
   ])
 }
 

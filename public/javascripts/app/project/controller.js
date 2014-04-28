@@ -1,6 +1,7 @@
 project.controller = function(){
   var map;
   this.app = new app.controller();
+  this.signoffModal = new common.modal.controller();
   this.projectTabs = new common.tabs.controller('/projects/'+m.route.param('id'));
   this.projectTabs.tabs([
     {label: "Assignments", href: 'assignments'},
@@ -113,6 +114,7 @@ project.controller = function(){
   }.bind(this))
 
   this.signoff = function(){
+    this.signoffModal.show();
     var password = prompt("Enter your password:");
     m.request({method: "POST", url: "/requests/"+this.id+"/signoff", data: {password: password}, config: app.xhrConfig})
     .then(function (r){

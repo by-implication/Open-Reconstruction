@@ -122,6 +122,45 @@ common.tabs.controller = function(basePath){
   }
 }
 
+common.modal = {};
+common.modal.controller = function(){
+  this.isVisible = m.prop(false);
+  this.show = function(){
+    this.isVisible(true);
+    this.height = helper.docHeight;
+  }
+  this.close = function(){
+    this.isVisible(false);
+  }
+}
+common.modal.view = function(ctrl, temp){
+  if (ctrl.isVisible()) {
+    return m("section.curtain",{style: {height: ctrl.height()+"px"}, onclick: ctrl.close.bind(ctrl)}, [
+      m(".row", [
+        m(".columns.medium-6.medium-centered", [
+          m(".card", [
+            m(".section", [
+              m("h3", "Authorization Required"),
+              m("p", [
+                "Please enter your password to continue."
+              ]),
+            ]),
+            m("hr"),
+            m(".section", [
+              common.field("Password", m("input[type='password']")),
+              m("button", [
+                "Submit"
+              ]),
+            ]),
+          ]),
+        ]),
+      ]),
+    ])
+  } else {
+    return ""
+  }
+}
+
 // common.tabs.panes = function(ctrl, views){
 //   if(!ctrl.currentTab()){
 //     ctrl.currentTab(_.keys(views)[0]);
