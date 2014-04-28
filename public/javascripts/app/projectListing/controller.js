@@ -14,25 +14,25 @@ projectListing.controller = function(){
     SIGNOFF: 'SIGNOFF',
     ASSESSOR: 'ASSESSOR',
     MINE: 'MINE'
-  } 
+  }
 
   function myAgency(){
-    return app.currentUser().agency ? (app.currentUser().agency.name + "'s") : "My";
+    return self.app.currentUser().agency ? (self.app.currentUser().agency.name + "'s requests") : "My requests";
   }
 
   this.tabs.tabs = m.prop([
-    {label: "All", href: "all", badge: badges.all, identifier: this.tabFilters.ALL},
-    {label: "For signoff", when: function(){
+    {label: m.prop("All"), href: "all", badge: badges.all, identifier: this.tabFilters.ALL},
+    {label: m.prop("For signoff"), when: function(){
       return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 5);
     }, href: "signoff", badge: badges.signoff, identifier: this.tabFilters.SIGNOFF},
-    {label: "For assigning assessor", when: function(){
+    {label: m.prop("For assigning assessor"), when: function(){
       return self.app.isSuperAdmin();
     }, href: "assessor", badge: badges.assessor, identifier: this.tabFilters.ASSESSOR},
-    {label: "Blarg's requests", when: function(){
+    {label: myAgency, when: function(){
       return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 1);
     }, href: "mine", badge: badges.mine, identifier: this.tabFilters.MINE}
   ]);
-  // this.tabs.currentTab("For signoff");
+  
   this.projectList = m.prop([]);
   this.projectFilters = m.prop([]);
   this.currentFilter = {

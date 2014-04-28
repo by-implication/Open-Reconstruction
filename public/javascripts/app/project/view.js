@@ -85,7 +85,7 @@ project.view = function(ctrl){
               m(".section", [
                 common.tabs.view(ctrl.projectTabs)
               ]),
-              m.switch(ctrl.projectTabs.currentTab())
+              m.switch(ctrl.projectTabs.currentTab()())
                 .case("Assignments", function(){
                   if(ctrl.app.isSuperAdmin()){
                     return m(".section", [

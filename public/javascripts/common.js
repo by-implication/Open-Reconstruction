@@ -100,7 +100,7 @@ common.tabs.view = function(ctrl, options){
       };
       return m("dd", {class: setActive(item)}, [
         m("a", { href: ctrl.absolute(item.href), config: m.route }, [
-          item.label, 
+          (item.label()), 
           item.badge ? 
             m("span.label.secondary.round", [
               item.badge() 
