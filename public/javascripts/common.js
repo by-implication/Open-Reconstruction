@@ -24,7 +24,6 @@ common.duration = function(ms){
   return r[0].toFixed(2) + " " + r[1];
 }
 common.day = function(ms){
-  console.log(ms / 86400000);
   var threshold = 5;
   var day = Math.floor(ms / 86400000);
   var rating = "";
