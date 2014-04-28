@@ -167,7 +167,7 @@ section.history
   color: $gray
 
 h1 small
-  color: $orange
+  color: $accent
 
 .legend
   margin-left: 36px
@@ -389,3 +389,24 @@ button.micro, .button.micro
 .tabs-content
   &.vertical
     padding: 0px 20px
+
+.tabs
+  dd > a
+    +transition(all 0.2s)
+    background-color: transparent
+    border: 0px
+    border-bottom-width: 1px
+    border-style: solid
+    border-color: #ddd
+    color: #ccc
+    &:hover
+      background-color: transparent
+      border-color: #333
+      color: #333
+  dd.active > a
+    border-color: $accent
+    color: $accent
+  &.vertical
+    dd > a
+      border-bottom-width: 0px
+      border-right-width: 1px
