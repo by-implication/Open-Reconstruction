@@ -150,11 +150,3 @@ common.modal.view = function(ctrl, content){
     return ""
   }
 }
-
-// common.tabs.panes = function(ctrl, views){
-//   if(!ctrl.currentTab()){
-//     ctrl.currentTab(_.keys(views)[0]);
-//   }
-//   return views[ctrl.currentTab()];
-// }
-
