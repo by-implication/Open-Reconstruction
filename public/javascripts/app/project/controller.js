@@ -1,6 +1,7 @@
 project.controller = function(){
   var map;
   this.app = new app.controller();
+  this.signoffModal = new common.modal.controller();
   this.projectTabs = new common.tabs.controller('/projects/'+m.route.param('id'));
   this.projectTabs.tabs([
     {label: "Assignments", href: 'assignments'},
@@ -112,11 +113,21 @@ project.controller = function(){
     this.oldProject(database.projectList()[this.id - 1]);
   }.bind(this))
 
-  this.signoff = function(){
-    m.request({method: "POST", url: "/requests/"+this.id+"/signoff"}).then(function(data){
-      this.canSignoff(false);
-      this.hasSignedoff(true);
-      alert('Signoff successful!');
+  this.signoffModal.signoff = function(e){
+    e.preventDefault();
+    m.request({method: "POST",
+      url: "/requests/" + this.id + "/signoff",
+      data: {password: this.signoffModal.password},
+      config: app.xhrConfig
+    }).then(function (r){
+      if(r.success){
+        this.canSignoff(false);
+        this.hasSignedoff(true);
+        alert('Signoff successful!');
+        this.signoffModal.close();
+      } else {
+        alert("Failed to signoff: " + r.messages.password);
+      }
     }.bind(this));
   }.bind(this);
 

@@ -73,7 +73,7 @@ common.formSection = function(icon, content, i){
   }
   return m("section", {"class": alternate(i)}, [
     m("div.row", [
-      m("div.columns.medium-2", [
+      m("div.columns.medium-2.field-icon", [
         m("i.fa.fa-5x.fa-fw", {"class": icon})
       ]),
       m("div.columns.medium-10", content)
@@ -122,6 +122,35 @@ common.tabs.controller = function(basePath){
   }
 }
 
+common.modal = {};
+common.modal.controller = function(){
+  this.isVisible = m.prop(false);
+  this.show = function(){
+    this.isVisible(true);
+    this.height = helper.docHeight;
+  }
+  this.close = function(){
+    this.isVisible(false);
+  }
+  this.password = m.prop("");
+}
+common.modal.view = function(ctrl, content){
+  if (ctrl.isVisible()) {
+    return m("section.modal", {style: {height: ctrl.height()+"px"}}, [
+      m(".curtain", {onclick: ctrl.close.bind(ctrl)}),
+      m(".row", [
+        m(".columns.medium-6.medium-centered.dialog", [
+          m(".card", [
+            content(ctrl)
+          ]),
+        ]),
+      ]),
+    ])
+  } else {
+    return ""
+  }
+}
+
 // common.tabs.panes = function(ctrl, views){
 //   if(!ctrl.currentTab()){
 //     ctrl.currentTab(_.keys(views)[0]);
@@ -129,26 +158,3 @@ common.tabs.controller = function(basePath){
 //   return views[ctrl.currentTab()];
 // }
 
-common.renderString = function(str){
-  if(str){
-    return m("span", str);
-  } else {
-    return m("span.label.alert", "Missing Data");
-  }
-}
-
-common.renderObj = function(obj){
-  if(_.isEmpty(obj)){
-    return m("span.label.alert", "Missing Data");
-  } else {
-    return _.chain(obj)
-      .pairs()
-      .filter(function(entry){
-        return entry[1];
-      })
-      .map(function(entry){
-        return m("div", [m("h5", entry[0]), m("p", entry[1])]);
-      })
-      .value();
-  }
-}
