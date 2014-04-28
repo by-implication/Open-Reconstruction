@@ -68,9 +68,14 @@ app.navbar = function(ctrl){
       m("ul.right", [
         m("li.has-dropdown.not-click", [
           m("a", {href: "#"}, [
-            m.cookie().logged_in ? ((m.cookie().logged_in + " (" + 
-              (ctrl.currentUser().agency.acronym ? ctrl.currentUser().agency.acronym : ctrl.currentUser().agency.name) + 
-              ")")) : "Guest"
+            m.cookie().logged_in ? 
+              m("span", [
+                m.cookie().logged_in,
+                m("span.label", [
+                  ctrl.currentUser().agency.acronym ? ctrl.currentUser().agency.acronym : ctrl.currentUser().agency.name
+                ]),
+              ])
+            : "Guest"
           ]),
           m("ul.dropdown", [
             m.cookie().logged_in ?

@@ -69,9 +69,11 @@ object Event extends EventGen {
     generate("editField", fieldValue + " " + field)
   }
 
-  def findForRequest(id: Int) = DB.withConnection { implicit c =>
-    SQL("SELECT * FROM events WHERE req_id = {reqId} ORDER BY event_date DESC")
-    .on('reqId -> id).list(simple)
+  def findForRequest(id: Int)(implicit user: User): Seq[Event] = DB.withConnection { implicit c =>
+    SQL("SELECT * FROM events WHERE req_id = {reqId}" +
+    (if(user.isAnonymous) " AND event_kind != 'comment' " else "") +
+    "ORDER BY event_date DESC"
+    ).on('reqId -> id).list(simple)
   }
 
 }

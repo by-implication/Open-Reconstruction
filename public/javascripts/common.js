@@ -73,7 +73,7 @@ common.formSection = function(icon, content, i){
   }
   return m("section", {"class": alternate(i)}, [
     m("div.row", [
-      m("div.columns.medium-2", [
+      m("div.columns.medium-2.field-icon", [
         m("i.fa.fa-5x.fa-fw", {"class": icon})
       ]),
       m("div.columns.medium-10", content)
@@ -179,26 +179,3 @@ common.modal.view = function(ctrl, temp){
 //   return views[ctrl.currentTab()];
 // }
 
-common.renderString = function(str){
-  if(str){
-    return m("span", str);
-  } else {
-    return m("span.label.alert", "Missing Data");
-  }
-}
-
-common.renderObj = function(obj){
-  if(_.isEmpty(obj)){
-    return m("span.label.alert", "Missing Data");
-  } else {
-    return _.chain(obj)
-      .pairs()
-      .filter(function(entry){
-        return entry[1];
-      })
-      .map(function(entry){
-        return m("div", [m("h5", entry[0]), m("p", entry[1])]);
-      })
-      .value();
-  }
-}
