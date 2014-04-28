@@ -15,6 +15,8 @@ historyEvent.archiveAttachment = function(data){
       m("p.meta", [
         "archived by ",
         m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+        " of ",
+        m("a", {href: "/agencies/" + data.govUnit.id, config: m.route}, data.govUnit.name),
         " ",
         helper.timeago(date)
       ])
@@ -34,6 +36,8 @@ historyEvent.editField = function(data){
       m("p.meta", [
         "modified by ",
         m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+        " of ",
+        m("a", {href: "/agencies/" + data.govUnit.id, config: m.route}, data.govUnit.name),
         " ",
         helper.timeago(date)
       ])
@@ -66,6 +70,8 @@ historyEvent.newRequest = function(data){
       m("p.meta", [
         "posted by ",
         m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+        " of ",
+        m("a", {href: "/agencies/" + data.govUnit.id, config: m.route}, data.govUnit.name),
         " ",
         helper.timeago(date)
       ])
@@ -98,6 +104,8 @@ historyEvent.assign = function(data){
       m("p.meta", [
         "assigned by ",
         m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+        " of ",
+        m("a", {href: "/agencies/" + data.govUnit.id, config: m.route}, data.govUnit.name),
         " ",
         helper.timeago(date)
       ])
@@ -122,6 +130,8 @@ historyEvent.signoff = function(data){
       m("p.meta", [
         "signed off by ",
         m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+        " of ",
+        m("a", {href: "/agencies/" + data.govUnit.id, config: m.route}, data.govUnit.name),
         " ",
         helper.timeago(date)
       ])
@@ -145,6 +155,8 @@ historyEvent.attachment = function(data){
       m("p.meta", [
         "attached by ",
         m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+        " of ",
+        m("a", {href: "/agencies/" + data.govUnit.id, config: m.route}, data.govUnit.name),
         " ",
         helper.timeago(date)
       ])
@@ -162,6 +174,8 @@ historyEvent.comment = function(data){
       m("p.meta", [
         "posted by ",
         m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+        " of ",
+        m("a", {href: "/agencies/" + data.govUnit.id, config: m.route}, data.govUnit.name),
         " ",
         helper.timeago(date)
       ])
@@ -182,6 +196,9 @@ historyEvent.reviseAmount = function(data){
         "changed by ",
         user ? "unknown" :
         m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+        " of ",
+        user ? "unknown" : 
+        m("a", {href: "/agencies/" + data.govUnit.id, config: m.route}, data.govUnit.name),
         helper.timeago(date)
       ])
     ])
