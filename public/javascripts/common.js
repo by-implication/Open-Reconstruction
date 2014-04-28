@@ -92,7 +92,7 @@ common.tabs.view = function(ctrl, options){
   return m("dl.tabs[data-tab]", options, [
     ctrl.tabs().map(function(item, i){
       var setActive = function(item){
-        if(ctrl.isActive(item.label)){
+        if(ctrl.isActive((item.identifier ? item.identifier : item.label))){
           return "active";
         } else {
           return "";
@@ -122,10 +122,10 @@ common.tabs.controller = function(basePath){
     if(item == undefined) {
       item = _.head(this.tabs());
     }
-    return item.label;
+    return item.identifier ? item.identifier : item.label;
   }
-  this.isActive = function(label){
-    return this.currentTab() == label;
+  this.isActive = function(identifier){
+    return this.currentTab() == identifier;
   }
 }
 
