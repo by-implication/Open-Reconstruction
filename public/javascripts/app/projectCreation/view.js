@@ -19,23 +19,6 @@ projectCreation.view = function(ctrl){
 
   var sections = [
     {
-      icon: "fa-star",
-      content: [
-        m("h2", [
-          "Preamble"
-        ]),
-        common.field(
-          "Terms of Agreement",
-          m("div", [
-            m("input", {type: "checkbox", onchange: ctrl.preamble}),
-            m("span", [
-              "I have not requested for assistance for this project from any other source."
-            ])
-          ])
-        )
-      ]
-    },
-    {
       icon: "fa-cloud",
       content: [
         m("h2", "Disaster"),
@@ -154,10 +137,24 @@ projectCreation.view = function(ctrl){
 
   return app.template(ctrl.app, [
     common.banner("New Project Request"),
-    m("form", {onsubmit: ctrl.submitNewRequest },
-      sections.map(function(s, i){
-        return common.formSection(s.icon, s.content, i);
-      })
-    )
+    m("form", {onsubmit: ctrl.submitNewRequest }, [
+      common.formSection("fa-star", [
+        m("h2", ["Preamble"]),
+        common.field(
+          "Terms of Agreement",
+          m("div", [
+            m("input", {type: "checkbox", onchange: m.withAttr("checked", ctrl.preamble)}),
+            m("span", [
+              "I have not requested for assistance for this project from any other source."
+            ])
+          ])
+        )
+      ]),
+      ctrl.preamble() ?
+        m("div.m-grow", {config: ctrl.configShowForm}, sections.map(function(s, i){
+          return common.formSection(s.icon, s.content, i + 1);
+        }))
+      : ""
+    ])
   ])
 }

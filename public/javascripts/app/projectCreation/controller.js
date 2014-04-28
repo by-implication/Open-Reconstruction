@@ -16,6 +16,12 @@ projectCreation.controller = function(){
     scopeOfWork: m.prop("Reconstruction")
   }
 
+  this.configShowForm = function(elem){
+    window.setTimeout(function(){
+      elem.style["max-height"] = "2000px";
+    }, 0)
+  }
+
   this.initMap = function(elem, isInit){
     // this.app.initMap(elem, isInit, {scrollWheelZoom: false}, true);
 
