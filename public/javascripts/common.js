@@ -134,38 +134,17 @@ common.modal.controller = function(){
   }
   this.password = m.prop("");
 }
-common.modal.view = function(ctrl, temp){
+common.modal.view = function(ctrl, content){
   if (ctrl.isVisible()) {
     return m("section.modal", {style: {height: ctrl.height()+"px"}}, [
       m(".curtain", {onclick: ctrl.close.bind(ctrl)}),
       m(".row", [
         m(".columns.medium-6.medium-centered.dialog", [
           m(".card", [
-            m("form", {onsubmit: ctrl.signoff}, [
-              m(".section", [
-                m("h3", "Authorization Required"),
-                m("p", [
-                  "Please enter your password to continue."
-                ]),
-              ]),
-              m("hr"),
-              m(".section", [
-                common.field("Password", m("input[type='password']", {
-                  onchange: m.withAttr("value", ctrl.password)
-                })),
-                m("button", [
-                  "Submit"
-                ]),
-              ]),
-            ])
+            content(ctrl)
           ]),
         ]),
       ]),
-      // m(".dialog", [
-      //   m(".row", [
-          
-      //   ]),
-      // ]),
     ])
   } else {
     return ""
