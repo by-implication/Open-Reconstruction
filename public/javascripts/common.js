@@ -47,8 +47,10 @@ common.day = function(ms){
       wording = day + " days";
       break;
   }
-  return m("span.age", {className: rating}, [
-    wording
+  return m("span.age", [
+    day >= 7 ?
+      m("span.label.alert", wording)
+    : wording
   ]);
 }
 
