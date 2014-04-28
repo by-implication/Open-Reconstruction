@@ -87,7 +87,9 @@ object Requests extends Controller with Secured {
   			_.copy(authorId = user.id).save().map { implicit r =>
           Event.newRequest().create().map { _ =>
             Event.disaster().create().map { _ =>
-  				    Rest.success("id" -> r.insertJson)
+              Checkpoint.push(user).map { _ =>
+  				      Rest.success("id" -> r.insertJson)
+              }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())
           }.getOrElse(Rest.serverError())
   			}.getOrElse(Rest.serverError())
@@ -114,7 +116,9 @@ object Requests extends Controller with Secured {
           Rest.formError(_),
           r => r.copy(level = r.level + 1).save().map( implicit r =>
             Event.signoff(user.govUnit).create().map { _ =>
-              Rest.success()
+              Checkpoint.push(user).map { _ =>
+                Rest.success()
+              }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())
           ).getOrElse(Rest.serverError())
         )
@@ -163,8 +167,9 @@ object Requests extends Controller with Secured {
         govUnitId match {
           case 0 => {
             val (r, govUnit) = unassign(req)
-            r.save().map { _ =>
+            r.save().map { r =>
               Event.assign(agencyType, false, govUnit).create().map { _ =>
+                if(agencyType == "assess") Checkpoint.pop()(r)
                 Rest.success()
               }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())
@@ -172,8 +177,9 @@ object Requests extends Controller with Secured {
           case _ => {
             GovUnit.findById(govUnitId).map { govUnit =>
               if(isAuthorized(govUnit)){
-                assign(req, govUnitId).save().map { _ =>
+                assign(req, govUnitId).save().map { r =>
                   Event.assign(agencyType, true, govUnit).create().map { _ =>
+                    if(agencyType == "assess") Checkpoint.push(user)(r)
                     Rest.success()
                   }.getOrElse(Rest.serverError())
                 }.getOrElse(Rest.serverError())
