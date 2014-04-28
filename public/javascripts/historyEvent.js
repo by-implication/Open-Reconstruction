@@ -144,20 +144,6 @@ historyEvent.comment = function(data){
   ])
 }
 
-// historyEvent.reviseAmount = function(data){
-//   var date = new Date(data.date);
-//   return m(".event", [
-//     historyEvent.date(date),
-//     m(".details", [
-//       m("h3", "Amount Revised"),
-//       m("p", "From " + data.content.split(" ")
-//         .map(function (amt){ return "PHP " + amt; })
-//         .join(" to ")),
-//       historyEvent.meta("Amount revised", data, date)
-//     ])
-//   ])
-// }
-
 historyEvent.date = function(date){
   return m(".dateGroup", [
     m(".date", [

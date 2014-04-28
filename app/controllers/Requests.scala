@@ -205,31 +205,6 @@ object Requests extends Controller with Secured {
     "implement"
   ) _
 
-  def reviseAmount(id: Int) = UserAction(){ implicit user => implicit request =>
-    if(!user.isAnonymous){
-      Req.findById(id).map { req =>
-        Form("amount" -> text.verifying("Invalid amount",
-          _amount => {
-            try {
-              val amount = BigDecimal(_amount)
-              (amount >= 0)
-            } catch {
-              case e: NumberFormatException => false
-            }
-          }
-        )).bindFromRequest.fold(
-          Rest.formError(_),
-          amount => req.copy(amount = BigDecimal(amount)).save().map { implicit req =>
-            Event.reviseAmount(amount).create().map { _ =>
-              Rest.success()
-            }.getOrElse(Rest.serverError())
-          }.getOrElse(Rest.serverError())
-        )
-      }.getOrElse(Rest.notFound())
-    } else Rest.unauthorized()
-
-  }
-
   private def editForm(field: String)(implicit req: Req): Form[Req] = Form(field match {
     case "description" => {
       mapping(

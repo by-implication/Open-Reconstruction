@@ -166,9 +166,9 @@ csv2json.dsv(",", "text/plain", 1)("/assets/data/CF14-RQST-Sanitized.csv", funct
         if(row["AMT_REQD"] && row.amount && (row["AMT_REQD"] != row.amount)){
             events.push({
                 reqId: row.id,
-                kind: "reviseAmount",
+                kind: "editField",
                 date: row["RECOM_DATE"] || row.date,
-                content: row["AMT_REQD"] + " " + row.amount
+                content: row.amount + " amount"
             });
         }
         delete row["RECOM_DATE"];
