@@ -73,7 +73,7 @@ common.formSection = function(icon, content, i){
   }
   return m("section", {"class": alternate(i)}, [
     m("div.row", [
-      m("div.columns.medium-2", [
+      m("div.columns.medium-2.field-icon", [
         m("i.fa.fa-5x.fa-fw", {"class": icon})
       ]),
       m("div.columns.medium-10", content)
