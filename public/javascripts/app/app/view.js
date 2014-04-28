@@ -56,7 +56,8 @@ app.navbar = function(ctrl){
         ]),
         ctrl.currentUser() && ctrl.currentUser().agency ?
           m("li", [
-            m("a", {href: "/agencies/" + ctrl.currentUser().agency.id, config: m.route}, "My Agency")
+            m("a", {href: "/agencies/" + ctrl.currentUser().agency.id, config: m.route}, 
+              ctrl.currentUser().agency.role == "LGU" ? "My LGU" : "My Agency")
           ])
         : "",
         ctrl.currentUser() && ctrl.currentUser().isSuperAdmin ?

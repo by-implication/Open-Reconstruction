@@ -155,7 +155,8 @@ case class User(
         "agency" -> Json.obj(
           "name" -> govUnit.name,
           "acronym" -> govUnit.acronym,
-          "id" -> govUnit.id.get
+          "id" -> govUnit.id.get,
+          "role" -> Role.findById(govUnit.roleId).map(_.name)
         ),
         "isAdmin" -> isAdmin,
         "isSuperAdmin" -> isSuperAdmin,
