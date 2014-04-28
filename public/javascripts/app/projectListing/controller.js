@@ -2,17 +2,23 @@ projectListing.controller = function(){
   var self = this;
   this.app = new app.controller();
   this.tabs = new common.tabs.controller("/projects");
+  var badges = {
+    all: m.prop(),
+    signoff: m.prop(),
+    assessor: m.prop(),
+    mine: m.prop()
+  }
   this.tabs.tabs = m.prop([
-    {label: "All", href: "all"},
+    {label: "All", href: "all", badge: badges.all},
     {label: "For signoff", when: function(){
       return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 5);
-    }, href: "signoff"},
+    }, href: "signoff", badge: badges.signoff},
     {label: "For assigning assessor", when: function(){
       return self.app.isSuperAdmin();
-    }, href: "assessor"},
+    }, href: "assessor", badge: badges.assessor},
     {label: "My requests", when: function(){
       return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 1);
-    }, href: "mine"}
+    }, href: "mine", badge: badges.mine}
   ]);
   // this.tabs.currentTab("For signoff");
   this.projectList = m.prop([]);
@@ -39,6 +45,10 @@ projectListing.controller = function(){
   m.request({method: "GET", url: "/requests"}).then(function (r){
     self.projectList = r.list;
     self.projectFilters = r.filters;
+    badges.all(" (" + r.counts.all+ ")");
+    badges.signoff(" (" + r.counts.signoff+ ")");
+    badges.assessor(" (" + r.counts.assessor+ ")");
+    badges.mine(" (" + r.counts.mine+ ")");
   });
 
 }
