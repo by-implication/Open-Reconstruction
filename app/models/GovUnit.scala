@@ -56,7 +56,7 @@ case class GovUnit(
       "name" -> name,
       "acronym" -> (acronym.getOrElse(""): String),
       "totalUsers" -> users.length,
-      "role" -> roleId // change this to role.toJson
+      "role" -> Role.findById(roleId).map(_.name)
     )
   }
 

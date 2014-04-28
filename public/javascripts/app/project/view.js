@@ -318,29 +318,8 @@ project.summary = function(ctrl){
 }
 
 project.listView = function(ctrl){
-  var filteredList = _.chain(ctrl.projectList)
-    .filter(function(p){
-      if(!ctrl.currentFilter.projects()){
-        return true;
-      } else {
-        return p.projectType == ctrl.currentFilter.projects();
-      }
-    })
-    .filter(function(p){
-      switch(ctrl.tabs.currentTab()){
-        case ctrl.tabFilters.SIGNOFF:
-          return p.canSignoff;
-          break;
-        case ctrl.tabFilters.ASSESSOR:
-          return p.level === 0 && !p.assessingAgencyId;
-          break;
-        case ctrl.tabFilters.MINE:
-          return p.author.govUnitId === ctrl.app.currentUser().agency.id;
-          break;
-        default:
-          return true;
-      }
-    });
+  var filteredList = ctrl.filteredList;
+
   return m("table", [
       m("thead", [
         m("tr", [
