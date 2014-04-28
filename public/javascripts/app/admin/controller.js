@@ -4,8 +4,8 @@ admin.controller = function(){
   this.roles = m.prop({});
   this.tabs = new common.tabs.controller("/admin");
   this.tabs.tabs = m.prop([
-    {label: "Agencies", href: "agencies"}, 
-    {label: "LGUs", href: "lgus"}
+    {label: m.prop("Agencies"), href: "agencies"}, 
+    {label: m.prop("LGUs"), href: "lgus"}
   ]);
   this.regions = m.prop([]);
 

@@ -85,7 +85,7 @@ project.view = function(ctrl){
               m(".section", [
                 common.tabs.view(ctrl.projectTabs)
               ]),
-              m.switch(ctrl.projectTabs.currentTab())
+              m.switch(ctrl.projectTabs.currentTab()())
                 .case("Assignments", function(){
                   if(ctrl.app.isSuperAdmin()){
                     return m(".section", [
@@ -322,13 +322,13 @@ project.listView = function(ctrl){
     })
     .filter(function(p){
       switch(ctrl.tabs.currentTab()){
-        case "For signoff":
+        case ctrl.tabFilters.SIGNOFF:
           return p.canSignoff;
           break;
-        case "For assigning assessor":
+        case ctrl.tabFilters.ASSESSOR:
           return p.level === 0 && !p.assessingAgencyId;
           break;
-        case "My requests":
+        case ctrl.tabFilters.MINE:
           return p.author.govUnitId === ctrl.app.currentUser().agency.id;
           break;
         default:

@@ -4,10 +4,10 @@ project.controller = function(){
   this.signoffModal = new common.modal.controller();
   this.projectTabs = new common.tabs.controller('/projects/'+m.route.param('id'));
   this.projectTabs.tabs([
-    {label: "Assignments", href: 'assignments'},
-    {label: "Images", href: 'images'},
-    {label: "Documents", href: 'documents'},
-    {label: "Activity", href: 'activity'}
+    {label: m.prop("Assignments"), href: 'assignments'},
+    {label: m.prop("Images"), href: 'images'},
+    {label: m.prop("Documents"), href: 'documents'},
+    {label: m.prop("Activity"), href: 'activity'}
   ]);
   this.projectTabs.currentTab(this.projectTabs.tabs()[0].label)
 
