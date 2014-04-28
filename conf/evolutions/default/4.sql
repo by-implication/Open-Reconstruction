@@ -348,8 +348,6 @@ TRUNCATE reqs;;
 
 TRUNCATE users;;
 
-TRUNCATE municipalitys;;
-
 TRUNCATE gov_units;;
 
-TRUNCATE rows;;
+TRUNCATE roles;;
