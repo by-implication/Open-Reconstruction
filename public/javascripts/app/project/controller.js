@@ -125,6 +125,7 @@ project.controller = function(){
         this.hasSignedoff(true);
         alert('Signoff successful!');
         this.signoffModal.close();
+        this.history().unshift(r.event);
       } else {
         alert("Failed to signoff: " + r.messages.password);
       }
@@ -160,13 +161,6 @@ project.controller = function(){
       console.log('Comment submitted!');
       this.refreshHistory();
     }.bind(this));
-  }.bind(this);
-
-  this.submitAmountRevision = function(e){
-    e.preventDefault()
-    m.request({method: "POST", url: "/requests/" + this.id + "/reviseAmount", data: {amount: this.input.amount}, config: app.xhrConfig}).then(function(r){
-      console.log('Amount revision submitted!');
-    });
   }.bind(this);
 
   this.updateAssessingAgency = function(e){
