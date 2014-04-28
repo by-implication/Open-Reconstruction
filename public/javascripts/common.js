@@ -25,9 +25,10 @@ common.duration = function(ms){
 }
 common.day = function(ms){
   console.log(ms / 86400000);
+  var threshold = 5;
   var day = Math.floor(ms / 86400000);
   var rating = "";
-  if (day > 3) {
+  if (day > threshold) {
     rating = "alert";
   }
 
@@ -45,7 +46,7 @@ common.day = function(ms){
   }
   return m("span.age", {className: rating}, [
     wording,
-    day > 3 ?
+    day > threshold ?
       m("span", [
         " ",
         m("i.fa.fa-warning")
