@@ -133,7 +133,7 @@ object Requests extends Controller with Secured {
         "all" -> allRequests.length,
         "signoff" -> allRequests.filter(req => user.canSignoff(req)).length,
         "assessor" -> allRequests.filter(req => (req.level == 0 && !req.assessingAgencyId.isDefined)).length,
-        "mine" -> allRequests.filter(req => (req.authorId == user.govUnitId)).length
+        "mine" -> allRequests.filter(req => (User.findById(req.authorId).get.govUnitId == user.govUnitId)).length
       )
     ))
   }

@@ -329,7 +329,7 @@ project.listView = function(ctrl){
           return p.level === 0 && !p.assessingAgencyId;
           break;
         case "My requests":
-          return p.authorId === ctrl.app.currentUser().agency.id;
+          return p.author.govUnitId === ctrl.app.currentUser().agency.id;
           break;
         default:
           return true;
