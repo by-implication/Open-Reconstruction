@@ -31,8 +31,7 @@ CREATE TYPE project_type AS ENUM(
 CREATE TYPE project_scope AS ENUM(
     'Reconstruction',
     'Repair',
-    'Prevention',
-    'Other'
+    'Prevention'
 );;
 
 CREATE TYPE disaster_type AS ENUM(
