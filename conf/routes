@@ -16,7 +16,7 @@ GET     /logout                     controllers.Users.logout()
 GET     /users/info                 controllers.Users.info()
 GET     /users/:id/meta             controllers.Users.viewMeta(id: Int)
 
-GET	  	/requests					          controllers.Requests.index()
+GET	  	/requests/meta              controllers.Requests.index()
 GET     /requests/info              controllers.Requests.createInfo()
 POST    /requests/new               controllers.Requests.insert()
 GET     /requests/:id/meta          controllers.Requests.viewMeta(id: Int)
@@ -45,17 +45,17 @@ POST    /lgus/new/:l/:id            controllers.GovUnits.lguInsert(l: Int, id: I
 
 # view routes (these all serve the index view)
 
-GET     /projects                   controllers.Application.index
-GET     /projects/all               controllers.Application.index
-GET     /projects/mine              controllers.Application.index
-GET     /projects/assessor          controllers.Application.index
-GET     /projects/signoff           controllers.Application.index
-GET     /projects/new               controllers.Application.index
-GET     /projects/:x                controllers.Application.index1(x: Int)
-GET     /projects/:x/assignments    controllers.Application.index1(x: Int)
-GET     /projects/:x/images         controllers.Application.index1(x: Int)
-GET     /projects/:x/documents      controllers.Application.index1(x: Int)
-GET     /projects/:x/activity       controllers.Application.index1(x: Int)
+GET     /requests                   controllers.Application.index
+GET     /requests/all               controllers.Application.index
+GET     /requests/mine              controllers.Application.index
+GET     /requests/assessor          controllers.Application.index
+GET     /requests/signoff           controllers.Application.index
+GET     /requests/new               controllers.Application.index
+GET     /requests/:x                controllers.Application.index1(x: Int)
+GET     /requests/:x/assignments    controllers.Application.index1(x: Int)
+GET     /requests/:x/images         controllers.Application.index1(x: Int)
+GET     /requests/:x/documents      controllers.Application.index1(x: Int)
+GET     /requests/:x/activity       controllers.Application.index1(x: Int)
 GET     /dashboard                  controllers.Application.index
 GET     /users/:x                   controllers.Application.index1(x: Int)
 GET     /admin                      controllers.Application.index

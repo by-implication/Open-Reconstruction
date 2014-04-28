@@ -42,7 +42,7 @@ app.navbar = function(ctrl){
     m("ul.title-area", [
       m("li.name", [
         m("h1", [
-          m("a", {href: "/projects", config: m.route}, "Open Reconstruction")
+          m("a", {href: "/requests", config: m.route}, "Open Reconstruction")
         ])
       ])
     ]),
@@ -52,7 +52,7 @@ app.navbar = function(ctrl){
           m("a", {href: "/dashboard", config: m.route}, "Dashboard")
         ]),
         m("li", [
-          m("a", {href: "/projects", config: m.route}, "Projects")
+          m("a", {href: "/requests", config: m.route}, "Requests")
         ]),
         ctrl.currentUser() && ctrl.currentUser().agency ?
           m("li", [

@@ -1,7 +1,7 @@
 projectListing.controller = function(){
   var self = this;
   this.app = new app.controller();
-  this.tabs = new common.tabs.controller("/projects");
+  this.tabs = new common.tabs.controller("/requests");
   var badges = {
     all: m.prop(),
     signoff: m.prop(),
@@ -54,7 +54,7 @@ projectListing.controller = function(){
     }
   }.bind(this)
 
-  m.request({method: "GET", url: "/requests"}).then(function (r){
+  m.request({method: "GET", url: "/requests/meta"}).then(function (r){
     self.projectList = r.list;
     self.projectFilters = r.filters;
     badges.all(r.counts.all);

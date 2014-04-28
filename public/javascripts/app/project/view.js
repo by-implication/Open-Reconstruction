@@ -338,7 +338,7 @@ project.listView = function(ctrl){
               return p.date;
             })
             .map(function(project){
-              var url = "/projects/"+project.id;
+              var url = "/requests/"+project.id;
               return m("tr", [
                 m("td", project.id),
                 m("td", [common.day(project.age + 86400000 * (9 * Math.random() + 1))]),

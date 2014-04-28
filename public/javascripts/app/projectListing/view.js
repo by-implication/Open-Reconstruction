@@ -11,7 +11,7 @@ projectListing.view = function(ctrl){
             ctrl.app.isAuthorized(1) ?
               m(
                 "a.button", 
-                {href: "/projects/new", config: m.route}, 
+                {href: "/requests/new", config: m.route}, 
                 "New Request"
               )
             : ""
