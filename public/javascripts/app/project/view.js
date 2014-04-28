@@ -214,21 +214,27 @@ project.view = function(ctrl){
                   ])
                 })
                 .case("Activity", function(){
-                  return m(".section", ctrl.history().map(function (e){
-                    return historyEvent[e.kind].bind(ctrl)(e);
-                  })
-                  .reverse()
-                  .concat(ctrl.app.currentUser() ? [
-                    m(".event", [
-                      m("form.details", {onsubmit: ctrl.submitComment}, [
-                        m("label", [
-                          "Comment",
-                          m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.comment)})
+                  return m("div", [
+                    m(".section", ctrl.history().map(function (e){
+                      return historyEvent[e.kind].bind(ctrl)(e);
+                    })
+                    .reverse()
+                    ),
+                    ctrl.app.currentUser() ? m("hr") : "",
+                    ctrl.app.currentUser() ?
+                      m(".section", [
+                        m(".event", [
+                          m("form.details", {onsubmit: ctrl.submitComment}, [
+                            m("label", [
+                              "Comment",
+                              m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.comment)})
+                            ]),
+                            m("button", "Submit")
+                          ])
                         ]),
-                        m("button", "Submit")
                       ])
-                    ]),
-                  ] : []))
+                    : ""
+                  ])
                 })
                 .render()
             ]),
