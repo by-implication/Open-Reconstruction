@@ -135,9 +135,10 @@ common.modal.controller = function(){
 }
 common.modal.view = function(ctrl, temp){
   if (ctrl.isVisible()) {
-    return m("section.curtain",{style: {height: ctrl.height()+"px"}, onclick: ctrl.close.bind(ctrl)}, [
+    return m("section.modal", {style: {height: ctrl.height()+"px"}}, [
+      m(".curtain", {onclick: ctrl.close.bind(ctrl)}),
       m(".row", [
-        m(".columns.medium-6.medium-centered", [
+        m(".columns.medium-6.medium-centered.dialog", [
           m(".card", [
             m(".section", [
               m("h3", "Authorization Required"),
@@ -155,6 +156,11 @@ common.modal.view = function(ctrl, temp){
           ]),
         ]),
       ]),
+      // m(".dialog", [
+      //   m(".row", [
+          
+      //   ]),
+      // ]),
     ])
   } else {
     return ""
