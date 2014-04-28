@@ -342,6 +342,7 @@ project.listView = function(ctrl){
           m("th", "Name"),
           m("th", "Agency/LGU"),
           m("th", "Type"),
+          m("th", "Aging"),
           m("th.text-right", "Amount")
         ])
       ]),
@@ -360,6 +361,7 @@ project.listView = function(ctrl){
                 ]),
                 m("td", project.author.agency),
                 m("td", project.projectType),
+                m("td", common.duration(project.age)),
                 m("td.text-right", helper.commaize(project.amount.toFixed(2)))
               ])
             })

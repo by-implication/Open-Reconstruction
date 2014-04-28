@@ -10,7 +10,7 @@ import recon.support._
 
 object Checkpoint extends CheckpointGen {
 
-  def create(user: User)(implicit req: Req): Option[Checkpoint] = {
+  def push(user: User)(implicit req: Req): Option[Checkpoint] = {
     val newLevel: Int = req.currentCheckpoint.map(
       _.copy(userId = user.id.toOption, dateCompleted = Some(Time.now)).save()
       .map(_.level + 1)
@@ -24,6 +24,8 @@ object Checkpoint extends CheckpointGen {
     }
     Checkpoint(reqId = req.id, level = newLevel).copy(govUnitId = govUnitId).create()
   }
+
+  def pop()(implicit req: Req) = req.currentCheckpoint.map(_.delete())
 
 }
 

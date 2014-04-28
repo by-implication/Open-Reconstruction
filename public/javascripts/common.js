@@ -1,5 +1,29 @@
 var common = {};
 
+common.duration = function(ms){
+  var cur = ms / 1000;
+  var next = cur / 60;
+  var r;
+  if(next < 1){
+    r = [cur, "seconds"];
+  } else {
+    cur = next;
+    next /= 60;
+    if(next < 1){
+      r = [cur, "minutes"];
+    } else {
+      cur = next;
+      next /= 60;
+      if(next < 1){
+        r = [cur, "hours"];
+      } else {
+        r = [next, "days"];
+      }
+    }
+  }
+  return r[0].toFixed(2) + " " + r[1];
+}
+
 common.attachmentActions = function(attachment){
   return [
     m("a", {title: "Preview", href: "/attachments/" + attachment.id + "/preview", target: "_blank"}, [

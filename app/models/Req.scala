@@ -48,12 +48,16 @@ case class Req(
     SQL("""
       SELECT * FROM checkpoints
       WHERE req_id = {reqId}
-      ORDER BY checkpoint_date_received DESC
+      ORDER BY checkpoint_date_received DESC LIMIT 1
     """).on('reqId -> id).singleOpt(Checkpoint.simple)
   }
 
-  def age(level: Int): Option[Long] = {
-    Checkpoint.findOne("req_id", id).map(_.duration)
+  def age(level: Int = level): Option[Long] = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT * FROM checkpoints
+      WHERE req_id = {reqId}
+      ORDER BY checkpoint_level DESC
+    """).on('reqId -> id).list(Checkpoint.simple).headOption.map(_.duration)
   }
 
   def addToAttachments(attachmentId: Int): Boolean = DB.withConnection { implicit c =>
@@ -84,6 +88,7 @@ case class Req(
     "id" -> id.get,
     "description" -> description,
     "projectType" -> projectType.name,
+    "age" -> age(),
     "level" -> level,
     "amount" -> amount,
     "author" -> Json.obj(
