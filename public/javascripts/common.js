@@ -26,14 +26,10 @@ common.duration = function(ms){
 common.day = function(ms){
   console.log(ms / 86400000);
   var day = Math.floor(ms / 86400000);
-  var rating;
-  if (day <= 3) {
-    rating = "good";
-  } else if (day > 3 && day <= 7){
-    rating = "warning";
-  } else {
-    rating = "alert"
-  };
+  var rating = "";
+  if (day > 3) {
+    rating = "alert";
+  }
 
   var wording = ""
   switch(day){
@@ -47,10 +43,14 @@ common.day = function(ms){
       wording = day + " days";
       break;
   }
-  return m("span.age", [
-    day >= 7 ?
-      m("span.label.alert", wording)
-    : wording
+  return m("span.age", {className: rating}, [
+    wording,
+    day > 3 ?
+      m("span", [
+        " ",
+        m("i.fa.fa-warning")
+      ])
+    : ""
   ]);
 }
 
