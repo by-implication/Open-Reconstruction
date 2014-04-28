@@ -61,6 +61,31 @@ projectListing.controller = function(){
     badges.signoff(r.counts.signoff);
     badges.assessor(r.counts.assessor);
     badges.mine(r.counts.mine);
+  
+    self.filteredList = _.chain(self.projectList)
+      .filter(function(p){
+        if(!self.currentFilter.projects()){
+          return true;
+        } else {
+          return p.projectType == self.currentFilter.projects();
+        }
+      })
+      .filter(function(p){
+        switch(self.tabs.currentTab()){
+          case self.tabFilters.SIGNOFF:
+            return p.canSignoff;
+            break;
+          case self.tabFilters.ASSESSOR:
+            return p.level === 0 && !p.assessingAgencyId;
+            break;
+          case self.tabFilters.MINE:
+            return p.author.govUnitId === self.app.currentUser().agency.id;
+            break;
+          default:
+            return true;
+        }
+      });
+
   });
 
 }
