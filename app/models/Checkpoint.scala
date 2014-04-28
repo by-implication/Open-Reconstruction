@@ -9,6 +9,22 @@ import play.api.Play.current
 import recon.support._
 
 object Checkpoint extends CheckpointGen {
+
+  def create(user: User)(implicit req: Req): Option[Checkpoint] = {
+    val newLevel: Int = req.currentCheckpoint.map(
+      _.copy(userId = user.id.toOption, dateCompleted = Some(Time.now)).save()
+      .map(_.level + 1)
+    ).flatten.getOrElse(0)
+    val govUnitId: Int = newLevel match {
+      case 0 => GovUnit.findOne("gov_unit_acronym", "OCD").get.id
+      case 1 => req.assessingAgencyId.get // assessing agency
+      case 2 => GovUnit.findOne("gov_unit_acronym", "OCD").get.id
+      case 3 => GovUnit.findOne("gov_unit_acronym", "OP").get.id
+      case 4 => GovUnit.findOne("gov_unit_acronym", "DBM").get.id
+    }
+    Checkpoint(reqId = req.id, level = newLevel).copy(govUnitId = govUnitId).create()
+  }
+
 }
 
 // GENERATED case class start
@@ -22,6 +38,9 @@ case class Checkpoint(
   dateCompleted: Option[Timestamp] = None
 ) extends CheckpointCCGen with Entity[Checkpoint]
 // GENERATED case class end
+{
+  lazy val duration: Long = dateCompleted.getOrElse(Time.now).getTime() - dateReceived.getTime()
+}
 
 // GENERATED object start
 trait CheckpointGen extends EntityCompanion[Checkpoint] {

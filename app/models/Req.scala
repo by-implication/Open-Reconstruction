@@ -44,6 +44,18 @@ case class Req(
 // GENERATED case class end
 {
 
+  lazy val currentCheckpoint: Option[Checkpoint] = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT * FROM checkpoints
+      WHERE req_id = {reqId}
+      ORDER BY checkpoint_date_received DESC
+    """).on('reqId -> id).singleOpt(Checkpoint.simple)
+  }
+
+  def age(level: Int): Option[Long] = {
+    Checkpoint.findOne("req_id", id).map(_.duration)
+  }
+
   def addToAttachments(attachmentId: Int): Boolean = DB.withConnection { implicit c =>
     SQL("""
       UPDATE reqs
