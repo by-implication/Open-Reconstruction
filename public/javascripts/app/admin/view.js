@@ -68,7 +68,7 @@ admin.view = function(ctrl){
       m("section", [
         m(".row", [
           common.tabs.view(ctrl.tabs, {className: "vertical"}),
-          m.switch(ctrl.tabs.currentTab())
+          m.switch(ctrl.tabs.currentTab()())
             .case("Agencies", function(){
               return m(".tabs-content.vertical", [
                 m("a.button", {href: "/agencies/new", config: m.route}, [

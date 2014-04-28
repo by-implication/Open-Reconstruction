@@ -18,7 +18,19 @@ CREATE TABLE events (
     user_id int REFERENCES users
 );;
 
+CREATE TABLE checkpoints (
+    checkpoint_id serial PRIMARY KEY,
+    req_id int NOT NULL REFERENCES reqs(req_id),
+    gov_unit_id int NOT NULL REFERENCES gov_units(gov_unit_id),
+    user_id int REFERENCES users(user_id),
+    checkpoint_level int NOT NULL DEFAULT 0,
+    checkpoint_date_received timestamp NOT NULL DEFAULT NOW(),
+    checkpoint_date_completed timestamp
+);;
+
 # --- !Downs
+
+DROP TABLE IF EXISTS checkpoints;;
 
 DROP TABLE IF EXISTS events;;
 

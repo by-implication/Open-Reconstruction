@@ -4,10 +4,10 @@ project.controller = function(){
   this.signoffModal = new common.modal.controller();
   this.projectTabs = new common.tabs.controller('/projects/'+m.route.param('id'));
   this.projectTabs.tabs([
-    {label: "Assignments", href: 'assignments'},
-    {label: "Images", href: 'images'},
-    {label: "Documents", href: 'documents'},
-    {label: "Activity", href: 'activity'}
+    {label: m.prop("Assignments"), href: 'assignments'},
+    {label: m.prop("Images"), href: 'images'},
+    {label: m.prop("Documents"), href: 'documents'},
+    {label: m.prop("Activity"), href: 'activity'}
   ]);
   this.projectTabs.currentTab(this.projectTabs.tabs()[0].label)
 
@@ -125,6 +125,7 @@ project.controller = function(){
         this.hasSignedoff(true);
         alert('Signoff successful!');
         this.signoffModal.close();
+        this.history().unshift(r.event);
       } else {
         alert("Failed to signoff: " + r.messages.password);
       }
@@ -160,13 +161,6 @@ project.controller = function(){
       console.log('Comment submitted!');
       this.refreshHistory();
     }.bind(this));
-  }.bind(this);
-
-  this.submitAmountRevision = function(e){
-    e.preventDefault()
-    m.request({method: "POST", url: "/requests/" + this.id + "/reviseAmount", data: {amount: this.input.amount}, config: app.xhrConfig}).then(function(r){
-      console.log('Amount revision submitted!');
-    });
   }.bind(this);
 
   this.updateAssessingAgency = function(e){

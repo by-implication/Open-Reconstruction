@@ -8,6 +8,12 @@ user.controller = function(){
 
   this.tabs = new common.tabs.controller();
   this.tabs.tabs = m.prop([{}]);
+  this.tabFilters = {
+    ALL: 'ALL',
+    SIGNOFF: 'SIGNOFF',
+    ASSESSOR: 'ASSESSOR',
+    MINE: 'MINE'
+  }
 
   m.request({method: "GET", url: ("/users/" + self.id + "/meta"), config: app.xhrConfig}).then(function (r){
     if(r.success){

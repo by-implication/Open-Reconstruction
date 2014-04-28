@@ -85,7 +85,7 @@ project.view = function(ctrl){
               m(".section", [
                 common.tabs.view(ctrl.projectTabs)
               ]),
-              m.switch(ctrl.projectTabs.currentTab())
+              m.switch(ctrl.projectTabs.currentTab()())
                 .case("Assignments", function(){
                   if(ctrl.app.isSuperAdmin()){
                     return m(".section", [
@@ -322,13 +322,13 @@ project.listView = function(ctrl){
     })
     .filter(function(p){
       switch(ctrl.tabs.currentTab()){
-        case "For signoff":
+        case ctrl.tabFilters.SIGNOFF:
           return p.canSignoff;
           break;
-        case "For assigning assessor":
+        case ctrl.tabFilters.ASSESSOR:
           return p.level === 0 && !p.assessingAgencyId;
           break;
-        case "My requests":
+        case ctrl.tabFilters.MINE:
           return p.author.govUnitId === ctrl.app.currentUser().agency.id;
           break;
         default:
@@ -342,6 +342,7 @@ project.listView = function(ctrl){
           m("th", "Name"),
           m("th", "Agency/LGU"),
           m("th", "Type"),
+          m("th", "Aging"),
           m("th.text-right", "Amount")
         ])
       ]),
@@ -360,6 +361,7 @@ project.listView = function(ctrl){
                 ]),
                 m("td", project.author.agency),
                 m("td", project.projectType),
+                m("td", common.duration(project.age)),
                 m("td.text-right", helper.commaize(project.amount.toFixed(2)))
               ])
             })

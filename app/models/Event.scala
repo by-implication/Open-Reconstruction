@@ -31,10 +31,6 @@ object Event extends EventGen {
     generate("comment", content)
   }
 
-  def reviseAmount(amount: String)(implicit req: Req, user: User) = {
-    generate("reviseAmount", amount)
-  }
-
   def assign(agencyType: String, assign: Boolean, govUnit: GovUnit)(implicit req: Req, user: User) = {
     generate("assign", Seq(govUnit.name, govUnit.id, (if (assign) 1 else 0), agencyType).mkString(" "))
   }
