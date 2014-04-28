@@ -43,7 +43,7 @@ ul
 
 table
   width: 100%
-  margin-top: 20px
+  // margin-top: 20px
 
 h1
   font-weight: bold
@@ -399,21 +399,31 @@ button.micro, .button.micro
     border-style: solid
     border-color: #ddd
     color: #ccc
+    .label
+      +transition(all 0.2s)
+      margin-left: 6px
+      margin-right: 0
+      background-color: transparent
+      border: 1px solid #ccc
+      color: #ccc
     &:hover
       background-color: transparent
       border-color: #333
       color: #333
+      .label
+        border-color: #333
+        color: #333
   dd.active > a
     border-color: $accent
     color: $accent
+    .label
+      border-color: $accent
+      color: $accent
   &.vertical
     dd > a
       border-bottom-width: 0px
       border-right-width: 1px
       text-align: right
-
-.filters
-  margin-top: 20px
 
 .modal
   +transition(all 0.4s)

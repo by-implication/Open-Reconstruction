@@ -19,10 +19,10 @@ projectListing.view = function(ctrl){
         ])
       : "",
       m(".row", [
-        m(".columns.medium-8", [
+        m(".columns.medium-9", [
           project.listView(ctrl)
         ]),
-        m(".columns.medium-4.filters", [
+        m(".columns.medium-3", [
           m("h4", [
             "Filter by Project Type"
           ]),

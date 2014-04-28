@@ -45,10 +45,10 @@ projectListing.controller = function(){
   m.request({method: "GET", url: "/requests"}).then(function (r){
     self.projectList = r.list;
     self.projectFilters = r.filters;
-    badges.all(" (" + r.counts.all+ ")");
-    badges.signoff(" (" + r.counts.signoff+ ")");
-    badges.assessor(" (" + r.counts.assessor+ ")");
-    badges.mine(" (" + r.counts.mine+ ")");
+    badges.all(r.counts.all);
+    badges.signoff(r.counts.signoff);
+    badges.assessor(r.counts.assessor);
+    badges.mine(r.counts.mine);
   });
 
 }
