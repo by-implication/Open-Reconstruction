@@ -117,12 +117,12 @@ admin.view = function(ctrl){
               return m(".tabs-content.vertical", [
                 m("ul.button-group", [
                   m("li", [
-                    m("button.small", {onclick: ctrl.expandAll.bind(ctrl)}, [
+                    m("button.small.secondary", {onclick: ctrl.expandAll.bind(ctrl)}, [
                       "Expand all"
                     ]),
                   ]),
                   m("li", [
-                    m("button.small", {onclick: ctrl.collapseAll.bind(ctrl)}, [
+                    m("button.small.secondary", {onclick: ctrl.collapseAll.bind(ctrl)}, [
                       "Collapse all"
                     ]),
                   ]),
