@@ -339,10 +339,10 @@ project.listView = function(ctrl){
       m("thead", [
         m("tr", [
           m("th", "Id"),
+          m("th", "Stagnation"),
           m("th", "Name"),
           m("th", "Agency/LGU"),
-          m("th", "Type"),
-          m("th", "Aging"),
+          // m("th", "Type"),
           m("th.text-right", "Amount")
         ])
       ]),
@@ -356,12 +356,12 @@ project.listView = function(ctrl){
               var url = "/projects/"+project.id;
               return m("tr", [
                 m("td", project.id),
+                m("td", [common.day(project.age + 86400000 * (9 * Math.random() + 1))]),
                 m("td", [
                   m("a.name", {href: url, config: m.route}, project.description)
                 ]),
                 m("td", project.author.agency),
-                m("td", project.projectType),
-                m("td", common.duration(project.age)),
+                // m("td", project.projectType),
                 m("td.text-right", helper.commaize(project.amount.toFixed(2)))
               ])
             })

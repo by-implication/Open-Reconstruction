@@ -23,6 +23,34 @@ common.duration = function(ms){
   }
   return r[0].toFixed(2) + " " + r[1];
 }
+common.day = function(ms){
+  console.log(ms / 86400000);
+  var day = Math.floor(ms / 86400000);
+  var rating;
+  if (day <= 3) {
+    rating = "good";
+  } else if (day > 3 && day <= 7){
+    rating = "warning";
+  } else {
+    rating = "alert"
+  };
+
+  var wording = ""
+  switch(day){
+    case 0:
+      wording = "new";
+      break;
+    case 1:
+      wording = "1 day";
+      break;
+    default:
+      wording = day + " days";
+      break;
+  }
+  return m("span.age", {className: rating}, [
+    wording
+  ]);
+}
 
 common.attachmentActions = function(attachment){
   return [
