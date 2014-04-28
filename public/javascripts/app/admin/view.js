@@ -67,63 +67,72 @@ admin.view = function(ctrl){
     ctrl.app.isSuperAdmin()?
       m("section", [
         m(".row", [
-          // create agencies
-          // list of agencies
           common.tabs.view(ctrl.tabs, {className: "vertical"}),
-          m(".tabs-content.vertical", [
-            m("a.button", {href: "/agencies/new", config: m.route}, [
-              "New agency"
-            ]),
-            m("a.button", {href: "/admin/lgus", config: m.route}, [
-              "LGU Manager"
-            ]),
-            m("button", {onclick: ctrl.expandAll.bind(ctrl)}, [
-              "Expand all"
-            ]),
-            m("button", {onclick: ctrl.collapseAll.bind(ctrl)}, [
-              "Collapse all"
-            ]),
-            m("table", [
-              m("thead", [
-                m("tr", [
-                  m("td", [
-                    "Agency Name"
-                  ]),
-                  m("td", [
-                    "Users"
-                  ]),
-                  m("td", [
-                    "Role"
-                  ]),
+          m.switch(ctrl.tabs.currentTab())
+            .case("Agencies", function(){
+              return m(".tabs-content.vertical", [
+                m("a.button", {href: "/agencies/new", config: m.route}, [
+                  "New agency"
                 ]),
-              ]),
-              m("tbody", [
-                ctrl.agencyList().map(function(a){
-                  return m("tr", [
-                    m("td", [
-                      m("a", {href: "/agencies/"+a.id, config: m.route}, [
-                        a.name,
-                        a.acronym ?
-                          m("span.acronym", [
-                            "("+a.acronym+")"
-                          ])
-                        : ""
+                m("table", [
+                  m("thead", [
+                    m("tr", [
+                      m("td", [
+                        "Agency Name"
+                      ]),
+                      m("td", [
+                        "Users"
+                      ]),
+                      m("td", [
+                        "Role"
                       ]),
                     ]),
-                    m("td", [
-                      a.totalUsers
+                  ]),
+                  m("tbody", [
+                    ctrl.agencyList().map(function(a){
+                      return m("tr", [
+                        m("td", [
+                          m("a", {href: "/agencies/"+a.id, config: m.route}, [
+                            a.name,
+                            a.acronym ?
+                              m("span.acronym", [
+                                "("+a.acronym+")"
+                              ])
+                            : ""
+                          ]),
+                        ]),
+                        m("td", [
+                          a.totalUsers
+                        ]),
+                        m("td", [
+                          ctrl.roles()[a.role]
+                        ])
+                      ]);
+                    }),
+                  ]),
+                ]),
+              ])
+            })
+            .case("LGUs", function(){
+              return m(".tabs-content.vertical", [
+                m("ul.button-group", [
+                  m("li", [
+                    m("button.small", {onclick: ctrl.expandAll.bind(ctrl)}, [
+                      "Expand all"
                     ]),
-                    m("td", [
-                      ctrl.roles()[a.role]
-                    ])
-                  ]);
-                }),
+                  ]),
+                  m("li", [
+                    m("button.small", {onclick: ctrl.collapseAll.bind(ctrl)}, [
+                      "Collapse all"
+                    ]),
+                  ]),
+                ]),
                 m("ul", [
                   ctrl.regions().map(renderLGU)
                 ])
-              ]),
-            ]),
-          ]),
+              ])
+            })
+            .render()
         ]),
       ])
     : ""

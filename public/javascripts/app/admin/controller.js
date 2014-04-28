@@ -2,8 +2,11 @@ admin.controller = function(){
   this.app = new app.controller();
   this.agencyList = m.prop([]);
   this.roles = m.prop({});
-  this.tabs = new common.tabs.controller();
-  this.tabs.tabs = m.prop([{label: "Agencies"}, {label: "LGUs"}]);
+  this.tabs = new common.tabs.controller("/admin");
+  this.tabs.tabs = m.prop([
+    {label: "Agencies", href: "agencies"}, 
+    {label: "LGUs", href: "lgus"}
+  ]);
   this.regions = m.prop([]);
 
   m.request({method: "GET", url: ("/agencies/new/meta"), config: app.xhrConfig}).then(function (r){
