@@ -100,11 +100,25 @@ object Requests extends Controller with Secured {
     Req.findById(id).map { r =>
 
       if(user.canSignoff(r)){
-        r.copy(level = r.level + 1).save().map( implicit r =>
-          Event.signoff(user.govUnit).create().map { _ =>
-            Rest.success()
-          }.getOrElse(Rest.serverError())
-        ).getOrElse(Rest.serverError())
+
+        val signoffForm: Form[Req] = Form(
+          mapping("password" -> nonEmptyText.verifying(
+            "Incorrect password",
+            User.authenticate(user.handle, _).isDefined
+          ))
+          (_ => r)
+          (_ => None)
+        )
+
+        signoffForm.bindFromRequest.fold(
+          Rest.formError(_),
+          r => r.copy(level = r.level + 1).save().map( implicit r =>
+            Event.signoff(user.govUnit).create().map { _ =>
+              Rest.success()
+            }.getOrElse(Rest.serverError())
+          ).getOrElse(Rest.serverError())
+        )
+
       } else Rest.unauthorized()
 
     }.getOrElse(Rest.notFound())

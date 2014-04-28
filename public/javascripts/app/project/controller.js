@@ -113,10 +113,16 @@ project.controller = function(){
   }.bind(this))
 
   this.signoff = function(){
-    m.request({method: "POST", url: "/requests/"+this.id+"/signoff"}).then(function(data){
-      this.canSignoff(false);
-      this.hasSignedoff(true);
-      alert('Signoff successful!');
+    var password = prompt("Enter your password:");
+    m.request({method: "POST", url: "/requests/"+this.id+"/signoff", data: {password: password}, config: app.xhrConfig})
+    .then(function (r){
+      if(r.success){
+        this.canSignoff(false);
+        this.hasSignedoff(true);
+        alert('Signoff successful!');
+      } else {
+        alert("Failed to signoff: " + r.messages.password);
+      }
     }.bind(this));
   }.bind(this);
 
