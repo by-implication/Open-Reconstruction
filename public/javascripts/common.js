@@ -132,6 +132,7 @@ common.modal.controller = function(){
   this.close = function(){
     this.isVisible(false);
   }
+  this.password = m.prop("");
 }
 common.modal.view = function(ctrl, temp){
   if (ctrl.isVisible()) {
@@ -140,19 +141,23 @@ common.modal.view = function(ctrl, temp){
       m(".row", [
         m(".columns.medium-6.medium-centered.dialog", [
           m(".card", [
-            m(".section", [
-              m("h3", "Authorization Required"),
-              m("p", [
-                "Please enter your password to continue."
+            m("form", {onsubmit: ctrl.signoff}, [
+              m(".section", [
+                m("h3", "Authorization Required"),
+                m("p", [
+                  "Please enter your password to continue."
+                ]),
               ]),
-            ]),
-            m("hr"),
-            m(".section", [
-              common.field("Password", m("input[type='password']")),
-              m("button", [
-                "Submit"
+              m("hr"),
+              m(".section", [
+                common.field("Password", m("input[type='password']", {
+                  onchange: m.withAttr("value", ctrl.password)
+                })),
+                m("button", [
+                  "Submit"
+                ]),
               ]),
-            ]),
+            ])
           ]),
         ]),
       ]),

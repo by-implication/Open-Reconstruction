@@ -11,7 +11,7 @@ project.view = function(ctrl){
                 m("h4", [
                   "Sign off on this request only if you feel the information is complete for your step in the approval process."
                 ]),
-                m("button", {onclick: ctrl.signoff}, [
+                m("button", {onclick: ctrl.signoffModal.show.bind(ctrl.signoffModal)}, [
                   m("i.fa.fa-check"),
                 ]),
                 m("button.alert", [
