@@ -122,33 +122,4 @@ common.tabs.controller = function(basePath){
   }
 }
 
-// common.tabs.panes = function(ctrl, views){
-//   if(!ctrl.currentTab()){
-//     ctrl.currentTab(_.keys(views)[0]);
-//   }
-//   return views[ctrl.currentTab()];
-// }
 
-common.renderString = function(str){
-  if(str){
-    return m("span", str);
-  } else {
-    return m("span.label.alert", "Missing Data");
-  }
-}
-
-common.renderObj = function(obj){
-  if(_.isEmpty(obj)){
-    return m("span.label.alert", "Missing Data");
-  } else {
-    return _.chain(obj)
-      .pairs()
-      .filter(function(entry){
-        return entry[1];
-      })
-      .map(function(entry){
-        return m("div", [m("h5", entry[0]), m("p", entry[1])]);
-      })
-      .value();
-  }
-}
