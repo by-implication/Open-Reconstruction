@@ -25,7 +25,10 @@ object Application extends Controller {
       Attachments.unarchive,
       Assets.at,
       Requests.insert,
-      Requests.editField
+      Requests.editField,
+      GovUnits.createMeta,
+      GovUnits.allMeta,
+      GovUnits.lguListing
     )).as("text/javascript")
   }
 
