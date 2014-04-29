@@ -116,9 +116,8 @@ object Requests extends Controller with Secured {
           Rest.formError(_),
           r => r.copy(level = r.level + 1).save().map( implicit r =>
             Event.signoff(user.govUnit).create().map { e =>
-              Checkpoint.push(user).map { _ =>
-                Rest.success("event" -> e.listJson)
-              }.getOrElse(Rest.serverError())
+              Checkpoint.push(user)
+              Rest.success("event" -> e.listJson)
             }.getOrElse(Rest.serverError())
           ).getOrElse(Rest.serverError())
         )

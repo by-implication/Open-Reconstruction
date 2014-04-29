@@ -436,6 +436,7 @@ Mithril = m = new function app(window) {
 		var serialize = xhrOptions.serialize || JSON.stringify
 		var deserialize = xhrOptions.deserialize || JSON.parse
 		var extract = xhrOptions.extract || function(xhr, xhrOptions) {return xhr.responseText}
+		xhrOptions.url = xhrOptions.url || window.location.href
 		xhrOptions.url = parameterizeUrl(xhrOptions.url, xhrOptions.data)
 		xhrOptions = bindData(xhrOptions, xhrOptions.data, serialize)
 		xhrOptions.onload = xhrOptions.onerror = function(e) {

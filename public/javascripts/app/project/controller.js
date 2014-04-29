@@ -89,7 +89,7 @@ project.controller = function(){
     }
   }
 
-  m.request({method: "GET", url: "/requests/"+this.id+"/meta"}).then(function(data){
+  bi.ajax(routes.controllers.Requests.viewMeta(this.id)).then(function(data){
     this.project(data.request);
     this.author(data.author);
     this.attachments(data.attachments);
@@ -115,10 +115,8 @@ project.controller = function(){
 
   this.signoffModal.signoff = function(e){
     e.preventDefault();
-    m.request({method: "POST",
-      url: "/requests/" + this.id + "/signoff",
-      data: {password: this.signoffModal.password},
-      config: app.xhrConfig
+    bi.ajax(routes.controllers.Requests.signoff(this.id), {
+      data: {password: this.signoffModal.password}
     }).then(function (r){
       if(r.success){
         this.canSignoff(false);
@@ -149,7 +147,7 @@ project.controller = function(){
   }.bind(this)
 
   this.refreshHistory = function(){
-    m.request({method: "GET", url: "/requests/"+this.id+"/meta"}).then(function(data){
+    bi.ajax(routes.controllers.Requests.viewMeta(this.id)).then(function(data){
       this.history(data.history);
       m.redraw();
     }.bind(this))
@@ -157,7 +155,7 @@ project.controller = function(){
 
   this.submitComment = function(e){
     e.preventDefault()
-    m.request({method: "POST", url: "/requests/" + this.id + "/comment", data: {content: this.input.comment}, config: app.xhrConfig}).then(function(r){
+    bi.ajax(routes.controllers.Requests.comment(this.id), {data: {content: this.input.comment}}).then(function(r){
       console.log('Comment submitted!');
       this.refreshHistory();
     }.bind(this));
@@ -165,14 +163,14 @@ project.controller = function(){
 
   this.updateAssessingAgency = function(e){
     this.input.assessingAgency(e);
-    m.request({method: "POST", url: "/requests/" + this.id + "/assign/assessing/" + this.input.assessingAgency()}).then(function(r){
+    bi.ajax(routes.controllers.Requests.assignAssessingAgency(this.id, this.input.assessingAgency())).then(function(r){
       console.log('Assessing agency submitted!');
     })
   }.bind(this);
 
   this.updateImplementingAgency = function(e){
     this.input.implementingAgency(e);
-    m.request({method: "POST", url: "/requests/" + this.id + "/assign/implementing/" + this.input.implementingAgency()}).then(function(r){
+    bi.ajax(routes.controllers.Requests.assignImplementingAgency(this.id, this.input.implementingAgency())).then(function(r){
       console.log('Implementing agency submitted!');
     })
   }.bind(this);

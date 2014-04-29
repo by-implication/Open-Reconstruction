@@ -21,7 +21,28 @@ object Application extends Controller {
     Ok(Routes.javascriptRouter("routes")(
       Users.login,
       Users.logout,
-      Requests.insert
+      Users.info,
+      Users.insert,
+      Users.viewMeta,
+      Attachments.archive,
+      Attachments.unarchive,
+      Assets.at,
+      Requests.assignAssessingAgency,
+      Requests.assignImplementingAgency,
+      Requests.comment,
+      Requests.createInfo,
+      Requests.editField,
+      Requests.index,
+      Requests.insert,
+      Requests.signoff,
+      Requests.viewMeta,
+      GovUnits.createMeta,
+      GovUnits.allMeta,
+      GovUnits.lguListing,
+      GovUnits.viewMeta,
+      GovUnits.insert,
+      GovUnits.lguCreationMeta,
+      GovUnits.lguInsert
     )).as("text/javascript")
   }
 

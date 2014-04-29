@@ -3,7 +3,7 @@ lguCreation.view = function(ctrl){
     common.banner("New " + ctrl.lguType() + " under " + ctrl.parentName()),
     ctrl.app.isSuperAdmin() ? m("form", {onsubmit: ctrl.submit}, [
       common.formSection(
-        "fa-star",
+        "fa-group",
         [
           common.field(
             "LGU Name",

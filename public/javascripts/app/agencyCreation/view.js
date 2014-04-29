@@ -3,7 +3,7 @@ agencyCreation.view = function(ctrl){
     common.banner("New Agency"),
     m("form", {onsubmit: ctrl.submit}, [
       common.formSection(
-        "fa-star",
+        "fa-group",
         [
           common.field(
             "Agency Name",

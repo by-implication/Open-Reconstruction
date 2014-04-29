@@ -15,14 +15,17 @@ object Checkpoint extends CheckpointGen {
       _.copy(userId = user.id.toOption, dateCompleted = Some(Time.now)).save()
       .map(_.level + 1)
     ).flatten.getOrElse(0)
-    val govUnitId: Int = newLevel match {
-      case 0 => GovUnit.findOne("gov_unit_acronym", "OCD").get.id
-      case 1 => req.assessingAgencyId.get // assessing agency
-      case 2 => GovUnit.findOne("gov_unit_acronym", "OCD").get.id
-      case 3 => GovUnit.findOne("gov_unit_acronym", "OP").get.id
-      case 4 => GovUnit.findOne("gov_unit_acronym", "DBM").get.id
+    val govUnitId: Option[Int] = newLevel match {
+      case 0 => GovUnit.findOne("gov_unit_acronym", "OCD").map(_.id)
+      case 1 => req.assessingAgencyId // assessing agency
+      case 2 => GovUnit.findOne("gov_unit_acronym", "OCD").map(_.id)
+      case 3 => GovUnit.findOne("gov_unit_acronym", "OP").map(_.id)
+      case 4 => GovUnit.findOne("gov_unit_acronym", "DBM").map(_.id)
+      case _ => None
     }
-    Checkpoint(reqId = req.id, level = newLevel).copy(govUnitId = govUnitId).create()
+    govUnitId.map { guId =>
+      Checkpoint(reqId = req.id, level = newLevel).copy(govUnitId = guId).create()
+    }.flatten
   }
 
   def pop()(implicit req: Req) = req.currentCheckpoint.map(_.delete())

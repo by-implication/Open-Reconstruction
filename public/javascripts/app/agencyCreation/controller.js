@@ -6,7 +6,7 @@ agencyCreation.controller = function(){
 
   this.roles = m.prop([{id: 0, name: 'Loading...'}]);
 
-  m.request({method: "GET", url: ("/agencies/new/meta"), config: app.xhrConfig}).then(function (r){
+  bi.ajax(routes.controllers.GovUnits.createMeta()).then(function (r){
     if(r.success){
       self.roles(r.roles);
     } else {
@@ -22,7 +22,7 @@ agencyCreation.controller = function(){
   
   this.submit = function(e){
     e.preventDefault();
-    m.request({method: "POST", url: "/agencies/new", data: self.input, config: app.xhrConfig}).then(function (r){
+    bi.ajax(routes.controllers.GovUnits.insert(), {data: self.input}).then(function (r){
       if(r.success){
         window.location = '/';
       } else if(r.reason == "form error"){

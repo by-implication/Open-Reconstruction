@@ -8,7 +8,7 @@ login.controller = function(){
   var self = this;
   this.submit = function(e){
     e.preventDefault();
-    m.request({method: "POST", url: "/login", data: self.input, config: app.xhrConfig}).then(function (r){
+    bi.ajax(routes.controllers.Users.login(), {data: self.input}).then(function (r){
       if(r.success){
         window.location = '/';
       } else if(r.reason == "form error"){
