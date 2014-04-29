@@ -28,7 +28,8 @@ object Application extends Controller {
       Requests.editField,
       GovUnits.createMeta,
       GovUnits.allMeta,
-      GovUnits.lguListing
+      GovUnits.lguListing,
+      GovUnits.viewMeta
     )).as("text/javascript")
   }
 
