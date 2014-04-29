@@ -72,7 +72,7 @@ projectCreation.controller = function(){
 
   }.bind(this);
 
-  m.request({method: "GET", url: "/requests/info"}).then(function(data){
+  bi.ajax(routes.controllers.Requests.createInfo()).then(function(data){
     this.requestCreationInfo = data;
     this.input.disasterType(data.disasterTypes[0]);
   }.bind(this));
@@ -87,7 +87,7 @@ projectCreation.controller = function(){
   this.submitNewRequest = function(e){
     e.preventDefault();
     if(this.preamble()) {
-      m.request({method: "POST", url: "/requests/new", data: this.input, config: app.xhrConfig}).then(function(r){
+      bi.ajax(routes.controllers.Requests.insert(), {data: this.input, config: app.xhrConfig}).then(function(r){
         if(r.success){
           window.location = '/';
         } else if(r.reason == "form error"){

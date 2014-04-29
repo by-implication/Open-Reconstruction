@@ -28,6 +28,7 @@ object Application extends Controller {
       Requests.assignAssessingAgency,
       Requests.assignImplementingAgency,
       Requests.comment,
+      Requests.createInfo,
       Requests.editField,
       Requests.insert,
       Requests.signoff,
