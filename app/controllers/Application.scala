@@ -31,7 +31,9 @@ object Application extends Controller {
       GovUnits.allMeta,
       GovUnits.lguListing,
       GovUnits.viewMeta,
-      GovUnits.insert
+      GovUnits.insert,
+      GovUnits.lguCreationMeta,
+      GovUnits.lguInsert
     )).as("text/javascript")
   }
 
