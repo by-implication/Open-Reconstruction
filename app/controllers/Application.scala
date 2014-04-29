@@ -24,7 +24,8 @@ object Application extends Controller {
       Attachments.archive,
       Attachments.unarchive,
       Assets.at,
-      Requests.insert
+      Requests.insert,
+      Requests.editField
     )).as("text/javascript")
   }
 
