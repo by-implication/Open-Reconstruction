@@ -30,6 +30,7 @@ object Application extends Controller {
       Requests.comment,
       Requests.createInfo,
       Requests.editField,
+      Requests.index,
       Requests.insert,
       Requests.signoff,
       Requests.viewMeta,
