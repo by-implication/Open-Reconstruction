@@ -2,7 +2,7 @@ projectCreation.controller = function(){
   var self = this;
   this.app = new app.controller();
 
-  this.preamble = m.prop(false);  
+  this.preamble = m.prop(false);
   this.input = {
     amount: m.prop(0),
     attachments: m.prop([]),
@@ -18,7 +18,7 @@ projectCreation.controller = function(){
 
   this.configShowForm = function(elem){
     window.setTimeout(function(){
-      elem.style["max-height"] = "2000px";
+      elem.classList.toggle("expand");
     }, 0)
   }
 
@@ -32,7 +32,7 @@ projectCreation.controller = function(){
         // create the tile layer with correct attribution
         var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-        var osm = new L.TileLayer(osmUrl, {minZoom: 5, maxZoom: 19, attribution: osmAttrib}).addTo(map);   
+        var osm = new L.TileLayer(osmUrl, {minZoom: 5, maxZoom: 19, attribution: osmAttrib}).addTo(map);
 
         var editableLayers = new L.FeatureGroup();
         map.addLayer(editableLayers);
@@ -50,7 +50,7 @@ projectCreation.controller = function(){
             rectangle: false,
             circle: false
           },
-          // position: 'topright' 
+          // position: 'topright'
         });
         map.addControl(drawControl);
 
@@ -64,7 +64,7 @@ projectCreation.controller = function(){
           editableLayers.clearLayers();
           editableLayers.addLayer(layer);
           editableLayers.openPopup();
-          
+
           self.input.location(strCoords);
         });
       }, 100)
