@@ -18,7 +18,7 @@ projectCreation.controller = function(){
 
   this.configShowForm = function(elem){
     window.setTimeout(function(){
-      elem.classList.toggle("expand");
+      elem.classList.add("expand");
     }, 0)
   }
 
