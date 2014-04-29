@@ -2,7 +2,7 @@ project.controller = function(){
   var map;
   this.app = new app.controller();
   this.signoffModal = new common.modal.controller();
-  this.projectTabs = new common.tabs.controller('/projects/'+m.route.param('id'));
+  this.projectTabs = new common.tabs.controller('/requests/'+m.route.param('id'));
   this.projectTabs.tabs([
     {label: m.prop("Assignments"), href: 'assignments'},
     {label: m.prop("Images"), href: 'images'},

@@ -2,18 +2,18 @@
 ////////////////////////////////////////////////////
 // routes
 
-m.route(document, window.location.pathname == "/" ? "/projects" : window.location.pathname, {
-  "/projects": projectListing,
-  "/projects/all": projectListing,
-  "/projects/mine": projectListing,
-  "/projects/assessor": projectListing,
-  "/projects/signoff": projectListing,
-  "/projects/new": projectCreation,
-  "/projects/:id": project,
-  "/projects/:id/assignments": project,
-  "/projects/:id/images": project,
-  "/projects/:id/documents": project,
-  "/projects/:id/activity": project,
+m.route(document, window.location.pathname == "/" ? "/requests" : window.location.pathname, {
+  "/requests": projectListing,
+  "/requests/all": projectListing,
+  "/requests/mine": projectListing,
+  "/requests/assessor": projectListing,
+  "/requests/signoff": projectListing,
+  "/requests/new": projectCreation,
+  "/requests/:id": project,
+  "/requests/:id/assignments": project,
+  "/requests/:id/images": project,
+  "/requests/:id/documents": project,
+  "/requests/:id/activity": project,
   "/dashboard": dashboard,
   "/users/:id": user,
   "/admin": admin,
