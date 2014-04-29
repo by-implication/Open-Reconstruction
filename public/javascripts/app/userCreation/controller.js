@@ -10,7 +10,7 @@ userCreation.controller = function(){
     isAdmin: m.prop(false)
   }
 
-  m.request({method: "GET", url: ("/agencies/" + this.slug() + "/meta"), config: app.xhrConfig}).then(function (r){
+  bi.ajax(routes.controllers.GovUnits.viewMeta(this.slug()), {config: app.xhrConfig}).then(function (r){
     if(r.success){
       this.agency(r.agency);
       this.input.agencyId(r.agency.id);
@@ -21,7 +21,7 @@ userCreation.controller = function(){
 
   this.submit = function(e){
     e.preventDefault();
-    m.request({method: "POST", url: window.location.pathname, data: this.input, config: app.xhrConfig}).then(function (r){
+    bi.ajax(routes.controllers.Users.insert(this.slug()), {data: this.input, config: app.xhrConfig}).then(function (r){
       if(r.success){
         window.location = '/';
       } else if(r.reason == "form error"){

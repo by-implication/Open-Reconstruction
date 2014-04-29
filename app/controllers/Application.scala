@@ -22,6 +22,7 @@ object Application extends Controller {
       Users.login,
       Users.logout,
       Users.info,
+      Users.insert,
       Users.viewMeta,
       Attachments.archive,
       Attachments.unarchive,
