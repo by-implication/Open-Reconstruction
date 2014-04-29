@@ -23,6 +23,7 @@ object Application extends Controller {
       Users.logout,
       Attachments.archive,
       Attachments.unarchive,
+      Assets.at,
       Requests.insert
     )).as("text/javascript")
   }
