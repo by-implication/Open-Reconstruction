@@ -12,6 +12,8 @@ object Requests extends Controller with Secured {
 
   private lazy val projectAmount = bigDecimal(15, 2).verifying("Invalid amount", _ >= 0)
 
+  def create() = Application.index
+
   def createInfo() = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
       "disasterTypes" -> DisasterType.jsonList,
@@ -19,6 +21,8 @@ object Requests extends Controller with Secured {
       "projectScopes" -> ProjectScope.jsonList
     ))
   }
+
+  def view = Application.index1 _
 
   def viewMeta(id: Int) = UserAction(){ implicit user => implicit request =>
     Req.findById(id).map { req =>
@@ -127,7 +131,9 @@ object Requests extends Controller with Secured {
     }.getOrElse(Rest.notFound())
   }
 
-  def index() = UserAction(){ implicit user => implicit request =>
+  def index = Application.index
+
+  def indexMeta() = UserAction(){ implicit user => implicit request =>
     val allRequests = Req.indexList()
     Ok(Json.obj(
       "list" -> allRequests.map(_.indexJson),

@@ -33,6 +33,7 @@ object Application extends Controller {
       Requests.createInfo,
       Requests.editField,
       Requests.index,
+      Requests.indexMeta,
       Requests.insert,
       Requests.signoff,
       Requests.viewMeta,

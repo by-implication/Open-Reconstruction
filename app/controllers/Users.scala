@@ -10,6 +10,8 @@ import recon.support._
 
 object Users extends Controller with Secured {
 
+  def loginView = Application.index
+
   def login = UserAction(){ implicit user => implicit request =>
     if (Secured.attemptLogin(request.remoteAddress)) {
 
@@ -33,6 +35,8 @@ object Users extends Controller with Secured {
   def logout() = UserAction(){ implicit user => implicit request =>
     Secured.logout()
   }
+
+  def create = Application.index1 _
 
   def insert(govUnitId: Int) = UserAction(){ implicit user => implicit request =>
     if(user.isSuperAdmin || (user.isAdmin && user.govUnitId == govUnitId)){
@@ -62,6 +66,8 @@ object Users extends Controller with Secured {
 
     } else Rest.unauthorized()
   }
+
+  def view = Application.index1 _
 
   def viewMeta(id: Int): Action[AnyContent] = GenericAction(){ implicit currentUser => implicit request =>
     User.findById(id) match {

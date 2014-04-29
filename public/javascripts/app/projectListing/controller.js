@@ -58,7 +58,7 @@ projectListing.controller = function(){
     }
   }.bind(this)
 
-  bi.ajax(routes.controllers.Requests.index()).then(function (r){
+  bi.ajax(routes.controllers.Requests.indexMeta()).then(function (r){
     self.projectList = r.list;
     self.projectFilters = r.filters;
     badges.all(r.counts.all);
