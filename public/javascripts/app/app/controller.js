@@ -1,10 +1,7 @@
 app.controller = function(){
   var self = this;
   this.currentUser = m.prop({});
-  m.request({
-    method: "GET",
-    url: "/users/info"
-  }).then(function(r){
+  bi.ajax(routes.controllers.Users.info()).then(function(r){
     this.currentUser(r);
     this.whenUserInfoLoads();
   }.bind(this));

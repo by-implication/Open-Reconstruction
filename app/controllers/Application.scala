@@ -21,6 +21,7 @@ object Application extends Controller {
     Ok(Routes.javascriptRouter("routes")(
       Users.login,
       Users.logout,
+      Users.info,
       Attachments.archive,
       Attachments.unarchive,
       Assets.at,
