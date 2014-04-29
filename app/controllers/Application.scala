@@ -21,6 +21,8 @@ object Application extends Controller {
     Ok(Routes.javascriptRouter("routes")(
       Users.login,
       Users.logout,
+      Attachments.archive,
+      Attachments.unarchive,
       Requests.insert
     )).as("text/javascript")
   }
