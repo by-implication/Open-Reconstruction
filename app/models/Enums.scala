@@ -3,18 +3,6 @@ package recon.models
 
 import recon.support._
 
-sealed class DisasterType(override val name: String) extends PGObject("disaster_type", name) with DisasterType.Value
-object DisasterType extends Enum[DisasterType] {
-  val TYPHOON = new DisasterType("Typhoon")
-  val EARTHQUAKE = new DisasterType("Earthquake")
-  val FLOOD = new DisasterType("Flood")
-  val LANDSLIDE = new DisasterType("Landslide")
-  val FIRE = new DisasterType("Fire")
-  val ANTHROPOGENIC = new DisasterType("Anthropogenic")
-  val NONE_OR_PREVENTIVE = new DisasterType("None or Preventive")
-  val list = List(TYPHOON, EARTHQUAKE, FLOOD, LANDSLIDE, FIRE, ANTHROPOGENIC, NONE_OR_PREVENTIVE)
-}
-
 sealed class ProjectType(override val name: String) extends PGObject("project_type", name) with ProjectType.Value
 object ProjectType extends Enum[ProjectType] {
   val BRIDGE = new ProjectType("Bridge")
@@ -40,6 +28,17 @@ object ProjectScope extends Enum[ProjectScope] {
   val RECONSTRUCTION = new ProjectScope("Reconstruction")
   val REPAIR = new ProjectScope("Repair")
   val PREVENTION = new ProjectScope("Prevention")
-  val OTHER = new ProjectScope("Other")
-  val list = List(RECONSTRUCTION, REPAIR, PREVENTION, OTHER)
+  val list = List(RECONSTRUCTION, REPAIR, PREVENTION)
+}
+
+sealed class DisasterType(override val name: String) extends PGObject("disaster_type", name) with DisasterType.Value
+object DisasterType extends Enum[DisasterType] {
+  val TYPHOON = new DisasterType("Typhoon")
+  val EARTHQUAKE = new DisasterType("Earthquake")
+  val FLOOD = new DisasterType("Flood")
+  val LANDSLIDE = new DisasterType("Landslide")
+  val FIRE = new DisasterType("Fire")
+  val ANTHROPOGENIC = new DisasterType("Anthropogenic")
+  val NONE_OR_PREVENTIVE = new DisasterType("None or Preventive")
+  val list = List(TYPHOON, EARTHQUAKE, FLOOD, LANDSLIDE, FIRE, ANTHROPOGENIC, NONE_OR_PREVENTIVE)
 }

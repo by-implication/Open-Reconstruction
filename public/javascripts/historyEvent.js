@@ -1,5 +1,34 @@
 var historyEvent = {}
 
+historyEvent.meta = function(verbed, data, date){
+  return m("p.meta", [
+    verbed,
+    " by ",
+    m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+    ", of ",
+    m("a", {href: "/agencies/" + data.govUnit.id, config: m.route}, data.govUnit.name),
+    " ",
+    helper.timeago(date)
+  ])
+}
+
+historyEvent.archiveAttachment = function(data){
+  var date = new Date(data.date);
+  var c = data.content.split(" ");
+  var attachmentId = c.pop();
+  var isImage = parseInt(c.pop());
+  var filename = c.join(" ");
+  return m(".event", [
+    historyEvent.date(date),
+    m(".details", [
+      m("p", [(isImage ? "Image" : "Document") + " archived: " + filename].concat(
+        common.attachmentActions.bind(this)({id: attachmentId, isArchived: true})
+      )),
+      historyEvent.meta("Archived", data, date)
+    ])
+  ])
+}
+
 historyEvent.editField = function(data){
   var date = new Date(data.date);
   var c = data.content.split(" ");
@@ -9,12 +38,7 @@ historyEvent.editField = function(data){
     historyEvent.date(date),
     m(".details", [
       m("p", "Project " + field + " was set to \"" + value + "\""),
-      m("p.meta", [
-        "modified by ",
-        m("a", {href: "/user/" + data.user.id, config: m.route}, data.user.name),
-        " ",
-        helper.timeago(date)
-      ])
+      historyEvent.meta("Modified", data, date)
     ]),
   ])
 }
@@ -41,12 +65,7 @@ historyEvent.newRequest = function(data){
     m(".details", [
       // m("h3", "Request posted"),
       m("p", "Request posted: " + data.content),
-      m("p.meta", [
-        "posted by ",
-        m("a", {href: "/user/" + data.user.id, config: m.route}, data.user.name),
-        " ",
-        helper.timeago(date)
-      ])
+      historyEvent.meta("Posted", data, date)
     ])
   ])
 }
@@ -73,12 +92,7 @@ historyEvent.assign = function(data){
         m("a", {href: "/agencies/" + agencyId}, agencyName),
         " was " + assignment + prepPhrase + " this project."
       ]),
-      m("p.meta", [
-        "assigned by ",
-        m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
-        " ",
-        helper.timeago(date)
-      ])
+      historyEvent.meta("Assigned", data, date)
     ])
   ])
 }
@@ -97,12 +111,7 @@ historyEvent.signoff = function(data){
         agencyName == "Department of Budget and Management" ?
         " has approved a SARO for this project." : " signed off on this project."
       ]),
-      m("p.meta", [
-        "signed off by ",
-        m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
-        " ",
-        helper.timeago(date)
-      ])
+      historyEvent.meta("Signed off", data, date)
     ])
   ])
 }
@@ -116,22 +125,11 @@ historyEvent.attachment = function(data){
   return m(".event", [
     historyEvent.date(date),
     m(".details", [
-      m("h3", isImage ? "Image" : "Document"),
       m("p", [
-        filename,
-        m("a", {title: "Preview", href: "/attachments/" + attachmentId + "/preview"}, [
-          m("i.fa.fa-lg.fa-eye.fa-fw"),
-        ]),
-        m("a", {title: "Download", href: "/attachments/" + attachmentId + "/download"}, [
-          m("i.fa.fa-lg.fa-download.fa-fw"),
-        ]),
+        (isImage ? "Image" : "Document") + " uploaded: " + filename,
+        common.attachmentActions.bind(this)({id: attachmentId})
       ]),
-      m("p.meta", [
-        "attached by ",
-        m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
-        " ",
-        helper.timeago(date)
-      ])
+      historyEvent.meta("Attached", data, date)
     ])
   ])
 }
@@ -139,35 +137,9 @@ historyEvent.attachment = function(data){
 historyEvent.comment = function(data){
   var date = new Date(data.date);
   return m(".event.comment", [
-    // historyEvent.date(date),
     m(".details", [
-      // m("h3", "Comment"),
       m("p", data.content),
-      m("p.meta", [
-        "posted by ",
-        m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
-        " ",
-        helper.timeago(date)
-      ])
-    ])
-  ])
-}
-
-historyEvent.reviseAmount = function(data){
-  var date = new Date(data.date);
-  return m(".event", [
-    historyEvent.date(date),
-    m(".details", [
-      m("h3", "Amount Revised"),
-      m("p", "From " + data.content.split(" ")
-        .map(function (amt){ return "PHP " + amt; })
-        .join(" to ")),
-      m("p.meta", [
-        "changed by ",
-        user ? "unknown" :
-        m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
-        helper.timeago(date)
-      ])
+      historyEvent.meta("Posted", data, date)
     ])
   ])
 }

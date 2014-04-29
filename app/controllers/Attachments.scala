@@ -13,15 +13,16 @@ object Attachments extends Controller with Secured {
     request.body.file("file").map { upload =>
       Req.findById(id).map { implicit req =>
         if(user.canEditRequest(req)){
-          Attachment(filename = upload.filename, uploaderId = user.id, isImage = typ == "img")
+          Attachment(filename = upload.filename, uploaderId = user.id, isImage = typ == "img", reqId = id)
               .create().map { a =>
             a.file.getParentFile().mkdirs()
             upload.ref.moveTo(a.file, true)
             if (a.isImage) ImageHandling.generateThumbnail(a)
             if(req.addToAttachments(a.id.get)){
-              Event.attachment(a).create().map(
-                _ => Rest.success("attachment" -> Attachment.insertJson(a, user))
-              ).getOrElse(Rest.serverError())
+              Event.attachment(a).create().map { e => Rest.success(
+                "attachment" -> Attachment.insertJson(a, user),
+                "event" -> e.listJson
+              )}.getOrElse(Rest.serverError())
             } else Rest.serverError()
           }.getOrElse(Rest.serverError())
         } else Rest.unauthorized()
@@ -43,5 +44,25 @@ object Attachments extends Controller with Secured {
       Ok.sendFile(attachment.thumb, true, _ => attachment.filename)
     }.getOrElse(NotFound)
   }
+
+  private def _archive(archive: Boolean)(id: Int) = UserAction(){ implicit user => implicit request =>
+    Attachment.findById(id).map { a =>
+      implicit val req = a.req
+      if(user.canEditRequest(req)){
+        if(a.archive(archive)){
+          if(archive){
+            Event.archiveAttachment(a).create().map { e =>
+              Rest.success("event" -> e.listJson)
+            }.getOrElse(Rest.serverError())
+          } else if(Event.unarchiveAttachment(a)){
+            Rest.success("doc" -> a.insertJson)
+          } else Rest.serverError()
+        } else Rest.serverError()
+      } else Rest.unauthorized()
+    }.getOrElse(Rest.notFound())
+  }
+
+  def archive = _archive(true) _
+  def unarchive = _archive(false) _
 
 }

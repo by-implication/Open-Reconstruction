@@ -42,6 +42,7 @@ trait Enum[A] {
 			val MetaDataItem(qualified,nullable,clazz) = meta
 			value match {
 				case pgo:PGobject if contains(pgo.getValue) => Right(withName(pgo.getValue))
+				case str:String => Right(withName(str))
 				case _ => Left(TypeDoesNotMatch("Cannot convert " + value + " for column " + qualified))
 			}
 		})

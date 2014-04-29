@@ -29,13 +29,13 @@ object Requests extends Controller with Secured {
         "hasSignedoff" -> Json.toJson(user.hasSignedoff(req)),
         "canSignoff" -> Json.toJson(user.canSignoff(req)),
         "author" -> User.findById(req.authorId).map(_.infoJson).getOrElse(JsNull),
-        "assessingAgencies" -> Json.toJson(Agency.withPermission(Permission.VALIDATE_REQUESTS).map(_.toJson)),
-        "implementingAgencies" -> Json.toJson(Agency.withPermission(Permission.IMPLEMENT_REQUESTS).map(_.toJson)),
+        "assessingAgencies" -> Json.toJson(GovUnit.withPermission(Permission.VALIDATE_REQUESTS).map(_.toJson)),
+        "implementingAgencies" -> Json.toJson(GovUnit.withPermission(Permission.IMPLEMENT_REQUESTS).map(_.toJson)),
         "assessingAgency" -> req.assessingAgencyId.map { aid =>
-          Agency.findById(aid).map(_.toJson).getOrElse(JsNull)
+          GovUnit.findById(aid).map(_.toJson).getOrElse(JsNull)
         }.getOrElse(JsNull),
         "implementingAgency" -> req.implementingAgencyId.map { aid =>
-          Agency.findById(aid).map(_.toJson).getOrElse(JsNull)
+          GovUnit.findById(aid).map(_.toJson).getOrElse(JsNull)
         }.getOrElse(JsNull),
         "attachments" -> {
           val (imgs, docs) = req.attachments.partition(_._1.isImage)
@@ -87,7 +87,9 @@ object Requests extends Controller with Secured {
   			_.copy(authorId = user.id).save().map { implicit r =>
           Event.newRequest().create().map { _ =>
             Event.disaster().create().map { _ =>
-  				    Rest.success("id" -> r.insertJson)
+              Checkpoint.push(user).map { _ =>
+  				      Rest.success("id" -> r.insertJson)
+              }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())
           }.getOrElse(Rest.serverError())
   			}.getOrElse(Rest.serverError())
@@ -100,20 +102,43 @@ object Requests extends Controller with Secured {
     Req.findById(id).map { r =>
 
       if(user.canSignoff(r)){
-        r.copy(level = r.level + 1).save().map( implicit r =>
-          Event.signoff(user.agency).create().map { _ =>
-            Rest.success()
-          }.getOrElse(Rest.serverError())
-        ).getOrElse(Rest.serverError())
+
+        val signoffForm: Form[Req] = Form(
+          mapping("password" -> nonEmptyText.verifying(
+            "Incorrect password",
+            User.authenticate(user.handle, _).isDefined
+          ))
+          (_ => r)
+          (_ => None)
+        )
+
+        signoffForm.bindFromRequest.fold(
+          Rest.formError(_),
+          r => r.copy(level = r.level + 1).save().map( implicit r =>
+            Event.signoff(user.govUnit).create().map { e =>
+              Checkpoint.push(user).map { _ =>
+                Rest.success("event" -> e.listJson)
+              }.getOrElse(Rest.serverError())
+            }.getOrElse(Rest.serverError())
+          ).getOrElse(Rest.serverError())
+        )
+
       } else Rest.unauthorized()
 
     }.getOrElse(Rest.notFound())
   }
 
   def index() = UserAction(){ implicit user => implicit request =>
+    val allRequests = Req.indexList()
     Ok(Json.obj(
-      "list" -> Req.indexList().map(_.indexJson),
-      "filters" -> ProjectType.jsonList
+      "list" -> allRequests.map(_.indexJson),
+      "filters" -> ProjectType.jsonList,
+      "counts" -> Json.obj(
+        "all" -> allRequests.length,
+        "signoff" -> allRequests.filter(req => user.canSignoff(req)).length,
+        "assessor" -> allRequests.filter(req => (req.level == 0 && !req.assessingAgencyId.isDefined)).length,
+        "mine" -> allRequests.filter(req => (User.findById(req.authorId).get.govUnitId == user.govUnitId)).length
+      )
     ))
   }
 
@@ -131,32 +156,34 @@ object Requests extends Controller with Secured {
 
   }
 
-  private def assignAgency(
-      isAuthorized: Agency => Boolean,
+  private def assignGovUnit(
+      isAuthorized: GovUnit => Boolean,
       assign: (Req, Int) => Req,
-      unassign: Req => (Req, Agency),
+      unassign: Req => (Req, GovUnit),
       agencyType: String
-    )(reqId: Int, agencyId: Int) = UserAction(){ implicit user => implicit request =>
+    )(reqId: Int, govUnitId: Int) = UserAction(){ implicit user => implicit request =>
     if(user.isSuperAdmin){
       Req.findById(reqId).map { implicit req =>
-        agencyId match {
+        govUnitId match {
           case 0 => {
-            val (r, agency) = unassign(req)
-            r.save().map { _ =>
-              Event.assign(agencyType, false, agency).create().map { _ =>
+            val (r, govUnit) = unassign(req)
+            r.save().map { r =>
+              Event.assign(agencyType, false, govUnit).create().map { _ =>
+                if(agencyType == "assess") Checkpoint.pop()(r)
                 Rest.success()
               }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())
           }
           case _ => {
-            Agency.findById(agencyId).map { agency =>
-              if(isAuthorized(agency)){
-                assign(req, agencyId).save().map { _ =>
-                  Event.assign(agencyType, true, agency).create().map { _ =>
+            GovUnit.findById(govUnitId).map { govUnit =>
+              if(isAuthorized(govUnit)){
+                assign(req, govUnitId).save().map { r =>
+                  Event.assign(agencyType, true, govUnit).create().map { _ =>
+                    if(agencyType == "assess") Checkpoint.push(user)(r)
                     Rest.success()
                   }.getOrElse(Rest.serverError())
                 }.getOrElse(Rest.serverError())
-              } else Rest.error("Agency not authorized to assess.")
+              } else Rest.error("GovUnit not authorized to assess.")
             }.getOrElse(Rest.notFound())
           }
         }
@@ -164,44 +191,19 @@ object Requests extends Controller with Secured {
     } else Rest.unauthorized()
   }
 
-  def assignAssessingAgency = assignAgency(
-    Agency.canAssess,
+  def assignAssessingAgency = assignGovUnit(
+    GovUnit.canAssess,
     (r, id) => r.copy(assessingAgencyId = Some(id)),
-    r => (r.copy(assessingAgencyId = None), Agency.findById(r.assessingAgencyId.get).get),
+    r => (r.copy(assessingAgencyId = None), GovUnit.findById(r.assessingAgencyId.get).get),
     "assess"
   ) _
 
-  def assignImplementingAgency = assignAgency(
-    Agency.canImplement,
+  def assignImplementingAgency = assignGovUnit(
+    GovUnit.canImplement,
     (r, id) => r.copy(implementingAgencyId = Some(id)),
-    r => (r.copy(implementingAgencyId = None), Agency.findById(r.implementingAgencyId.get).get),
+    r => (r.copy(implementingAgencyId = None), GovUnit.findById(r.implementingAgencyId.get).get),
     "implement"
   ) _
-
-  def reviseAmount(id: Int) = UserAction(){ implicit user => implicit request =>
-    if(!user.isAnonymous){
-      Req.findById(id).map { req =>
-        Form("amount" -> text.verifying("Invalid amount",
-          _amount => {
-            try {
-              val amount = BigDecimal(_amount)
-              (amount >= 0)
-            } catch {
-              case e: NumberFormatException => false
-            }
-          }
-        )).bindFromRequest.fold(
-          Rest.formError(_),
-          amount => req.copy(amount = BigDecimal(amount)).save().map { implicit req =>
-            Event.reviseAmount(amount).create().map { _ =>
-              Rest.success()
-            }.getOrElse(Rest.serverError())
-          }.getOrElse(Rest.serverError())
-        )
-      }.getOrElse(Rest.notFound())
-    } else Rest.unauthorized()
-
-  }
 
   private def editForm(field: String)(implicit req: Req): Form[Req] = Form(field match {
     case "description" => {

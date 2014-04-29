@@ -2,28 +2,27 @@ projectListing.view = function(ctrl){
   return app.template(ctrl.app, [
     common.banner("List of Requested Projects"),
     m("section", [
-      m(".row", [
-        m(".columns.medium-8", [
-          m(".clearfix", [
+      ctrl.app.currentUser() ?
+        m(".row", [
+          m(".columns.medium-9", [
+            common.tabs.view(ctrl.tabs, {className: "left", config: ctrl.setCurrentTab})
+          ]),
+          m(".columns.medium-3", [
             ctrl.app.isAuthorized(1) ?
               m(
-                "a.button.right", 
-                {href: "/projects/new", config: m.route}, 
+                "a.button", 
+                {href: "/requests/new", config: m.route}, 
                 "New Request"
               )
-            : "",
-            ctrl.app.currentUser() ?
-              common.tabs.view(ctrl.tabs, {className: "left", config: ctrl.setCurrentTab})
             : ""
           ]),
+        ])
+      : "",
+      m(".row", [
+        m(".columns.medium-9", [
           project.listView(ctrl)
         ]),
-      // ]),
-      // m(".row", [
-      //   m(".columns.medium-8", [
-          
-      //   ]),
-        m(".columns.medium-4", [
+        m(".columns.medium-3", [
           m("h4", [
             "Filter by Project Type"
           ]),

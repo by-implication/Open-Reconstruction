@@ -1,8 +1,14 @@
 project.controller = function(){
   var map;
   this.app = new app.controller();
-  this.projectTabs = new common.tabs.controller();
-  this.projectTabs.tabs([{label: "Assignments"}, {label: "Images"}, {label: "Documents"}, {label: "Activity"}]);
+  this.signoffModal = new common.modal.controller();
+  this.projectTabs = new common.tabs.controller('/requests/'+m.route.param('id'));
+  this.projectTabs.tabs([
+    {label: m.prop("Assignments"), href: 'assignments'},
+    {label: m.prop("Images"), href: 'images'},
+    {label: m.prop("Documents"), href: 'documents'},
+    {label: m.prop("Activity"), href: 'activity'}
+  ]);
   this.projectTabs.currentTab(this.projectTabs.tabs()[0].label)
 
   this.tabs = new common.tabs.controller();
@@ -107,12 +113,22 @@ project.controller = function(){
     this.oldProject(database.projectList()[this.id - 1]);
   }.bind(this))
 
-  this.signoff = function(){
-    m.request({method: "POST", url: "/requests/"+this.id+"/signoff"}).then(function(data){
-      this.canSignoff(false);
-      this.hasSignedoff(true);
-      // m.redraw();
-      alert('Signoff successful! Replace this message with something more useful.');
+  this.signoffModal.signoff = function(e){
+    e.preventDefault();
+    m.request({method: "POST",
+      url: "/requests/" + this.id + "/signoff",
+      data: {password: this.signoffModal.password},
+      config: app.xhrConfig
+    }).then(function (r){
+      if(r.success){
+        this.canSignoff(false);
+        this.hasSignedoff(true);
+        alert('Signoff successful!');
+        this.signoffModal.close();
+        this.history().unshift(r.event);
+      } else {
+        alert("Failed to signoff: " + r.messages.password);
+      }
     }.bind(this));
   }.bind(this);
 
@@ -145,13 +161,6 @@ project.controller = function(){
       console.log('Comment submitted!');
       this.refreshHistory();
     }.bind(this));
-  }.bind(this);
-
-  this.submitAmountRevision = function(e){
-    e.preventDefault()
-    m.request({method: "POST", url: "/requests/" + this.id + "/reviseAmount", data: {amount: this.input.amount}, config: app.xhrConfig}).then(function(r){
-      console.log('Amount revision submitted!');
-    });
   }.bind(this);
 
   this.updateAssessingAgency = function(e){
@@ -206,6 +215,7 @@ project.controller = function(){
 
       this.dropzone.on("success", function (_, r){
         this.attachments().imgs.push(r.attachment);
+        this.history().unshift(r.event);
         m.redraw();
       }.bind(this));
 
@@ -225,6 +235,7 @@ project.controller = function(){
 
       this.dropzone.on("success", function (_, r){
         this.attachments().docs.push(r.attachment);
+        this.history().unshift(r.event);
         m.redraw();
       }.bind(this));
 

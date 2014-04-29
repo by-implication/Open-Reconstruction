@@ -97,8 +97,9 @@ object PostgresMetadata {
         from pg_attribute
           join pg_class on pg_class.oid=attrelid
           join pg_type on pg_type.oid=atttypid
+          join pg_namespace on pg_namespace.oid=relnamespace
           left join pg_attrdef on adrelid=attrelid and adnum=attnum
-        where relname=? and attnum > 0;
+        where relname=? and nspname='codegen' and attnum > 0;
       """)
     queryStatement.setString(1, table)
     val result = queryStatement.executeQuery()
@@ -120,7 +121,7 @@ object PostgresMetadata {
   }
 
   def listEnums() = {
-    val statement = conn.prepareStatement("select t.typname as type, t.oid as oid from pg_type t left join pg_catalog.pg_namespace n on n.oid = t.typnamespace where (t.typrelid = 0 or (select c.relkind = 'c' from pg_catalog.pg_class c where c.oid = t.typrelid)) and not exists(select 1 from pg_catalog.pg_type el where el.oid = t.typelem and el.typarray = t.oid) and n.nspname not in ('pg_catalog', 'information_schema') and typtype='e'")
+    val statement = conn.prepareStatement("select t.typname as type, t.oid as oid from pg_type t left join pg_catalog.pg_namespace n on n.oid = t.typnamespace where (t.typrelid = 0 or (select c.relkind = 'c' from pg_catalog.pg_class c where c.oid = t.typrelid)) and not exists(select 1 from pg_catalog.pg_type el where el.oid = t.typelem and el.typarray = t.oid) and n.nspname = 'codegen' and typtype='e'")
     val result = statement.executeQuery()
     var enums: Seq[(String, Int)] = Seq.empty
     while(result.next) {

@@ -28,7 +28,7 @@ $tabs-vertical-navigation-margin-bottom: 1.25rem !default;
   @if $include-html-tabs-classes {
     .tabs {
       @include clearfix;
-      margin-bottom: 0 !important;
+      // margin-bottom: 0 !important;
       dd {
         position: relative;
         margin-bottom: 0 !important;

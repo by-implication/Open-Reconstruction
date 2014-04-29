@@ -17,24 +17,22 @@ object Event extends EventGen {
     userId = user.id.toOption
   )
 
-  def signoff(agency: Agency)(implicit req: Req, user: User) = {
-    generate("signoff", agency.name + " " + agency.id)
+  private def asContent(a: Attachment) = Seq(a.filename, if(a.isImage) 1 else 0, a.id).mkString(" ")
+
+  def signoff(govUnit: GovUnit)(implicit req: Req, user: User) = {
+    generate("signoff", govUnit.name + " " + govUnit.id)
   }
 
   def attachment(a: Attachment)(implicit req: Req, user: User) = {
-    generate("attachment", Seq(a.filename, if(a.isImage) 1 else 0, a.id).mkString(" "))
+    generate("attachment", asContent(a))
   }
 
   def comment(content: String)(implicit req: Req, user: User) = {
     generate("comment", content)
   }
 
-  def reviseAmount(amount: String)(implicit req: Req, user: User) = {
-    generate("reviseAmount", amount)
-  }
-
-  def assign(agencyType: String, assign: Boolean, agency: Agency)(implicit req: Req, user: User) = {
-    generate("assign", Seq(agency.name, agency.id, (if (assign) 1 else 0), agencyType).mkString(" "))
+  def assign(agencyType: String, assign: Boolean, govUnit: GovUnit)(implicit req: Req, user: User) = {
+    generate("assign", Seq(govUnit.name, govUnit.id, (if (assign) 1 else 0), agencyType).mkString(" "))
   }
 
   def newRequest()(implicit req: Req, user: User) = {
@@ -43,6 +41,19 @@ object Event extends EventGen {
 
   def disaster()(implicit req: Req, user: User) = {
     generate("disaster", req.disasterName.getOrElse("") + ":" + req.disasterType).copy(date = req.disasterDate)
+  }
+
+  def archiveAttachment(a: Attachment)(implicit req: Req, user: User) = {
+    generate("archiveAttachment", asContent(a))
+  }
+
+  def unarchiveAttachment(a: Attachment) = DB.withConnection { implicit c =>
+    SQL("""
+      DELETE FROM events
+      WHERE req_id = {reqId}
+      AND event_kind = 'archiveAttachment'
+      AND event_content ilike '% """ + a.id + """'
+    """).on('reqId -> a.reqId).executeUpdate > 0
   }
 
   def editField(field: String)(implicit req: Req, user: User) = {
@@ -54,9 +65,11 @@ object Event extends EventGen {
     generate("editField", fieldValue + " " + field)
   }
 
-  def findForRequest(id: Int) = DB.withConnection { implicit c =>
-    SQL("SELECT * FROM events WHERE req_id = {reqId} ORDER BY event_date DESC")
-    .on('reqId -> id).list(simple)
+  def findForRequest(id: Int)(implicit user: User): Seq[Event] = DB.withConnection { implicit c =>
+    SQL("SELECT * FROM events WHERE req_id = {reqId}" +
+    (if(user.isAnonymous) " AND event_kind != 'comment' " else "") +
+    "ORDER BY event_date DESC"
+    ).on('reqId -> id).list(simple)
   }
 
 }
@@ -80,6 +93,10 @@ case class Event(
     "user" -> userId.map(User.findById(_).map(u => Json.obj(
       "id" -> u.id.get,
       "name" -> u.name
+    ))),
+    "govUnit" -> userId.map(User.findById(_).map(u => Json.obj(
+      "id" -> u.govUnit.id.get,
+      "name" -> u.govUnit.name
     )))
   )
 

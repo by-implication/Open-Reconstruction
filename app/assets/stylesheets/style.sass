@@ -43,7 +43,7 @@ ul
 
 table
   width: 100%
-  margin-top: 20px
+  // margin-top: 20px
 
 h1
   font-weight: bold
@@ -167,7 +167,7 @@ section.history
   color: $gray
 
 h1 small
-  color: $orange
+  color: $accent
 
 .legend
   margin-left: 36px
@@ -324,7 +324,7 @@ label
   text-align: center
   color: $gray
 
-button.micro
+button.micro, .button.micro
   @extend .tiny
   padding: 6px 8px
 
@@ -346,4 +346,118 @@ button.micro
     .save-button
       float: left
 
+.lgu
+  .add
+    display: none
+    margin-bottom: 0px
+    margin-left: 14px
+  .info
+    line-height: 40px
+    &:hover
+      .add
+        display: inline-block
+
+  .children
+    margin-left: 20px
+
+.expander
+  display: inline-block
+  text-align: center
+  margin-right: 10px
+  cursor: default
+  width: 24px
+  &.expanded
+    cursor: pointer
+  .control
+    display: inline-block
+    text-align: center
+    width: 24px
+    height: 24px
+    border-radius: 2px
+    &:hover
+      background-color: #eee
+    i
+      +transition(all 0.2s)
+  input[type="checkbox"]
+    display: none
+    &:checked + .control
+      i
+        +transform(rotateZ(90deg))
+        +transform-origin(center)
+
+  
+.tabs-content
+  &.vertical
+    padding: 0px 20px
+
+.tabs
+  dd > a
+    +transition(all 0.2s)
+    background-color: transparent
+    border: 0px
+    border-bottom-width: 1px
+    border-style: solid
+    border-color: #ddd
+    color: #ccc
+    .label
+      +transition(all 0.2s)
+      margin-left: 6px
+      margin-right: 0
+      background-color: transparent
+      border: 1px solid #ccc
+      color: #ccc
+    &:hover
+      background-color: transparent
+      border-color: #333
+      color: #333
+      .label
+        border-color: #333
+        color: #333
+  dd.active > a
+    border-color: $accent
+    color: $accent
+    .label
+      border-color: $accent
+      color: $accent
+  &.vertical
+    dd > a
+      border-bottom-width: 0px
+      border-right-width: 1px
+      text-align: right
+
+.modal
+  +transition(all 0.4s)
+  padding: 0
+  width: 100%
+  position: absolute
+  z-index: 1020
+  opacity: 0
+  .curtain
+    position: absolute
+    width: 100%
+    height: 100%
+    background-color: rgba(black, 0.5)
+  .dialog
+    +transition(all 0.4s)
+    position: relative
+    top: -999px
+    padding-top: 40px
+
+.top-bar-section
+  .label
+    margin-right: 0
+    margin-left: 10px
+
+.field-icon
+  text-align: right
+
+.age
+  white-space: nowrap
+  &.alert
+    color: $red
+
+.m-grow
+  +transition(all 0.4s)
+  max-height: 0px
+  overflow: hidden
   

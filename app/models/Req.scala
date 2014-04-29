@@ -44,6 +44,22 @@ case class Req(
 // GENERATED case class end
 {
 
+  lazy val currentCheckpoint: Option[Checkpoint] = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT * FROM checkpoints
+      WHERE req_id = {reqId}
+      ORDER BY checkpoint_date_received DESC LIMIT 1
+    """).on('reqId -> id).singleOpt(Checkpoint.simple)
+  }
+
+  def age(level: Int = level): Option[Long] = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT * FROM checkpoints
+      WHERE req_id = {reqId}
+      ORDER BY checkpoint_level DESC
+    """).on('reqId -> id).list(Checkpoint.simple).headOption.map(_.duration)
+  }
+
   def addToAttachments(attachmentId: Int): Boolean = DB.withConnection { implicit c =>
     SQL("""
       UPDATE reqs
@@ -72,9 +88,13 @@ case class Req(
     "id" -> id.get,
     "description" -> description,
     "projectType" -> projectType.name,
+    "age" -> age(),
     "level" -> level,
     "amount" -> amount,
-    "author" -> Map("agency" -> author.agency.name),
+    "author" -> Json.obj(
+      "agency" -> author.govUnit.name,
+      "govUnitId" -> author.govUnit.id.get
+      ),
     "authorId" -> authorId,
     "assessingAgencyId" -> assessingAgencyId,
     "canSignoff" -> user.canSignoff(this)

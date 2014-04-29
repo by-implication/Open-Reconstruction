@@ -1,9 +1,9 @@
-new function(window) {
+Mithril = m = new function app(window) {
 	var selectorCache = {}
 	var type = {}.toString
 	var parser = /(?:(^|#|\.)([^#\.\[\]]+))|(\[.+?\])/g, attrParser = /\[(.+?)(?:=("|'|)(.+?)\2)?\]/
 	
-	Mithril = m = function() {
+	function m() {
 		var args = arguments
 		var hasAttrs = type.call(args[1]) == "[object Object]"
 		var attrs = hasAttrs ? args[1] : {}
@@ -32,7 +32,7 @@ new function(window) {
 		}
 		return cell
 	}
-	function build(parent, data, cached, shouldReattach, index, namespace) {
+	function build(parentElement, parentTag, data, cached, shouldReattach, index, namespace) {
 		if (data === null || data === undefined) {
 			if (cached) clear(cached.nodes)
 			return 
@@ -48,23 +48,23 @@ new function(window) {
 		
 		if (dataType == "[object Array]") {
 			var nodes = [], intact = cached.length === data.length, subArrayCount = 0
-			for (var i = 0; i < data.length; i++) {
-				var item = build(parent, data[i], cached[i], shouldReattach, index + subArrayCount || subArrayCount, namespace)
+			for (var i = 0, cacheCount = 0; i < data.length; i++) {
+				var item = build(parentElement, null, data[i], cached[cacheCount], shouldReattach, index + subArrayCount || subArrayCount, namespace)
 				if (item === undefined) continue
 				if (!item.nodes.intact) intact = false
 				subArrayCount += item instanceof Array ? item.length : 1
-				cached[i] = item
+				cached[cacheCount++] = item
 			}
 			if (!intact) {
 				for (var i = 0; i < data.length; i++) if (cached[i] !== undefined) nodes = nodes.concat(cached[i].nodes)
 				for (var i = nodes.length, node; node = cached.nodes[i]; i++) if (node.parentNode !== null) node.parentNode.removeChild(node)
-				for (var i = cached.nodes.length, node; node = nodes[i]; i++) if (node.parentNode === null) parent.appendChild(node)
-				cached.length = data.length
+				for (var i = cached.nodes.length, node; node = nodes[i]; i++) if (node.parentNode === null) parentElement.appendChild(node)
+				if (data.length < cached.length) cached.length = data.length
 				cached.nodes = nodes
 			}
 		}
 		else if (dataType == "[object Object]") {
-			if (data.tag != cached.tag || Object.keys(data.attrs).join() != Object.keys(cached.attrs).join()) clear(cached.nodes)
+			if (data.tag != cached.tag || Object.keys(data.attrs).join() != Object.keys(cached.attrs).join() || data.attrs.id != cached.attrs.id) clear(cached.nodes)
 			if (typeof data.tag != "string") return
 			
 			var node, isNew = cached.nodes.length === 0
@@ -73,18 +73,18 @@ new function(window) {
 				node = namespace === undefined ? window.document.createElement(data.tag) : window.document.createElementNS(namespace, data.tag)
 				cached = {
 					tag: data.tag,
-					attrs: setAttributes(node, data.attrs, {}, namespace),
-					children: build(node, data.children, cached.children, true, 0, namespace),
+					attrs: setAttributes(node, data.tag, data.attrs, {}, namespace),
+					children: build(node, data.tag, data.children, cached.children, true, 0, namespace),
 					nodes: [node]
 				}
-				parent.insertBefore(node, parent.childNodes[index] || null)
+				parentElement.insertBefore(node, parentElement.childNodes[index] || null)
 			}
 			else {
 				node = cached.nodes[0]
-				setAttributes(node, data.attrs, cached.attrs, namespace)
-				cached.children = build(node, data.children, cached.children, false, 0, namespace)
+				setAttributes(node, data.tag, data.attrs, cached.attrs, namespace)
+				cached.children = build(node, data.tag, data.children, cached.children, false, 0, namespace)
 				cached.nodes.intact = true
-				if (shouldReattach === true) parent.insertBefore(node, parent.childNodes[index] || null)
+				if (shouldReattach === true) parentElement.insertBefore(node, parentElement.childNodes[index] || null)
 			}
 			if (type.call(data.attrs["config"]) == "[object Function]") data.attrs["config"](node, !isNew)
 		}
@@ -92,11 +92,11 @@ new function(window) {
 			var node
 			if (cached.nodes.length === 0) {
 				if (data.$trusted) {
-					node = injectHTML(parent, index, data)
+					node = injectHTML(parentElement, index, data)
 				}
 				else {
 					node = window.document.createTextNode(data)
-					parent.insertBefore(node, parent.childNodes[index] || null)
+					parentElement.insertBefore(node, parentElement.childNodes[index] || null)
 				}
 				cached = "string number boolean".indexOf(typeof data) > -1 ? new data.constructor(data) : data
 				cached.nodes = [node]
@@ -107,13 +107,14 @@ new function(window) {
 					if (current) {
 						while (current = current.nextSibling) nodes.push(current)
 						clear(nodes)
-						node = injectHTML(parent, index, data)
+						node = injectHTML(parentElement, index, data)
 					}
-					else parent.innerHTML = data
+					else parentElement.innerHTML = data
 				}
 				else {
 					node = cached.nodes[0]
-					parent.insertBefore(node, parent.childNodes[index] || null)
+					if (parentTag === "textarea") parentElement.value = data
+					else parentElement.insertBefore(node, parentElement.childNodes[index] || null)
 					node.nodeValue = data
 				}
 				cached = new data.constructor(data)
@@ -124,7 +125,7 @@ new function(window) {
 		
 		return cached
 	}
-	function setAttributes(node, dataAttrs, cachedAttrs, namespace) {
+	function setAttributes(node, tag, dataAttrs, cachedAttrs, namespace) {
 		for (var attrName in dataAttrs) {
 			var dataAttr = dataAttrs[attrName]
 			var cachedAttr = cachedAttrs[attrName]
@@ -144,6 +145,9 @@ new function(window) {
 					else if (attrName === "className") node.setAttribute("class", dataAttr)
 					else node.setAttribute(attrName, dataAttr)
 				}
+				else if (attrName === "value" && tag === "input") {
+					if (node.value !== dataAttr) node.value = dataAttr
+				}
 				else if (attrName in node) node[attrName] = dataAttr
 				else node.setAttribute(attrName, dataAttr)
 			}
@@ -154,11 +158,11 @@ new function(window) {
 		for (var i = 0; i < nodes.length; i++) nodes[i].parentNode.removeChild(nodes[i])
 		nodes.length = 0
 	}
-	function injectHTML(parent, index, data) {
-		var nextSibling = parent.childNodes[index]
+	function injectHTML(parentElement, index, data) {
+		var nextSibling = parentElement.childNodes[index]
 		if (nextSibling) nextSibling.insertAdjacentHTML("beforebegin", data)
-		else parent.insertAdjacentHTML("beforeend", data)
-		return nextSibling ? nextSibling.previousSibling : parent.firstChild
+		else parentElement.insertAdjacentHTML("beforeend", data)
+		return nextSibling ? nextSibling.previousSibling : parentElement.firstChild
 	}
 	function clone(object) {
 		var result = {}
@@ -198,7 +202,7 @@ new function(window) {
 		var index = nodeCache.indexOf(root)
 		var id = index < 0 ? nodeCache.push(root) - 1 : index
 		var node = root == window.document || root == window.document.documentElement ? documentNode : root
-		cellCache[id] = build(node, cell, cellCache[id], false, 0)
+		cellCache[id] = build(node, null, cell, cellCache[id], false, 0)
 	}
 	
 	m.trust = function(value) {
@@ -207,16 +211,20 @@ new function(window) {
 		return value
 	}
 	
-	var currentRoot, currentModule = {view: function() {}}, currentController = {}, now = 0, lastRedraw = 0, lastRedrawId = 0
+	var roots = [], modules = [], controllers = [], now = 0, lastRedraw = 0, lastRedrawId = 0
 	m.module = function(root, module) {
 		m.startComputation()
-		currentRoot = root
-		currentModule = module
-		currentController = new module.controller
+		var index = roots.indexOf(root)
+		if (index < 0) index = roots.length
+		roots[index] = root
+		modules[index] = module
+		controllers[index] = new module.controller
 		m.endComputation()
 	}
 	m.redraw = function() {
-		m.render(currentRoot, currentModule.view(currentController))
+		for (var i = 0; i < roots.length; i++) {
+			m.render(roots[i], modules[i].view(controllers[i]))
+		}
 		lastRedraw = now
 	}
 	function redraw() {
@@ -290,6 +298,7 @@ new function(window) {
 	m.route.param = function(key) {return routeParams[key]}
 	m.route.mode = "search"
 	function routeByValue(root, router, path) {
+		m.route.path = path
 		routeParams = {}
 		for (var route in router) {
 			if (route == path) return !void m.module(root, router[route])
@@ -315,14 +324,14 @@ new function(window) {
 	
 	//model
 	m.prop = function(store) {
-		var f = function() {
+		var prop = function() {
 			if (arguments.length) store = arguments[0]
 			return store
 		}
-		f.toJSON = function(){
+		prop.toJSON = function() {
 			return store
 		}
-		return f
+		return prop
 	}
 
 	m.deferred = function() {
@@ -426,11 +435,12 @@ new function(window) {
 		var deferred = m.deferred()
 		var serialize = xhrOptions.serialize || JSON.stringify
 		var deserialize = xhrOptions.deserialize || JSON.parse
+		var extract = xhrOptions.extract || function(xhr, xhrOptions) {return xhr.responseText}
 		xhrOptions.url = parameterizeUrl(xhrOptions.url, xhrOptions.data)
 		xhrOptions = bindData(xhrOptions, xhrOptions.data, serialize)
 		xhrOptions.onload = xhrOptions.onerror = function(e) {
 			var unwrap = (e.type == "load" ? xhrOptions.unwrapSuccess : xhrOptions.unwrapError) || identity
-			var response = unwrap(deserialize(e.target.responseText))
+			var response = unwrap(deserialize(extract(e.target, xhrOptions)))
 			if (response instanceof Array && xhrOptions.type) {
 				for (var i = 0; i < response.length; i++) response[i] = new xhrOptions.type(response[i])
 			}
@@ -452,9 +462,11 @@ new function(window) {
 		}
 	}
 	
-	if (typeof module != "undefined" && module !== null) module.exports = m
-	if (typeof define == "function" && define.amd) define(function() {return m})
-	
 	//testing API
 	m.deps = function(mock) {return window = mock}
+	
+	return m
 }(this)
+
+if (typeof module != "undefined" && module !== null) module.exports = m
+if (typeof define == "function" && define.amd) define(function() {return m})
