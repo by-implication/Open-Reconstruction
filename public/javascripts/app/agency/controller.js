@@ -10,7 +10,7 @@ agency.controller = function(){
   });
   this.users = m.prop([])
 
-  bi.ajax(routes.controllers.GovUnits.viewMeta(this.slug()), {config: app.xhrConfig}).then(function (r){
+  bi.ajax(routes.controllers.GovUnits.viewMeta(this.slug())).then(function (r){
     if(r.success){
       self.agency(r.agency)
       self.users(r.users)

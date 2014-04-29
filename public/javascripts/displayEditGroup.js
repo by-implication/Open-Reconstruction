@@ -17,8 +17,7 @@ var displayEditGroup = {
             m("button.micro.save-button", 
               {type: "button", onclick: function(){
                 bi.ajax(routes.controllers.Requests.editField(ctrl.req().id, ctrl.field), {
-                  data: {input: ctrl.input},
-                  config: app.xhrConfig
+                  data: {input: ctrl.input}
                 }).then(function (r){
                   if(r.success){
                     ctrl.req()[ctrl.field] = ctrl.input();

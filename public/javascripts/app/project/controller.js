@@ -116,8 +116,7 @@ project.controller = function(){
   this.signoffModal.signoff = function(e){
     e.preventDefault();
     bi.ajax(routes.controllers.Requests.signoff(this.id), {
-      data: {password: this.signoffModal.password},
-      config: app.xhrConfig
+      data: {password: this.signoffModal.password}
     }).then(function (r){
       if(r.success){
         this.canSignoff(false);
@@ -156,7 +155,7 @@ project.controller = function(){
 
   this.submitComment = function(e){
     e.preventDefault()
-    bi.ajax(routes.controllers.Requests.comment(this.id), {data: {content: this.input.comment}, config: app.xhrConfig}).then(function(r){
+    bi.ajax(routes.controllers.Requests.comment(this.id), {data: {content: this.input.comment}}).then(function(r){
       console.log('Comment submitted!');
       this.refreshHistory();
     }.bind(this));

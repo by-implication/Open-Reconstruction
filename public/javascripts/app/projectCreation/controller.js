@@ -87,7 +87,7 @@ projectCreation.controller = function(){
   this.submitNewRequest = function(e){
     e.preventDefault();
     if(this.preamble()) {
-      bi.ajax(routes.controllers.Requests.insert(), {data: this.input, config: app.xhrConfig}).then(function(r){
+      bi.ajax(routes.controllers.Requests.insert(), {data: this.input}).then(function(r){
         if(r.success){
           window.location = '/';
         } else if(r.reason == "form error"){

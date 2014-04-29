@@ -24,7 +24,7 @@ lguCreation.controller = function(){
 
   this.submit = function(e){
     e.preventDefault();
-    bi.ajax(routes.controllers.GovUnits.lguInsert(this.level, this.parentId), {data: this.input, config: app.xhrConfig}).then(function (r){
+    bi.ajax(routes.controllers.GovUnits.lguInsert(this.level, this.parentId), {data: this.input}).then(function (r){
       if(r.success){
         window.location = "/admin/lgus";
       } else if(r.reason == "form error"){

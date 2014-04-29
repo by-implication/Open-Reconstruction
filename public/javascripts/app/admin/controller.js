@@ -9,7 +9,7 @@ admin.controller = function(){
   ]);
   this.regions = m.prop([]);
 
-  bi.ajax(routes.controllers.GovUnits.createMeta(), {config: app.xhrConfig}).then(function (r){
+  bi.ajax(routes.controllers.GovUnits.createMeta()).then(function (r){
     if(r.success){
       var roles = _.object(r.roles.map(function(role) {
         return [role.id, role.name];
@@ -20,7 +20,7 @@ admin.controller = function(){
     }
   }.bind(this));
 
-  bi.ajax(routes.controllers.GovUnits.allMeta(), {config: app.xhrConfig}).then(function (r){
+  bi.ajax(routes.controllers.GovUnits.allMeta()).then(function (r){
     if(r.success){
       this.agencyList(r.agencies);
     } else {
@@ -28,7 +28,7 @@ admin.controller = function(){
     }
   }.bind(this));
 
-  bi.ajax(routes.controllers.GovUnits.lguListing(), {config: app.xhrConfig}).then(function (r){
+  bi.ajax(routes.controllers.GovUnits.lguListing()).then(function (r){
 
     var regions = [];
     r.regions
