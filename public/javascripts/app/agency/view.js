@@ -14,7 +14,7 @@ agency.view = function(ctrl){
           ctrl.app.isAgencyAdmin(ctrl.agency().id) ?
             m("a.button", 
               {
-                href: ("/agencies/"+ctrl.agency().id+"/newUser"), 
+                href: routes.controllers.Users.create(ctrl.agency().id).url,
                 config: m.route
               }, 
               ["Add new user"]
@@ -42,7 +42,7 @@ agency.view = function(ctrl){
               ctrl.users().map(function(u){
                 return m("tr", [
                   m("td", [
-                    m("a", {href: "/users/" + u.id, config: m.route}, [
+                    m("a", {href: routes.controllers.Users.view(u.id).url, config: m.route}, [
                       u.name
                     ]),
                   ]),

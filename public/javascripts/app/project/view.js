@@ -80,7 +80,7 @@ project.view = function(ctrl){
                         "Assessing Agency",
                         m("h4", [
                           ctrl.assessingAgency() ?
-                            m("a", {href: "/agencies/"+ctrl.assessingAgency().id, config: m.route}, [
+                            m("a", {href: routes.controllers.GovUnits.view(ctrl.assessingAgency().id).url, config: m.route}, [
                               ctrl.assessingAgency().name
                             ])
                           : "Unassigned"
@@ -93,7 +93,7 @@ project.view = function(ctrl){
                         "Implementing Agency",
                         m("h4", [
                           ctrl.implementingAgency() ?
-                            m("a", {href: "/agencies/"+ctrl.implementingAgency().id, config: m.route}, [
+                            m("a", {href: routes.controllers.GovUnits.view(ctrl.implementingAgency().id).url, config: m.route}, [
                               ctrl.implementingAgency().name
                             ])
                           : "Unassigned"
@@ -114,16 +114,16 @@ project.view = function(ctrl){
                     ctrl.attachments().imgs.length ?
                       m("ul.attachments-images.small-block-grid-4", ctrl.attachments().imgs.map(function (img){
                         return m("li", [
-                          m("img", {src: "/attachments/" + img.id + "/thumb"}),
+                          m("img", {src: routes.controllers.Attachments.thumb(img.id).url}),
                           m(".filename", [
-                            m("a", {title: "Preview", href: "/attachments/" + img.id + "/preview", target: "_blank"}, [
+                            m("a", {title: "Preview", href: routes.controllers.Attachments.preview(img.id).url, target: "_blank"}, [
                               img.filename
                             ]),
                           ]),
                           
                           m(".uploader", [
                             "Uploaded by ",
-                            m("a", {href: "/users/" + img.uploader.id ,config: m.route},[
+                            m("a", {href: routes.controllers.Users.view(img.uploader.id).url, config: m.route},[
                               img.uploader.name
                             ]),
                             m(".date", [
@@ -159,7 +159,7 @@ project.view = function(ctrl){
                               m("td", doc.filename),
                               m("td", common.displayDate(doc.dateUploaded)),
                               m("td", [
-                                m("a", {href: "/users/" + doc.uploader.id}, doc.uploader.name)
+                                m("a", {href: routes.controllers.Users.view(doc.uploader.id).url}, doc.uploader.name)
                               ]),
                               m("td", common.attachmentActions.bind(ctrl)(doc))
                             ])
@@ -221,7 +221,7 @@ project.summary = function(ctrl){
       ),
       m("p.meta", [
         "Posted by ",
-        m("a",{href: "/users/"+ctrl.project().authorId, config: m.route}, ctrl.author().name),
+        m("a",{href: routes.controllers.Users.view(ctrl.project().authorId).url, config: m.route}, ctrl.author().name),
         m("br"),
         " on "+(new Date(ctrl.project().date).toString()), // change this as people modify this. "Last edited by _____"
       ]),

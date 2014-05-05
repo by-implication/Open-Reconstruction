@@ -18,8 +18,8 @@ GET     /admin/agencies/meta                      controllers.GovUnits.listAgenc
 
 GET     /assets/*file                             controllers.Assets.at(path="/public", file)
 
-GET     /login                                    controllers.Users.loginView
-POST    /login                                    controllers.Users.login
+GET     /login                                    controllers.Users.login
+POST    /login                                    controllers.Users.authenticate
 GET     /logout                                   controllers.Users.logout
 
 GET     /users/meta                               controllers.Users.meta
@@ -27,10 +27,12 @@ GET     /users/:id                                controllers.Users.view(id: Int
 GET     /users/:id/meta                           controllers.Users.viewMeta(id: Int)
 
 GET     /requests                                 controllers.Requests.index
-GET     /requests/all                             controllers.Requests.index
-GET     /requests/mine                            controllers.Requests.index
-GET     /requests/assessor                        controllers.Requests.index
-GET     /requests/signoff                         controllers.Requests.index
+GET     /requests/all                             controllers.Requests.indexAll
+GET     /requests/approval                        controllers.Requests.indexApproval
+GET     /requests/assessor                        controllers.Requests.indexAssessor
+GET     /requests/implementation                  controllers.Requests.indexImplementation
+GET     /requests/mine                            controllers.Requests.indexMine
+GET     /requests/signoff                         controllers.Requests.indexSignoff
 GET     /requests/meta                            controllers.Requests.indexMeta
 
 GET     /requests/new                             controllers.Requests.create
@@ -38,10 +40,10 @@ GET     /requests/meta                            controllers.Requests.createMet
 POST    /requests/new                             controllers.Requests.insert
 
 GET     /requests/:id                             controllers.Requests.view(id: Int)
-GET     /requests/:id/assignments                 controllers.Requests.view(id: Int)
-GET     /requests/:id/images                      controllers.Requests.view(id: Int)
-GET     /requests/:id/documents                   controllers.Requests.view(id: Int)
-GET     /requests/:id/activity                    controllers.Requests.view(id: Int)
+GET     /requests/:id/assignments                 controllers.Requests.viewAssignments(id: Int)
+GET     /requests/:id/images                      controllers.Requests.viewImages(id: Int)
+GET     /requests/:id/documents                   controllers.Requests.viewDocuments(id: Int)
+GET     /requests/:id/activity                    controllers.Requests.viewActivity(id: Int)
 GET     /requests/:id/meta                        controllers.Requests.viewMeta(id: Int)
 
 POST    /requests/:id/signoff                     controllers.Requests.signoff(id: Int)
@@ -57,13 +59,13 @@ GET     /attachments/:id/thumb                    controllers.Attachments.thumb(
 POST    /attachments/:id/archive                  controllers.Attachments.archive(id: Int)
 POST    /attachments/:id/unarchive                controllers.Attachments.unarchive(id: Int)
 
-GET     /gov-units/new                            controllers.GovUnits.create
-GET     /gov-units/new/meta                       controllers.GovUnits.createMeta
-POST    /gov-units/new                            controllers.GovUnits.insert
+GET     /gov-units/new/agency                     controllers.GovUnits.createAgency
+GET     /gov-units/new/agency/meta                controllers.GovUnits.createAgencyMeta
+POST    /gov-units/new/agency                     controllers.GovUnits.insertAgency
 GET     /gov-units/new/lgu/:l/:id                 controllers.GovUnits.createLgu(l: Int, id: Int)
 GET     /gov-units/new/lgu/:l/:id/meta            controllers.GovUnits.createLguMeta(l: Int, id: Int)
 POST    /gov-units/new/lgu/:l/:id                 controllers.GovUnits.insertLgu(l: Int, id: Int)
 GET     /gov-units/:id                            controllers.GovUnits.view(id: Int)
 GET     /gov-units/:id/meta                       controllers.GovUnits.viewMeta(id: Int)
-GET     /gov-units/:id/newUser                    controllers.Users.create(id: Int)
-POST    /gov-units/:id/newUser                    controllers.Users.insert(id: Int)
+GET     /gov-units/:id/new-user                    controllers.Users.create(id: Int)
+POST    /gov-units/:id/new-user                    controllers.Users.insert(id: Int)

@@ -10,9 +10,9 @@ import recon.support._
 
 object Users extends Controller with Secured {
 
-  def loginView = Application.index
+  def login = Application.index
 
-  def login = UserAction(){ implicit user => implicit request =>
+  def authenticate = UserAction(){ implicit user => implicit request =>
     if (Secured.attemptLogin(request.remoteAddress)) {
 
       val loginForm: Form[Option[User]] = Form(

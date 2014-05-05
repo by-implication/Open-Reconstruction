@@ -30,7 +30,7 @@ projectListing.controller = function(){
   this.tabs.tabs = m.prop([
     {
       label: m.prop("All"), 
-      href: "all", 
+      href: routes.controllers.Requests.indexAll().url, 
       badge: badges.all, 
       identifier: this.tabFilters.ALL
     },
@@ -39,7 +39,7 @@ projectListing.controller = function(){
       when: function(){
         return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 5);
       }, 
-      href: "signoff", 
+      href: routes.controllers.Requests.indexSignoff().url, 
       badge: badges.signoff, 
       identifier: this.tabFilters.SIGNOFF
     },
@@ -48,7 +48,7 @@ projectListing.controller = function(){
       when: function(){
         return self.app.isSuperAdmin();
       }, 
-      href: "assessor", 
+      href: routes.controllers.Requests.indexAssessor().url, 
       badge: badges.assessor, 
       identifier: this.tabFilters.ASSESSOR
     },
@@ -57,7 +57,7 @@ projectListing.controller = function(){
       when: function(){
         return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 1);
       }, 
-      href: "mine", 
+      href: routes.controllers.Requests.indexMine().url, 
       badge: badges.mine, 
       identifier: this.tabFilters.MINE
     },
@@ -66,7 +66,7 @@ projectListing.controller = function(){
       when: function(){
         return !self.app.currentUser();
       }, 
-      href: "approval", 
+      href: routes.controllers.Requests.indexApproval().url, 
       badge: badges.approval, 
       identifier: this.tabFilters.APPROVAL
     },
@@ -75,7 +75,7 @@ projectListing.controller = function(){
       when: function(){
         return !self.app.currentUser();
       }, 
-      href: "implementation", 
+      href: routes.controllers.Requests.indexImplementation().url, 
       badge: badges.implementation, 
       identifier: this.tabFilters.IMPLEMENTATION
     },

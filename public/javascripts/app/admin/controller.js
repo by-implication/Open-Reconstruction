@@ -4,12 +4,12 @@ admin.controller = function(){
   this.roles = m.prop({});
   this.tabs = new common.tabs.controller("/admin");
   this.tabs.tabs = m.prop([
-    {label: m.prop("Agencies"), href: "agencies"}, 
-    {label: m.prop("LGUs"), href: "lgus"}
+    {label: m.prop("Agencies"), href: routes.controllers.Application.adminAgencies().url}, 
+    {label: m.prop("LGUs"), href: routes.controllers.Application.adminLgus().url}
   ]);
   this.regions = m.prop([]);
 
-  bi.ajax(routes.controllers.GovUnits.createMeta()).then(function (r){
+  bi.ajax(routes.controllers.GovUnits.createAgencyMeta()).then(function (r){
     if(r.success){
       var roles = _.object(r.roles.map(function(role) {
         return [role.id, role.name];

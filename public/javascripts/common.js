@@ -56,10 +56,10 @@ common.day = function(ms){
 
 common.attachmentActions = function(attachment){
   return [
-    m("a", {title: "Preview", href: "/attachments/" + attachment.id + "/preview", target: "_blank"}, [
+    m("a", {title: "Preview", href: routes.controllers.Attachments.preview(attachment.id).url, target: "_blank"}, [
       m("i.fa.fa-lg.fa-fw.fa-eye"),
     ]),
-    m("a", {title: "Download", href: "/attachments/" + attachment.id + "/download"}, [
+    m("a", {title: "Download", href: routes.controllers.Attachments.download(attachment.id).url}, [
       m("i.fa.fa-lg.fa-fw.fa-download"),
     ]),
     this.canEdit() ? attachment.isArchived ?
