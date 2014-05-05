@@ -111,6 +111,9 @@ projectListing.controller = function(){
     badges.signoff(r.counts.signoff);
     badges.assessor(r.counts.assessor);
     badges.mine(r.counts.mine);
+    // replace this with real shit
+    badges.approval(1);
+    badges.implementation(1);
   
     self.filteredList = _.chain(self.projectList)
       .filter(function(p){
