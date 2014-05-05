@@ -17,14 +17,11 @@ projectListing.view = function(ctrl){
         ])
       : "",
 
-      ctrl.app.currentUser() ?
-        m(".row", [
-          m(".columns.medium-12", [
-            common.tabs.view(ctrl.tabs, {className: "left", config: ctrl.setCurrentTab})
-          ]),
-        ])
-      : "",
-
+      m(".row", [
+        m(".columns.medium-12", [
+          common.tabs.view(ctrl.tabs, {className: "left", config: ctrl.setCurrentTab})
+        ]),
+      ]),
       m(".row", [
         m(".columns.medium-9", [
           project.listView(ctrl)

@@ -6,13 +6,17 @@ projectListing.controller = function(){
     all: m.prop(),
     signoff: m.prop(),
     assessor: m.prop(),
-    mine: m.prop()
+    mine: m.prop(),
+    approval: m.prop(),
+    implementation: m.prop()
   }
   this.tabFilters = {
     ALL: 'ALL',
     SIGNOFF: 'SIGNOFF',
     ASSESSOR: 'ASSESSOR',
-    MINE: 'MINE'
+    MINE: 'MINE',
+    APPROVAL: 'APPROVAL',
+    IMPLEMENTATION: 'IMPLEMENTATION'
   }
 
   function myAgency(){
@@ -31,7 +35,7 @@ projectListing.controller = function(){
       identifier: this.tabFilters.ALL
     },
     {
-      label: m.prop("For signoff"), 
+      label: m.prop("Needs signoff"), 
       when: function(){
         return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 5);
       }, 
@@ -40,7 +44,7 @@ projectListing.controller = function(){
       identifier: this.tabFilters.SIGNOFF
     },
     {
-      label: m.prop("For assigning assessor"), 
+      label: m.prop("Needs assessor"), 
       when: function(){
         return self.app.isSuperAdmin();
       }, 
@@ -56,7 +60,25 @@ projectListing.controller = function(){
       href: "mine", 
       badge: badges.mine, 
       identifier: this.tabFilters.MINE
-    }
+    },
+    {
+      label: m.prop("Pending Approval"), 
+      when: function(){
+        return !self.app.currentUser();
+      }, 
+      href: "approval", 
+      badge: badges.approval, 
+      identifier: this.tabFilters.APPROVAL
+    },
+    {
+      label: m.prop("Implementation"), 
+      when: function(){
+        return !self.app.currentUser();
+      }, 
+      href: "implementation", 
+      badge: badges.implementation, 
+      identifier: this.tabFilters.IMPLEMENTATION
+    },
   ]);
   
   this.projectList = m.prop([]);
@@ -69,15 +91,17 @@ projectListing.controller = function(){
   this.app.whenUserInfoLoads = function(){
     // can't use config for when tabs loads because user data is asynchronous.
 
-    if(this.app.isSuperAdmin()){
-      this.tabs.currentTab("For assigning assessor");
-    } else if(this.app.currentUser() && _.contains(this.app.currentUser().permissions, 5)){
-      this.tabs.currentTab("For signoff");
-    } else if(this.app.currentUser() && _.contains(this.app.currentUser().permissions, 1)){
-      this.tabs.currentTab("My requests");
-    } else {
-      this.tabs.currentTab("All");
-    }
+    // can't use this anymore because currentTab isn't m.prop anymore.
+    // perhaps should use m.route?
+    // if(this.app.isSuperAdmin()){
+    //   this.tabs.currentTab("Needs assessor");
+    // } else if(this.app.currentUser() && _.contains(this.app.currentUser().permissions, 5)){
+    //   this.tabs.currentTab("Needs signoff");
+    // } else if(this.app.currentUser() && _.contains(this.app.currentUser().permissions, 1)){
+    //   this.tabs.currentTab("My requests");
+    // } else {
+    //   this.tabs.currentTab("All");
+    // }
   }.bind(this)
 
   bi.ajax(routes.controllers.Requests.index()).then(function (r){
@@ -106,6 +130,12 @@ projectListing.controller = function(){
             break;
           case self.tabFilters.MINE:
             return p.author.govUnitId === self.app.currentUser().agency.id;
+            break;
+          case self.tabFilters.APPROVAL:
+            return p.level <= 4
+            break;
+          case self.tabFilters.IMPLEMENTATION:
+            return p.level > 4
             break;
           default:
             return true;

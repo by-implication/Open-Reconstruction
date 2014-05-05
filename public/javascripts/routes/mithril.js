@@ -8,6 +8,8 @@ m.route(document, window.location.pathname == "/" ? "/requests" : window.locatio
   "/requests/mine": projectListing,
   "/requests/assessor": projectListing,
   "/requests/signoff": projectListing,
+  "/requests/approval": projectListing,
+  "/requests/implementation": projectListing,
   "/requests/new": projectCreation,
   "/requests/:id": project,
   "/requests/:id/assignments": project,
