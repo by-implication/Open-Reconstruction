@@ -49,20 +49,20 @@ app.navbar = function(ctrl){
     m("section.top-bar-section", [
       m("ul.left", [
         m("li", [
-          m("a", {href: "/dashboard", config: m.route}, "Dashboard")
+          m("a", {href: "/dashboard", config: m.route, className: ("/dashboard" === m.route.path ? "active" : "")}, "Dashboard")
         ]),
         m("li", [
-          m("a", {href: "/requests", config: m.route}, "Requests")
+          m("a", {href: "/requests", config: m.route, className: ("/requests" === m.route.path ? "active" : "")}, "Requests")
         ]),
         ctrl.currentUser() && ctrl.currentUser().agency ?
           m("li", [
-            m("a", {href: "/agencies/" + ctrl.currentUser().agency.id, config: m.route}, 
+            m("a", {href: "/agencies/" + ctrl.currentUser().agency.id, config: m.route, className: ("/agencies" === m.route.path ? "active" : "")}, 
               ctrl.currentUser().agency.role == "LGU" ? "My LGU" : "My Agency")
           ])
         : "",
         ctrl.currentUser() && ctrl.currentUser().isSuperAdmin ?
           m("li", [
-            m("a", {href: "/admin", config: m.route}, "Admin")
+            m("a", {href: "/admin", config: m.route, className: ("/admin" === m.route.path ? "active" : "")}, "Admin")
           ])
         : ""
       ]),
