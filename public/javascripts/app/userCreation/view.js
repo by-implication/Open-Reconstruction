@@ -1,6 +1,6 @@
 userCreation.view = function(ctrl){
   return app.template(ctrl.app, [
-    common.banner("Adding a user for " + ctrl.agency().name),
+    common.banner("Adding a user for " + ctrl.govUnit().name),
     m("form", {onsubmit: ctrl.submit}, [
       common.formSection(
         "fa-user",

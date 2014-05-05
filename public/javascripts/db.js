@@ -159,13 +159,13 @@ database.pull = function(){
     //   .value();
     
     database.agencyList([
-      new agency.Agency({
+      new govUnit.Agency({
         shortname: "OCD",
         name: "Office of Civil Defense",
         permissions: "xxrrdd",
         userCount: 42, 
       }),
-      new agency.Agency({
+      new govUnit.Agency({
         shortname: "DPWH",
         name: "Department of Public Works and Highways",
         permissions: "xxrrdd",

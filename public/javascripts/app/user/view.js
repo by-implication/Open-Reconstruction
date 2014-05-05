@@ -7,7 +7,7 @@ user.view = function(ctrl){
           m("div", [
             "Agency",
             m("h3", [
-              ctrl.user().agency.name
+              ctrl.user().govUnit.name
             ]),
           ]),
           m("hr.dashed"),

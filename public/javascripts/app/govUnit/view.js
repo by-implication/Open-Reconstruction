@@ -11,7 +11,7 @@ govUnit.view = function(ctrl){
     m("section", [
       m(".row", [
         m(".columns.medium-12", [
-          ctrl.app.isAgencyAdmin(ctrl.govUnit().id) ?
+          ctrl.app.isGovUnitAdmin(ctrl.govUnit().id) ?
             m("a.button", 
               {
                 href: routes.controllers.Users.create(ctrl.govUnit().id).url,

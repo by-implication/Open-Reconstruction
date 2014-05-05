@@ -23,7 +23,7 @@ m.route(document, window.location.pathname == "/" ? "/requests" : window.locatio
   "/admin/agencies": admin,
   "/gov-units/new/agency": agencyCreation,
   "/gov-units/new/lgu/:level/:parentId": lguCreation,
-  "/gov-units/:id/newUser": userCreation,
+  "/gov-units/:id/new-user": userCreation,
   "/gov-units/:id": govUnit,
   "/login": login
 });

@@ -20,7 +20,7 @@ projectListing.controller = function(){
   }
 
   function myAgency(){
-    if(self.app.currentUser().agency && self.app.currentUser().agency.role == "LGU") {
+    if(self.app.currentUser().govUnit && self.app.currentUser().govUnit.role == "LGU") {
       return "My LGU's requests";
     } else {
       return "My agency's requests";
@@ -132,7 +132,7 @@ projectListing.controller = function(){
             return p.level === 0 && !p.assessingAgencyId;
             break;
           case self.tabFilters.MINE:
-            return p.author.govUnitId === self.app.currentUser().agency.id;
+            return p.author.govUnitId === self.app.currentUser().govUnit.id;
             break;
           case self.tabFilters.APPROVAL:
             return p.level <= 4
