@@ -64,7 +64,7 @@ common.attachmentActions = function(attachment){
     ]),
     this.canEdit() ? attachment.isArchived ?
       m("a", {title: "Unarchive", onclick: function(){
-        m.request({method: "POST", url: "/attachments/" + attachment.id + "/unarchive"}).then(function (r){
+        bi.ajax(routes.controllers.Attachments.unarchive(attachment.id)).then(function (r){
           alert("Succesfully unarchived document.");
           this.attachments().docs.push(r.doc);
           this.history(this.history().filter(function (e){
@@ -75,7 +75,7 @@ common.attachmentActions = function(attachment){
       }.bind(this) }, [
         m("i.fa.fa-lg.fa-fw.fa-upload")
       ]) : m("a", {title: "Archive", onclick: function(){
-        m.request({method: "POST", url: "/attachments/" + attachment.id + "/archive"}).then(function (r){
+        bi.ajax(routes.controllers.Attachments.archive(attachment.id)).then(function (r){
           alert("Succesfully archived document.");
           var docs = this.attachments().docs;
           docs.splice(docs.indexOf(attachment), 1);

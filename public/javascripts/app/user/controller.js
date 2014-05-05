@@ -6,7 +6,7 @@ user.controller = function(){
   this.projectList = m.prop([]);
   this.currentFilter = {projects: function(){return null}};
 
-  m.request({method: "GET", url: ("/users/" + self.id + "/meta"), config: app.xhrConfig}).then(function (r){
+  bi.ajax(routes.controllers.Users.viewMeta(self.id)).then(function (r){
     if(r.success){
       this.user(r.user)
       this.projectList = r.requests;
