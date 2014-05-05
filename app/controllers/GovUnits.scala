@@ -10,6 +10,9 @@ import recon.support._
 
 object GovUnits extends Controller with Secured {
 
+  def create = Application.index
+  def view = Application.index1 _
+
   def viewMeta(id: Int): Action[AnyContent] = GenericAction(){ implicit user => implicit request =>
     GovUnit.findById(id) match {
       case Some(govUnit) => Rest.success(
@@ -69,6 +72,8 @@ object GovUnits extends Controller with Secured {
     ((name, acronym) => GovUnit(name = name, acronym = acronym, roleId = LGUroleId))
     (_ => None)
   )
+
+  def lguCreate = Application.index2 _
 
   def lguCreationMeta(level: Int, parentId: Int) = UserAction(){ implicit user => implicit request =>
     
