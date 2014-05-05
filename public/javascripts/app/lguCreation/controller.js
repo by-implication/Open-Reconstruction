@@ -18,13 +18,13 @@ lguCreation.controller = function(){
     case 2: this.lguType("Barangay"); break;
   }
 
-  bi.ajax(routes.controllers.GovUnits.lguCreationMeta(this.level, this.parentId)).then(function (r){
+  bi.ajax(routes.controllers.GovUnits.createLguMeta(this.level, this.parentId)).then(function (r){
     this.parentName(r.parentName);
   }.bind(this));
 
   this.submit = function(e){
     e.preventDefault();
-    bi.ajax(routes.controllers.GovUnits.lguInsert(this.level, this.parentId), {data: this.input}).then(function (r){
+    bi.ajax(routes.controllers.GovUnits.insertLgu(this.level, this.parentId), {data: this.input}).then(function (r){
       if(r.success){
         window.location = "/admin/lgus";
       } else if(r.reason == "form error"){

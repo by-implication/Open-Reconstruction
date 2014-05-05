@@ -79,7 +79,7 @@ object Users extends Controller with Secured {
     }
   }
 
-  def info() = UserAction(){ implicit user => implicit request =>
+  def meta() = UserAction(){ implicit user => implicit request =>
     Ok(user.infoJson)
   }
 

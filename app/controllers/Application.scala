@@ -26,7 +26,7 @@ object Application extends Controller {
     Ok(Routes.javascriptRouter("routes")(
       Users.login,
       Users.logout,
-      Users.info,
+      Users.meta,
       Users.insert,
       Users.viewMeta,
       Attachments.archive,
@@ -35,7 +35,7 @@ object Application extends Controller {
       Requests.assignAssessingAgency,
       Requests.assignImplementingAgency,
       Requests.comment,
-      Requests.createInfo,
+      Requests.createMeta,
       Requests.editField,
       Requests.index,
       Requests.indexMeta,
@@ -43,12 +43,12 @@ object Application extends Controller {
       Requests.signoff,
       Requests.viewMeta,
       GovUnits.createMeta,
-      GovUnits.allMeta,
-      GovUnits.lguListing,
+      GovUnits.listAgencies,
+      GovUnits.listLgus,
       GovUnits.viewMeta,
       GovUnits.insert,
-      GovUnits.lguCreationMeta,
-      GovUnits.lguInsert
+      GovUnits.createLguMeta,
+      GovUnits.insertLgu
     )).as("text/javascript")
   }
 

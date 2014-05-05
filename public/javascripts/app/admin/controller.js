@@ -20,7 +20,7 @@ admin.controller = function(){
     }
   }.bind(this));
 
-  bi.ajax(routes.controllers.GovUnits.allMeta()).then(function (r){
+  bi.ajax(routes.controllers.GovUnits.listAgencies()).then(function (r){
     if(r.success){
       this.agencyList(r.agencies);
     } else {
@@ -28,7 +28,7 @@ admin.controller = function(){
     }
   }.bind(this));
 
-  bi.ajax(routes.controllers.GovUnits.lguListing()).then(function (r){
+  bi.ajax(routes.controllers.GovUnits.listLgus()).then(function (r){
 
     var regions = [];
     r.regions
