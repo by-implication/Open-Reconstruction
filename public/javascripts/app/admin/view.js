@@ -15,7 +15,7 @@ admin.view = function(ctrl){
           ])
         : m("label.expander", []),
         (level ?
-          m("a", {href: routes.controllers.GovUnits(lgu.id()).url}, lgu.name()) :
+          m("a", {href: routes.controllers.GovUnits.view(lgu.id()).url}, lgu.name()) :
           m("span", lgu.name())
         ),
         lgu.children().length ? 

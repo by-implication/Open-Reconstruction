@@ -6,7 +6,7 @@ agencyCreation.controller = function(){
 
   this.roles = m.prop([{id: 0, name: 'Loading...'}]);
 
-  bi.ajax(routes.controllers.GovUnits.createMeta()).then(function (r){
+  bi.ajax(routes.controllers.GovUnits.createAgencyMeta()).then(function (r){
     if(r.success){
       self.roles(r.roles);
     } else {
