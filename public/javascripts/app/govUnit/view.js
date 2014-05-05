@@ -1,20 +1,20 @@
-agency.view = function(ctrl){
+govUnit.view = function(ctrl){
   return app.template(ctrl.app, [
     common.banner([
-      ctrl.agency().name,
-      ctrl.agency().acronym ?
+      ctrl.govUnit().name,
+      ctrl.govUnit().acronym ?
         m("span.acronym", [
-          "(" + ctrl.agency().acronym + ")"
+          "(" + ctrl.govUnit().acronym + ")"
         ])
       : ""
     ]),
     m("section", [
       m(".row", [
         m(".columns.medium-12", [
-          ctrl.app.isAgencyAdmin(ctrl.agency().id) ?
+          ctrl.app.isAgencyAdmin(ctrl.govUnit().id) ?
             m("a.button", 
               {
-                href: routes.controllers.Users.create(ctrl.agency().id).url,
+                href: routes.controllers.Users.create(ctrl.govUnit().id).url,
                 config: m.route
               }, 
               ["Add new user"]

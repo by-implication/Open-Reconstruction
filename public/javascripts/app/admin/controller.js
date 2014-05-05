@@ -33,14 +33,14 @@ admin.controller = function(){
     var regions = [];
     r.regions
       .map(function(r){
-        return new agency.Region(r);
+        return new govUnit.Region(r);
       })
       .forEach(function (region){
         regions[region.id()] = region;
       });
 
     var r_lgus = r.lgus.map(function(lgu){
-        return new agency.LGU(lgu);
+        return new govUnit.LGU(lgu);
     })
 
     var lgus = [];

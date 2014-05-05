@@ -21,10 +21,10 @@ m.route(document, window.location.pathname == "/" ? "/requests" : window.locatio
   "/admin": admin,
   "/admin/lgus": admin,
   "/admin/agencies": admin,
-  "/agencies/new": agencyCreation,
-  "/lgus/new/:level/:parentId": lguCreation,
-  "/agencies/:id/newUser": userCreation,
-  "/agencies/:id": agency,
+  "/gov-units/new/agency": agencyCreation,
+  "/gov-units/new/lgu/:level/:parentId": lguCreation,
+  "/gov-units/:id/newUser": userCreation,
+  "/gov-units/:id": govUnit,
   "/login": login
 });
 

@@ -1,8 +1,8 @@
-agency.controller = function(){
+govUnit.controller = function(){
   this.app = new app.controller();
   this.slug = m.prop(m.route.param("id"));
   var self = this;
-  this.agency = m.prop({
+  this.govUnit = m.prop({
     id: -1,
     name: "My Agency",
     acronym: "",
@@ -12,7 +12,7 @@ agency.controller = function(){
 
   bi.ajax(routes.controllers.GovUnits.viewMeta(this.slug())).then(function (r){
     if(r.success){
-      self.agency(r.agency)
+      self.govUnit(r.govUnit)
       self.users(r.users)
     } else if(r.reason == "form error"){
       alert("Agency not created!");
