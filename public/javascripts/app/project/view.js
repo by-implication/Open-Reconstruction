@@ -27,54 +27,12 @@ project.view = function(ctrl){
         }
       )
     ], 
-    [ // actual content
-      ctrl.isInvolved() ?
-        m("section.approval", [
-          m(".row", [
-            m(".columns.medium-12", [
-              ctrl.canSignoff() ?
-                m("div", [
-                  m("h4", [
-                    "Sign off on this request only if you feel the information is complete for your step in the approval process."
-                  ]),
-                  m("button", {onclick: ctrl.signoffModal.show.bind(ctrl.signoffModal)}, [
-                    m("i.fa.fa-check"),
-                  ]),
-                  m("button.alert", [
-                    m("i.fa.fa-times"),
-                  ]),
-                ])
-              : "",
-              ctrl.hasSignedoff()  ?
-                m("div", [
-                  m("h4", [
-                    m("div", [m("i.fa.fa-thumbs-up.fa-2x")]),
-                    "You've already signed off on this request."
-                  ]),
-                ])
-              : "",
-              ctrl.currentUserIsAuthor() && !ctrl.hasSignedoff() ?
-                m("div", [
-                  m("h4", [
-                    "You created this request."
-                  ]),
-                ])
-              : "",
-              !ctrl.canSignoff() && !ctrl.hasSignedoff() ? // waiting for predecessor
-                m("div", [
-                  m("h4", [
-                    ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
-                      ctrl.app.isSuperAdmin() ?
-                        "Please assign an agency to assess this request."
-                      : "Waiting for the Office of Civil Defense to assign an agency to assess this request."
-                    : "Waiting for " + ctrl.getBlockingAgency() + " approval."
-                  ]),
-                ])
-              : ""
-            ]),
-          ])
-        ])
-      : "",
+    [ 
+      // approval section
+      ctrl.isInvolved() ? project.approval(ctrl) : "",
+      // progress tracker
+      project.progress(ctrl),
+      // actual content
       m("section", [
         m(".row", [
           m(".columns.medium-4", [
@@ -313,6 +271,66 @@ project.summary = function(ctrl){
             "Map unavailable because requester did not supply coordinates"
           ]),
         ])
+    ]),
+  ])
+}
+
+project.approval = function(ctrl){
+  return m("section.approval", [
+    m(".row", [
+      m(".columns.medium-12", [
+        ctrl.canSignoff() ?
+          m("div", [
+            m("h4", [
+              "Sign off on this request only if you feel the information is complete for your step in the approval process."
+            ]),
+            m("button", {onclick: ctrl.signoffModal.show.bind(ctrl.signoffModal)}, [
+              m("i.fa.fa-check"),
+            ]),
+            m("button.alert", [
+              m("i.fa.fa-times"),
+            ]),
+          ])
+        : "",
+        ctrl.hasSignedoff()  ?
+          m("div", [
+            m("h4", [
+              m("div", [m("i.fa.fa-thumbs-up.fa-2x")]),
+              "You've already signed off on this request."
+            ]),
+          ])
+        : "",
+        ctrl.currentUserIsAuthor() && !ctrl.hasSignedoff() ?
+          m("div", [
+            m("h4", [
+              "You created this request."
+            ]),
+          ])
+        : "",
+        !ctrl.canSignoff() && !ctrl.hasSignedoff() ? // waiting for predecessor
+          m("div", [
+            m("h4", [
+              ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
+                ctrl.app.isSuperAdmin() ?
+                  "Please assign an agency to assess this request."
+                : "Waiting for the Office of Civil Defense to assign an agency to assess this request."
+              : "Waiting for " + ctrl.getBlockingAgency() + " approval."
+            ]),
+          ])
+        : ""
+      ]),
+    ])
+  ])
+}
+
+project.progress = function(ctrl){
+  return m("section", [
+    m(".row", [
+      m(".columns.medium-12", [
+        m(".progress", [
+          "hi"
+        ]),
+      ]),
     ]),
   ])
 }
