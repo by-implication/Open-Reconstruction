@@ -161,7 +161,7 @@ common.tabs.view = function(ctrl, options){
         }
       };
       return m("dd", {class: setActive(item)}, [
-        m("a", { href: ctrl.absolute(item.href), config: m.route }, [
+        m("a", { href: item.href, config: m.route }, [
           (item.label()), 
           item.badge ? 
             m("span.label.secondary.round", [
@@ -175,12 +175,9 @@ common.tabs.view = function(ctrl, options){
 }
 
 common.tabs.controller = function(basePath){
-  var absolute = this.absolute = function(href) {
-    return basePath + '/' + href;
-  }
   this.tabs = m.prop([]);
   this.currentTab = function() {
-    var item = _.find(this.tabs(), function(tab) { return absolute(tab.href) == m.route.path });
+    var item = _.find(this.tabs(), function(tab) { return tab.href == m.route.path });
     if(item == undefined) {
       item = _.head(this.tabs());
     }

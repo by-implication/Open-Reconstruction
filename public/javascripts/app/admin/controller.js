@@ -2,7 +2,7 @@ admin.controller = function(){
   this.app = new app.controller();
   this.agencyList = m.prop([]);
   this.roles = m.prop({});
-  this.tabs = new common.tabs.controller("/admin");
+  this.tabs = new common.tabs.controller();
   this.tabs.tabs = m.prop([
     {label: m.prop("Agencies"), href: routes.controllers.Application.adminAgencies().url}, 
     {label: m.prop("LGUs"), href: routes.controllers.Application.adminLgus().url}

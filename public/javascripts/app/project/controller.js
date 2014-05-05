@@ -3,7 +3,7 @@ project.controller = function(){
   this.app = new app.controller();
   this.signoffModal = new common.modal.controller();
   var projectId = m.route.param('id');
-  this.projectTabs = new common.tabs.controller(routes.controllers.Requests.view(projectId).url);
+  this.projectTabs = new common.tabs.controller();
   this.projectTabs.tabs([
     {label: m.prop("Assignments"), href: routes.controllers.Requests.viewAssignments(projectId).url},
     {label: m.prop("Images"), href: routes.controllers.Requests.viewImages(projectId).url},

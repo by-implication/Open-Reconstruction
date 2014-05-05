@@ -1,7 +1,7 @@
 projectListing.controller = function(){
   var self = this;
   this.app = new app.controller();
-  this.tabs = new common.tabs.controller("/requests");
+  this.tabs = new common.tabs.controller();
   var badges = {
     all: m.prop(),
     signoff: m.prop(),
