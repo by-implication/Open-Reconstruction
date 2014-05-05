@@ -144,7 +144,15 @@ common.tabs.view = function(ctrl, options){
   }
 
   return m("dl.tabs[data-tab]", options, [
-    ctrl.tabs().map(function(item, i){
+    ctrl.tabs()
+    .filter(function(item){
+      if(item.when){
+        return item.when();
+      } else {
+        return true;
+      }
+    })
+    .map(function(item, i){
       var setActive = function(item){
         if(ctrl.isActive((item.identifier ? item.identifier : item.label))){
           return "active";

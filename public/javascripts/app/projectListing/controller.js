@@ -8,7 +8,6 @@ projectListing.controller = function(){
     assessor: m.prop(),
     mine: m.prop()
   }
-
   this.tabFilters = {
     ALL: 'ALL',
     SIGNOFF: 'SIGNOFF',
@@ -25,16 +24,39 @@ projectListing.controller = function(){
   }
 
   this.tabs.tabs = m.prop([
-    {label: m.prop("All"), href: "all", badge: badges.all, identifier: this.tabFilters.ALL},
-    {label: m.prop("For signoff"), when: function(){
-      return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 5);
-    }, href: "signoff", badge: badges.signoff, identifier: this.tabFilters.SIGNOFF},
-    {label: m.prop("For assigning assessor"), when: function(){
-      return self.app.isSuperAdmin();
-    }, href: "assessor", badge: badges.assessor, identifier: this.tabFilters.ASSESSOR},
-    {label: myAgency, when: function(){
-      return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 1);
-    }, href: "mine", badge: badges.mine, identifier: this.tabFilters.MINE}
+    {
+      label: m.prop("All"), 
+      href: "all", 
+      badge: badges.all, 
+      identifier: this.tabFilters.ALL
+    },
+    {
+      label: m.prop("For signoff"), 
+      when: function(){
+        return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 5);
+      }, 
+      href: "signoff", 
+      badge: badges.signoff, 
+      identifier: this.tabFilters.SIGNOFF
+    },
+    {
+      label: m.prop("For assigning assessor"), 
+      when: function(){
+        return self.app.isSuperAdmin();
+      }, 
+      href: "assessor", 
+      badge: badges.assessor, 
+      identifier: this.tabFilters.ASSESSOR
+    },
+    {
+      label: myAgency, 
+      when: function(){
+        return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 1);
+      }, 
+      href: "mine", 
+      badge: badges.mine, 
+      identifier: this.tabFilters.MINE
+    }
   ]);
   
   this.projectList = m.prop([]);
