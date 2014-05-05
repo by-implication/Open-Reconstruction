@@ -442,11 +442,14 @@ button.micro, .button.micro
     position: relative
     top: -999px
     padding-top: 40px
-
-.top-bar-section
-  .label
-    margin-right: 0
-    margin-left: 10px
+nav
+  .top-bar-section
+    ul li
+      .label
+        margin-right: 0
+        margin-left: 10px
+      & > a.active, & > a.active:hover
+        color: $accent
 
 .field-icon
   text-align: right

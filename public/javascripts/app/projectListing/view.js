@@ -2,12 +2,10 @@ projectListing.view = function(ctrl){
   return app.template(ctrl.app, [
     common.banner("List of Requested Projects"),
     m("section", [
+
       ctrl.app.currentUser() ?
         m(".row", [
-          m(".columns.medium-9", [
-            common.tabs.view(ctrl.tabs, {className: "left", config: ctrl.setCurrentTab})
-          ]),
-          m(".columns.medium-3", [
+          m(".columns.medium-12", [
             ctrl.app.isAuthorized(1) ?
               m(
                 "a.button", 
@@ -18,6 +16,12 @@ projectListing.view = function(ctrl){
           ]),
         ])
       : "",
+
+      m(".row", [
+        m(".columns.medium-12", [
+          common.tabs.view(ctrl.tabs, {className: "left", config: ctrl.setCurrentTab})
+        ]),
+      ]),
       m(".row", [
         m(".columns.medium-9", [
           project.listView(ctrl)
