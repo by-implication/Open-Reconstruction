@@ -372,7 +372,7 @@ project.listView = function(ctrl){
             ]),
           ]),
           m("th", "Name"),
-          m("th", "Agency/LGU"),
+          m("th", "Gov Unit"),
           m("th", [
             m("a", {onclick: ctrl.currentSort.bind(ctrl, "level")}, [
               "Progress"
@@ -396,7 +396,7 @@ project.listView = function(ctrl){
                 m("td", [
                   m("a.name", {href: url, config: m.route}, p.description)
                 ]),
-                m("td", p.author.agency),
+                m("td", p.author.govUnit),
                 m("td", [
                   project.miniProgress(p)
                 ]),
