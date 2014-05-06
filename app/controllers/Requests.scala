@@ -208,8 +208,8 @@ object Requests extends Controller with Secured {
 
   def assignAssessingAgency = assignGovUnit(
     GovUnit.canAssess,
-    (r, id) => r.copy(assessingAgencyId = Some(id)),
-    r => (r.copy(assessingAgencyId = None, level = r.level + 1), GovUnit.findById(r.assessingAgencyId.get).get),
+    (r, id) => r.copy(assessingAgencyId = Some(id), level = 1),
+    r => (r.copy(assessingAgencyId = None, level = 0), GovUnit.findById(r.assessingAgencyId.get).get),
     "assess"
   ) _
 

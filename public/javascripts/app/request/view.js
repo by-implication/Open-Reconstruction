@@ -333,8 +333,8 @@ request.progress = function(ctrl){
             .map(function(step){
               return m(".step", {
                 style: {width: (100/steps.length + '%')},
-                className: (ctrl.request().level > step ? 'done ' : '') +
-                  (ctrl.request().level === step ? 'pending' : '')
+                className: (ctrl.request().level >= step ? 'done ' : '') +
+                  (ctrl.request().level === (step - 1) ? 'pending' : '')
               }, [
                 process.levelDict()[step]
               ])

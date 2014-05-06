@@ -198,6 +198,7 @@ case class User(
   def hasSignedoff(r: Req): Boolean = {
     isInvolvedWith(r) && {
       val checks = List[Boolean](
+        false,
         (r.assessingAgencyId.map(_ == govUnitId).getOrElse(false)),
         isSuperAdmin,
         isOP,
@@ -215,10 +216,10 @@ case class User(
       false
     } else {
       r.level match {
-        case 0 => r.assessingAgencyId.map(_ == govUnitId).getOrElse(false)
-        case 1 => isSuperAdmin
-        case 2 => isOP
-        case 3 => isDBM
+        case 1 => r.assessingAgencyId.map(_ == govUnitId).getOrElse(false)
+        case 2 => isSuperAdmin
+        case 3 => isOP
+        case 4 => isDBM
         case _ => false
       }
     }
