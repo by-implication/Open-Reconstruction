@@ -324,11 +324,22 @@ project.approval = function(ctrl){
 }
 
 project.progress = function(ctrl){
+  var steps = _.range(6);
   return m("section", [
     m(".row", [
       m(".columns.medium-12", [
         m(".progress", [
-          "hi"
+          _.chain(steps)
+            .map(function(step){
+              return m(".step", {
+                style: {width: (100/steps.length + '%')},
+                className: (ctrl.project().level > step ? 'done ' : '') +
+                  (ctrl.project().level === step ? 'pending' : '')
+              }, [
+                process.levelDict()[step]
+              ])
+            })
+            .value()
         ]),
       ]),
     ]),
