@@ -2,12 +2,13 @@ project.controller = function(){
   var map;
   this.app = new app.controller();
   this.signoffModal = new common.modal.controller();
-  this.projectTabs = new common.tabs.controller('/requests/'+m.route.param('id'));
+  var projectId = m.route.param('id');
+  this.projectTabs = new common.tabs.controller();
   this.projectTabs.tabs([
-    {label: m.prop("Assignments"), href: 'assignments'},
-    {label: m.prop("Images"), href: 'images'},
-    {label: m.prop("Documents"), href: 'documents'},
-    {label: m.prop("Activity"), href: 'activity'}
+    {label: m.prop("Assignments"), href: routes.controllers.Requests.viewAssignments(projectId).url},
+    {label: m.prop("Images"), href: routes.controllers.Requests.viewImages(projectId).url},
+    {label: m.prop("Documents"), href: routes.controllers.Requests.viewDocuments(projectId).url},
+    {label: m.prop("Activity"), href: routes.controllers.Requests.viewActivity(projectId).url}
   ]);
   this.projectTabs.currentTab(this.projectTabs.tabs()[0].label)
 
@@ -201,7 +202,7 @@ project.controller = function(){
     if(!isInit){
 
       this.dropzone = new Dropzone(elem, {
-        url: "/requests/" + this.id + "/attach/img",
+        url: routes.controllers.Attachments.add(this.id, "img").url,
         previewTemplate: m.stringify(dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop photos here, or click to browse.",
         clickable: true,
@@ -224,7 +225,7 @@ project.controller = function(){
     if(!isInit){
 
       this.dropzone = new Dropzone(elem, {
-        url: "/requests/" + this.id + "/attach/doc",
+        url: routes.controllers.Attachments.add(this.id, "doc").url,
         previewTemplate: m.stringify(dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop documents here, or click to browse. We recommend pdfs and doc files.",
         clickable: true,

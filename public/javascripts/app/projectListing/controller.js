@@ -1,7 +1,7 @@
 projectListing.controller = function(){
   var self = this;
   this.app = new app.controller();
-  this.tabs = new common.tabs.controller("/requests");
+  this.tabs = new common.tabs.controller();
   this.currentSort = m.prop();
   var badges = {
     all: m.prop(),
@@ -21,7 +21,7 @@ projectListing.controller = function(){
   }
 
   function myAgency(){
-    if(self.app.currentUser().agency && self.app.currentUser().agency.role == "LGU") {
+    if(self.app.currentUser().govUnit && self.app.currentUser().govUnit.role == "LGU") {
       return "My LGU's requests";
     } else {
       return "My agency's requests";
@@ -31,7 +31,7 @@ projectListing.controller = function(){
   this.tabs.tabs = m.prop([
     {
       label: m.prop("All"), 
-      href: "all", 
+      href: routes.controllers.Requests.indexAll().url, 
       badge: badges.all, 
       identifier: this.tabFilters.ALL
     },
@@ -40,7 +40,7 @@ projectListing.controller = function(){
       when: function(){
         return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 5);
       }, 
-      href: "signoff", 
+      href: routes.controllers.Requests.indexSignoff().url, 
       badge: badges.signoff, 
       identifier: this.tabFilters.SIGNOFF
     },
@@ -49,7 +49,7 @@ projectListing.controller = function(){
       when: function(){
         return self.app.isSuperAdmin();
       }, 
-      href: "assessor", 
+      href: routes.controllers.Requests.indexAssessor().url, 
       badge: badges.assessor, 
       identifier: this.tabFilters.ASSESSOR
     },
@@ -58,7 +58,7 @@ projectListing.controller = function(){
       when: function(){
         return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 1);
       }, 
-      href: "mine", 
+      href: routes.controllers.Requests.indexMine().url, 
       badge: badges.mine, 
       identifier: this.tabFilters.MINE
     },
@@ -67,7 +67,7 @@ projectListing.controller = function(){
       when: function(){
         return !self.app.currentUser();
       }, 
-      href: "approval", 
+      href: routes.controllers.Requests.indexApproval().url, 
       badge: badges.approval, 
       identifier: this.tabFilters.APPROVAL
     },
@@ -76,7 +76,7 @@ projectListing.controller = function(){
       when: function(){
         return !self.app.currentUser();
       }, 
-      href: "implementation", 
+      href: routes.controllers.Requests.indexImplementation().url, 
       badge: badges.implementation, 
       identifier: this.tabFilters.IMPLEMENTATION
     },
@@ -138,7 +138,7 @@ projectListing.controller = function(){
               return p.level === 0 && !p.assessingAgencyId;
               break;
             case self.tabFilters.MINE:
-              return p.author.govUnitId === self.app.currentUser().agency.id;
+              return p.author.govUnitId === self.app.currentUser().govUnit.id;
               break;
             case self.tabFilters.APPROVAL:
               return p.level <= 4

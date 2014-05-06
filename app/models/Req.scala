@@ -92,7 +92,7 @@ case class Req(
     "level" -> level,
     "amount" -> amount,
     "author" -> Json.obj(
-      "agency" -> author.govUnit.name,
+      "govUnit" -> author.govUnit.name,
       "govUnitId" -> author.govUnit.id.get
       ),
     "authorId" -> authorId,

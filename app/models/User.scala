@@ -152,7 +152,7 @@ case class User(
         "handle" -> handle,
         "id" -> id.get,
         "name" -> name,
-        "agency" -> Json.obj(
+        "govUnit" -> Json.obj(
           "name" -> govUnit.name,
           "acronym" -> govUnit.acronym,
           "id" -> govUnit.id.get,

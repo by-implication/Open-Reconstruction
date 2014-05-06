@@ -72,7 +72,7 @@ projectCreation.controller = function(){
 
   }.bind(this);
 
-  bi.ajax(routes.controllers.Requests.createInfo()).then(function(data){
+  bi.ajax(routes.controllers.Requests.createMeta()).then(function (data){
     this.requestCreationInfo = data;
     this.input.disasterType(data.disasterTypes[0]);
   }.bind(this));

@@ -1,7 +1,7 @@
 app.controller = function(){
   var self = this;
   this.currentUser = m.prop({});
-  bi.ajax(routes.controllers.Users.info()).then(function(r){
+  bi.ajax(routes.controllers.Users.meta()).then(function(r){
     this.currentUser(r);
     this.whenUserInfoLoads();
   }.bind(this));
@@ -22,8 +22,8 @@ app.controller = function(){
     return this.currentUser() && this.currentUser().isSuperAdmin;
   }
 
-  this.isAgencyAdmin = function(agencyId){
-    return this.isSuperAdmin() || this.currentUser() && this.currentUser().isAdmin && this.currentUser().agency.id === agencyId;
+  this.isGovUnitAdmin = function(govUnitId){
+    return this.isSuperAdmin() || this.currentUser() && this.currentUser().isAdmin && this.currentUser().govUnit.id === govUnitId;
   }
 
   this.getCurrentUserProp = function(prop){

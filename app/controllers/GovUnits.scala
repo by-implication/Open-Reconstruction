@@ -10,24 +10,24 @@ import recon.support._
 
 object GovUnits extends Controller with Secured {
 
-  def create = Application.index
+  def createAgency = Application.index
   def view = Application.index1 _
 
   def viewMeta(id: Int): Action[AnyContent] = GenericAction(){ implicit user => implicit request =>
     GovUnit.findById(id) match {
       case Some(govUnit) => Rest.success(
-        "agency" -> govUnit.toJson,
+        "govUnit" -> govUnit.toJson,
         "users" -> Json.toJson(govUnit.users.map(_.infoJson))
       )
       case None => Rest.notFound()
     }
   }
 
-  def allMeta(): Action[AnyContent] = GenericAction(){ implicit user => implicit request =>
-    Rest.success("agencies" ->  Json.toJson(GovUnit.listAll.map(_.toJson)))
+  def listAgencies(): Action[AnyContent] = GenericAction(){ implicit user => implicit request =>
+    Rest.success("agencies" ->  Json.toJson(GovUnit.listAgencies.map(_.toJson)))
   }
 
-  lazy val createForm: Form[GovUnit] = Form(
+  lazy val createAgencyForm: Form[GovUnit] = Form(
     mapping(
       "name" -> nonEmptyText,
       "acronym" -> optional(text),
@@ -37,13 +37,13 @@ object GovUnits extends Controller with Secured {
     (_ => None)
   )
 
-  def createMeta() = UserAction(){ implicit user => implicit request =>
+  def createAgencyMeta() = UserAction(){ implicit user => implicit request =>
     Rest.success("roles" ->  Json.toJson(Role.list().map(_.toJson)))
   }
 
-  def insert(): Action[AnyContent] = UserAction(){ implicit user => implicit request =>
+  def insertAgency(): Action[AnyContent] = UserAction(){ implicit user => implicit request =>
     if(user.isSuperAdmin){
-      createForm.bindFromRequest.fold(
+      createAgencyForm.bindFromRequest.fold(
         Rest.formError(_),
         _.create().map(_ => Rest.success())
         .getOrElse(Rest.serverError())
@@ -51,7 +51,7 @@ object GovUnits extends Controller with Secured {
     } else Rest.unauthorized()
   }
 
-  def lguListing = UserAction(){ implicit user => implicit request =>
+  def listLgus = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
       "regions" -> Json.toJson(Lgu.REGIONS.toSeq.map {
         case (id, name) => Json.obj("id" -> id, "name" -> name)
@@ -73,9 +73,9 @@ object GovUnits extends Controller with Secured {
     (_ => None)
   )
 
-  def lguCreate = Application.index2 _
+  def createLgu = Application.index2 _
 
-  def lguCreationMeta(level: Int, parentId: Int) = UserAction(){ implicit user => implicit request =>
+  def createLguMeta(level: Int, parentId: Int) = UserAction(){ implicit user => implicit request =>
     
     val parentName: Option[String] = if(level > 0){
       GovUnit.findById(parentId).map(_.name)
@@ -89,7 +89,7 @@ object GovUnits extends Controller with Secured {
 
   }
 
-  def lguInsert(level: Int, parentId: Int) = UserAction(){ implicit user => implicit request =>
+  def insertLgu(level: Int, parentId: Int) = UserAction(){ implicit user => implicit request =>
     if(level >= 0 && level < 3){
       if(user.isSuperAdmin){
         lguForm.bindFromRequest.fold(

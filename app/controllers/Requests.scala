@@ -13,8 +13,12 @@ object Requests extends Controller with Secured {
   private lazy val projectAmount = bigDecimal(15, 2).verifying("Invalid amount", _ >= 0)
 
   def create() = Application.index
+  def viewAssignments = Application.index1 _
+  def viewImages = Application.index1 _
+  def viewDocuments = Application.index1 _
+  def viewActivity = Application.index1 _
 
-  def createInfo() = UserAction(){ implicit user => implicit request =>
+  def createMeta() = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
       "disasterTypes" -> DisasterType.jsonList,
       "projectTypes" -> ProjectType.jsonList,
@@ -132,6 +136,12 @@ object Requests extends Controller with Secured {
   }
 
   def index = Application.index
+  def indexAll = Application.index
+  def indexApproval = Application.index
+  def indexAssessor = Application.index
+  def indexImplementation = Application.index
+  def indexMine = Application.index
+  def indexSignoff = Application.index
 
   def indexMeta() = UserAction(){ implicit user => implicit request =>
     val allRequests = Req.indexList()

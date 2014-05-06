@@ -5,11 +5,11 @@
 m.route(document, window.location.pathname == "/" ? "/requests" : window.location.pathname, {
   "/requests": projectListing,
   "/requests/all": projectListing,
-  "/requests/mine": projectListing,
-  "/requests/assessor": projectListing,
-  "/requests/signoff": projectListing,
   "/requests/approval": projectListing,
+  "/requests/assessor": projectListing,
   "/requests/implementation": projectListing,
+  "/requests/mine": projectListing,
+  "/requests/signoff": projectListing,
   "/requests/new": projectCreation,
   "/requests/:id": project,
   "/requests/:id/assignments": project,
@@ -21,10 +21,10 @@ m.route(document, window.location.pathname == "/" ? "/requests" : window.locatio
   "/admin": admin,
   "/admin/lgus": admin,
   "/admin/agencies": admin,
-  "/agencies/new": agencyCreation,
-  "/lgus/new/:level/:parentId": lguCreation,
-  "/agencies/:id/newUser": userCreation,
-  "/agencies/:id": agency,
+  "/gov-units/new/agency": agencyCreation,
+  "/gov-units/new/lgu/:level/:parentId": lguCreation,
+  "/gov-units/:id/new-user": userCreation,
+  "/gov-units/:id": govUnit,
   "/login": login
 });
 
