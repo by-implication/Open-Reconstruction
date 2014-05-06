@@ -5,7 +5,7 @@ user.view = function(ctrl){
       m(".row", [
         m(".columns.medium-9", [
           m("div", [
-            "Agency",
+            "Government Unit",
             m("h3", [
               ctrl.user().govUnit.name
             ]),
