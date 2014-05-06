@@ -152,7 +152,7 @@ projectListing.controller = function(){
         })
         .sortBy(function(p){
           if(typeof self.currentSort() === "undefined"){
-            self.currentSort("amount");
+            self.currentSort("age");
           }
           return -1 * p[self.currentSort()];
         })
