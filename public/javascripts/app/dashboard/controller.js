@@ -1,18 +1,18 @@
 dashboard.controller = function(){
   var self = this;
   this.app = new app.controller();
-  this.projects = m.prop({});
+  this.requests = m.prop({});
   database.pull().then(function(data){
-    self.projects(database.projectList());
+    self.requests(database.requestList());
   })
 
   this.totalProjects = function(){
-    return this.projects().length
+    return this.requests().length
   }
 
   this.totalProjectCost = function(){
     return helper.truncate(
-      _.chain(this.projects())
+      _.chain(this.requests())
       .map(function(project){
         return project.amount();
       })
@@ -25,7 +25,7 @@ dashboard.controller = function(){
   }
 
   this.mostCommonProjectType = function(){
-    return _.chain(this.projects())
+    return _.chain(this.requests())
     .countBy(function(r){
       return r.type();
     })
@@ -40,7 +40,7 @@ dashboard.controller = function(){
   }
 
   this.mostCommonDisasterType = function(){
-    return _.chain(this.projects())
+    return _.chain(this.requests())
     .countBy(function(r){
       return r.disaster().type();
     })
@@ -69,7 +69,7 @@ dashboard.controller = function(){
     }
 
     var labels = [];
-    var rawGroup = _.chain(self.projects()).groupBy(entryToInt)
+    var rawGroup = _.chain(self.requests()).groupBy(entryToInt)
 
     var times = rawGroup.keys()
       .map(function(key) {

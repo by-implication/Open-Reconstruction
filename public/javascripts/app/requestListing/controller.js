@@ -1,4 +1,4 @@
-projectListing.controller = function(){
+requestListing.controller = function(){
   var self = this;
   this.app = new app.controller();
   this.tabs = new common.tabs.controller();
@@ -82,10 +82,10 @@ projectListing.controller = function(){
     },
   ]);
   
-  this.projectList = m.prop([]);
+  this.requestList = m.prop([]);
   this.projectFilters = m.prop([]);
   this.currentFilter = {
-    projects: m.prop("")
+    requests: m.prop("")
   };
 
   // not sure if should
@@ -110,7 +110,7 @@ projectListing.controller = function(){
   }
 
   bi.ajax(routes.controllers.Requests.indexMeta()).then(function (r){
-    self.projectList = r.list;
+    self.requestList = r.list;
     self.projectFilters = r.filters;
     badges.all(r.counts.all);
     badges.signoff(r.counts.signoff);
@@ -121,12 +121,12 @@ projectListing.controller = function(){
     badges.implementation(1);
   
     self.filteredList = function(){
-      return _.chain(self.projectList)
+      return _.chain(self.requestList)
         .filter(function(p){
-          if(!self.currentFilter.projects()){
+          if(!self.currentFilter.requests()){
             return true;
           } else {
-            return p.projectType == self.currentFilter.projects();
+            return p.projectType == self.currentFilter.requests();
           }
         })
         .filter(function(p){

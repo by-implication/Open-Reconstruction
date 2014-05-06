@@ -1,4 +1,4 @@
-projectListing.view = function(ctrl){
+requestListing.view = function(ctrl){
   return app.template(ctrl.app, [
     common.banner("List of Requested Projects"),
     m("section", [
@@ -24,23 +24,23 @@ projectListing.view = function(ctrl){
       ]),
       m(".row", [
         m(".columns.medium-9", [
-          project.listView(ctrl)
+          request.listView(ctrl)
         ]),
         m(".columns.medium-3", [
           m("h4", [
             "Filter by Project Type"
           ]),
           m("ul.filters", [
-            m("li.filter", {className: (ctrl.currentFilter.projects() == "") ? "active" : ""}, [
+            m("li.filter", {className: (ctrl.currentFilter.requests() == "") ? "active" : ""}, [
               m("a", {
-                onclick: ctrl.currentFilter.projects.bind(ctrl.currentFilter, "")
+                onclick: ctrl.currentFilter.requests.bind(ctrl.currentFilter, "")
               }, "All")
             ]),
             _.chain(ctrl.projectFilters)
             .map(function(filter){
-              return m("li.filter",{className: (ctrl.currentFilter.projects() == filter) ? "active" : ""}, [
+              return m("li.filter",{className: (ctrl.currentFilter.requests() == filter) ? "active" : ""}, [
                 m("a", {
-                  onclick: ctrl.currentFilter.projects.bind(ctrl.currentFilter, filter)
+                  onclick: ctrl.currentFilter.requests.bind(ctrl.currentFilter, filter)
                 }, filter)
               ])
             })
