@@ -5,6 +5,7 @@
 
 @import variables
 
+
 body
   &.detail
     background-color: #eee
@@ -465,3 +466,21 @@ nav
   overflow: hidden
   &.expand
     max-height: 2000px
+
+.progress
+  +clearfix
+  width: 100%
+  background-color: rgba(black, 0.05)
+  border-radius: 3px
+  overflow: hidden
+  .step
+    float: left
+    padding: 10px
+    font-size: 12px
+    color: rgba(black, 0.2)
+    &.done
+      background-color: $teal
+      color: rgba(black, 0.4)
+    &.pending
+      background-color: darken($teal, 10%)
+      color: rgba(black, 0.4)

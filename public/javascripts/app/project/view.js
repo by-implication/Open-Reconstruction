@@ -324,11 +324,22 @@ project.approval = function(ctrl){
 }
 
 project.progress = function(ctrl){
+  var steps = _.range(6);
   return m("section", [
     m(".row", [
       m(".columns.medium-12", [
         m(".progress", [
-          "hi"
+          _.chain(steps)
+            .map(function(step){
+              return m(".step", {
+                style: {width: (100/steps.length + '%')},
+                className: (ctrl.project().level > step ? 'done ' : '') +
+                  (ctrl.project().level === step ? 'pending' : '')
+              }, [
+                process.levelDict()[step]
+              ])
+            })
+            .value()
         ]),
       ]),
     ]),
@@ -336,35 +347,39 @@ project.progress = function(ctrl){
 }
 
 project.listView = function(ctrl){
-  var filteredList = ctrl.filteredList;
-
   return m("table", [
       m("thead", [
         m("tr", [
-          m("th", "Id"),
-          m("th", "Stagnation"),
+          m("th", [
+            m("a", {onclick: ctrl.currentSort.bind(ctrl, "id")}, [
+              "Id"
+            ]),
+          ]),
+          m("th", [
+            m("a", {onclick: ctrl.currentSort.bind(ctrl, "age")}, [
+              "Stagnation"
+            ]),
+          ]),
           m("th", "Name"),
           m("th", "Agency/LGU"),
-          // m("th", "Type"),
-          m("th.text-right", "Amount")
+          m("th.text-right", [
+            m("a", {onclick: ctrl.currentSort.bind(ctrl, "amount")}, [
+              "Amount"
+            ]),
+          ])
         ])
       ]),
       m("tbody", [
-        filteredList.value().length ?
-          filteredList
-            .sortBy(function(p){
-              return p.date;
-            })
+        ctrl.filteredList().value().length ?
+          ctrl.filteredList()
             .map(function(project){
-              var url = "/requests/"+project.id;
               return m("tr", [
                 m("td", project.id),
-                m("td", [common.day(project.age + 86400000 * (9 * Math.random() + 1))]),
+                m("td", [common.day(project.age)]),
                 m("td", [
-                  m("a.name", {href: url, config: m.route}, project.description)
+                  m("a.name", {href: routes.controllers.Requests.view(project.id).url, config: m.route}, project.description)
                 ]),
                 m("td", project.author.govUnit),
-                // m("td", project.projectType),
                 m("td.text-right", helper.commaize(project.amount.toFixed(2)))
               ])
             })

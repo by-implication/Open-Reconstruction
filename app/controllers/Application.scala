@@ -59,6 +59,7 @@ object Application extends Controller {
       Requests.indexMeta,
       Requests.insert,
       Requests.signoff,
+      Requests.view,
       Requests.viewAssignments,
       Requests.viewImages,
       Requests.viewDocuments,
