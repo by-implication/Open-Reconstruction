@@ -12,6 +12,11 @@ object Application extends Controller {
   def index1(x: Int) = index
   def index2(x: Int, y: Int) = index
 
+  def dashboard = index
+  def admin = index
+  def adminLgus = index
+  def adminAgencies = index
+
   def csvParser() = Action {
     Ok(views.html.csvParser())
   }
@@ -33,6 +38,7 @@ object Application extends Controller {
       Requests.createInfo,
       Requests.editField,
       Requests.index,
+      Requests.indexMeta,
       Requests.insert,
       Requests.signoff,
       Requests.viewMeta,
