@@ -1,4 +1,4 @@
-project.view = function(ctrl){
+request.view = function(ctrl){
 
   return app.template(
     ctrl.app, 
@@ -29,21 +29,21 @@ project.view = function(ctrl){
     ], 
     [ 
       // approval section
-      ctrl.isInvolved() ? project.approval(ctrl) : "",
+      ctrl.isInvolved() ? request.approval(ctrl) : "",
       // progress tracker
-      project.progress(ctrl),
+      request.progress(ctrl),
       // actual content
       m("section", [
         m(".row", [
           m(".columns.medium-4", [
-            project.summary(ctrl)
+            request.summary(ctrl)
           ]),
           m("div.columns.medium-8", [
             m(".card", [
               m(".section", [
-                common.tabs.view(ctrl.projectTabs)
+                common.tabs.view(ctrl.requestTabs)
               ]),
-              m.switch(ctrl.projectTabs.currentTab()())
+              m.switch(ctrl.requestTabs.currentTab()())
                 .case("Assignments", function(){
                   if(ctrl.app.isSuperAdmin()){
                     return m(".section", [
@@ -69,7 +69,7 @@ project.view = function(ctrl){
                             }
                             ))),
                           m("p.help", [
-                            "The Implementing Agency will be responsible for the handling the money, and the completion of the project. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
+                            "The Implementing Agency will be responsible for the handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
                           ]),
                         ]),
                       ]),
@@ -99,7 +99,7 @@ project.view = function(ctrl){
                           : "Unassigned"
                         ]),
                         m("p.help", [
-                          "The Implementing Agency will be responsible for the handling the money, and the completion of the project. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
+                          "The Implementing Agency will be responsible for the handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
                         ]),
                       ]),
                     ])
@@ -203,27 +203,27 @@ project.view = function(ctrl){
   )
 }
 
-project.summary = function(ctrl){
-  return m(".project-stub", [
+request.summary = function(ctrl){
+  return m(".request-stub", [
     m(".section.type", [
-      ctrl.project().projectType
+      ctrl.request().projectType
     ]),
     m(".section", [
       displayEditGroup.view(
         ctrl.canEdit(),
         ctrl.degDescription,
-        function(){ return m("h4", ctrl.project().description) }, 
+        function(){ return m("h4", ctrl.request().description) }, 
         function(){
           return m("div", [
-            m("input", {type: "text", value: ctrl.project().description, onchange: m.withAttr("value", ctrl.degDescription.input)}),
+            m("input", {type: "text", value: ctrl.request().description, onchange: m.withAttr("value", ctrl.degDescription.input)}),
           ])
         }
       ),
       m("p.meta", [
         "Posted by ",
-        m("a",{href: "/users/"+ctrl.project().authorId, config: m.route}, ctrl.author().name),
+        m("a",{href: "/users/"+ctrl.request().authorId, config: m.route}, ctrl.author().name),
         m("br"),
-        " on "+(new Date(ctrl.project().date).toString()), // change this as people modify this. "Last edited by _____"
+        " on "+(new Date(ctrl.request().date).toString()), // change this as people modify this. "Last edited by _____"
       ]),
     ]),
     m("hr"),
@@ -232,10 +232,10 @@ project.summary = function(ctrl){
       displayEditGroup.view(
         ctrl.canEdit(),
         ctrl.degAmount,
-        function(){ return m("h5.value", [helper.commaize(ctrl.project().amount)]) }, 
+        function(){ return m("h5.value", [helper.commaize(ctrl.request().amount)]) }, 
         function(){ 
           return m("div", [
-            m("input", {type: "text", value: ctrl.project().amount, onchange: m.withAttr("value", ctrl.degAmount.input)}),
+            m("input", {type: "text", value: ctrl.request().amount, onchange: m.withAttr("value", ctrl.degAmount.input)}),
           ])
         }
       ),
@@ -243,7 +243,7 @@ project.summary = function(ctrl){
       displayEditGroup.view(
         ctrl.canEdit(),
         ctrl.degDisaster, 
-        function(){ return m("h5.value", [ctrl.project().disasterType + " " + ctrl.project().disasterName + " in " + common.displayDate(ctrl.project().disasterDate)]) }, 
+        function(){ return m("h5.value", [ctrl.request().disasterType + " " + ctrl.request().disasterName + " in " + common.displayDate(ctrl.request().disasterDate)]) }, 
         function(){ 
           return m("div", [
             "Sorry, editing disaster is not yet supported."
@@ -254,10 +254,10 @@ project.summary = function(ctrl){
       displayEditGroup.view(
         ctrl.canEdit(),
         ctrl.degLocation, 
-        function(){ return m("h5.value", [ctrl.project().location]) }, 
+        function(){ return m("h5.value", [ctrl.request().location]) }, 
         function(){ 
           return m("div", [
-            m("input", {type: "text", value: ctrl.project().location, onchange: m.withAttr("value", ctrl.degLocation.input)}),
+            m("input", {type: "text", value: ctrl.request().location, onchange: m.withAttr("value", ctrl.degLocation.input)}),
           ])
         }
       ),
@@ -275,7 +275,7 @@ project.summary = function(ctrl){
   ])
 }
 
-project.approval = function(ctrl){
+request.approval = function(ctrl){
   return m("section.approval", [
     m(".row", [
       m(".columns.medium-12", [
@@ -323,7 +323,7 @@ project.approval = function(ctrl){
   ])
 }
 
-project.progress = function(ctrl){
+request.progress = function(ctrl){
   var steps = _.range(6);
   return m("section", [
     m(".row", [
@@ -333,8 +333,8 @@ project.progress = function(ctrl){
             .map(function(step){
               return m(".step", {
                 style: {width: (100/steps.length + '%')},
-                className: (ctrl.project().level > step ? 'done ' : '') +
-                  (ctrl.project().level === step ? 'pending' : '')
+                className: (ctrl.request().level > step ? 'done ' : '') +
+                  (ctrl.request().level === step ? 'pending' : '')
               }, [
                 process.levelDict()[step]
               ])
@@ -346,18 +346,16 @@ project.progress = function(ctrl){
   ])
 }
 
-project.miniProgress = function(project){
+request.miniProgress = function(request){
   return m(".progress.mini", [
     m(".step", {
-      style: {width: (100/6 * (project.level + 1) + '%')},
+      style: {width: (100/6 * (request.level + 1) + '%')},
       className: "done"
     })
   ])
 }
 
-project.listView = function(ctrl){
-  var filteredList = ctrl.filteredList;
-
+request.listView = function(ctrl){
   return m("table", [
       m("thead", [
         m("tr", [
@@ -386,8 +384,8 @@ project.listView = function(ctrl){
         ])
       ]),
       m("tbody", [
-        filteredList().value().length ?
-          filteredList()
+        ctrl.filteredList().value().length ?
+          ctrl.filteredList()
             .map(function(p){
               var url = "/requests/"+p.id;
               return m("tr", [
@@ -398,7 +396,7 @@ project.listView = function(ctrl){
                 ]),
                 m("td", p.author.govUnit),
                 m("td", [
-                  project.miniProgress(p)
+                  request.miniProgress(p)
                 ]),
                 // m("td", p.pType),
                 m("td.text-right", helper.commaize(p.amount.toFixed(2)))

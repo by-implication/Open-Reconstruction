@@ -6,10 +6,10 @@ dictio.disasters = m.prop({
 });
 
 var database = {
-  projectList: m.prop([]),
+  requestList: m.prop([]),
   userList: m.prop([]),
-  projectFilters: m.prop([]),
-  projectDisasters: m.prop([]),
+  requestFilters: m.prop([]),
+  requestDisasters: m.prop([]),
   agencyList: m.prop([])
 }
 
@@ -72,8 +72,8 @@ database.pull = function(){
         if(!d["AMT_REQD"]){
           errors.push("No Amount");
         }
-        if(d["NO OF PROJECTS"] > 1){
-          errors.push("Multiple Projects");
+        if(d["NO OF REQUESTS"] > 1){
+          errors.push("Multiple Requests");
         }
         if(!d["TYPE OF DISASTER"]){
           errors.push("Unspecified Disaster");
@@ -104,12 +104,12 @@ database.pull = function(){
           })],
           attachments: []
         }
-        return new project.Project(p);
+        return new request.Request(p);
       });
     }
   }).then(function(data){
-    database.projectList(data);
-    var pFilters = _.chain(database.projectList())
+    database.requestList(data);
+    var pFilters = _.chain(database.requestList())
       .map(function(p){
         return p.type();
       })
@@ -117,7 +117,7 @@ database.pull = function(){
       .compact()
       .value();
 
-    var pDisasters = _.chain(database.projectList())
+    var pDisasters = _.chain(database.requestList())
       .map(function(p){
         return p.disaster().type();
       })
@@ -145,8 +145,8 @@ database.pull = function(){
       .value()
     );
 
-    database.projectFilters(pFilters);
-    database.projectDisasters(pDisasters);
+    database.requestFilters(pFilters);
+    database.requestDisasters(pDisasters);
 
     // _.chain(database.userList())
     //   .map(function(u){

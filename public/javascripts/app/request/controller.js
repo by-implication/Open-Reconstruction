@@ -1,24 +1,24 @@
-project.controller = function(){
+request.controller = function(){
   var map;
   this.app = new app.controller();
   this.signoffModal = new common.modal.controller();
-  var projectId = m.route.param('id');
-  this.projectTabs = new common.tabs.controller();
-  this.projectTabs.tabs([
-    {label: m.prop("Assignments"), href: routes.controllers.Requests.viewAssignments(projectId).url},
-    {label: m.prop("Images"), href: routes.controllers.Requests.viewImages(projectId).url},
-    {label: m.prop("Documents"), href: routes.controllers.Requests.viewDocuments(projectId).url},
-    {label: m.prop("Activity"), href: routes.controllers.Requests.viewActivity(projectId).url}
+  var requestId = m.route.param('id');
+  this.requestTabs = new common.tabs.controller();
+  this.requestTabs.tabs([
+    {label: m.prop("Assignments"), href: routes.controllers.Requests.viewAssignments(requestId).url},
+    {label: m.prop("Images"), href: routes.controllers.Requests.viewImages(requestId).url},
+    {label: m.prop("Documents"), href: routes.controllers.Requests.viewDocuments(requestId).url},
+    {label: m.prop("Activity"), href: routes.controllers.Requests.viewActivity(requestId).url}
   ]);
-  this.projectTabs.currentTab(this.projectTabs.tabs()[0].label)
+  this.requestTabs.currentTab(this.requestTabs.tabs()[0].label)
 
   this.tabs = new common.tabs.controller();
   this.id = m.route.param("id");
-  this.project = m.prop({});
+  this.request = m.prop({});
   this.author = m.prop({});
   this.attachments = m.prop({});
   this.history = m.prop({});
-  this.oldProject = m.prop({});
+  this.oldRequest = m.prop({});
   this.location = m.prop("");
   this.isInvolved = m.prop(false);
   this.canSignoff = m.prop(false);
@@ -37,10 +37,10 @@ project.controller = function(){
   this.implementingAgencies = m.prop([]);
 
   // displayEditGroups
-  this.degDescription = new displayEditGroup.controller(this.project, "description");
-  this.degAmount = new displayEditGroup.controller(this.project, "amount");
-  this.degDisaster = new displayEditGroup.controller(this.project, "disaster");
-  this.degLocation = new displayEditGroup.controller(this.project, "location");
+  this.degDescription = new displayEditGroup.controller(this.request, "description");
+  this.degAmount = new displayEditGroup.controller(this.request, "amount");
+  this.degDisaster = new displayEditGroup.controller(this.request, "disaster");
+  this.degLocation = new displayEditGroup.controller(this.request, "location");
 
   var parseLocation = function(location){
     var split = location.split(',').map(function(coord){return parseFloat(coord)});
@@ -60,13 +60,13 @@ project.controller = function(){
 
   this.curUserCanUpload = function(){
     // if requester, you can only upload if the assessor hasn't approved it
-    return (this.currentUserIsAuthor() && this.project().level === 0)
+    return (this.currentUserIsAuthor() && this.request().level === 0)
     ||
     // if assesor, can only upload if you haven't approved it
-    (this.currentUserBelongsToAssessingAgency() && this.project().level === 0)
+    (this.currentUserBelongsToAssessingAgency() && this.request().level === 0)
     ||
     // if OCD, can only upload if you haven't approved it
-    (this.app.isSuperAdmin() && this.project().level <= 1)
+    (this.app.isSuperAdmin() && this.request().level <= 1)
   }
 
   this.currentUserBelongsToAssessingAgency = function(){
@@ -78,7 +78,7 @@ project.controller = function(){
   }
 
   this.getBlockingAgency = function(){
-    var agency = process.levelToAgencyName()[this.project().level]
+    var agency = process.levelToAgencyName()[this.request().level]
     if(agency === "ASSESSING_AGENCY"){
       if (this.assessingAgency()){
         return this.assessingAgency().name;
@@ -91,7 +91,7 @@ project.controller = function(){
   }
 
   bi.ajax(routes.controllers.Requests.viewMeta(this.id)).then(function(data){
-    this.project(data.request);
+    this.request(data.request);
     this.author(data.author);
     this.attachments(data.attachments);
     this.history(data.history);
@@ -111,7 +111,7 @@ project.controller = function(){
   }.bind(this));
 
   database.pull().then(function(data){
-    this.oldProject(database.projectList()[this.id - 1]);
+    this.oldRequest(database.requestList()[this.id - 1]);
   }.bind(this))
 
   this.signoffModal.signoff = function(e){

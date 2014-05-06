@@ -1,4 +1,4 @@
-projectCreation.view = function(ctrl){
+requestCreation.view = function(ctrl){
 
   function cancel(){ history.back(); }
 

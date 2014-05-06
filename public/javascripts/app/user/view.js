@@ -14,7 +14,7 @@ user.view = function(ctrl){
           ctrl.app.isUserAuthorized(ctrl.user(), 1) ?
             m("div", [
               m("h1",[m("small", "List of projects requested by this user")]),
-              project.listView(ctrl)
+              request.listView(ctrl)
             ])
           : ""
         ])

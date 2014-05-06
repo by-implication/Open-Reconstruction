@@ -1,9 +1,9 @@
-var project = {};
+var request = {};
 
-project.Project = function(data){
+request.Request = function(data){
   for(prop in data){
     this[prop] = m.prop(data[prop]);
   }
 }
 
-project.List = Array;
+request.List = Array;

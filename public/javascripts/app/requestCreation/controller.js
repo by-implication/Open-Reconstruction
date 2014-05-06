@@ -1,4 +1,4 @@
-projectCreation.controller = function(){
+requestCreation.controller = function(){
   var self = this;
   this.app = new app.controller();
 
