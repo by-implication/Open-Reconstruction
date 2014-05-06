@@ -2,6 +2,7 @@ projectListing.controller = function(){
   var self = this;
   this.app = new app.controller();
   this.tabs = new common.tabs.controller("/requests");
+  this.currentSort = m.prop();
   var badges = {
     all: m.prop(),
     signoff: m.prop(),
@@ -104,6 +105,10 @@ projectListing.controller = function(){
     // }
   }.bind(this)
 
+  this.setSort = function(sort){
+    
+  }
+
   bi.ajax(routes.controllers.Requests.indexMeta()).then(function (r){
     self.projectList = r.list;
     self.projectFilters = r.filters;
@@ -115,36 +120,43 @@ projectListing.controller = function(){
     badges.approval(1);
     badges.implementation(1);
   
-    self.filteredList = _.chain(self.projectList)
-      .filter(function(p){
-        if(!self.currentFilter.projects()){
-          return true;
-        } else {
-          return p.projectType == self.currentFilter.projects();
-        }
-      })
-      .filter(function(p){
-        switch(self.tabs.currentTab()){
-          case self.tabFilters.SIGNOFF:
-            return p.canSignoff;
-            break;
-          case self.tabFilters.ASSESSOR:
-            return p.level === 0 && !p.assessingAgencyId;
-            break;
-          case self.tabFilters.MINE:
-            return p.author.govUnitId === self.app.currentUser().agency.id;
-            break;
-          case self.tabFilters.APPROVAL:
-            return p.level <= 4
-            break;
-          case self.tabFilters.IMPLEMENTATION:
-            return p.level > 4
-            break;
-          default:
+    self.filteredList = function(){
+      return _.chain(self.projectList)
+        .filter(function(p){
+          if(!self.currentFilter.projects()){
             return true;
-        }
-      });
-
+          } else {
+            return p.projectType == self.currentFilter.projects();
+          }
+        })
+        .filter(function(p){
+          switch(self.tabs.currentTab()){
+            case self.tabFilters.SIGNOFF:
+              return p.canSignoff;
+              break;
+            case self.tabFilters.ASSESSOR:
+              return p.level === 0 && !p.assessingAgencyId;
+              break;
+            case self.tabFilters.MINE:
+              return p.author.govUnitId === self.app.currentUser().agency.id;
+              break;
+            case self.tabFilters.APPROVAL:
+              return p.level <= 4
+              break;
+            case self.tabFilters.IMPLEMENTATION:
+              return p.level > 4
+              break;
+            default:
+              return true;
+          }
+        })
+        .sortBy(function(p){
+          if(typeof self.currentSort() === "undefined"){
+            self.currentSort("amount");
+          }
+          return -1 * p[self.currentSort()];
+        })
+    }
   });
 
 }

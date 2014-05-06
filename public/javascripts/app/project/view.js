@@ -352,25 +352,34 @@ project.listView = function(ctrl){
   return m("table", [
       m("thead", [
         m("tr", [
-          m("th", "Id"),
-          m("th", "Stagnation"),
+          m("th", [
+            m("a", {onclick: ctrl.currentSort.bind(ctrl, "id")}, [
+              "Id"
+            ]),
+          ]),
+          m("th", [
+            m("a", {onclick: ctrl.currentSort.bind(ctrl, "age")}, [
+              "Stagnation"
+            ]),
+          ]),
           m("th", "Name"),
           m("th", "Agency/LGU"),
           // m("th", "Type"),
-          m("th.text-right", "Amount")
+          m("th.text-right", [
+            m("a", {onclick: ctrl.currentSort.bind(ctrl, "amount")}, [
+              "Amount"
+            ]),
+          ])
         ])
       ]),
       m("tbody", [
-        filteredList.value().length ?
-          filteredList
-            .sortBy(function(p){
-              return p.date;
-            })
+        filteredList().value().length ?
+          filteredList()
             .map(function(project){
               var url = "/requests/"+project.id;
               return m("tr", [
                 m("td", project.id),
-                m("td", [common.day(project.age + 86400000 * (9 * Math.random() + 1))]),
+                m("td", [common.day(project.age)]),
                 m("td", [
                   m("a.name", {href: url, config: m.route}, project.description)
                 ]),
