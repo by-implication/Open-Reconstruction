@@ -346,6 +346,15 @@ project.progress = function(ctrl){
   ])
 }
 
+project.miniProgress = function(project){
+  return m(".progress.mini", [
+    m(".step", {
+      style: {width: (100/6 * (project.level + 1) + '%')},
+      className: "done"
+    })
+  ])
+}
+
 project.listView = function(ctrl){
   var filteredList = ctrl.filteredList;
 
@@ -364,6 +373,11 @@ project.listView = function(ctrl){
           ]),
           m("th", "Name"),
           m("th", "Agency/LGU"),
+          m("th", [
+            m("a", {onclick: ctrl.currentSort.bind(ctrl, "level")}, [
+              "Progress"
+            ]),
+          ]),
           // m("th", "Type"),
           m("th.text-right", [
             m("a", {onclick: ctrl.currentSort.bind(ctrl, "amount")}, [
@@ -375,17 +389,20 @@ project.listView = function(ctrl){
       m("tbody", [
         filteredList().value().length ?
           filteredList()
-            .map(function(project){
-              var url = "/requests/"+project.id;
+            .map(function(p){
+              var url = "/requests/"+p.id;
               return m("tr", [
-                m("td", project.id),
-                m("td", [common.day(project.age)]),
+                m("td", p.id),
+                m("td", [common.day(p.age)]),
                 m("td", [
-                  m("a.name", {href: url, config: m.route}, project.description)
+                  m("a.name", {href: url, config: m.route}, p.description)
                 ]),
-                m("td", project.author.agency),
-                // m("td", project.projectType),
-                m("td.text-right", helper.commaize(project.amount.toFixed(2)))
+                m("td", p.author.agency),
+                m("td", [
+                  project.miniProgress(p)
+                ]),
+                // m("td", p.pType),
+                m("td.text-right", helper.commaize(p.amount.toFixed(2)))
               ])
             })
             .value()

@@ -468,11 +468,17 @@ nav
     max-height: 2000px
 
 .progress
-  +clearfix
+  // +clearfix
   width: 100%
   background-color: rgba(black, 0.05)
   border-radius: 3px
   overflow: hidden
+  &.mini
+    height: 4px
+    border-radius: 0px
+    .step
+      padding: 0px
+      height: 100%
   .step
     float: left
     padding: 10px
