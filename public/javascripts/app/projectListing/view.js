@@ -30,14 +30,18 @@ projectListing.view = function(ctrl){
           m("h4", [
             "Filter by Project Type"
           ]),
-          m("ul", [
-            m("li", [
-              m("a", {onclick: ctrl.currentFilter.projects.bind(ctrl.currentFilter, "")}, "All")
+          m("ul.filters", [
+            m("li.filter", {className: (ctrl.currentFilter.projects() == "") ? "active" : ""}, [
+              m("a", {
+                onclick: ctrl.currentFilter.projects.bind(ctrl.currentFilter, "")
+              }, "All")
             ]),
             _.chain(ctrl.projectFilters)
             .map(function(filter){
-              return m("li", [
-                m("a", {onclick: ctrl.currentFilter.projects.bind(ctrl.currentFilter, filter)}, filter)
+              return m("li.filter",{className: (ctrl.currentFilter.projects() == filter) ? "active" : ""}, [
+                m("a", {
+                  onclick: ctrl.currentFilter.projects.bind(ctrl.currentFilter, filter)
+                }, filter)
               ])
             })
             .value()
