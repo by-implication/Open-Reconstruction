@@ -36,7 +36,7 @@ GET     /requests/signoff                         controllers.Requests.indexSign
 GET     /requests/meta                            controllers.Requests.indexMeta
 
 GET     /requests/new                             controllers.Requests.create
-GET     /requests/meta                            controllers.Requests.createMeta
+GET     /requests/new/meta                        controllers.Requests.createMeta
 POST    /requests/new                             controllers.Requests.insert
 
 GET     /requests/:id                             controllers.Requests.view(id: Int)

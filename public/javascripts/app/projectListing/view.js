@@ -9,7 +9,7 @@ projectListing.view = function(ctrl){
             ctrl.app.isAuthorized(1) ?
               m(
                 "a.button", 
-                {href: routes.controllers.GovUnits.createAgency(), config: m.route}, 
+                {href: routes.controllers.Requests.create().url, config: m.route}, 
                 "New Request"
               )
             : ""

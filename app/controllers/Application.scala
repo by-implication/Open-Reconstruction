@@ -46,6 +46,7 @@ object Application extends Controller {
       Requests.assignAssessingAgency,
       Requests.assignImplementingAgency,
       Requests.comment,
+      Requests.create,
       Requests.createMeta,
       Requests.editField,
       Requests.index,
