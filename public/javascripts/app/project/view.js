@@ -378,7 +378,6 @@ project.listView = function(ctrl){
               "Progress"
             ]),
           ]),
-          // m("th", "Type"),
           m("th.text-right", [
             m("a", {onclick: ctrl.currentSort.bind(ctrl, "amount")}, [
               "Amount"
