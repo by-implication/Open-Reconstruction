@@ -5,7 +5,7 @@ user.controller = function(){
   this.user = m.prop({});
   this.requestList = m.prop([]);
   this.currentFilter = {requests: function(){return null}};
-  this.currentSort = m.prop();
+  this.sortBy = m.prop("id");
 
   bi.ajax(routes.controllers.Users.viewMeta(self.id)).then(function (r){
     if(r.success){

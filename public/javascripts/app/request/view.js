@@ -64,7 +64,7 @@ request.view = function(ctrl){
           m("div.columns.medium-8", [
             m(".card", [
               m(".section", [
-                common.tabs.view(ctrl.requestTabs)
+                common.tabs.menu(ctrl.requestTabs)
               ]),
               m.switch(ctrl.requestTabs.currentTab()())
                 .case("Assignments", function(){
@@ -387,24 +387,24 @@ request.listView = function(reqs, sortBy){
       m("thead", [
         m("tr", [
           m("th", [
-            m("a", {onclick: sortBy("id")}, [
+            m("a", {onclick: function(){ sortBy("id") }}, [
               "Id"
             ]),
           ]),
           m("th", [
-            m("a", {onclick: sortBy("age")}, [
+            m("a", {onclick: function(){ sortBy("age") }}, [
               "Stagnation"
             ]),
           ]),
           m("th", "Name"),
           m("th", "Gov Unit"),
           m("th", [
-            m("a", {onclick: sortBy("level")}, [
+            m("a", {onclick: function(){ sortBy("level") }}, [
               "Status"
             ]),
           ]),
           m("th.text-right", [
-            m("a", {onclick: sortBy("amount")}, [
+            m("a", {onclick: function(){ sortBy("amount") }}, [
               "Amount"
             ]),
           ])

@@ -142,7 +142,11 @@ common.tabs.menu = function(ctrl, options){
   return m("dl.tabs[data-tab]", options || {},
     ctrl.tabs()
     .filter(function (tab){
-      return tab.when();
+      if(tab.when){
+        return tab.when()
+      } else {
+        return true
+      }
     })
     .map(function (tab, i){
       var tabClass = function(tab){

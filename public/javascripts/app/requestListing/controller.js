@@ -10,7 +10,7 @@ requestListing.controller = function(){
     APPROVAL: 'APPROVAL',
     IMPLEMENTATION: 'IMPLEMENTATION'
   }
-  this.sortBy = m.prop();
+  this.sortBy = m.prop("id");
 
   var requestFilter = function (r){
     if(!self.currentFilter.requests()){
@@ -24,8 +24,6 @@ requestListing.controller = function(){
     {
       identifier: this.tabFilters.ALL,
       href: routes.controllers.Requests.indexAll().url,
-      when: function(){ return true },
-      filter: function(){ return true },
       _label: "All"
     },
     {
@@ -70,7 +68,14 @@ requestListing.controller = function(){
       _label: "Implementation"
     },
   ].map(function (tab){
-    tab.requests = function(){ return self.requestList.filter(tab.filter).filter(requestFilter) }
+    tab.requests = function(){
+      return self.requestList
+        .filter(tab.filter || function(){ return true })
+        .filter(requestFilter)
+        .sort(function (a, b){
+          return b[self.sortBy()] - a[self.sortBy()]
+        })
+    }
     tab.label = function(){
       return [
         typeof tab._label == 'function' ? tab._label() : tab._label,
