@@ -10,7 +10,7 @@ user.controller = function(){
   bi.ajax(routes.controllers.Users.viewMeta(self.id)).then(function (r){
     if(r.success){
       this.user(r.user)
-      this.requestList = r.requests;
+      this.requestList(r.requests);
       this.filteredList = function(){
         return _.chain(this.requestList);
       }
