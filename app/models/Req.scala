@@ -97,7 +97,8 @@ case class Req(
       ),
     "authorId" -> authorId,
     "assessingAgencyId" -> assessingAgencyId,
-    "canSignoff" -> user.canSignoff(this)
+    "canSignoff" -> user.canSignoff(this),
+    "isRejected" -> isRejected
   )
 
   def viewJson = Json.obj(
