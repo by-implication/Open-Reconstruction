@@ -299,10 +299,10 @@ request.summary = function(ctrl){
 }
 
 request.approval = function(ctrl){
-  return m("section.approval", {className: ctrl.isRejected() ? "rejected" : ""}, [
+  return m("section.approval", {className: ctrl.request().isRejected ? "rejected" : ""}, [
     m(".row", [
       m(".columns.medium-12", [
-        ctrl.isRejected() ?
+        ctrl.request().isRejected ?
           m("div", [
             m("h4", [
               "This request has been rejected." 

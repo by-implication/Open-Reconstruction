@@ -70,6 +70,7 @@ requestListing.controller = function(){
   ].map(function (tab){
     tab.requests = function(){
       return self.requestList
+        .filter(function (r){ return tab.filter ? !r.isRejected : true })
         .filter(tab.filter || function(){ return true })
         .filter(requestFilter)
         .sort(function (a, b){
