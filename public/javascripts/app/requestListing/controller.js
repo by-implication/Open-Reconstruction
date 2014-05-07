@@ -12,14 +12,6 @@ requestListing.controller = function(){
   }
   this.sortBy = m.prop();
 
-  function myGovUnit(){
-    if(self.app.currentUser().govUnit && self.app.currentUser().govUnit.role == "LGU") {
-      return "My LGU's requests";
-    } else {
-      return "My agency's requests";
-    }
-  }
-
   var requestFilter = function (r){
     if(!self.currentFilter.requests()){
       return true;
@@ -55,7 +47,13 @@ requestListing.controller = function(){
       href: routes.controllers.Requests.indexMine().url,
       when: function(){ return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 1) },
       filter: function (r){ return r.author.govUnitId === self.app.currentUser().govUnit.id },
-      _label: myGovUnit()
+      _label: function(){
+        if(self.app.currentUser().govUnit && self.app.currentUser().govUnit.role == "LGU") {
+          return "My LGU's requests";
+        } else {
+          return "My agency's requests";
+        }
+      }
     },
     {
       identifier: this.tabFilters.APPROVAL,
@@ -73,7 +71,12 @@ requestListing.controller = function(){
     },
   ].map(function (tab){
     tab.requests = function(){ return self.requestList.filter(tab.filter).filter(requestFilter) }
-    tab.label = function(){ return [tab._label, m("span.label.secondary.round", tab.requests().length)] }
+    tab.label = function(){
+      return [
+        typeof tab._label == 'function' ? tab._label() : tab._label,
+        m("span.label.secondary.round", tab.requests().length)
+      ]
+    }
     tab.content = function(){ return request.listView(this.requests(), self.sortBy) }
     return tab;
   });
