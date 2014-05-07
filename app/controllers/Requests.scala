@@ -167,13 +167,7 @@ object Requests extends Controller with Secured {
     val allRequests = Req.indexList()
     Ok(Json.obj(
       "list" -> allRequests.map(_.indexJson),
-      "filters" -> ProjectType.jsonList,
-      "counts" -> Json.obj(
-        "all" -> allRequests.length,
-        "signoff" -> allRequests.filter(req => user.canSignoff(req)).length,
-        "assessor" -> allRequests.filter(req => (req.level == 0 && !req.assessingAgencyId.isDefined)).length,
-        "mine" -> allRequests.filter(req => (User.findById(req.authorId).get.govUnitId == user.govUnitId)).length
-      )
+      "filters" -> ProjectType.jsonList
     ))
   }
 

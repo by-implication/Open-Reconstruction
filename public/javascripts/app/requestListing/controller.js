@@ -3,14 +3,6 @@ requestListing.controller = function(){
   this.app = new app.controller();
   this.tabs = new common.tabs.controller();
   this.currentSort = m.prop();
-  var badges = {
-    all: m.prop(),
-    signoff: m.prop(),
-    assessor: m.prop(),
-    mine: m.prop(),
-    approval: m.prop(),
-    implementation: m.prop()
-  }
   this.tabFilters = {
     ALL: 'ALL',
     SIGNOFF: 'SIGNOFF',
@@ -32,7 +24,6 @@ requestListing.controller = function(){
     {
       label: m.prop("All"), 
       href: routes.controllers.Requests.indexAll().url, 
-      badge: badges.all, 
       identifier: this.tabFilters.ALL
     },
     {
@@ -41,7 +32,6 @@ requestListing.controller = function(){
         return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 5);
       }, 
       href: routes.controllers.Requests.indexSignoff().url, 
-      badge: badges.signoff, 
       identifier: this.tabFilters.SIGNOFF
     },
     {
@@ -50,7 +40,6 @@ requestListing.controller = function(){
         return self.app.isSuperAdmin();
       }, 
       href: routes.controllers.Requests.indexAssessor().url, 
-      badge: badges.assessor, 
       identifier: this.tabFilters.ASSESSOR
     },
     {
@@ -59,7 +48,6 @@ requestListing.controller = function(){
         return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 1);
       }, 
       href: routes.controllers.Requests.indexMine().url, 
-      badge: badges.mine, 
       identifier: this.tabFilters.MINE
     },
     {
@@ -68,7 +56,6 @@ requestListing.controller = function(){
         return !self.app.currentUser();
       }, 
       href: routes.controllers.Requests.indexApproval().url, 
-      badge: badges.approval, 
       identifier: this.tabFilters.APPROVAL
     },
     {
@@ -77,7 +64,6 @@ requestListing.controller = function(){
         return !self.app.currentUser();
       }, 
       href: routes.controllers.Requests.indexImplementation().url, 
-      badge: badges.implementation, 
       identifier: this.tabFilters.IMPLEMENTATION
     },
   ]);
@@ -112,13 +98,6 @@ requestListing.controller = function(){
   bi.ajax(routes.controllers.Requests.indexMeta()).then(function (r){
     self.requestList = r.list;
     self.projectFilters = r.filters;
-    badges.all(r.counts.all);
-    badges.signoff(r.counts.signoff);
-    badges.assessor(r.counts.assessor);
-    badges.mine(r.counts.mine);
-    // replace this with real shit
-    badges.approval(1);
-    badges.implementation(1);
   
     self.filteredList = function(){
       return _.chain(self.requestList)
