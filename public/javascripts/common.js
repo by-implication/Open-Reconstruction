@@ -196,6 +196,7 @@ common.modal.controller = function(){
     this.isVisible(false);
   }
   this.password = m.prop("");
+  this.content = m.prop("");
   this.config = function(elem){
     window.setTimeout(function(){
       elem.style.opacity = 1;

@@ -135,7 +135,7 @@ request.controller = function(){
   this.rejectModal.reject = function(e){
     e.preventDefault();
     bi.ajax(routes.controllers.Requests.reject(this.id), {
-      data: {password: this.rejectModal.password}
+      data: {password: this.rejectModal.password, content: this.rejectModal.content}
     }).then(function (r){
       if(r.success){
         this.canSignoff(false);
@@ -144,7 +144,11 @@ request.controller = function(){
         this.rejectModal.close();
         this.history().unshift(r.event);
       } else {
-        alert("Failed to reject: " + r.messages.password);
+        var errors = [];
+        for(var field in r.messages){
+          errors.push([field, r.messages[field]]);
+        }
+        alert("Failed to reject:\n" + errors.join("\n"));
       }
     }.bind(this));
   }.bind(this);
