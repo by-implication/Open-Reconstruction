@@ -298,39 +298,36 @@ request.summary = function(ctrl){
 }
 
 request.approval = function(ctrl){
-  return m("section.approval", [
+  return m("section.approval", {className: ctrl.isRejected() ? "rejected" : ""}, [
     m(".row", [
       m(".columns.medium-12", [
-        ctrl.request().isRejected ? "This request has been rejected." : (ctrl.canSignoff() ?
+        ctrl.isRejected() ?
           m("div", [
             m("h4", [
-              "Sign off on this request only if you feel the information is complete for your step in the approval process."
-            ]),
-            m("button", {onclick: ctrl.signoffModal.show.bind(ctrl.signoffModal)}, [
-              m("i.fa.fa-check"),
-            ]),
-            m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
-              m("i.fa.fa-times"),
+              "This request has been rejected." 
             ]),
           ])
-        : "",
-        ctrl.hasSignedoff()  ?
-          m("div", [
-            m("h4", [
-              m("div", [m("i.fa.fa-thumbs-up.fa-2x")]),
-              "You've already signed off on this request."
-            ]),
-          ])
-        : "",
-        ctrl.currentUserIsAuthor() && !ctrl.hasSignedoff() ?
-          m("div", [
-            m("h4", [
-              "You created this request."
-            ]),
-          ])
-        : "",
-        !ctrl.canSignoff() && !ctrl.hasSignedoff() ? // waiting for predecessor
-          m("div", [
+        : (
+          ctrl.canSignoff() ?
+            m("div", [
+              m("h4", [
+                "Sign off on this request only if you feel the information is complete for your step in the approval process."
+              ]),
+              m("button", {onclick: ctrl.signoffModal.show.bind(ctrl.signoffModal)}, [
+                m("i.fa.fa-check"),
+              ]),
+              m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
+                m("i.fa.fa-times"),
+              ])
+            ])
+          : ctrl.hasSignedoff() ?
+            m("div", [
+              m("h4", [
+                m("div", [m("i.fa.fa-thumbs-up.fa-2x")]),
+                "You've already signed off on this request."
+              ]),
+            ])
+          : m("div", [
             m("h4", [
               ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
                 ctrl.app.isSuperAdmin() ?
@@ -339,7 +336,14 @@ request.approval = function(ctrl){
               : "Waiting for " + ctrl.getBlockingAgency() + " approval."
             ]),
           ])
-        : "")
+        ),
+        ctrl.currentUserIsAuthor() && !ctrl.hasSignedoff() ?
+          m("div", [
+            m("h5", [
+              "You created this request."
+            ]),
+          ])
+        : ""
       ]),
     ])
   ])
@@ -395,7 +399,7 @@ request.listView = function(ctrl){
           m("th", "Gov Unit"),
           m("th", [
             m("a", {onclick: ctrl.currentSort.bind(ctrl, "level")}, [
-              "Progress"
+              "Status"
             ]),
           ]),
           m("th.text-right", [
@@ -418,7 +422,11 @@ request.listView = function(ctrl){
                 ]),
                 m("td", p.author.govUnit),
                 m("td", [
-                  request.miniProgress(p)
+                  !p.isRejected ?
+                    request.miniProgress(p)
+                  : m(".label.alert", [
+                    "Rejected"
+                  ])
                 ]),
                 // m("td", p.pType),
                 m("td.text-right", helper.commaize(p.amount.toFixed(2)))

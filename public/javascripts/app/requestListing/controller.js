@@ -130,24 +130,28 @@ requestListing.controller = function(){
           }
         })
         .filter(function(p){
-          switch(self.tabs.currentTab()){
-            case self.tabFilters.SIGNOFF:
-              return p.canSignoff;
-              break;
-            case self.tabFilters.ASSESSOR:
-              return p.level === 0 && !p.assessingAgencyId;
-              break;
-            case self.tabFilters.MINE:
-              return p.author.govUnitId === self.app.currentUser().govUnit.id;
-              break;
-            case self.tabFilters.APPROVAL:
-              return p.level <= 4
-              break;
-            case self.tabFilters.IMPLEMENTATION:
-              return p.level > 4
-              break;
-            default:
-              return true;
+          if(!p.isRejected){          
+            switch(self.tabs.currentTab()){
+              case self.tabFilters.SIGNOFF:
+                return p.canSignoff;
+                break;
+              case self.tabFilters.ASSESSOR:
+                return p.level === 0 && !p.assessingAgencyId;
+                break;
+              case self.tabFilters.MINE:
+                return p.author.govUnitId === self.app.currentUser().govUnit.id;
+                break;
+              case self.tabFilters.APPROVAL:
+                return p.level <= 4
+                break;
+              case self.tabFilters.IMPLEMENTATION:
+                return p.level > 4
+                break;
+              default:
+                return true;
+            }
+          } else {
+            return false
           }
         })
         .sortBy(function(p){
