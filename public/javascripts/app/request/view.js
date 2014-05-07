@@ -41,6 +41,7 @@ request.view = function(ctrl){
               common.field("Password", m("input[type='password']", {
                 onchange: m.withAttr("value", ctrl.password)
               })),
+              common.field("Remarks", m("textarea"), "Please state the reason for rejection"),
               m("button", [
                 "Submit"
               ]),
