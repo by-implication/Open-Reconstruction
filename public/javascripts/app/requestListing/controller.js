@@ -2,15 +2,6 @@ requestListing.controller = function(){
   var self = this;
   this.app = new app.controller();
   this.tabs = new common.tabs.controller();
-  this.currentSort = m.prop();
-  var badges = {
-    all: m.prop(),
-    signoff: m.prop(),
-    assessor: m.prop(),
-    mine: m.prop(),
-    approval: m.prop(),
-    implementation: m.prop()
-  }
   this.tabFilters = {
     ALL: 'ALL',
     SIGNOFF: 'SIGNOFF',
@@ -19,69 +10,84 @@ requestListing.controller = function(){
     APPROVAL: 'APPROVAL',
     IMPLEMENTATION: 'IMPLEMENTATION'
   }
+  this.sortBy = m.prop("id");
 
-  function myAgency(){
-    if(self.app.currentUser().govUnit && self.app.currentUser().govUnit.role == "LGU") {
-      return "My LGU's requests";
+  var requestFilter = function (r){
+    if(!self.currentFilter.requests()){
+      return true;
     } else {
-      return "My agency's requests";
+      return r.projectType == self.currentFilter.requests();
     }
   }
 
-  this.tabs.tabs = m.prop([
+  var tabs = [
     {
-      label: m.prop("All"), 
-      href: routes.controllers.Requests.indexAll().url, 
-      badge: badges.all, 
-      identifier: this.tabFilters.ALL
+      identifier: this.tabFilters.ALL,
+      href: routes.controllers.Requests.indexAll().url,
+      _label: "All"
     },
     {
-      label: m.prop("Needs signoff"), 
-      when: function(){
-        return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 5);
-      }, 
-      href: routes.controllers.Requests.indexSignoff().url, 
-      badge: badges.signoff, 
-      identifier: this.tabFilters.SIGNOFF
+      identifier: this.tabFilters.SIGNOFF,
+      href: routes.controllers.Requests.indexSignoff().url,
+      when: function(){ return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 5) },
+      filter: function (r){ return r.canSignoff },
+      _label: "Needs signoff"
     },
     {
-      label: m.prop("Needs assessor"), 
-      when: function(){
-        return self.app.isSuperAdmin();
-      }, 
-      href: routes.controllers.Requests.indexAssessor().url, 
-      badge: badges.assessor, 
-      identifier: this.tabFilters.ASSESSOR
+      identifier: this.tabFilters.ASSESSOR,
+      href: routes.controllers.Requests.indexAssessor().url,
+      when: function(){ return self.app.isSuperAdmin() },
+      filter: function (r){ return r.level === 0 && !r.assessingAgencyId },
+      _label: "Needs assessor"
     },
     {
-      label: myAgency, 
-      when: function(){
-        return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 1);
-      }, 
-      href: routes.controllers.Requests.indexMine().url, 
-      badge: badges.mine, 
-      identifier: this.tabFilters.MINE
+      identifier: this.tabFilters.MINE,
+      href: routes.controllers.Requests.indexMine().url,
+      when: function(){ return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 1) },
+      filter: function (r){ return r.author.govUnitId === self.app.currentUser().govUnit.id },
+      _label: function(){
+        if(self.app.currentUser().govUnit && self.app.currentUser().govUnit.role == "LGU") {
+          return "My LGU's requests";
+        } else {
+          return "My agency's requests";
+        }
+      }
     },
     {
-      label: m.prop("Pending Approval"), 
-      when: function(){
-        return !self.app.currentUser();
-      }, 
-      href: routes.controllers.Requests.indexApproval().url, 
-      badge: badges.approval, 
-      identifier: this.tabFilters.APPROVAL
+      identifier: this.tabFilters.APPROVAL,
+      href: routes.controllers.Requests.indexApproval().url,
+      when: function(){ return !self.app.currentUser() },
+      filter: function (r){ return r.level <= 4 },
+      _label: "Pending Approval"
     },
     {
-      label: m.prop("Implementation"), 
-      when: function(){
-        return !self.app.currentUser();
-      }, 
-      href: routes.controllers.Requests.indexImplementation().url, 
-      badge: badges.implementation, 
-      identifier: this.tabFilters.IMPLEMENTATION
+      identifier: this.tabFilters.IMPLEMENTATION,
+      href: routes.controllers.Requests.indexImplementation().url,
+      when: function(){ return !self.app.currentUser() },
+      filter: function (r){ return r.level > 4 },
+      _label: "Implementation"
     },
-  ]);
-  
+  ].map(function (tab){
+    tab.requests = function(){
+      return self.requestList
+        .filter(function (r){ return tab.filter ? !r.isRejected : true })
+        .filter(tab.filter || function(){ return true })
+        .filter(requestFilter)
+        .sort(function (a, b){
+          return b[self.sortBy()] - a[self.sortBy()]
+        })
+    }
+    tab.label = function(){
+      return [
+        typeof tab._label == 'function' ? tab._label() : tab._label,
+        m("span.label.secondary.round", tab.requests().length)
+      ]
+    }
+    tab.content = function(){ return request.listView(this.requests(), self.sortBy) }
+    return tab;
+  });
+
+  this.tabs.tabs = m.prop(tabs);
   this.requestList = m.prop([]);
   this.projectFilters = m.prop([]);
   this.currentFilter = {
@@ -108,55 +114,6 @@ requestListing.controller = function(){
   bi.ajax(routes.controllers.Requests.indexMeta()).then(function (r){
     self.requestList = r.list;
     self.projectFilters = r.filters;
-    badges.all(r.counts.all);
-    badges.signoff(r.counts.signoff);
-    badges.assessor(r.counts.assessor);
-    badges.mine(r.counts.mine);
-    // replace this with real shit
-    badges.approval(1);
-    badges.implementation(1);
-  
-    self.filteredList = function(){
-      return _.chain(self.requestList)
-        .filter(function(p){
-          if(!self.currentFilter.requests()){
-            return true;
-          } else {
-            return p.projectType == self.currentFilter.requests();
-          }
-        })
-        .filter(function(p){
-          if(!p.isRejected){          
-            switch(self.tabs.currentTab()){
-              case self.tabFilters.SIGNOFF:
-                return p.canSignoff;
-                break;
-              case self.tabFilters.ASSESSOR:
-                return p.level === 0 && !p.assessingAgencyId;
-                break;
-              case self.tabFilters.MINE:
-                return p.author.govUnitId === self.app.currentUser().govUnit.id;
-                break;
-              case self.tabFilters.APPROVAL:
-                return p.level <= 4
-                break;
-              case self.tabFilters.IMPLEMENTATION:
-                return p.level > 4
-                break;
-              default:
-                return true;
-            }
-          } else {
-            return false
-          }
-        })
-        .sortBy(function(p){
-          if(typeof self.currentSort() === "undefined"){
-            self.currentSort("age");
-          }
-          return -1 * p[self.currentSort()];
-        })
-    }
   });
 
 }

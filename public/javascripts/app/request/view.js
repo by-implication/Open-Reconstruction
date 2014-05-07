@@ -41,7 +41,9 @@ request.view = function(ctrl){
               common.field("Password", m("input[type='password']", {
                 onchange: m.withAttr("value", ctrl.password)
               })),
-              common.field("Remarks", m("textarea"), "Please state the reason for rejection"),
+              common.field("Remarks", m("textarea", {
+                onchange: m.withAttr("value", ctrl.content)
+              }), "Please state the reason for rejection"),
               m("button", [
                 "Submit"
               ]),
@@ -64,7 +66,7 @@ request.view = function(ctrl){
           m("div.columns.medium-8", [
             m(".card", [
               m(".section", [
-                common.tabs.view(ctrl.requestTabs)
+                common.tabs.menu(ctrl.requestTabs)
               ]),
               m.switch(ctrl.requestTabs.currentTab()())
                 .case("Assignments", function(){
@@ -299,10 +301,10 @@ request.summary = function(ctrl){
 }
 
 request.approval = function(ctrl){
-  return m("section.approval", {className: ctrl.isRejected() ? "rejected" : ""}, [
+  return m("section.approval", {className: ctrl.request().isRejected ? "rejected" : ""}, [
     m(".row", [
       m(".columns.medium-12", [
-        ctrl.isRejected() ?
+        ctrl.request().isRejected ?
           m("div", [
             m("h4", [
               "This request has been rejected." 
@@ -382,44 +384,46 @@ request.miniProgress = function(request){
   ])
 }
 
-request.listView = function(ctrl){
+request.listView = function(reqs, sortBy){
   return m("table", [
       m("thead", [
         m("tr", [
           m("th", [
-            m("a", {onclick: ctrl.currentSort.bind(ctrl, "id")}, [
+            m("a", {onclick: function(){ sortBy("id") }}, [
               "Id"
             ]),
           ]),
           m("th", [
-            m("a", {onclick: ctrl.currentSort.bind(ctrl, "age")}, [
+            m("a", {onclick: function(){ sortBy("age") }}, [
               "Stagnation"
             ]),
           ]),
           m("th", "Name"),
           m("th", "Gov Unit"),
           m("th", [
-            m("a", {onclick: ctrl.currentSort.bind(ctrl, "level")}, [
+            m("a", {onclick: function(){ sortBy("level") }}, [
               "Status"
             ]),
           ]),
           m("th.text-right", [
-            m("a", {onclick: ctrl.currentSort.bind(ctrl, "amount")}, [
+            m("a", {onclick: function(){ sortBy("amount") }}, [
               "Amount"
             ]),
           ])
         ])
       ]),
       m("tbody", [
-        ctrl.filteredList().value().length ?
-          ctrl.filteredList()
+        reqs.length ?
+          reqs
             .map(function(p){
-              var url = "/requests/"+p.id;
               return m("tr", [
                 m("td", p.id),
                 m("td", [common.day(p.age)]),
                 m("td", [
-                  m("a.name", {href: url, config: m.route}, p.description)
+                  m("a.name", {
+                    href: routes.controllers.Requests.view(p.id).url,
+                    config: m.route
+                  }, p.description)
                 ]),
                 m("td", p.author.govUnit),
                 m("td", [
@@ -433,7 +437,6 @@ request.listView = function(ctrl){
                 m("td.text-right", helper.commaize(p.amount.toFixed(2)))
               ])
             })
-            .value()
         : m("tr", [m("td", "No requests matched filter criteria")])
       ])
     ])

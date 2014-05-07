@@ -23,7 +23,6 @@ request.controller = function(){
   this.location = m.prop("");
   this.isInvolved = m.prop(false);
   this.canSignoff = m.prop(false);
-  this.isRejected = m.prop(false);
   this.canEdit = m.prop(false);
   this.hasSignedoff = m.prop(false);
   this.input = {
@@ -110,7 +109,6 @@ request.controller = function(){
     this.canSignoff(data.canSignoff);
     this.canEdit(data.canEdit);
     parseLocation(data.request.location);
-    this.isRejected(this.request().isRejected);
   }.bind(this));
 
   database.pull().then(function(data){
@@ -137,16 +135,20 @@ request.controller = function(){
   this.rejectModal.reject = function(e){
     e.preventDefault();
     bi.ajax(routes.controllers.Requests.reject(this.id), {
-      data: {password: this.rejectModal.password}
+      data: {password: this.rejectModal.password, content: this.rejectModal.content}
     }).then(function (r){
       if(r.success){
         this.canSignoff(false);
-        this.isRejected(true);
+        this.request().isRejected = true;
         alert('Request rejected.');
         this.rejectModal.close();
         this.history().unshift(r.event);
       } else {
-        alert("Failed to reject: " + r.messages.password);
+        var errors = [];
+        for(var field in r.messages){
+          errors.push([field, r.messages[field]]);
+        }
+        alert("Failed to reject:\n" + errors.join("\n"));
       }
     }.bind(this));
   }.bind(this);
