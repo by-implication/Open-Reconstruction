@@ -105,10 +105,6 @@ requestListing.controller = function(){
     // }
   }.bind(this)
 
-  this.setSort = function(sort){
-    
-  }
-
   bi.ajax(routes.controllers.Requests.indexMeta()).then(function (r){
     self.requestList = r.list;
     self.projectFilters = r.filters;
