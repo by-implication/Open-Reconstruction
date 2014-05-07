@@ -19,13 +19,11 @@ requestListing.view = function(ctrl){
 
       m(".row", [
         m(".columns.medium-12", [
-          common.tabs.view(ctrl.tabs, {className: "left", config: ctrl.setCurrentTab})
+          common.tabs.menu(ctrl.tabs, {className: "left", config: ctrl.setCurrentTab})
         ]),
       ]),
       m(".row", [
-        m(".columns.medium-9", [
-          request.listView(ctrl)
-        ]),
+        m(".columns.medium-9", common.tabs.content(ctrl.tabs)),
         m(".columns.medium-3", [
           m("h4", [
             "Filter by Project Type"

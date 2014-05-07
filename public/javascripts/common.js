@@ -138,33 +138,33 @@ common.formSection = function(icon, content, i){
 
 common.tabs = {};
 
-common.tabs.view = function(ctrl, options){
-  if(!options){
-    options = {};
-  }
-
-  return m("dl.tabs[data-tab]", options, [
+common.tabs.menu = function(ctrl, options){
+  return m("dl.tabs[data-tab]", options || {},
     ctrl.tabs()
-    .filter(function(item){
-      if(item.when){
-        return item.when();
-      } else {
-        return true;
-      }
+    .filter(function (tab){
+      return tab.when();
     })
-    .map(function(item, i){
-      var setActive = function(item){
-        if(ctrl.isActive((item.identifier ? item.identifier : item.label))){
+    .map(function (tab, i){
+      var tabClass = function(tab){
+        if(ctrl.isActive((tab.identifier ? tab.identifier : tab.label))){
           return "active";
         } else {
           return "";
         }
       };
-      return m("dd", {class: setActive(item)}, [
-        m("a", { href: item.href, config: m.route }, item.label())
+      return m("dd", {class: tabClass(tab)}, [
+        m("a", { href: tab.href, config: m.route }, tab.label())
       ]);
     })
-  ])
+  )
+}
+
+common.tabs.content = function(ctrl){
+  return ctrl.tabs().filter(function (tab){
+    return ctrl.isActive(tab.identifier? tab.identifier : tab.label)
+  }).map(function (activeTab){
+    return activeTab.content()
+  })
 }
 
 common.tabs.controller = function(basePath){
