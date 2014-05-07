@@ -110,6 +110,7 @@ request.controller = function(){
     this.canSignoff(data.canSignoff);
     this.canEdit(data.canEdit);
     parseLocation(data.request.location);
+    this.isRejected(this.request().isRejected);
   }.bind(this));
 
   database.pull().then(function(data){

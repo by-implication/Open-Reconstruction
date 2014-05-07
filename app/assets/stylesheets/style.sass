@@ -5,6 +5,8 @@
 
 @import variables
 
+$red: #cc4136
+
 
 body
   &.detail
@@ -196,13 +198,18 @@ h1 small
   background-color: #ddd
   button
     margin-right: 1px
-  h4,
-    color: $gray
+  h4
+    color: #333
     font-weight: 300
     margin-top: 20px
     margin-bottom: 12px
-    // margin-left: 90px
-    // padding: 20px 0px
+  h5
+    color: $gray
+  &.rejected
+    background-color: $red
+    h4, h5
+      color: darken($red, 20%)
+
 
 .help
   color: $gray
