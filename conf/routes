@@ -47,6 +47,7 @@ GET     /requests/:id/activity                    controllers.Requests.viewActiv
 GET     /requests/:id/meta                        controllers.Requests.viewMeta(id: Int)
 
 POST    /requests/:id/signoff                     controllers.Requests.signoff(id: Int)
+POST    /requests/:id/reject                      controllers.Requests.reject(id: Int)
 POST    /requests/:id/comment                     controllers.Requests.comment(id: Int)
 POST    /requests/:rid/assign/assessing/:aid      controllers.Requests.assignAssessingAgency(rid: Int, aid: Int)
 POST    /requests/:rid/assign/implementing/:aid   controllers.Requests.assignImplementingAgency(rid: Int, aid: Int)

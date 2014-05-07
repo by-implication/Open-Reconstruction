@@ -23,6 +23,10 @@ object Event extends EventGen {
     generate("signoff", govUnit.name + " " + govUnit.id)
   }
 
+  def reject(govUnit: GovUnit)(implicit req: Req, user: User) = {
+    generate("reject", govUnit.name + " " + govUnit.id)
+  }
+
   def attachment(a: Attachment)(implicit req: Req, user: User) = {
     generate("attachment", asContent(a))
   }

@@ -5,9 +5,31 @@ request.view = function(ctrl){
     {class: "detail"}, 
     [ // modals
       common.modal.view(
-        ctrl.signoffModal, 
+        ctrl.signoffModal,
         function(ctrl){
           return m("form", {onsubmit: ctrl.signoff}, [
+            m(".section", [
+              m("h3", "Authorization Required"),
+              m("p", [
+                "Please enter your password to continue."
+              ]),
+            ]),
+            m("hr"),
+            m(".section", [
+              common.field("Password", m("input[type='password']", {
+                onchange: m.withAttr("value", ctrl.password)
+              })),
+              m("button", [
+                "Submit"
+              ]),
+            ]),
+          ])
+        }
+      ),
+      common.modal.view(
+        ctrl.rejectModal,
+        function(ctrl){
+          return m("form", {onsubmit: ctrl.reject}, [
             m(".section", [
               m("h3", "Authorization Required"),
               m("p", [
@@ -279,7 +301,7 @@ request.approval = function(ctrl){
   return m("section.approval", [
     m(".row", [
       m(".columns.medium-12", [
-        ctrl.canSignoff() ?
+        ctrl.request().isRejected ? "This request has been rejected." : (ctrl.canSignoff() ?
           m("div", [
             m("h4", [
               "Sign off on this request only if you feel the information is complete for your step in the approval process."
@@ -287,7 +309,7 @@ request.approval = function(ctrl){
             m("button", {onclick: ctrl.signoffModal.show.bind(ctrl.signoffModal)}, [
               m("i.fa.fa-check"),
             ]),
-            m("button.alert", [
+            m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
               m("i.fa.fa-times"),
             ]),
           ])
@@ -317,7 +339,7 @@ request.approval = function(ctrl){
               : "Waiting for " + ctrl.getBlockingAgency() + " approval."
             ]),
           ])
-        : ""
+        : "")
       ]),
     ])
   ])

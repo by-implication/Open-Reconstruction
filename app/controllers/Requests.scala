@@ -106,21 +106,21 @@ object Requests extends Controller with Secured {
 
   }
 
+  private def signoffForm(r: Req)(implicit user: User): Form[Req] = Form(
+    mapping("password" -> nonEmptyText.verifying(
+      "Incorrect password",
+      User.authenticate(user.handle, _).isDefined
+    ))
+    (_ => r)
+    (_ => None)
+  )
+
   def signoff(id: Int) = UserAction(){ implicit user => implicit request =>
     Req.findById(id).map { r =>
 
       if(user.canSignoff(r)){
 
-        val signoffForm: Form[Req] = Form(
-          mapping("password" -> nonEmptyText.verifying(
-            "Incorrect password",
-            User.authenticate(user.handle, _).isDefined
-          ))
-          (_ => r)
-          (_ => None)
-        )
-
-        signoffForm.bindFromRequest.fold(
+        signoffForm(r).bindFromRequest.fold(
           Rest.formError(_),
           r => r.copy(level = r.level + 1).save().map( implicit r =>
             Event.signoff(user.govUnit).create().map { e =>
@@ -133,6 +133,26 @@ object Requests extends Controller with Secured {
       } else Rest.unauthorized()
 
     }.getOrElse(Rest.notFound())
+  }
+
+  def reject(id: Int) = UserAction(){ implicit user => implicit request =>
+    Req.findById(id).map { r =>
+
+      if(user.canSignoff(r)){
+
+        signoffForm(r).bindFromRequest.fold(
+          Rest.formError(_),
+          r => r.copy(isRejected = true).save().map( implicit r =>
+            Event.reject(user.govUnit).create().map { e =>
+              Checkpoint.push(user)
+              Rest.success("event" -> e.listJson)
+            }.getOrElse(Rest.serverError())
+          ).getOrElse(Rest.serverError())
+        )
+
+      } else Rest.unauthorized()
+
+    }.getOrElse(Rest.notFound()) 
   }
 
   def index = Application.index

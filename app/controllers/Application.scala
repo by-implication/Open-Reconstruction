@@ -58,6 +58,7 @@ object Application extends Controller {
       Requests.indexSignoff,
       Requests.indexMeta,
       Requests.insert,
+      Requests.reject,
       Requests.signoff,
       Requests.view,
       Requests.viewAssignments,

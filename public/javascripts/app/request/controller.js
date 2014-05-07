@@ -2,6 +2,7 @@ request.controller = function(){
   var map;
   this.app = new app.controller();
   this.signoffModal = new common.modal.controller();
+  this.rejectModal = new common.modal.controller();
   var requestId = m.route.param('id');
   this.requestTabs = new common.tabs.controller();
   this.requestTabs.tabs([
@@ -22,6 +23,7 @@ request.controller = function(){
   this.location = m.prop("");
   this.isInvolved = m.prop(false);
   this.canSignoff = m.prop(false);
+  this.isRejected = m.prop(false);
   this.canEdit = m.prop(false);
   this.hasSignedoff = m.prop(false);
   this.input = {
@@ -127,6 +129,23 @@ request.controller = function(){
         this.history().unshift(r.event);
       } else {
         alert("Failed to signoff: " + r.messages.password);
+      }
+    }.bind(this));
+  }.bind(this);
+
+  this.rejectModal.reject = function(e){
+    e.preventDefault();
+    bi.ajax(routes.controllers.Requests.reject(this.id), {
+      data: {password: this.rejectModal.password}
+    }).then(function (r){
+      if(r.success){
+        this.canSignoff(false);
+        this.isRejected(true);
+        alert('Request rejected.');
+        this.rejectModal.close();
+        this.history().unshift(r.event);
+      } else {
+        alert("Failed to reject: " + r.messages.password);
       }
     }.bind(this));
   }.bind(this);

@@ -12,6 +12,24 @@ historyEvent.meta = function(verbed, data, date){
   ])
 }
 
+historyEvent.reject = function(data){
+  var date = new Date(data.date);
+  var c = data.content.split(" ");
+  var govUnitId = c.pop();
+  var govUnitName = c.join(" ");
+  return m(".event", [
+    historyEvent.date(date),
+    m(".details", [
+      m("h3", "Rejected"),
+      m("p", [
+        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url}, govUnitName),
+        " rejected this project."
+      ]),
+      historyEvent.meta("Rejected", data, date)
+    ])
+  ])
+}
+
 historyEvent.archiveAttachment = function(data){
   var date = new Date(data.date);
   var c = data.content.split(" ");
