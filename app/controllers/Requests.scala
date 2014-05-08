@@ -223,7 +223,7 @@ object Requests extends Controller with Secured {
                 assign(req, govUnitId).save().map { r =>
                   Event.assign(agencyType, true, govUnit).create().map { _ =>
                     if(agencyType == "assess") Checkpoint.push(user)(r)
-                    Rest.success()
+                    Rest.success("agency" -> govUnit.toJson)
                   }.getOrElse(Rest.serverError())
                 }.getOrElse(Rest.serverError())
               } else Rest.error("GovUnit not authorized to assess.")
