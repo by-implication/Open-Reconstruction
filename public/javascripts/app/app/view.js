@@ -1,5 +1,5 @@
 app.template = function(a, b, c, d){
-  var ctrl, attrs, content;
+  var ctrl, attrs, content, modals;
 
   switch(arguments.length){
     case 2:
