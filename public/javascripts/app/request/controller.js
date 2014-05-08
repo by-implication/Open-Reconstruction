@@ -178,7 +178,8 @@ request.controller = function(){
 
   this.submitComment = function(e){
     e.preventDefault()
-    bi.ajax(routes.controllers.Requests.comment(this.id), {data: {content: this.input.comment}}).then(function(r){
+    bi.ajax(routes.controllers.Requests.comment(this.id), {data: {content: this.input.comment}})
+    .then(function (r){
       console.log('Comment submitted!');
       this.refreshHistory();
     }.bind(this));
@@ -186,14 +187,17 @@ request.controller = function(){
 
   this.updateAssessingAgency = function(e){
     this.input.assessingAgency(e);
-    bi.ajax(routes.controllers.Requests.assignAssessingAgency(this.id, this.input.assessingAgency())).then(function(r){
-      console.log('Assessing agency submitted!');
-    })
+    bi.ajax(routes.controllers.Requests.assignAssessingAgency(this.id, this.input.assessingAgency()))
+    .then(function (r){
+      this.assessingAgency(r.agency);
+      this.request().level++;
+    }.bind(this))
   }.bind(this);
 
   this.updateImplementingAgency = function(e){
     this.input.implementingAgency(e);
-    bi.ajax(routes.controllers.Requests.assignImplementingAgency(this.id, this.input.implementingAgency())).then(function(r){
+    bi.ajax(routes.controllers.Requests.assignImplementingAgency(this.id, this.input.implementingAgency()))
+    .then(function (r){
       console.log('Implementing agency submitted!');
     })
   }.bind(this);
