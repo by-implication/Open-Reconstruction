@@ -8,6 +8,12 @@ var bi = {
       xhr.setRequestHeader("Content-Type", "application/json");
     } : null;
     return m.request(options);
-  }
+  },
 
+  controller: function(module, deps, ctrl){
+    var args = deps.map(function(d){
+      return window[d];
+    });
+    window[module].controller = ctrl.bind.apply(ctrl, [null].concat(args)); // returns a new constructor function with the args bound
+  }
 }
