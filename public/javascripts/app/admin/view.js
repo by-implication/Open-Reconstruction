@@ -67,7 +67,7 @@ admin.view = function(ctrl){
     ctrl.app.isSuperAdmin()?
       m("section", [
         m(".row", [
-          common.tabs.view(ctrl.tabs, {className: "vertical"}),
+          common.tabs.menu(ctrl.tabs, {className: "vertical"}),
           m.switch(ctrl.tabs.currentTab()())
             .case("Agencies", function(){
               return m(".tabs-content.vertical", [
