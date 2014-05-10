@@ -7,14 +7,14 @@ var bi = {
     },
     increment: function() {
       if(bi.loader.initialized) {
-        // show loading animation
+        NProgress.start();
       }
       bi.loader.pending++;
     },
     decrement: function(value) {
       bi.loader.pending--;
       if(bi.loader.pending == 0 && bi.loader.initialized) {
-        // hide loading animation
+        NProgress.done();
       }
       return value;
     }
