@@ -87,7 +87,8 @@ app.navbar = function(ctrl){
                 m("a", {href: routes.controllers.Users.login().url, config: m.route}, "Log in")
               ])
           ])
-        ])
+        ]),
+        m("li.loader-dummy", {config: bi.loader.init}, [])
       ])
     ])
   ]);
