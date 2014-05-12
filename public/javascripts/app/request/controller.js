@@ -19,7 +19,6 @@ request.controller = function(){
   this.author = m.prop({});
   this.attachments = m.prop({});
   this.history = m.prop({});
-  this.oldRequest = m.prop({});
   this.location = m.prop("");
   this.isInvolved = m.prop(false);
   this.canSignoff = m.prop(false);
@@ -110,10 +109,6 @@ request.controller = function(){
     this.canEdit(data.canEdit);
     parseLocation(data.request.location);
   }.bind(this));
-
-  database.pull().then(function(data){
-    this.oldRequest(database.requestList()[this.id - 1]);
-  }.bind(this))
 
   this.signoffModal.signoff = function(e){
     e.preventDefault();

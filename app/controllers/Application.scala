@@ -1,6 +1,7 @@
 package controllers
 
 import play.api._
+import play.api.libs.json._
 import play.api.mvc._
 import recon.models._
 
@@ -26,6 +27,10 @@ object Application extends Controller {
     Ok(views.html.js.process()).withHeaders("Content-Type" -> "text/javascript")
   }
 
+  def dashboardMeta() = Action {
+    Ok(Json.toJson(Req.indexList.map(_.dashboardJson)))
+  }
+
   def jsRoutes = Action { implicit request =>
     import routes.javascript._
     Ok(Routes.javascriptRouter("routes")(
@@ -33,6 +38,7 @@ object Application extends Controller {
       routes.javascript.Application.adminLgus,
       routes.javascript.Application.adminAgencies,
       routes.javascript.Application.dashboard,
+      routes.javascript.Application.dashboardMeta,
       routes.javascript.Application.process,
       Users.authenticate,
       Users.create,

@@ -84,6 +84,14 @@ case class Req(
 
   def insertJson = Json.obj("id" -> id.get)
 
+  def dashboardJson = Json.obj(
+    "id" -> id.get,
+    "date" -> date,
+    "amount" -> amount,
+    "projectType" -> projectType.name,
+    "disasterType" -> disasterType.name
+  )
+
   def indexJson(implicit user: User) = Json.obj(
     "id" -> id.get,
     "description" -> description,

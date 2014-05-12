@@ -2,9 +2,10 @@ dashboard.controller = function(){
   var self = this;
   this.app = new app.controller();
   this.requests = m.prop({});
-  database.pull().then(function(data){
-    self.requests(database.requestList());
-  })
+  
+  bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
+    self.requests(r);
+  });
 
   this.totalProjects = function(){
     return this.requests().length
@@ -14,7 +15,7 @@ dashboard.controller = function(){
     return helper.truncate(
       _.chain(this.requests())
       .map(function(project){
-        return project.amount();
+        return project.amount;
       })
       .compact()
       .reduce(function(a, b){
@@ -27,7 +28,7 @@ dashboard.controller = function(){
   this.mostCommonProjectType = function(){
     return _.chain(this.requests())
     .countBy(function(r){
-      return r.type();
+      return r.projectType;
     })
     .pairs()
     .reject(function(p){
@@ -42,7 +43,7 @@ dashboard.controller = function(){
   this.mostCommonDisasterType = function(){
     return _.chain(this.requests())
     .countBy(function(r){
-      return r.disaster().type();
+      return r.disasterType;
     })
     .pairs()
     .reject(function(p){
@@ -58,7 +59,7 @@ dashboard.controller = function(){
     // elem.width = document.body.offsetWidth;
     elem.width = 1280;
     function entryToInt(entry) {
-      var date = entry.date();
+      var date = new Date(entry.date);
       return date.getFullYear() * 12 + date.getMonth();
     }
 
@@ -96,7 +97,7 @@ dashboard.controller = function(){
         if(projects){
           amount = _.chain(projects)
           .map(function(project){
-            return project.amount();
+            return project.amount;
           })
           .compact()
           .reduce(function(acc, next){
@@ -136,6 +137,6 @@ dashboard.controller = function(){
     var myNewChart = new Chart(ctx).Line(data, {
       bezierCurve: false
     });
-    // console.log(lol);
+    
   }
 }
