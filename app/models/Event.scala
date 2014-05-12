@@ -65,6 +65,11 @@ object Event extends EventGen {
       case "amount" => req.amount
       case "description" => req.description
       case "location" => req.location
+      case "disaster" => List(
+        req.disasterName.getOrElse(""),
+        req.disasterType,
+        req.disasterDate.getTime()
+      ).mkString("|")
     }
     generate("editField", fieldValue + " " + field)
   }
@@ -93,7 +98,7 @@ case class Event(
   def listJson = Json.obj(
     "kind" -> kind,
     "content" -> content,
-    "date" -> date,
+    "date" -> date.getTime,
     "user" -> userId.map(User.findById(_).map(u => Json.obj(
       "id" -> u.id.get,
       "name" -> u.name

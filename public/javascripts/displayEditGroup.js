@@ -5,9 +5,9 @@ var displayEditGroup = {
     this.req = req;
     this.field = field;
   },
-  view: function(currentUserCanEdit, ctrl, viewView, editView){
-    return m(".display-edit-group",{className: (ctrl.isEditMode() ? "edit-mode" : "") + " " + (currentUserCanEdit ? "can-edit": "")}, [
-      currentUserCanEdit ?
+  view: function(reqCtrl, ctrl, viewView, editView){
+    return m(".display-edit-group",{className: (ctrl.isEditMode() ? "edit-mode" : "") + " " + (reqCtrl.canEdit() ? "can-edit": "")}, [
+      reqCtrl.canEdit() ?
         !ctrl.isEditMode() ? 
           m("button.micro.edit-button", 
             {type: "button", onclick: function(){ ctrl.isEditMode(true); }}, 
@@ -21,6 +21,7 @@ var displayEditGroup = {
                 }).then(function (r){
                   if(r.success){
                     ctrl.req()[ctrl.field] = ctrl.input();
+                    reqCtrl.history().unshift(r.event);
                   } else {
                     alert("Your input was invalid.");
                   }
@@ -36,7 +37,7 @@ var displayEditGroup = {
           ])
       : "",
       
-      ctrl.isEditMode() && currentUserCanEdit ?
+      ctrl.isEditMode() && reqCtrl.canEdit() ?
         editView()
       : viewView()
     ])

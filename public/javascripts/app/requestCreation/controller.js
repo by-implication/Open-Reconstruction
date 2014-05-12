@@ -87,6 +87,12 @@ requestCreation.controller = function(){
   this.submitNewRequest = function(e){
     e.preventDefault();
     if(this.preamble()) {
+
+      // transmit disasterDate as a timestamp
+      var oldDate = this.input.disasterDate();
+      var newDate = (new Date(oldDate)).getTime();
+      this.input.disasterDate(newDate);
+
       bi.ajax(routes.controllers.Requests.insert(), {data: this.input}).then(function(r){
         if(r.success){
           window.location = '/';

@@ -235,7 +235,7 @@ request.summary = function(ctrl){
     ]),
     m(".section", [
       displayEditGroup.view(
-        ctrl.canEdit(),
+        ctrl,
         ctrl.degDescription,
         function(){ return m("h4", ctrl.request().description) }, 
         function(){
@@ -255,7 +255,7 @@ request.summary = function(ctrl){
     m("div.section", [
       m("h5", [m("small", "Amount")]),
       displayEditGroup.view(
-        ctrl.canEdit(),
+        ctrl,
         ctrl.degAmount,
         function(){ return m("h5.value", [helper.commaize(ctrl.request().amount)]) }, 
         function(){ 
@@ -266,18 +266,43 @@ request.summary = function(ctrl){
       ),
       m("h5", [m("small", "Disaster")]),
       displayEditGroup.view(
-        ctrl.canEdit(),
-        ctrl.degDisaster, 
-        function(){ return m("h5.value", [ctrl.request().disasterType + " " + ctrl.request().disasterName + " in " + common.displayDate(ctrl.request().disasterDate)]) }, 
-        function(){ 
+        ctrl,
+        ctrl.degDisaster,
+        function(){ return m("h5.value", [ctrl.request().disaster.type + " " + ctrl.request().disaster.name + " in " + common.displayDate(ctrl.request().disaster.date)]) },
+        function(){
           return m("div", [
-            "Sorry, editing disaster is not yet supported."
+            m("div", [
+              m("label", [
+                "Name",
+                m("input", {
+                  type: "text",
+                  value: ctrl.request().disaster.name,
+                  onchange: m.withAttr("value", ctrl.degDisaster.input.setName)
+                })
+              ]),
+              m("label", [
+                "Type",
+                m("select", {
+                  onchange: m.withAttr("value", ctrl.degDisaster.input.setType)
+                }, ctrl.disasterTypes().map(function (dt){
+                  return m("option", {value: dt, selected: dt == ctrl.request().disaster.type}, dt)
+                }))
+              ]),
+              m("label", [
+                "Date",
+                m("input", {
+                  type: "date",
+                  value: ctrl.degDisaster.htmlDate() || helper.toDateValue(ctrl.request().disaster.date),
+                  onchange: m.withAttr("value", ctrl.degDisaster.input.setDate)
+                })
+              ])
+            ])
           ])
         }
       ),
       m("h5", [m("small", "Location")]),
       displayEditGroup.view(
-        ctrl.canEdit(),
+        ctrl,
         ctrl.degLocation, 
         function(){ return m("h5.value", [ctrl.request().location]) }, 
         function(){ 

@@ -23,6 +23,7 @@ request.controller = function(){
   this.isInvolved = m.prop(false);
   this.canSignoff = m.prop(false);
   this.canEdit = m.prop(false);
+  this.disasterTypes = m.prop([]);
   this.hasSignedoff = m.prop(false);
   this.input = {
     assessingAgency: m.prop(),
@@ -39,8 +40,25 @@ request.controller = function(){
   // displayEditGroups
   this.degDescription = new displayEditGroup.controller(this.request, "description");
   this.degAmount = new displayEditGroup.controller(this.request, "amount");
-  this.degDisaster = new displayEditGroup.controller(this.request, "disaster");
   this.degLocation = new displayEditGroup.controller(this.request, "location");
+
+  this.degDisaster = new displayEditGroup.controller(this.request, "disaster");
+  this.degDisaster.htmlDate = m.prop("");
+  this.degDisaster.input({
+    name: "",
+    type: "",
+    date: ""
+  });
+  this.degDisaster.input.setName = function(v){
+    this.degDisaster.input().name = v;
+  }.bind(this)
+  this.degDisaster.input.setType = function(v){
+    this.degDisaster.input().type = v;
+  }.bind(this)
+  this.degDisaster.input.setDate = function(v){
+    this.degDisaster.input().date = (new Date(v)).getTime();
+    this.degDisaster.htmlDate(v);
+  }.bind(this)
 
   var parseLocation = function(location){
     var split = location.split(',').map(function(coord){return parseFloat(coord)});
@@ -90,8 +108,13 @@ request.controller = function(){
     }
   }
 
-  bi.ajax(routes.controllers.Requests.viewMeta(this.id)).then(function(data){
+  bi.ajax(routes.controllers.Requests.viewMeta(this.id)).then(function (data){
+
     this.request(data.request);
+    this.degDisaster.input().name = data.request.disaster.name;
+    this.degDisaster.input().type = data.request.disaster.type;
+    this.degDisaster.input().date = data.request.disaster.date;
+
     this.author(data.author);
     this.attachments(data.attachments);
     this.history(data.history);
@@ -101,12 +124,14 @@ request.controller = function(){
     this.implementingAgency(data.implementingAgency);
 
     this.input.assessingAgency(data.request.assessingAgencyId);
-    this.input.implementingAgency(data.request.implementingAgencyId);  
+    this.input.implementingAgency(data.request.implementingAgencyId);
 
     this.isInvolved(data.isInvolved);
     this.hasSignedoff(data.hasSignedoff)
     this.canSignoff(data.canSignoff);
     this.canEdit(data.canEdit);
+    this.disasterTypes(data.disasterTypes);
+
     parseLocation(data.request.location);
   }.bind(this));
 

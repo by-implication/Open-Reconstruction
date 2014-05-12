@@ -53,7 +53,8 @@ object Requests extends Controller with Secured {
             "docs" -> docs.map(tf)
           )
         },
-        "history" -> Json.toJson(Event.findForRequest(id).map(_.listJson))
+        "history" -> Json.toJson(Event.findForRequest(id).map(_.listJson)),
+        "disasterTypes" -> DisasterType.jsonList
       )
     }.getOrElse(Rest.notFound())
     
@@ -65,7 +66,7 @@ object Requests extends Controller with Secured {
       mapping(
         "amount" -> optional(projectAmount),
         "description" -> nonEmptyText,
-        "disasterDate" -> date,
+        "disasterDate" -> longNumber,
         "disasterName" -> optional(text),
         "disasterType" -> nonEmptyText,
         "location" -> nonEmptyText,
@@ -78,7 +79,7 @@ object Requests extends Controller with Secured {
         Req(
           amount = amount.getOrElse(0),
           description = description,
-          disasterDate = disasterDate,
+          disasterDate = new java.sql.Timestamp(disasterDate),
           disasterName = disasterName,
           disasterType = DisasterType.withName(disasterType),
           projectType = ProjectType.withName(projectType),
@@ -267,6 +268,19 @@ object Requests extends Controller with Secured {
       )(v => req.copy(location = v)
       )(_ => None)
     }
+    case "disaster" => {
+      mapping(
+        "input" -> tuple(
+          "name" -> optional(text),
+          "type" -> nonEmptyText,
+          "date" -> longNumber
+        )
+      )({ case (name, dtype, date) => req.copy(
+        disasterName = name,
+        disasterType = DisasterType.withName(dtype),
+        disasterDate = new java.sql.Timestamp(date)
+      )})(_ => None)
+    }
     case _ => {
       mapping(
         "input" -> text.verifying("Invalid field", _ => false)
@@ -282,8 +296,8 @@ object Requests extends Controller with Secured {
           editForm(field).bindFromRequest.fold(
             Rest.formError(_),
             _.save().map { implicit req =>
-              Event.editField(field).create().map { _ =>
-                Rest.success()
+              Event.editField(field).create().map { e =>
+                Rest.success("event" -> e.listJson)
               }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())
           )

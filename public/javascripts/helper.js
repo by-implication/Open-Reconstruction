@@ -7,6 +7,22 @@ helper.percent = function(value){
   return (value*100).toFixed(2) + "%";
 }
 
+helper.pad = function(n, digits){
+  digits = digits || 2;
+  n += "";
+  while(n.length < digits) n = "0" + n;
+  return n;
+}
+
+helper.toDateValue = function(timestamp){
+  var d = new Date(timestamp);
+  return [  
+    d.getFullYear(),
+    this.pad(d.getMonth()+1),
+    this.pad(d.getDate())
+  ].join("-");
+}
+
 helper.truncate = function(input, place){
   var out = "";
   var buffer;

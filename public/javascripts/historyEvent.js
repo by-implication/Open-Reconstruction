@@ -51,14 +51,25 @@ historyEvent.editField = function(data){
   var date = new Date(data.date);
   var c = data.content.split(" ");
   var field = c.pop();
-  var value = c.join(" ");
+  var value;
+  switch(field){
+    case "disaster": {
+      var nameTypeDate = c.join(" ").split("|");
+      var name = nameTypeDate.shift();
+      var type = nameTypeDate.shift();
+      var ddate = parseInt(nameTypeDate.shift());
+      value = name + " (" + type + ") on " + common.displayDate(ddate);
+      break;
+    }
+    default: value = c.join(" ");
+  }
   return m(".event", [
     historyEvent.date(date),
     m(".details", [
       m("p", "Project " + field + " was set to \"" + value + "\""),
       historyEvent.meta("Modified", data, date)
     ]),
-  ])
+  ]);
 }
 
 historyEvent.disaster = function(data){
