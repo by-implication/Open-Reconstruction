@@ -365,7 +365,7 @@ request.progress = function(ctrl){
                 className: (ctrl.request().level >= step ? 'done ' : '') +
                   (ctrl.request().level === (step - 1) ? 'pending' : '')
               }, [
-                process.levelDict()[step]
+                process.levelDict[step]
               ])
             })
             .value()

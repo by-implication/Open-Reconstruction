@@ -7,8 +7,28 @@ dashboard.controller = function(){
     self.requests(r);
   });
 
+  this.pendingProjects = function(){
+    return this.totalProjects() - this.approvedProjects().length;
+  }
+
+  this.approvedProjects = function(){
+    return this.requests().filter(function (r){
+      return r.level >= process.levelDict.indexOf("OP_SIGNOFF");
+    });
+  }
+
   this.totalProjects = function(){
     return this.requests().length
+  }
+
+  this.percentApproved = function(){
+    return this.approvedProjects().length / this.totalProjects();
+  }
+
+  this.amountApproved = function(){
+    return this.approvedProjects()
+      .map(function (r){ return r.amount; })
+      .reduce(function (a, b){ return a + b; }, 0);
   }
 
   this.totalProjectCost = function(){

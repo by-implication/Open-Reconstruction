@@ -2,6 +2,11 @@
 // // Helpers
 
 var helper = {};
+
+helper.percent = function(value){
+  return (value*100).toFixed(2) + "%";
+}
+
 helper.truncate = function(input, place){
   var out = "";
   var buffer;
@@ -179,6 +184,3 @@ helper.docHeight = function(){
                          html.clientHeight, html.scrollHeight, html.offsetHeight );
   return height;
 }
-
-
-

@@ -10,15 +10,15 @@ process.levelToAgencyName = m.prop([
   "Office of Civil Defense",
   "Office of the President",
   "Department of Budget and Management"
-])
+]);
 
-process.levelDict = m.prop([
+process.levelDict = [
   "RECEIVED",
   "ASSESSOR_ASSIGNMENT",
   "ASSESSOR_SIGNOFF",
   "OCD_SIGNOFF",
   "OP_SIGNOFF",
   "SARO_ASSIGNMENT"
-])
+];
 
 process.permissions = @Html(Permission.json.toString);

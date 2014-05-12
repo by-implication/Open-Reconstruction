@@ -87,6 +87,7 @@ case class Req(
   def dashboardJson = Json.obj(
     "id" -> id.get,
     "date" -> date,
+    "level" -> level,
     "amount" -> amount,
     "projectType" -> projectType.name,
     "disasterType" -> disasterType.name
