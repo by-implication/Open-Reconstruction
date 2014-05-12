@@ -6,7 +6,7 @@ requestListing.view = function(ctrl){
       ctrl.app.currentUser() ?
         m(".row", [
           m(".columns.medium-12", [
-            ctrl.app.isAuthorized(1) ?
+            ctrl.app.isAuthorized(process.permissions.CREATE_REQUESTS) ?
               m(
                 "a.button", 
                 {href: routes.controllers.Requests.create().url, config: m.route}, 

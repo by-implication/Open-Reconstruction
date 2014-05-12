@@ -6,6 +6,7 @@
 
 GET     /                                         controllers.Application.index
 GET     /dashboard                                controllers.Application.dashboard
+GET     /process                                  controllers.Application.process
 GET     /assets/javascripts/routes/play.js        controllers.Application.jsRoutes
 GET     /csvParser                                controllers.Application.csvParser
 GET     /admin                                    controllers.Application.admin

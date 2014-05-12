@@ -1,13 +1,8 @@
-var process = {};
+@()
 
-process.rolePermissions = m.prop({
-  "1": "CREATE_REQUESTS",
-  "2": "VALIDATE_REQUESTS",
-  "3": "EDIT_REQUESTS",
-  "4": "IMPLEMENT_REQUESTS",
-  "5": "SIGNOFF",
-  "6": "ASSIGN_FUNDING",
-})
+@import recon.models.Permission
+
+var process = {};
 
 process.levelToAgencyName = m.prop([
   "ASSESSING_AGENCY",
@@ -26,9 +21,4 @@ process.levelDict = m.prop([
   "SARO_ASSIGNMENT"
 ])
 
-// process.titles = m.prop([
-//   "MAYOR",
-//   "CONG",
-//   "GOV",
-//   "USEC",
-// ])
+process.permissions = @Html(Permission.json.toString);

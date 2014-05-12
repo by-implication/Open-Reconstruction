@@ -2,6 +2,7 @@ package controllers
 
 import play.api._
 import play.api.mvc._
+import recon.models._
 
 object Application extends Controller {
 
@@ -21,6 +22,10 @@ object Application extends Controller {
     Ok(views.html.csvParser())
   }
 
+  def process() = Action {
+    Ok(views.html.js.process()).withHeaders("Content-Type" -> "text/javascript")
+  }
+
   def jsRoutes = Action { implicit request =>
     import routes.javascript._
     Ok(Routes.javascriptRouter("routes")(
@@ -28,6 +33,7 @@ object Application extends Controller {
       routes.javascript.Application.adminLgus,
       routes.javascript.Application.adminAgencies,
       routes.javascript.Application.dashboard,
+      routes.javascript.Application.process,
       Users.authenticate,
       Users.create,
       Users.login,

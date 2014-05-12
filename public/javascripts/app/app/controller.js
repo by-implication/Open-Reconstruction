@@ -1,14 +1,10 @@
 app.controller = function(){
   var self = this;
   this.currentUser = m.prop({});
-  bi.ajax(routes.controllers.Users.meta()).then(function(r){
-    this.currentUser(r);
-    this.whenUserInfoLoads();
-  }.bind(this));
 
-  this.whenUserInfoLoads = function(func){
-    return null;
-  }
+  bi.ajax(routes.controllers.Users.meta()).then(function (r){
+    this.currentUser(r);
+  }.bind(this));
 
   this.isAuthorized = function(permission){
     return this.currentUser() && _.contains(this.currentUser().permissions, permission);
