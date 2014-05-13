@@ -10,6 +10,7 @@ GET     /dashboard/meta                           controllers.Application.dashbo
 GET     /process                                  controllers.Application.process
 GET     /assets/javascripts/routes/play.js        controllers.Application.jsRoutes
 GET     /csvParser                                controllers.Application.csvParser
+GET     /lguParser                                controllers.Application.lguParser
 GET     /admin                                    controllers.Application.admin
 GET     /admin/lgus                               controllers.Application.adminLgus
 GET     /admin/lgus/meta                          controllers.GovUnits.listLgus

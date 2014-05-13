@@ -19,9 +19,8 @@ object Application extends Controller {
   def adminLgus = index
   def adminAgencies = index
 
-  def csvParser() = Action {
-    Ok(views.html.csvParser())
-  }
+  def csvParser() = Action { Ok(views.html.csvParser()) }
+  def lguParser() = Action { Ok(views.html.lguParser()) }
 
   def process() = Action {
     Ok(views.html.js.process()).withHeaders("Content-Type" -> "text/javascript")
