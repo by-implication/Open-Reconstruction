@@ -114,6 +114,13 @@ request.controller = function(){
     this.degDisaster.input().name = data.request.disaster.name;
     this.degDisaster.input().type = data.request.disaster.type;
     this.degDisaster.input().date = data.request.disaster.date;
+    if(data.request.level < 4 && !data.request.isRejected){
+      !function update(){
+        var el = document.getElementById('pending-for');
+        if(el) el.innerHTML = common.stagnation(this);
+        setTimeout(update.bind(this), 40);
+      }.bind(this)();
+    }
 
     this.author(data.author);
     this.attachments(data.attachments);
@@ -146,6 +153,7 @@ request.controller = function(){
         alert('Signoff successful!');
         this.signoffModal.close();
         this.history().unshift(r.event);
+        this.request().level++;
       } else {
         alert("Failed to signoff: " + r.messages.password);
       }
@@ -286,4 +294,5 @@ request.controller = function(){
 
     }
   }.bind(this);
+
 }

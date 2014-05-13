@@ -1,5 +1,46 @@
 var common = {};
 
+common.stagnation = function(reqCtrl){
+
+  function getDateRejected(history){
+    var rejection = history.filter(function (h){
+      return h.kind == "reject";
+    })[0];
+    return new Date(rejection.date);
+  }
+
+  function getDateApproved(history){
+    var approval = history.filter(function (h){
+      return h.kind == "signoff" && h.govUnit.name == "Office of the President";
+    })[0];
+    return new Date(approval.date);
+  }
+
+  var req = reqCtrl.request();
+  var timestamp = req.date;
+
+  var current;
+  if(req.isRejected){
+    current = getDateRejected(reqCtrl.history());
+  } else if(req.level > 3){
+    current = getDateApproved(reqCtrl.history());
+  } else {
+    current = new Date();
+  }
+
+  var dd = current - timestamp;
+  var ms = helper.pad(Math.floor((dd%1000)/10));
+  dd/=1000;
+  var s = helper.pad(Math.floor(dd%60));
+  dd/=60;
+  var m = helper.pad(Math.floor(dd%60));
+  dd/=60;
+  var h = helper.pad(Math.floor(dd%24));
+  dd/=24;
+  var d = Math.floor(dd);
+  return d + " DAYS " + h + ":" + m + ":" + s + "." + ms;
+}
+
 common.duration = function(ms){
   var cur = ms / 1000;
   var next = cur / 60;
