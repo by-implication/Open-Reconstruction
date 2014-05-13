@@ -11,11 +11,23 @@ import recon.support._
 object Lgu extends LguGen {
   
   val REGIONS: Map[Int, String] = Map(
-    1 -> "Region 1",
-    2 -> "Region 2",
-    3 -> "Region 3",
-    4 -> "Region 4",
-    5 -> "Region 5"
+    1 -> "REGION I (ILOCOS REGION)",
+    2 -> "REGION II (CAGAYAN VALLEY)",
+    3 -> "REGION III (CENTRAL LUZON)",
+    4 -> "REGION IV-A (CALABARZON)",
+    5 -> "REGION V (BICOL REGION)",
+    6 -> "REGION VI (WESTERN VISAYAS)",
+    7 -> "REGION VII (CENTRAL VISAYAS)",
+    8 -> "REGION VIII (EASTERN VISAYAS)",
+    9 -> "REGION IX (ZAMBOANGA PENINSULA)",
+    10 -> "REGION X (NORTHERN MINDANAO)",
+    11 -> "REGION XI (DAVAO REGION)",
+    12 -> "REGION XII (SOCCSKSARGEN)",
+    13 -> "NATIONAL CAPITAL REGION (NCR)",
+    14 -> "CORDILLERA ADMINISTRATIVE REGION (CAR)",
+    15 -> "AUTONOMOUS REGION IN MUSLIM MINDANAO (ARMM)",
+    16 -> "REGION XIII (Caraga)",
+    17 -> "REGION IV-B (MIMAROPA)"
   )
 
   def jsonList = DB.withConnection { implicit c =>
