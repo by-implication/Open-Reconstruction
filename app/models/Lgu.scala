@@ -30,16 +30,17 @@ object Lgu extends LguGen {
     17 -> "REGION IV-B (MIMAROPA)"
   )
 
-  def jsonList = DB.withConnection { implicit c =>
-    Json.toJson(SQL("""
+  def getChildren(level: Int, id: Int): Seq[JsObject] = DB.withConnection { implicit c =>
+    SQL("""
       SELECT * FROM lgus LEFT join gov_units ON lgu_id = gov_unit_id
-    """).list(GovUnit.simple ~ simple map(flatten)).map {
+      WHERE parent_""" + (if (level == 0) "region" else "lgu") + """_id = {id}
+    """).on('id -> id).list(GovUnit.simple ~ simple map(flatten)).map {
       case (govUnit, lgu) => govUnit.toJson ++ Json.obj(
         "parentRegion" -> lgu.parentRegionId,
         "parentLGU" -> lgu.parentLguId,
         "level" -> lgu.level
       )
-    })
+    }
   }
 
 }

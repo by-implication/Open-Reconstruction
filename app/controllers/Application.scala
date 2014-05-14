@@ -77,6 +77,7 @@ object Application extends Controller {
       Requests.viewDocuments,
       Requests.viewActivity,
       Requests.viewMeta,
+      GovUnits.getChildren,
       GovUnits.listAgencies,
       GovUnits.listLgus,
       GovUnits.view,
