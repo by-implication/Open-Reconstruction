@@ -344,10 +344,12 @@ request.approval = function(ctrl){
                 "Sign off on this request only if you feel the information is complete for your step in the approval process."
               ]),
               m("button", {onclick: ctrl.signoffModal.show.bind(ctrl.signoffModal)}, [
-                m("i.fa.fa-check"),
+                m("i.fa.fa-fw.fa-check"),
+                "Sign off"
               ]),
               m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
-                m("i.fa.fa-times"),
+                m("i.fa.fa-fw.fa-times"),
+                "Reject"
               ])
             ])
           : ctrl.hasSignedoff() ?
@@ -358,13 +360,27 @@ request.approval = function(ctrl){
               ]),
             ])
           : m("div", [
-            m("h4", [
+            m("h4",
               ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
                 ctrl.app.isSuperAdmin() ?
-                  "Please assign an agency to assess this request."
+                  [
+                    "Please assign an agency to assess this request.",
+                  ]
                 : "Waiting for the Office of Civil Defense to assign an agency to assess this request."
               : "Waiting for " + ctrl.getBlockingAgency() + " approval."
-            ]),
+            ),
+            m("div",
+              ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
+                ctrl.app.isSuperAdmin() ?
+                  [
+                    m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
+                      m("i.fa.fa-fw.fa-times"),
+                      "Reject"
+                    ])
+                  ]
+                : ""
+              : ""
+            ),
           ])
         ),
         ctrl.currentUserIsAuthor() && !ctrl.hasSignedoff() ?
