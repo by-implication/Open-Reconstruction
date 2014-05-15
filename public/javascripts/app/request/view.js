@@ -246,7 +246,7 @@ request.summary = function(ctrl){
       ),
       m("p.meta", [
         "Posted by ",
-        m("a",{href: "/users/"+ctrl.request().authorId, config: m.route}, ctrl.author().name),
+        m("a",{href: "/users/"+ctrl.request().author.id, config: m.route}, ctrl.author().name),
         m("br"),
         " on "+(new Date(ctrl.request().date).toString()), // change this as people modify this. "Last edited by _____"
       ]),
@@ -468,7 +468,9 @@ request.listView = function(reqs, sortBy){
                     config: m.route
                   }, p.description)
                 ]),
-                m("td", p.author.govUnit),
+                m("td", [m("a",
+                  {href: routes.controllers.GovUnits.view(p.author.govUnit.id).url},
+                  p.author.govUnit.name)]),
                 m("td", [
                   !p.isRejected ?
                     request.miniProgress(p)
