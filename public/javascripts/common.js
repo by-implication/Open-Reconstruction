@@ -1,5 +1,46 @@
 var common = {};
 
+common.stagnation = function(reqCtrl){
+
+  function getDateRejected(history){
+    var rejection = history.filter(function (h){
+      return h.kind == "reject";
+    })[0];
+    return new Date(rejection.date);
+  }
+
+  function getDateApproved(history){
+    var approval = history.filter(function (h){
+      return h.kind == "signoff" && h.govUnit.name == "Office of the President";
+    })[0];
+    return new Date(approval.date);
+  }
+
+  var req = reqCtrl.request();
+  var timestamp = req.date;
+
+  var current;
+  if(req.isRejected){
+    current = getDateRejected(reqCtrl.history());
+  } else if(req.level > 3){
+    current = getDateApproved(reqCtrl.history());
+  } else {
+    current = new Date();
+  }
+
+  var dd = current - timestamp;
+  var ms = helper.pad(Math.floor((dd%1000)/10));
+  dd/=1000;
+  var s = helper.pad(Math.floor(dd%60));
+  dd/=60;
+  var m = helper.pad(Math.floor(dd%60));
+  dd/=60;
+  var h = helper.pad(Math.floor(dd%24));
+  dd/=24;
+  var d = Math.floor(dd);
+  return d + " DAYS " + h + ":" + m + ":" + s + "." + ms;
+}
+
 common.duration = function(ms){
   var cur = ms / 1000;
   var next = cur / 60;
@@ -56,10 +97,10 @@ common.day = function(ms){
 
 common.attachmentActions = function(attachment){
   return [
-    m("a", {title: "Preview", href: "/attachments/" + attachment.id + "/preview", target: "_blank"}, [
+    m("a", {title: "Preview", href: routes.controllers.Attachments.preview(attachment.id).url, target: "_blank"}, [
       m("i.fa.fa-lg.fa-fw.fa-eye"),
     ]),
-    m("a", {title: "Download", href: "/attachments/" + attachment.id + "/download"}, [
+    m("a", {title: "Download", href: routes.controllers.Attachments.download(attachment.id).url}, [
       m("i.fa.fa-lg.fa-fw.fa-download"),
     ]),
     this.canEdit() ? attachment.isArchived ?
@@ -138,41 +179,43 @@ common.formSection = function(icon, content, i){
 
 common.tabs = {};
 
-common.tabs.view = function(ctrl, options){
-  if(!options){
-    options = {};
-  }
-
-  return m("dl.tabs[data-tab]", options, [
-    ctrl.tabs().map(function(item, i){
-      var setActive = function(item){
-        if(ctrl.isActive((item.identifier ? item.identifier : item.label))){
+common.tabs.menu = function(ctrl, options){
+  return m("dl.tabs[data-tab]", options || {},
+    ctrl.tabs()
+    .filter(function (tab){
+      if(tab.when){
+        return tab.when()
+      } else {
+        return true
+      }
+    })
+    .map(function (tab, i){
+      var tabClass = function(tab){
+        if(ctrl.isActive((tab.identifier ? tab.identifier : tab.label))){
           return "active";
         } else {
           return "";
         }
       };
-      return m("dd", {class: setActive(item)}, [
-        m("a", { href: ctrl.absolute(item.href), config: m.route }, [
-          (item.label()), 
-          item.badge ? 
-            m("span.label.secondary.round", [
-              item.badge() 
-            ])
-          : ""
-        ])
+      return m("dd", {class: tabClass(tab)}, [
+        m("a", { href: tab.href, config: m.route }, tab.label())
       ]);
     })
-  ])
+  )
+}
+
+common.tabs.content = function(ctrl){
+  return ctrl.tabs().filter(function (tab){
+    return ctrl.isActive(tab.identifier? tab.identifier : tab.label)
+  }).map(function (activeTab){
+    return activeTab.content()
+  })
 }
 
 common.tabs.controller = function(basePath){
-  var absolute = this.absolute = function(href) {
-    return basePath + '/' + href;
-  }
   this.tabs = m.prop([]);
   this.currentTab = function() {
-    var item = _.find(this.tabs(), function(tab) { return absolute(tab.href) == m.route.path });
+    var item = _.find(this.tabs(), function(tab) { return tab.href == m.route.path });
     if(item == undefined) {
       item = _.head(this.tabs());
     }
@@ -194,6 +237,7 @@ common.modal.controller = function(){
     this.isVisible(false);
   }
   this.password = m.prop("");
+  this.content = m.prop("");
   this.config = function(elem){
     window.setTimeout(function(){
       elem.style.opacity = 1;

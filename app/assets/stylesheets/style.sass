@@ -5,6 +5,9 @@
 
 @import variables
 
+$red: #cc4136
+
+
 body
   &.detail
     background-color: #eee
@@ -36,6 +39,21 @@ body
   h1
     color: $white
 
+.loader-padding
+  display: inline-block
+  width: 30px
+
+#nprogress
+  .bar
+    background: $orange
+
+  .peg
+    box-shadow: 0 0 10px $orange, 0 0 5px $orange
+
+  .spinner-icon
+    border-top-color: $orange
+    border-left-color: $orange
+
 ul
   list-style: none
   li.selected
@@ -43,6 +61,8 @@ ul
 
 table
   width: 100%
+  // border-spacing: 0px
+  // border: 0
   // margin-top: 20px
 
 h1
@@ -193,13 +213,18 @@ h1 small
   background-color: #ddd
   button
     margin-right: 1px
-  h4,
-    color: $gray
+  h4
+    color: #333
     font-weight: 300
     margin-top: 20px
     margin-bottom: 12px
-    // margin-left: 90px
-    // padding: 20px 0px
+  h5
+    color: $gray
+  &.rejected
+    background-color: $red
+    h4, h5
+      color: darken($red, 20%)
+
 
 .help
   color: $gray
@@ -237,7 +262,7 @@ hr.dashed
   border-top: 0px
   border-bottom: 1px dashed #ddd
 
-.project-stub
+.request-stub
   @extend .card
 
 .meta
@@ -416,6 +441,7 @@ button.micro, .button.micro
   dd.active > a
     border-color: $accent
     color: $accent
+    background-color: transparent
     .label
       border-color: $accent
       color: $accent
@@ -442,11 +468,14 @@ button.micro, .button.micro
     position: relative
     top: -999px
     padding-top: 40px
-
-.top-bar-section
-  .label
-    margin-right: 0
-    margin-left: 10px
+nav
+  .top-bar-section
+    ul li
+      .label
+        margin-right: 0
+        margin-left: 10px
+      & > a.active, & > a.active:hover
+        color: $accent
 
 .field-icon
   text-align: right
@@ -462,3 +491,40 @@ button.micro, .button.micro
   overflow: hidden
   &.expand
     max-height: 2000px
+
+.progress
+  // +clearfix
+  width: 100%
+  background-color: rgba(black, 0.05)
+  border-radius: 3px
+  overflow: hidden
+  &.mini
+    height: 4px
+    border-radius: 0px
+    .step
+      padding: 0px
+      height: 100%
+  .step
+    float: left
+    padding: 10px
+    font-size: 12px
+    color: rgba(black, 0.2)
+    &.done
+      background-color: $teal
+      color: rgba(black, 0.4)
+    &.pending
+      background-color: darken($teal, 10%)
+      color: rgba(black, 0.4)
+
+.filters
+  .filter
+    a
+      margin: 0px -10px
+      padding: 4px 10px
+      border-radius: 1000px
+      font-size: 12px
+
+    &.active
+      a
+        background-color: $accent
+        color: white

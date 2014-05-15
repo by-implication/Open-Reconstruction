@@ -1,20 +1,20 @@
-agency.view = function(ctrl){
+govUnit.view = function(ctrl){
   return app.template(ctrl.app, [
     common.banner([
-      ctrl.agency().name,
-      ctrl.agency().acronym ?
+      ctrl.govUnit().name,
+      ctrl.govUnit().acronym ?
         m("span.acronym", [
-          "(" + ctrl.agency().acronym + ")"
+          "(" + ctrl.govUnit().acronym + ")"
         ])
       : ""
     ]),
     m("section", [
       m(".row", [
         m(".columns.medium-12", [
-          ctrl.app.isAgencyAdmin(ctrl.agency().id) ?
+          ctrl.app.isGovUnitAdmin(ctrl.govUnit().id) ?
             m("a.button", 
               {
-                href: ("/agencies/"+ctrl.agency().id+"/newUser"), 
+                href: routes.controllers.Users.create(ctrl.govUnit().id).url,
                 config: m.route
               }, 
               ["Add new user"]
@@ -42,7 +42,7 @@ agency.view = function(ctrl){
               ctrl.users().map(function(u){
                 return m("tr", [
                   m("td", [
-                    m("a", {href: "/users/" + u.id, config: m.route}, [
+                    m("a", {href: routes.controllers.Users.view(u.id).url, config: m.route}, [
                       u.name
                     ]),
                   ]),

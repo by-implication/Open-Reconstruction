@@ -131,4 +131,12 @@ object Permission {
   val SIGNOFF = Permission(5)
   val ASSIGN_FUNDING = Permission(6)
 
+  def json = Json.obj(
+    "CREATE_REQUESTS" -> CREATE_REQUESTS.value,
+    "VALIDATE_REQUESTS" -> VALIDATE_REQUESTS.value,
+    "EDIT_REQUESTS" -> EDIT_REQUESTS.value,
+    "IMPLEMENT_REQUESTS" -> IMPLEMENT_REQUESTS.value,
+    "SIGNOFF" -> SIGNOFF.value,
+    "ASSIGN_FUNDING" ->ASSIGN_FUNDING.value 
+  )
 }

@@ -1,11 +1,11 @@
-project.view = function(ctrl){
+request.view = function(ctrl){
 
   return app.template(
     ctrl.app, 
     {class: "detail"}, 
     [ // modals
       common.modal.view(
-        ctrl.signoffModal, 
+        ctrl.signoffModal,
         function(ctrl){
           return m("form", {onsubmit: ctrl.signoff}, [
             m(".section", [
@@ -25,67 +25,50 @@ project.view = function(ctrl){
             ]),
           ])
         }
-      )
-    ], 
-    [ // actual content
-      ctrl.isInvolved() ?
-        m("section.approval", [
-          m(".row", [
-            m(".columns.medium-12", [
-              ctrl.canSignoff() ?
-                m("div", [
-                  m("h4", [
-                    "Sign off on this request only if you feel the information is complete for your step in the approval process."
-                  ]),
-                  m("button", {onclick: ctrl.signoffModal.show.bind(ctrl.signoffModal)}, [
-                    m("i.fa.fa-check"),
-                  ]),
-                  m("button.alert", [
-                    m("i.fa.fa-times"),
-                  ]),
-                ])
-              : "",
-              ctrl.hasSignedoff()  ?
-                m("div", [
-                  m("h4", [
-                    m("div", [m("i.fa.fa-thumbs-up.fa-2x")]),
-                    "You've already signed off on this request."
-                  ]),
-                ])
-              : "",
-              ctrl.currentUserIsAuthor() && !ctrl.hasSignedoff() ?
-                m("div", [
-                  m("h4", [
-                    "You created this request."
-                  ]),
-                ])
-              : "",
-              !ctrl.canSignoff() && !ctrl.hasSignedoff() ? // waiting for predecessor
-                m("div", [
-                  m("h4", [
-                    ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
-                      ctrl.app.isSuperAdmin() ?
-                        "Please assign an agency to assess this request."
-                      : "Waiting for the Office of Civil Defense to assign an agency to assess this request."
-                    : "Waiting for " + ctrl.getBlockingAgency() + " approval."
-                  ]),
-                ])
-              : ""
+      ),
+      common.modal.view(
+        ctrl.rejectModal,
+        function(ctrl){
+          return m("form", {onsubmit: ctrl.reject}, [
+            m(".section", [
+              m("h3", "Authorization Required"),
+              m("p", [
+                "Please enter your password to continue."
+              ]),
+            ]),
+            m("hr"),
+            m(".section", [
+              common.field("Password", m("input[type='password']", {
+                onchange: m.withAttr("value", ctrl.password)
+              })),
+              common.field("Remarks", m("textarea", {
+                onchange: m.withAttr("value", ctrl.content)
+              }), "Please state the reason for rejection"),
+              m("button", [
+                "Submit"
+              ]),
             ]),
           ])
-        ])
-      : "",
+        }
+      )
+    ], 
+    [ 
+      // approval section
+      ctrl.isInvolved() ? request.approval(ctrl) : "",
+      // progress tracker
+      request.progress(ctrl),
+      // actual content
       m("section", [
         m(".row", [
           m(".columns.medium-4", [
-            project.summary(ctrl)
+            request.summary(ctrl)
           ]),
           m("div.columns.medium-8", [
             m(".card", [
               m(".section", [
-                common.tabs.view(ctrl.projectTabs)
+                common.tabs.menu(ctrl.requestTabs)
               ]),
-              m.switch(ctrl.projectTabs.currentTab()())
+              m.switch(ctrl.requestTabs.currentTab()())
                 .case("Assignments", function(){
                   if(ctrl.app.isSuperAdmin()){
                     return m(".section", [
@@ -111,7 +94,7 @@ project.view = function(ctrl){
                             }
                             ))),
                           m("p.help", [
-                            "The Implementing Agency will be responsible for the handling the money, and the completion of the project. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
+                            "The Implementing Agency will be responsible for the handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
                           ]),
                         ]),
                       ]),
@@ -141,7 +124,7 @@ project.view = function(ctrl){
                           : "Unassigned"
                         ]),
                         m("p.help", [
-                          "The Implementing Agency will be responsible for the handling the money, and the completion of the project. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
+                          "The Implementing Agency will be responsible for the handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
                         ]),
                       ]),
                     ])
@@ -245,61 +228,88 @@ project.view = function(ctrl){
   )
 }
 
-project.summary = function(ctrl){
-  return m(".project-stub", [
+request.summary = function(ctrl){
+  return m(".request-stub", [
     m(".section.type", [
-      ctrl.project().projectType
+      ctrl.request().projectType
     ]),
     m(".section", [
       displayEditGroup.view(
-        ctrl.canEdit(),
+        ctrl,
         ctrl.degDescription,
-        function(){ return m("h4", ctrl.project().description) }, 
+        function(){ return m("h4", ctrl.request().description) }, 
         function(){
           return m("div", [
-            m("input", {type: "text", value: ctrl.project().description, onchange: m.withAttr("value", ctrl.degDescription.input)}),
+            m("input", {type: "text", value: ctrl.request().description, onchange: m.withAttr("value", ctrl.degDescription.input)}),
           ])
         }
       ),
       m("p.meta", [
         "Posted by ",
-        m("a",{href: "/users/"+ctrl.project().authorId, config: m.route}, ctrl.author().name),
+        m("a",{href: "/users/"+ctrl.request().authorId, config: m.route}, ctrl.author().name),
         m("br"),
-        " on "+(new Date(ctrl.project().date).toString()), // change this as people modify this. "Last edited by _____"
+        " on "+(new Date(ctrl.request().date).toString()), // change this as people modify this. "Last edited by _____"
       ]),
     ]),
     m("hr"),
     m("div.section", [
+      m("h5", [m("small", "Processing Time")]),
+      m("h5#pending-for.value", common.stagnation(ctrl)),
       m("h5", [m("small", "Amount")]),
       displayEditGroup.view(
-        ctrl.canEdit(),
+        ctrl,
         ctrl.degAmount,
-        function(){ return m("h5.value", [helper.commaize(ctrl.project().amount)]) }, 
+        function(){ return m("h5.value", [helper.commaize(ctrl.request().amount)]) }, 
         function(){ 
           return m("div", [
-            m("input", {type: "text", value: ctrl.project().amount, onchange: m.withAttr("value", ctrl.degAmount.input)}),
+            m("input", {type: "text", value: ctrl.request().amount, onchange: m.withAttr("value", ctrl.degAmount.input)}),
           ])
         }
       ),
       m("h5", [m("small", "Disaster")]),
       displayEditGroup.view(
-        ctrl.canEdit(),
-        ctrl.degDisaster, 
-        function(){ return m("h5.value", [ctrl.project().disasterType + " " + ctrl.project().disasterName + " in " + common.displayDate(ctrl.project().disasterDate)]) }, 
-        function(){ 
+        ctrl,
+        ctrl.degDisaster,
+        function(){ return m("h5.value", [ctrl.request().disaster.type + " " + ctrl.request().disaster.name + " in " + common.displayDate(ctrl.request().disaster.date)]) },
+        function(){
           return m("div", [
-            "Sorry, editing disaster is not yet supported."
+            m("div", [
+              m("label", [
+                "Name",
+                m("input", {
+                  type: "text",
+                  value: ctrl.request().disaster.name,
+                  onchange: m.withAttr("value", ctrl.degDisaster.input.setName)
+                })
+              ]),
+              m("label", [
+                "Type",
+                m("select", {
+                  onchange: m.withAttr("value", ctrl.degDisaster.input.setType)
+                }, ctrl.disasterTypes().map(function (dt){
+                  return m("option", {value: dt, selected: dt == ctrl.request().disaster.type}, dt)
+                }))
+              ]),
+              m("label", [
+                "Date",
+                m("input", {
+                  type: "date",
+                  value: ctrl.degDisaster.htmlDate() || helper.toDateValue(ctrl.request().disaster.date),
+                  onchange: m.withAttr("value", ctrl.degDisaster.input.setDate)
+                })
+              ])
+            ])
           ])
         }
       ),
       m("h5", [m("small", "Location")]),
       displayEditGroup.view(
-        ctrl.canEdit(),
+        ctrl,
         ctrl.degLocation, 
-        function(){ return m("h5.value", [ctrl.project().location]) }, 
+        function(){ return m("h5.value", [ctrl.request().location]) }, 
         function(){ 
           return m("div", [
-            m("input", {type: "text", value: ctrl.project().location, onchange: m.withAttr("value", ctrl.degLocation.input)}),
+            m("input", {type: "text", value: ctrl.request().location, onchange: m.withAttr("value", ctrl.degLocation.input)}),
           ])
         }
       ),
@@ -317,40 +327,143 @@ project.summary = function(ctrl){
   ])
 }
 
-project.listView = function(ctrl){
-  var filteredList = ctrl.filteredList;
-
-  return m("table", [
-      m("thead", [
-        m("tr", [
-          m("th", "Id"),
-          m("th", "Stagnation"),
-          m("th", "Name"),
-          m("th", "Agency/LGU"),
-          // m("th", "Type"),
-          m("th.text-right", "Amount")
-        ])
+request.approval = function(ctrl){
+  return m("section.approval", {className: ctrl.request().isRejected ? "rejected" : ""}, [
+    m(".row", [
+      m(".columns.medium-12", [
+        ctrl.request().isRejected ?
+          m("div", [
+            m("h4", [
+              "This request has been rejected." 
+            ]),
+          ])
+        : (
+          ctrl.canSignoff() ?
+            m("div", [
+              m("h4", [
+                "Sign off on this request only if you feel the information is complete for your step in the approval process."
+              ]),
+              m("button", {onclick: ctrl.signoffModal.show.bind(ctrl.signoffModal)}, [
+                m("i.fa.fa-check"),
+              ]),
+              m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
+                m("i.fa.fa-times"),
+              ])
+            ])
+          : ctrl.hasSignedoff() ?
+            m("div", [
+              m("h4", [
+                m("div", [m("i.fa.fa-thumbs-up.fa-2x")]),
+                "You've already signed off on this request."
+              ]),
+            ])
+          : m("div", [
+            m("h4", [
+              ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
+                ctrl.app.isSuperAdmin() ?
+                  "Please assign an agency to assess this request."
+                : "Waiting for the Office of Civil Defense to assign an agency to assess this request."
+              : "Waiting for " + ctrl.getBlockingAgency() + " approval."
+            ]),
+          ])
+        ),
+        ctrl.currentUserIsAuthor() && !ctrl.hasSignedoff() ?
+          m("div", [
+            m("h5", [
+              "You created this request."
+            ]),
+          ])
+        : ""
       ]),
-      m("tbody", [
-        filteredList.value().length ?
-          filteredList
-            .sortBy(function(p){
-              return p.date;
-            })
-            .map(function(project){
-              var url = "/requests/"+project.id;
-              return m("tr", [
-                m("td", project.id),
-                m("td", [common.day(project.age + 86400000 * (9 * Math.random() + 1))]),
-                m("td", [
-                  m("a.name", {href: url, config: m.route}, project.description)
-                ]),
-                m("td", project.author.agency),
-                // m("td", project.projectType),
-                m("td.text-right", helper.commaize(project.amount.toFixed(2)))
+    ])
+  ])
+}
+
+request.progress = function(ctrl){
+  var steps = _.range(6);
+  return m("section", [
+    m(".row", [
+      m(".columns.medium-12", [
+        m(".progress", [
+          _.chain(steps)
+            .map(function(step){
+              return m(".step", {
+                style: {width: (100/steps.length + '%')},
+                className: (ctrl.request().level >= step ? 'done ' : '') +
+                  (ctrl.request().level === (step - 1) ? 'pending' : '')
+              }, [
+                process.levelDict[step]
               ])
             })
             .value()
+        ]),
+      ]),
+    ]),
+  ])
+}
+
+request.miniProgress = function(request){
+  return m(".progress.mini", [
+    m(".step", {
+      style: {width: (100/6 * (request.level + 1) + '%')},
+      className: "done"
+    })
+  ])
+}
+
+request.listView = function(reqs, sortBy){
+  return m("table", [
+      m("thead", [
+        m("tr", [
+          m("th", [
+            m("a", {onclick: function(){ sortBy("id") }}, [
+              "Id"
+            ]),
+          ]),
+          m("th", [
+            m("a", {onclick: function(){ sortBy("age") }}, [
+              "Stagnation"
+            ]),
+          ]),
+          m("th", "Name"),
+          m("th", "Gov Unit"),
+          m("th", [
+            m("a", {onclick: function(){ sortBy("level") }}, [
+              "Status"
+            ]),
+          ]),
+          m("th.text-right", [
+            m("a", {onclick: function(){ sortBy("amount") }}, [
+              "Amount"
+            ]),
+          ])
+        ])
+      ]),
+      m("tbody", [
+        reqs.length ?
+          reqs
+            .map(function(p){
+              return m("tr", [
+                m("td", p.id),
+                m("td", [common.day(p.age)]),
+                m("td", [
+                  m("a.name", {
+                    href: routes.controllers.Requests.view(p.id).url,
+                    config: m.route
+                  }, p.description)
+                ]),
+                m("td", p.author.govUnit),
+                m("td", [
+                  !p.isRejected ?
+                    request.miniProgress(p)
+                  : m(".label.alert", [
+                    "Rejected"
+                  ])
+                ]),
+                // m("td", p.pType),
+                m("td.text-right", helper.commaize(p.amount.toFixed(2)))
+              ])
+            })
         : m("tr", [m("td", "No requests matched filter criteria")])
       ])
     ])

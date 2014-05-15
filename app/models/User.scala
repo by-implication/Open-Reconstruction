@@ -152,7 +152,7 @@ case class User(
         "handle" -> handle,
         "id" -> id.get,
         "name" -> name,
-        "agency" -> Json.obj(
+        "govUnit" -> Json.obj(
           "name" -> govUnit.name,
           "acronym" -> govUnit.acronym,
           "id" -> govUnit.id.get,
@@ -198,6 +198,7 @@ case class User(
   def hasSignedoff(r: Req): Boolean = {
     isInvolvedWith(r) && {
       val checks = List[Boolean](
+        false,
         (r.assessingAgencyId.map(_ == govUnitId).getOrElse(false)),
         isSuperAdmin,
         isOP,
@@ -215,10 +216,10 @@ case class User(
       false
     } else {
       r.level match {
-        case 0 => r.assessingAgencyId.map(_ == govUnitId).getOrElse(false)
-        case 1 => isSuperAdmin
-        case 2 => isOP
-        case 3 => isDBM
+        case 1 => r.assessingAgencyId.map(_ == govUnitId).getOrElse(false)
+        case 2 => isSuperAdmin
+        case 3 => isOP
+        case 4 => isDBM
         case _ => false
       }
     }
@@ -237,7 +238,7 @@ case class User(
   def canEditRequest(r: Req): Boolean = DB.withConnection { implicit c =>
     isSuperAdmin ||
     r.authorId == id.get ||
-    r.assessingAgencyId.map(_ == govUnitId && r.level < 1).getOrElse(false) ||
+    r.assessingAgencyId.map(_ == govUnitId && r.level < 2).getOrElse(false) ||
     r.implementingAgencyId.map(_ == govUnitId).getOrElse(false)
   }
 

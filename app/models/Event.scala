@@ -23,6 +23,10 @@ object Event extends EventGen {
     generate("signoff", govUnit.name + " " + govUnit.id)
   }
 
+  def reject(govUnit: GovUnit)(implicit req: Req, user: User) = {
+    generate("reject", govUnit.name + " " + govUnit.id)
+  }
+
   def attachment(a: Attachment)(implicit req: Req, user: User) = {
     generate("attachment", asContent(a))
   }
@@ -61,6 +65,11 @@ object Event extends EventGen {
       case "amount" => req.amount
       case "description" => req.description
       case "location" => req.location
+      case "disaster" => List(
+        req.disasterName.getOrElse(""),
+        req.disasterType,
+        req.disasterDate.getTime()
+      ).mkString("|")
     }
     generate("editField", fieldValue + " " + field)
   }
@@ -89,7 +98,7 @@ case class Event(
   def listJson = Json.obj(
     "kind" -> kind,
     "content" -> content,
-    "date" -> date,
+    "date" -> date.getTime,
     "user" -> userId.map(User.findById(_).map(u => Json.obj(
       "id" -> u.id.get,
       "name" -> u.name

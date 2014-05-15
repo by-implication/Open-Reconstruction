@@ -1,13 +1,13 @@
-var agency = {}
+var govUnit = {}
 
-agency.Agency = function(data){
+govUnit.Agency = function(data){
   for(prop in data){
     this[prop] = m.prop(data[prop]);
   }
   this.slug = m.prop(this.name().replace(/ /g, "-").replace(/\./g, "").toLowerCase());
 }
 
-agency.LGU = function(data){
+govUnit.LGU = function(data){
   for(prop in data){
     this[prop] = m.prop(data[prop]);
   }
@@ -15,7 +15,7 @@ agency.LGU = function(data){
   this.isExpanded = m.prop(false);
 }
 
-agency.Region = function(data){
+govUnit.Region = function(data){
   for(prop in data){
     this[prop] = m.prop(data[prop]);
   }

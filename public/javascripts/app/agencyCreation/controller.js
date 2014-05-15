@@ -1,12 +1,11 @@
 agencyCreation.controller = function(){
   this.app = new app.controller();
-  database.pull();
 
   var self = this;
 
   this.roles = m.prop([{id: 0, name: 'Loading...'}]);
 
-  bi.ajax(routes.controllers.GovUnits.createMeta()).then(function (r){
+  bi.ajax(routes.controllers.GovUnits.createAgencyMeta()).then(function (r){
     if(r.success){
       self.roles(r.roles);
     } else {

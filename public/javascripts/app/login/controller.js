@@ -4,11 +4,11 @@ login.controller = function(){
     handle: m.prop(""),
     password: m.prop("")
   }
-  database.pull();
+
   var self = this;
   this.submit = function(e){
     e.preventDefault();
-    bi.ajax(routes.controllers.Users.login(), {data: self.input}).then(function (r){
+    bi.ajax(routes.controllers.Users.authenticate(), {data: self.input}).then(function (r){
       if(r.success){
         window.location = '/';
       } else if(r.reason == "form error"){

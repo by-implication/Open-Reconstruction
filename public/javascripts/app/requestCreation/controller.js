@@ -1,4 +1,4 @@
-projectCreation.controller = function(){
+requestCreation.controller = function(){
   var self = this;
   this.app = new app.controller();
 
@@ -72,7 +72,7 @@ projectCreation.controller = function(){
 
   }.bind(this);
 
-  bi.ajax(routes.controllers.Requests.createInfo()).then(function(data){
+  bi.ajax(routes.controllers.Requests.createMeta()).then(function (data){
     this.requestCreationInfo = data;
     this.input.disasterType(data.disasterTypes[0]);
   }.bind(this));
@@ -87,6 +87,12 @@ projectCreation.controller = function(){
   this.submitNewRequest = function(e){
     e.preventDefault();
     if(this.preamble()) {
+
+      // transmit disasterDate as a timestamp
+      var oldDate = this.input.disasterDate();
+      var newDate = (new Date(oldDate)).getTime();
+      this.input.disasterDate(newDate);
+
       bi.ajax(routes.controllers.Requests.insert(), {data: this.input}).then(function(r){
         if(r.success){
           window.location = '/';

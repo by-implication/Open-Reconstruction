@@ -12,13 +12,21 @@ object Requests extends Controller with Secured {
 
   private lazy val projectAmount = bigDecimal(15, 2).verifying("Invalid amount", _ >= 0)
 
-  def createInfo() = UserAction(){ implicit user => implicit request =>
+  def create() = Application.index
+  def viewAssignments = Application.index1 _
+  def viewImages = Application.index1 _
+  def viewDocuments = Application.index1 _
+  def viewActivity = Application.index1 _
+
+  def createMeta() = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
       "disasterTypes" -> DisasterType.jsonList,
       "projectTypes" -> ProjectType.jsonList,
       "projectScopes" -> ProjectScope.jsonList
     ))
   }
+
+  def view = Application.index1 _
 
   def viewMeta(id: Int) = UserAction(){ implicit user => implicit request =>
     Req.findById(id).map { req =>
@@ -45,7 +53,8 @@ object Requests extends Controller with Secured {
             "docs" -> docs.map(tf)
           )
         },
-        "history" -> Json.toJson(Event.findForRequest(id).map(_.listJson))
+        "history" -> Json.toJson(Event.findForRequest(id).map(_.listJson)),
+        "disasterTypes" -> DisasterType.jsonList
       )
     }.getOrElse(Rest.notFound())
     
@@ -57,7 +66,7 @@ object Requests extends Controller with Secured {
       mapping(
         "amount" -> optional(projectAmount),
         "description" -> nonEmptyText,
-        "disasterDate" -> date,
+        "disasterDate" -> longNumber,
         "disasterName" -> optional(text),
         "disasterType" -> nonEmptyText,
         "location" -> nonEmptyText,
@@ -70,7 +79,7 @@ object Requests extends Controller with Secured {
         Req(
           amount = amount.getOrElse(0),
           description = description,
-          disasterDate = disasterDate,
+          disasterDate = new java.sql.Timestamp(disasterDate),
           disasterName = disasterName,
           disasterType = DisasterType.withName(disasterType),
           projectType = ProjectType.withName(projectType),
@@ -127,17 +136,53 @@ object Requests extends Controller with Secured {
     }.getOrElse(Rest.notFound())
   }
 
-  def index() = UserAction(){ implicit user => implicit request =>
+  def reject(id: Int) = UserAction(){ implicit user => implicit request =>
+    Req.findById(id).map { r =>
+
+      if(user.canSignoff(r)){
+
+        val rejectForm: Form[(Req, String)] = Form(
+          mapping(
+            "password" -> nonEmptyText.verifying(
+              "Incorrect password",
+              User.authenticate(user.handle, _).isDefined
+            ),
+            "content" -> nonEmptyText
+          )
+          ((password, content) => (r, content))
+          (_ => None)
+        )
+
+        rejectForm.bindFromRequest.fold(
+          Rest.formError(_),
+          { case (r, content) => r.copy(isRejected = true).save().map( implicit r =>
+            Event.comment(content).create().map { _ =>
+              Event.reject(user.govUnit).create().map { e =>
+                Checkpoint.push(user)
+                Rest.success("event" -> e.listJson)
+              }.getOrElse(Rest.serverError())
+            }.getOrElse(Rest.serverError())
+          ).getOrElse(Rest.serverError())}
+        )
+
+      } else Rest.unauthorized()
+
+    }.getOrElse(Rest.notFound()) 
+  }
+
+  def index = Application.index
+  def indexAll = Application.index
+  def indexApproval = Application.index
+  def indexAssessor = Application.index
+  def indexImplementation = Application.index
+  def indexMine = Application.index
+  def indexSignoff = Application.index
+
+  def indexMeta() = UserAction(){ implicit user => implicit request =>
     val allRequests = Req.indexList()
     Ok(Json.obj(
       "list" -> allRequests.map(_.indexJson),
-      "filters" -> ProjectType.jsonList,
-      "counts" -> Json.obj(
-        "all" -> allRequests.length,
-        "signoff" -> allRequests.filter(req => user.canSignoff(req)).length,
-        "assessor" -> allRequests.filter(req => (req.level == 0 && !req.assessingAgencyId.isDefined)).length,
-        "mine" -> allRequests.filter(req => (User.findById(req.authorId).get.govUnitId == user.govUnitId)).length
-      )
+      "filters" -> ProjectType.jsonList
     ))
   }
 
@@ -179,7 +224,7 @@ object Requests extends Controller with Secured {
                 assign(req, govUnitId).save().map { r =>
                   Event.assign(agencyType, true, govUnit).create().map { _ =>
                     if(agencyType == "assess") Checkpoint.push(user)(r)
-                    Rest.success()
+                    Rest.success("agency" -> govUnit.toJson)
                   }.getOrElse(Rest.serverError())
                 }.getOrElse(Rest.serverError())
               } else Rest.error("GovUnit not authorized to assess.")
@@ -192,8 +237,8 @@ object Requests extends Controller with Secured {
 
   def assignAssessingAgency = assignGovUnit(
     GovUnit.canAssess,
-    (r, id) => r.copy(assessingAgencyId = Some(id)),
-    r => (r.copy(assessingAgencyId = None), GovUnit.findById(r.assessingAgencyId.get).get),
+    (r, id) => r.copy(assessingAgencyId = Some(id), level = 1),
+    r => (r.copy(assessingAgencyId = None, level = 0), GovUnit.findById(r.assessingAgencyId.get).get),
     "assess"
   ) _
 
@@ -223,6 +268,19 @@ object Requests extends Controller with Secured {
       )(v => req.copy(location = v)
       )(_ => None)
     }
+    case "disaster" => {
+      mapping(
+        "input" -> tuple(
+          "name" -> optional(text),
+          "type" -> nonEmptyText,
+          "date" -> longNumber
+        )
+      )({ case (name, dtype, date) => req.copy(
+        disasterName = name,
+        disasterType = DisasterType.withName(dtype),
+        disasterDate = new java.sql.Timestamp(date)
+      )})(_ => None)
+    }
     case _ => {
       mapping(
         "input" -> text.verifying("Invalid field", _ => false)
@@ -238,8 +296,8 @@ object Requests extends Controller with Secured {
           editForm(field).bindFromRequest.fold(
             Rest.formError(_),
             _.save().map { implicit req =>
-              Event.editField(field).create().map { _ =>
-                Rest.success()
+              Event.editField(field).create().map { e =>
+                Rest.success("event" -> e.listJson)
               }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())
           )

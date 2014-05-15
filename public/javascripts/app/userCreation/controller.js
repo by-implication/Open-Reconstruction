@@ -1,19 +1,19 @@
 userCreation.controller = function(){
   this.app = new app.controller();
   this.slug = m.prop(m.route.param("id"));
-  this.agency = m.prop({});
+  this.govUnit = m.prop({});
   this.input = {
     name: m.prop(""),
     handle: m.prop(""),
     password: m.prop(""),
-    agencyId: m.prop(0),
+    govUnitId: m.prop(0),
     isAdmin: m.prop(false)
   }
 
   bi.ajax(routes.controllers.GovUnits.viewMeta(this.slug())).then(function (r){
     if(r.success){
-      this.agency(r.agency);
-      this.input.agencyId(r.agency.id);
+      this.govUnit(r.govUnit);
+      this.input.govUnitId(r.govUnit.id);
     } else {
       alert(r.reason);
     }

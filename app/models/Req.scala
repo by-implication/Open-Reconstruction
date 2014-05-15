@@ -84,6 +84,15 @@ case class Req(
 
   def insertJson = Json.obj("id" -> id.get)
 
+  def dashboardJson = Json.obj(
+    "id" -> id.get,
+    "date" -> date,
+    "level" -> level,
+    "amount" -> amount,
+    "projectType" -> projectType.name,
+    "disasterType" -> disasterType.name
+  )
+
   def indexJson(implicit user: User) = Json.obj(
     "id" -> id.get,
     "description" -> description,
@@ -92,12 +101,13 @@ case class Req(
     "level" -> level,
     "amount" -> amount,
     "author" -> Json.obj(
-      "agency" -> author.govUnit.name,
+      "govUnit" -> author.govUnit.name,
       "govUnitId" -> author.govUnit.id.get
       ),
     "authorId" -> authorId,
     "assessingAgencyId" -> assessingAgencyId,
-    "canSignoff" -> user.canSignoff(this)
+    "canSignoff" -> user.canSignoff(this),
+    "isRejected" -> isRejected
   )
 
   def viewJson = Json.obj(
@@ -115,9 +125,11 @@ case class Req(
     "implementingAgencyId" -> implementingAgencyId,
     "location" -> location,
     "remarks" -> (remarks.getOrElse(""):String),
-    "disasterType" -> disasterType.name,
-    "disasterDate" -> disasterDate,
-    "disasterName" -> (disasterName.getOrElse(""):String)
+    "disaster" -> Json.obj(
+      "type" -> disasterType.name,
+      "date" -> disasterDate,
+      "name" -> (disasterName.getOrElse(""):String)
+    )
   )
   
 }

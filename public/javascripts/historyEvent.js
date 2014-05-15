@@ -4,11 +4,29 @@ historyEvent.meta = function(verbed, data, date){
   return m("p.meta", [
     verbed,
     " by ",
-    m("a", {href: "/users/" + data.user.id, config: m.route}, data.user.name),
+    m("a", {href: routes.controllers.Users.view(data.user.id).url, config: m.route}, data.user.name),
     ", of ",
-    m("a", {href: "/agencies/" + data.govUnit.id, config: m.route}, data.govUnit.name),
+    m("a", {href: routes.controllers.GovUnits.view(data.govUnit.id).url, config: m.route}, data.govUnit.name),
     " ",
     helper.timeago(date)
+  ])
+}
+
+historyEvent.reject = function(data){
+  var date = new Date(data.date);
+  var c = data.content.split(" ");
+  var govUnitId = c.pop();
+  var govUnitName = c.join(" ");
+  return m(".event", [
+    historyEvent.date(date),
+    m(".details", [
+      m("h3", "Rejected"),
+      m("p", [
+        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url}, govUnitName),
+        " rejected this project."
+      ]),
+      historyEvent.meta("Rejected", data, date)
+    ])
   ])
 }
 
@@ -33,14 +51,25 @@ historyEvent.editField = function(data){
   var date = new Date(data.date);
   var c = data.content.split(" ");
   var field = c.pop();
-  var value = c.join(" ");
+  var value;
+  switch(field){
+    case "disaster": {
+      var nameTypeDate = c.join(" ").split("|");
+      var name = nameTypeDate.shift();
+      var type = nameTypeDate.shift();
+      var ddate = parseInt(nameTypeDate.shift());
+      value = name + " (" + type + ") on " + common.displayDate(ddate);
+      break;
+    }
+    default: value = c.join(" ");
+  }
   return m(".event", [
     historyEvent.date(date),
     m(".details", [
       m("p", "Project " + field + " was set to \"" + value + "\""),
       historyEvent.meta("Modified", data, date)
     ]),
-  ])
+  ]);
 }
 
 historyEvent.disaster = function(data){
@@ -78,8 +107,8 @@ historyEvent.assign = function(data){
   cduty[0] = cduty[0].toUpperCase();
   cduty = cduty.join("");
   var isAssign = parseInt(c.pop());
-  var agencyId = c.pop();
-  var agencyName = c.join(" ");
+  var govUnitId = c.pop();
+  var govUnitName = c.join(" ");
 
   var assignment = isAssign ? "assigned" : "unassigned";
   var prepPhrase = isAssign ? " to " + duty : " from " + duty + "ing"
@@ -87,9 +116,8 @@ historyEvent.assign = function(data){
   return m(".event", [
     historyEvent.date(date),
     m(".details", [
-      // m("h3", cduty + "ing Agency " + assignment),
       m("p", [
-        m("a", {href: "/agencies/" + agencyId}, agencyName),
+        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url}, govUnitName),
         " was " + assignment + prepPhrase + " this project."
       ]),
       historyEvent.meta("Assigned", data, date)
@@ -100,15 +128,15 @@ historyEvent.assign = function(data){
 historyEvent.signoff = function(data){
   var date = new Date(data.date);
   var c = data.content.split(" ");
-  var agencyId = c.pop();
-  var agencyName = c.join(" ");
+  var govUnitId = c.pop();
+  var govUnitName = c.join(" ");
   return m(".event", [
     historyEvent.date(date),
     m(".details", [
       m("h3", "Sign off"),
       m("p", [
-        m("a", {href: "/agencies/" + agencyId}, agencyName),
-        agencyName == "Department of Budget and Management" ?
+        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url}, govUnitName),
+        govUnitName == "Department of Budget and Management" ?
         " has approved a SARO for this project." : " signed off on this project."
       ]),
       historyEvent.meta("Signed off", data, date)

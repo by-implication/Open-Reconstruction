@@ -5,16 +5,16 @@ user.view = function(ctrl){
       m(".row", [
         m(".columns.medium-9", [
           m("div", [
-            "Agency",
+            "Government Unit",
             m("h3", [
-              ctrl.user().agency.name
+              ctrl.user().govUnit.name
             ]),
           ]),
           m("hr.dashed"),
           ctrl.app.isUserAuthorized(ctrl.user(), 1) ?
             m("div", [
               m("h1",[m("small", "List of projects requested by this user")]),
-              project.listView(ctrl)
+              request.listView(ctrl.requestList(), ctrl.sortBy)
             ])
           : ""
         ])

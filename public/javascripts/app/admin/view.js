@@ -15,7 +15,7 @@ admin.view = function(ctrl){
           ])
         : m("label.expander", []),
         (level ?
-          m("a", {href: "/agencies/" + lgu.id()}, lgu.name()) :
+          m("a", {href: routes.controllers.GovUnits.view(lgu.id()).url}, lgu.name()) :
           m("span", lgu.name())
         ),
         lgu.children().length ? 
@@ -38,7 +38,7 @@ admin.view = function(ctrl){
           ])
         : null,
         (level < 3 ?
-          m("a.add.button.micro", {href: "/lgus/new/" + level + "/" + lgu.id()}, [
+          m("a.add.button.micro", {href: routes.controllers.GovUnits.createLgu(level, lgu.id()).url}, [
             m.switch(level)
               .case(0, function(){
                 return "Add Province"
@@ -67,11 +67,11 @@ admin.view = function(ctrl){
     ctrl.app.isSuperAdmin()?
       m("section", [
         m(".row", [
-          common.tabs.view(ctrl.tabs, {className: "vertical"}),
+          common.tabs.menu(ctrl.tabs, {className: "vertical"}),
           m.switch(ctrl.tabs.currentTab()())
             .case("Agencies", function(){
               return m(".tabs-content.vertical", [
-                m("a.button", {href: "/agencies/new", config: m.route}, [
+                m("a.button", {href: routes.controllers.GovUnits.createAgency().url, config: m.route}, [
                   "New agency"
                 ]),
                 m("table", [
@@ -92,7 +92,7 @@ admin.view = function(ctrl){
                     ctrl.agencyList().map(function(a){
                       return m("tr", [
                         m("td", [
-                          m("a", {href: "/agencies/"+a.id, config: m.route}, [
+                          m("a", {href: routes.controllers.GovUnits.view(a.id).url, config: m.route}, [
                             a.name,
                             a.acronym ?
                               m("span.acronym", [

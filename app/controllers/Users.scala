@@ -10,7 +10,9 @@ import recon.support._
 
 object Users extends Controller with Secured {
 
-  def login = UserAction(){ implicit user => implicit request =>
+  def login = Application.index
+
+  def authenticate = UserAction(){ implicit user => implicit request =>
     if (Secured.attemptLogin(request.remoteAddress)) {
 
       val loginForm: Form[Option[User]] = Form(
@@ -33,6 +35,8 @@ object Users extends Controller with Secured {
   def logout() = UserAction(){ implicit user => implicit request =>
     Secured.logout()
   }
+
+  def create = Application.index1 _
 
   def insert(govUnitId: Int) = UserAction(){ implicit user => implicit request =>
     if(user.isSuperAdmin || (user.isAdmin && user.govUnitId == govUnitId)){
@@ -63,6 +67,8 @@ object Users extends Controller with Secured {
     } else Rest.unauthorized()
   }
 
+  def view = Application.index1 _
+
   def viewMeta(id: Int): Action[AnyContent] = GenericAction(){ implicit currentUser => implicit request =>
     User.findById(id) match {
       case Some(user) => Rest.success(
@@ -73,7 +79,7 @@ object Users extends Controller with Secured {
     }
   }
 
-  def info() = UserAction(){ implicit user => implicit request =>
+  def meta() = UserAction(){ implicit user => implicit request =>
     Ok(user.infoJson)
   }
 

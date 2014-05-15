@@ -10,6 +10,15 @@ import recon.support._
 
 object GovUnit extends GovUnitGen {
 
+  def listAgencies = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT * FROM gov_units g
+      LEFT JOIN lgus l
+      ON g.gov_unit_id = l.lgu_id
+      WHERE l.lgu_id IS NULL
+    """).list(simple)
+  }
+
   def withPermission(permission: Permission) = DB.withConnection { implicit c =>
     SQL("""
       SELECT * FROM gov_units
@@ -27,10 +36,6 @@ object GovUnit extends GovUnitGen {
     """).on(
       'id -> id
     ).list(User.simple)
-  }
-
-  def listAll: Seq[GovUnit] = DB.withConnection { implicit c =>
-    SQL("select * FROM gov_units").list(simple)
   }
 
   def canAssess(a: GovUnit) = a.canDo(Permission.VALIDATE_REQUESTS)

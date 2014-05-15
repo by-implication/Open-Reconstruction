@@ -1,49 +1,28 @@
 // ////////////////////////////////////////////////////
 // // Helpers
 
-// var genArray = function($from, $to){
-//   var list = [];
-//   if($from < $to){
-//     for(var i = $from; i < $to; i++){
-//       list.push(i);
-//     }
-//   } else {
-//     // $from >= $to
-//     for (var i = $from; i > $to; i--){
-//       list.push(i);
-//     }
-//   }
-//   return list;
-// }
-
-// var rand = {
-//   int: function(lower, upper){
-//     if(typeof(upper) == 'undefined'){
-//       // catches for when only one argument is added, meant for upper.
-//       upper = lower;
-//       lower = 0
-//     }
-//     return Math.round(Math.random() * (upper - lower)) + lower;
-//   },
-//   date: function(backThen){
-//     if(typeof(backThen) == "undefined"){
-//       var backThen = new Date('January 1, 2013');
-//     }
-//     var now = new Date(Date.now());
-//     return new Date(now - Math.round((now - backThen) * Math.random()));
-//   },
-//   amount: function(){
-//     return Math.round(Math.random() * 100) * 100000;
-//   },
-//   fromArray: function(arr){
-//     return _.sample(arr, 1)[0]
-//     // var n = Math.random() * (arr.length - 1);
-//     // var index = Math.round(n);
-//     // return arr[index];
-//   }
-// }
-
 var helper = {};
+
+helper.percent = function(value){
+  return (value*100).toFixed(2) + "%";
+}
+
+helper.pad = function(n, digits){
+  digits = digits || 2;
+  n += "";
+  while(n.length < digits) n = "0" + n;
+  return n;
+}
+
+helper.toDateValue = function(timestamp){
+  var d = new Date(timestamp);
+  return [  
+    d.getFullYear(),
+    this.pad(d.getMonth()+1),
+    this.pad(d.getDate())
+  ].join("-");
+}
+
 helper.truncate = function(input, place){
   var out = "";
   var buffer;
@@ -221,6 +200,3 @@ helper.docHeight = function(){
                          html.clientHeight, html.scrollHeight, html.offsetHeight );
   return height;
 }
-
-
-

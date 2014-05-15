@@ -1,27 +1,29 @@
-project.controller = function(){
+request.controller = function(){
   var map;
   this.app = new app.controller();
   this.signoffModal = new common.modal.controller();
-  this.projectTabs = new common.tabs.controller('/requests/'+m.route.param('id'));
-  this.projectTabs.tabs([
-    {label: m.prop("Assignments"), href: 'assignments'},
-    {label: m.prop("Images"), href: 'images'},
-    {label: m.prop("Documents"), href: 'documents'},
-    {label: m.prop("Activity"), href: 'activity'}
+  this.rejectModal = new common.modal.controller();
+  var requestId = m.route.param('id');
+  this.requestTabs = new common.tabs.controller();
+  this.requestTabs.tabs([
+    {label: m.prop("Assignments"), href: routes.controllers.Requests.viewAssignments(requestId).url},
+    {label: m.prop("Images"), href: routes.controllers.Requests.viewImages(requestId).url},
+    {label: m.prop("Documents"), href: routes.controllers.Requests.viewDocuments(requestId).url},
+    {label: m.prop("Activity"), href: routes.controllers.Requests.viewActivity(requestId).url}
   ]);
-  this.projectTabs.currentTab(this.projectTabs.tabs()[0].label)
+  this.requestTabs.currentTab(this.requestTabs.tabs()[0].label)
 
   this.tabs = new common.tabs.controller();
   this.id = m.route.param("id");
-  this.project = m.prop({});
+  this.request = m.prop({});
   this.author = m.prop({});
   this.attachments = m.prop({});
   this.history = m.prop({});
-  this.oldProject = m.prop({});
   this.location = m.prop("");
   this.isInvolved = m.prop(false);
   this.canSignoff = m.prop(false);
   this.canEdit = m.prop(false);
+  this.disasterTypes = m.prop([]);
   this.hasSignedoff = m.prop(false);
   this.input = {
     assessingAgency: m.prop(),
@@ -36,10 +38,27 @@ project.controller = function(){
   this.implementingAgencies = m.prop([]);
 
   // displayEditGroups
-  this.degDescription = new displayEditGroup.controller(this.project, "description");
-  this.degAmount = new displayEditGroup.controller(this.project, "amount");
-  this.degDisaster = new displayEditGroup.controller(this.project, "disaster");
-  this.degLocation = new displayEditGroup.controller(this.project, "location");
+  this.degDescription = new displayEditGroup.controller(this.request, "description");
+  this.degAmount = new displayEditGroup.controller(this.request, "amount");
+  this.degLocation = new displayEditGroup.controller(this.request, "location");
+
+  this.degDisaster = new displayEditGroup.controller(this.request, "disaster");
+  this.degDisaster.htmlDate = m.prop("");
+  this.degDisaster.input({
+    name: "",
+    type: "",
+    date: ""
+  });
+  this.degDisaster.input.setName = function(v){
+    this.degDisaster.input().name = v;
+  }.bind(this)
+  this.degDisaster.input.setType = function(v){
+    this.degDisaster.input().type = v;
+  }.bind(this)
+  this.degDisaster.input.setDate = function(v){
+    this.degDisaster.input().date = (new Date(v)).getTime();
+    this.degDisaster.htmlDate(v);
+  }.bind(this)
 
   var parseLocation = function(location){
     var split = location.split(',').map(function(coord){return parseFloat(coord)});
@@ -59,13 +78,13 @@ project.controller = function(){
 
   this.curUserCanUpload = function(){
     // if requester, you can only upload if the assessor hasn't approved it
-    return (this.currentUserIsAuthor() && this.project().level === 0)
+    return (this.currentUserIsAuthor() && this.request().level === 0)
     ||
     // if assesor, can only upload if you haven't approved it
-    (this.currentUserBelongsToAssessingAgency() && this.project().level === 0)
+    (this.currentUserBelongsToAssessingAgency() && this.request().level === 0)
     ||
     // if OCD, can only upload if you haven't approved it
-    (this.app.isSuperAdmin() && this.project().level <= 1)
+    (this.app.isSuperAdmin() && this.request().level <= 1)
   }
 
   this.currentUserBelongsToAssessingAgency = function(){
@@ -77,7 +96,7 @@ project.controller = function(){
   }
 
   this.getBlockingAgency = function(){
-    var agency = process.levelToAgencyName()[this.project().level]
+    var agency = process.levelToAgencyName()[this.request().level]
     if(agency === "ASSESSING_AGENCY"){
       if (this.assessingAgency()){
         return this.assessingAgency().name;
@@ -89,8 +108,20 @@ project.controller = function(){
     }
   }
 
-  bi.ajax(routes.controllers.Requests.viewMeta(this.id)).then(function(data){
-    this.project(data.request);
+  bi.ajax(routes.controllers.Requests.viewMeta(this.id)).then(function (data){
+
+    this.request(data.request);
+    this.degDisaster.input().name = data.request.disaster.name;
+    this.degDisaster.input().type = data.request.disaster.type;
+    this.degDisaster.input().date = data.request.disaster.date;
+    if(data.request.level < 4 && !data.request.isRejected){
+      !function update(){
+        var el = document.getElementById('pending-for');
+        if(el) el.innerHTML = common.stagnation(this);
+        setTimeout(update.bind(this), 40);
+      }.bind(this)();
+    }
+
     this.author(data.author);
     this.attachments(data.attachments);
     this.history(data.history);
@@ -100,18 +131,16 @@ project.controller = function(){
     this.implementingAgency(data.implementingAgency);
 
     this.input.assessingAgency(data.request.assessingAgencyId);
-    this.input.implementingAgency(data.request.implementingAgencyId);  
+    this.input.implementingAgency(data.request.implementingAgencyId);
 
     this.isInvolved(data.isInvolved);
     this.hasSignedoff(data.hasSignedoff)
     this.canSignoff(data.canSignoff);
     this.canEdit(data.canEdit);
+    this.disasterTypes(data.disasterTypes);
+
     parseLocation(data.request.location);
   }.bind(this));
-
-  database.pull().then(function(data){
-    this.oldProject(database.projectList()[this.id - 1]);
-  }.bind(this))
 
   this.signoffModal.signoff = function(e){
     e.preventDefault();
@@ -124,8 +153,30 @@ project.controller = function(){
         alert('Signoff successful!');
         this.signoffModal.close();
         this.history().unshift(r.event);
+        this.request().level++;
       } else {
         alert("Failed to signoff: " + r.messages.password);
+      }
+    }.bind(this));
+  }.bind(this);
+
+  this.rejectModal.reject = function(e){
+    e.preventDefault();
+    bi.ajax(routes.controllers.Requests.reject(this.id), {
+      data: {password: this.rejectModal.password, content: this.rejectModal.content}
+    }).then(function (r){
+      if(r.success){
+        this.canSignoff(false);
+        this.request().isRejected = true;
+        alert('Request rejected.');
+        this.rejectModal.close();
+        this.history().unshift(r.event);
+      } else {
+        var errors = [];
+        for(var field in r.messages){
+          errors.push([field, r.messages[field]]);
+        }
+        alert("Failed to reject:\n" + errors.join("\n"));
       }
     }.bind(this));
   }.bind(this);
@@ -155,7 +206,8 @@ project.controller = function(){
 
   this.submitComment = function(e){
     e.preventDefault()
-    bi.ajax(routes.controllers.Requests.comment(this.id), {data: {content: this.input.comment}}).then(function(r){
+    bi.ajax(routes.controllers.Requests.comment(this.id), {data: {content: this.input.comment}})
+    .then(function (r){
       console.log('Comment submitted!');
       this.refreshHistory();
     }.bind(this));
@@ -163,14 +215,17 @@ project.controller = function(){
 
   this.updateAssessingAgency = function(e){
     this.input.assessingAgency(e);
-    bi.ajax(routes.controllers.Requests.assignAssessingAgency(this.id, this.input.assessingAgency())).then(function(r){
-      console.log('Assessing agency submitted!');
-    })
+    bi.ajax(routes.controllers.Requests.assignAssessingAgency(this.id, this.input.assessingAgency()))
+    .then(function (r){
+      this.assessingAgency(r.agency);
+      this.request().level++;
+    }.bind(this))
   }.bind(this);
 
   this.updateImplementingAgency = function(e){
     this.input.implementingAgency(e);
-    bi.ajax(routes.controllers.Requests.assignImplementingAgency(this.id, this.input.implementingAgency())).then(function(r){
+    bi.ajax(routes.controllers.Requests.assignImplementingAgency(this.id, this.input.implementingAgency()))
+    .then(function (r){
       console.log('Implementing agency submitted!');
     })
   }.bind(this);
@@ -201,7 +256,7 @@ project.controller = function(){
     if(!isInit){
 
       this.dropzone = new Dropzone(elem, {
-        url: "/requests/" + this.id + "/attach/img",
+        url: routes.controllers.Attachments.add(this.id, "img").url,
         previewTemplate: m.stringify(dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop photos here, or click to browse.",
         clickable: true,
@@ -224,7 +279,7 @@ project.controller = function(){
     if(!isInit){
 
       this.dropzone = new Dropzone(elem, {
-        url: "/requests/" + this.id + "/attach/doc",
+        url: routes.controllers.Attachments.add(this.id, "doc").url,
         previewTemplate: m.stringify(dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop documents here, or click to browse. We recommend pdfs and doc files.",
         clickable: true,
@@ -239,4 +294,5 @@ project.controller = function(){
 
     }
   }.bind(this);
+
 }
