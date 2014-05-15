@@ -24,6 +24,7 @@ app.template = function(a, b, c, d){
 
   return m("html", [
     m("head", [
+      m("meta", {charset: "utf-8"}),
       m("title", [ "Open Reconstruction" ]),
       m("meta", {name: "google", value: "notranslate"}),
       m("link[href='/assets/bower_components/nprogress/nprogress.css'][rel='stylesheet'][type='text/css']"),
