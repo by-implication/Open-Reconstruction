@@ -101,10 +101,12 @@ case class Req(
     "level" -> level,
     "amount" -> amount,
     "author" -> Json.obj(
-      "govUnit" -> author.govUnit.name,
-      "govUnitId" -> author.govUnit.id.get
-      ),
-    "authorId" -> authorId,
+      "id" -> authorId,
+      "govUnit" -> Json.obj(
+        "name" -> author.govUnit.name,
+        "id" -> author.govUnit.id.get
+      )
+    ),
     "assessingAgencyId" -> assessingAgencyId,
     "canSignoff" -> user.canSignoff(this),
     "isRejected" -> isRejected
