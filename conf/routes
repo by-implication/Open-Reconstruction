@@ -10,9 +10,11 @@ GET     /dashboard/meta                           controllers.Application.dashbo
 GET     /process                                  controllers.Application.process
 GET     /assets/javascripts/routes/play.js        controllers.Application.jsRoutes
 GET     /csvParser                                controllers.Application.csvParser
+GET     /lguParser                                controllers.Application.lguParser
 GET     /admin                                    controllers.Application.admin
 GET     /admin/lgus                               controllers.Application.adminLgus
 GET     /admin/lgus/meta                          controllers.GovUnits.listLgus
+GET     /admin/lgus/:l/:id                        controllers.GovUnits.getChildren(l: Int, id: Int)
 GET     /admin/agencies                           controllers.Application.adminAgencies
 GET     /admin/agencies/meta                      controllers.GovUnits.listAgencies
 
@@ -70,5 +72,5 @@ GET     /gov-units/new/lgu/:l/:id/meta            controllers.GovUnits.createLgu
 POST    /gov-units/new/lgu/:l/:id                 controllers.GovUnits.insertLgu(l: Int, id: Int)
 GET     /gov-units/:id                            controllers.GovUnits.view(id: Int)
 GET     /gov-units/:id/meta                       controllers.GovUnits.viewMeta(id: Int)
-GET     /gov-units/:id/new-user                    controllers.Users.create(id: Int)
-POST    /gov-units/:id/new-user                    controllers.Users.insert(id: Int)
+GET     /gov-units/:id/new-user                   controllers.Users.create(id: Int)
+POST    /gov-units/:id/new-user                   controllers.Users.insert(id: Int)

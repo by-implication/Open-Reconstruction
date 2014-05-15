@@ -29,7 +29,6 @@ admin.controller = function(){
   }.bind(this));
 
   bi.ajax(routes.controllers.GovUnits.listLgus()).then(function (r){
-
     var regions = [];
     r.regions
       .map(function(r){
@@ -38,23 +37,7 @@ admin.controller = function(){
       .forEach(function (region){
         regions[region.id()] = region;
       });
-
-    var r_lgus = r.lgus.map(function(lgu){
-        return new govUnit.LGU(lgu);
-    })
-
-    var lgus = [];
-    r_lgus.forEach(function (lgu){
-      lgus[lgu.id()] = lgu;
-    });
-
-    r_lgus.forEach(function (lgu){
-      var parent = lgu.parentLGU() ? lgus[lgu.parentLGU()] : regions[lgu.parentRegion()];
-      parent.children( parent.children().concat(lgu) );
-    });
-
     this.regions(regions);
-
   }.bind(this));
 
   var expandCollapseRecurse = function(node, ec){
@@ -66,15 +49,24 @@ admin.controller = function(){
     }
   }
 
-  this.expandAll = function(){
-    this.regions().forEach(function(r){
-      expandCollapseRecurse(r, true);
-    })
-  }
-
   this.collapseAll = function(){
     this.regions().forEach(function(r){
       expandCollapseRecurse(r, false);
     })
   }
+
+  this.toggleLguExpansion = function(lgu){
+    var isExpanded = !lgu.isExpanded();
+    if(isExpanded){
+      bi.ajax(routes.controllers.GovUnits.getChildren(lgu.level(), lgu.id())).then(function (r){
+        lgu.children(r.map(function (child){
+          return new govUnit.LGU(child);
+        }));
+        lgu.isExpanded(isExpanded);
+      });
+    } else {
+      lgu.isExpanded(isExpanded);
+    }
+  }
+
 }

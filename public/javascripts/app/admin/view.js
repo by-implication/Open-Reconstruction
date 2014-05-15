@@ -1,14 +1,13 @@
 admin.view = function(ctrl){
   
   function renderLGU(lgu){
-    // lgu.isExpanded = false;
     var level = lgu.level();
 
     return m("li.lgu", [
       m(".info", [
-        level < 3 && lgu.children().length ?
-          m("label.expander", {className: lgu.isExpanded ? "expanded" : ""}, [
-            m("input", {type: "checkbox", onchange: m.withAttr("checked", lgu.isExpanded), checked: lgu.isExpanded()}),
+        level < 3 ?
+          m("label.expander", {className: lgu.isExpanded() ? "expanded" : ""}, [
+            m("input", {type: "checkbox", onchange: m.withAttr("checked", function(){ ctrl.toggleLguExpansion(lgu); }), checked: lgu.isExpanded()}),
             m(".control", [
               m("i.fa.fa-caret-right.fa-fw")
             ]),
@@ -116,11 +115,6 @@ admin.view = function(ctrl){
             .case("LGUs", function(){
               return m(".tabs-content.vertical", [
                 m("ul.button-group", [
-                  m("li", [
-                    m("button.small.secondary", {onclick: ctrl.expandAll.bind(ctrl)}, [
-                      "Expand all"
-                    ]),
-                  ]),
                   m("li", [
                     m("button.small.secondary", {onclick: ctrl.collapseAll.bind(ctrl)}, [
                       "Collapse all"
