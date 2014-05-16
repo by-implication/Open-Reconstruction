@@ -279,7 +279,7 @@ request.summary = function(ctrl){
     m("hr"),
     m("div.section", [
       m("h5", [m("small", "Processing Time")]),
-      m("h5#pending-for.value", common.stagnation(ctrl)),
+      m("h5#pending-for.value", ctrl.stagnation()),
       m("h5", [m("small", "Amount")]),
       displayEditGroup.view(
         ctrl,

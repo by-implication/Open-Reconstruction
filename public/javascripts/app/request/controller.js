@@ -29,6 +29,7 @@ request.controller = function(){
   this.assessingAgency = m.prop();
   this.implementingAgency = m.prop();
   this.coords = m.prop();
+  this.stagnation = m.prop();
   
   this.assessingAgencies = m.prop([]);
   this.implementingAgencies = m.prop([]);
@@ -112,13 +113,6 @@ request.controller = function(){
     this.degDisaster.input().name = data.request.disaster.name;
     this.degDisaster.input().type = data.request.disaster.type;
     this.degDisaster.input().date = data.request.disaster.date;
-    if(data.request.level < 4 && !data.request.isRejected){
-      !function update(){
-        var el = document.getElementById('pending-for');
-        if(el) el.innerHTML = common.stagnation(this);
-        setTimeout(update.bind(this), 40);
-      }.bind(this)();
-    }
 
     this.author(data.author);
     this.attachments(data.attachments);
@@ -134,7 +128,17 @@ request.controller = function(){
     this.canEdit(data.canEdit);
     this.disasterTypes(data.disasterTypes);
 
+    this.stagnation(common.stagnation(this));
+    if(data.request.level < 4 && !data.request.isRejected){
+      !function update(){
+        this.stagnation(common.stagnation(this));
+        m.redraw();
+        setTimeout(update.bind(this), 40);
+      }.bind(this)();
+    }
+
     parseLocation(data.request.location);
+
   }.bind(this));
 
   this.signoffModal.signoff = function(e){
