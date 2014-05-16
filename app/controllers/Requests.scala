@@ -139,7 +139,7 @@ object Requests extends Controller with Secured {
   def reject(id: Int) = UserAction(){ implicit user => implicit request =>
     Req.findById(id).map { r =>
 
-      if(user.canSignoff(r)){
+      if(user.canReject(r)){
 
         val rejectForm: Form[(Req, String)] = Form(
           mapping(

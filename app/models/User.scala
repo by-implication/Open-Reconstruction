@@ -225,6 +225,21 @@ case class User(
     }
   }
 
+  def canReject(r: Req): Boolean = {
+    if(isAnonymous) {
+      false
+    } else {
+      r.level match {
+        case 0 => isSuperAdmin
+        case 1 => isSuperAdmin || r.assessingAgencyId.map(_ == govUnitId).getOrElse(false)
+        case 2 => isSuperAdmin
+        case 3 => isOP
+        case 4 => isDBM
+        case _ => false
+      }
+    }
+  }
+
   private def canDo(p: Permission): Boolean = DB.withConnection { implicit c =>
     SQL("""
       SELECT * FROM users NATURAL join gov_units NATURAL JOIN roles
