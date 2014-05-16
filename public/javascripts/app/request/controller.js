@@ -41,8 +41,8 @@ request.controller = function(){
   this.degDescription = new displayEditGroup.controller(this.request, "description");
   this.degAmount = new displayEditGroup.controller(this.request, "amount");
   this.degLocation = new displayEditGroup.controller(this.request, "location");
-  this.degAssessor = new displayEditGroup.controller(this.request, "assessor");
-  this.degImplementor = new displayEditGroup.controller(this.request, "implementor");
+  this.degAssess = new displayEditGroup.controller(this.request, "assess");
+  this.degImplement = new displayEditGroup.controller(this.request, "implement");
 
   this.degDisaster = new displayEditGroup.controller(this.request, "disaster");
   this.degDisaster.htmlDate = m.prop("");
@@ -213,23 +213,6 @@ request.controller = function(){
       console.log('Comment submitted!');
       this.refreshHistory();
     }.bind(this));
-  }.bind(this);
-
-  this.updateAssessingAgency = function(e){
-    this.input.assessingAgency(e);
-    bi.ajax(routes.controllers.Requests.assignAssessingAgency(this.id, this.input.assessingAgency()))
-    .then(function (r){
-      this.assessingAgency(r.agency);
-      this.request().level++;
-    }.bind(this))
-  }.bind(this);
-
-  this.updateImplementingAgency = function(e){
-    this.input.implementingAgency(e);
-    bi.ajax(routes.controllers.Requests.assignImplementingAgency(this.id, this.input.implementingAgency()))
-    .then(function (r){
-      console.log('Implementing agency submitted!');
-    })
   }.bind(this);
 
   var dropzonePreviewTemplate = m(".dz-preview.dz-file-preview", [

@@ -200,56 +200,7 @@ object Requests extends Controller with Secured {
 
   }
 
-  private def assignGovUnit(
-      isAuthorized: GovUnit => Boolean,
-      assign: (Req, Int) => Req,
-      unassign: Req => (Req, GovUnit),
-      agencyType: String
-    )(reqId: Int, govUnitId: Int) = UserAction(){ implicit user => implicit request =>
-    if(user.isSuperAdmin){
-      Req.findById(reqId).map { implicit req =>
-        govUnitId match {
-          case 0 => {
-            val (r, govUnit) = unassign(req)
-            r.save().map { r =>
-              Event.assign(agencyType, false, govUnit).create().map { _ =>
-                if(agencyType == "assess") Checkpoint.pop()(r)
-                Rest.success()
-              }.getOrElse(Rest.serverError())
-            }.getOrElse(Rest.serverError())
-          }
-          case _ => {
-            GovUnit.findById(govUnitId).map { govUnit =>
-              if(isAuthorized(govUnit)){
-                assign(req, govUnitId).save().map { r =>
-                  Event.assign(agencyType, true, govUnit).create().map { _ =>
-                    if(agencyType == "assess") Checkpoint.push(user)(r)
-                    Rest.success("agency" -> govUnit.toJson)
-                  }.getOrElse(Rest.serverError())
-                }.getOrElse(Rest.serverError())
-              } else Rest.error("GovUnit not authorized to assess.")
-            }.getOrElse(Rest.notFound())
-          }
-        }
-      }.getOrElse(Rest.notFound())
-    } else Rest.unauthorized()
-  }
-
-  def assignAssessingAgency = assignGovUnit(
-    GovUnit.canAssess,
-    (r, id) => r.copy(assessingAgencyId = Some(id), level = 1),
-    r => (r.copy(assessingAgencyId = None, level = 0), GovUnit.findById(r.assessingAgencyId.get).get),
-    "assess"
-  ) _
-
-  def assignImplementingAgency = assignGovUnit(
-    GovUnit.canImplement,
-    (r, id) => r.copy(implementingAgencyId = Some(id)),
-    r => (r.copy(implementingAgencyId = None), GovUnit.findById(r.implementingAgencyId.get).get),
-    "implement"
-  ) _
-
-  private def editForm(field: String)(implicit req: Req): Form[Req] = Form(field match {
+  private def editForm(field: String)(implicit req: Req, user: User): Form[Req] = Form(field match {
     case "description" => {
       mapping(
         "input" -> nonEmptyText
@@ -281,6 +232,32 @@ object Requests extends Controller with Secured {
         disasterDate = new java.sql.Timestamp(date)
       )})(_ => None)
     }
+    case "assess" => {
+      mapping(
+        "input" -> (number.verifying("Unauthorized",
+          id => user.isSuperAdmin && (id match {
+            case 0 => true
+            case _ => GovUnit.findById(id).get.canAssess
+          })
+        ))
+      )(govUnitId => req.copy(assessingAgencyId = govUnitId match {
+          case 0 => None
+          case _ => Some(govUnitId)
+      }))(_ => None)
+    }
+    case "implement" => {
+      mapping(
+        "input" -> number.verifying("Unauthorized",
+          id => user.isSuperAdmin && (id match {
+            case 0 => true
+            case _ => GovUnit.findById(id).get.canImplement
+          })
+        )
+      )(govUnitId => req.copy(implementingAgencyId = govUnitId match {
+          case 0 => None
+          case _ => Some(govUnitId)
+      }))(_ => None)
+    }
     case _ => {
       mapping(
         "input" -> text.verifying("Invalid field", _ => false)
@@ -296,7 +273,11 @@ object Requests extends Controller with Secured {
           editForm(field).bindFromRequest.fold(
             Rest.formError(_),
             _.save().map { implicit req =>
-              Event.editField(field).create().map { e =>
+              (field match {
+                case "assess" => Event.assign(field, req.assessingAgency)
+                case "implement" => Event.assign(field, req.implementingAgency)
+                case _ => Event.editField(field)
+              }).create().map { e =>
                 Rest.success("event" -> e.listJson)
               }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())

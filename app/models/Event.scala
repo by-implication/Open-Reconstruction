@@ -35,8 +35,9 @@ object Event extends EventGen {
     generate("comment", content)
   }
 
-  def assign(agencyType: String, assign: Boolean, govUnit: GovUnit)(implicit req: Req, user: User) = {
-    generate("assign", Seq(govUnit.name, govUnit.id, (if (assign) 1 else 0), agencyType).mkString(" "))
+  def assign(agencyType: String, govUnit: Option[GovUnit])(implicit req: Req, user: User) = {
+    val params = govUnit.map( g => Seq(g.name, g.id, agencyType) ).getOrElse(Seq(0, agencyType))
+    generate("assign", params.mkString(" "))
   }
 
   def newRequest()(implicit req: Req, user: User) = {

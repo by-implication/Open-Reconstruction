@@ -38,9 +38,6 @@ object GovUnit extends GovUnitGen {
     ).list(User.simple)
   }
 
-  def canAssess(a: GovUnit) = a.canDo(Permission.VALIDATE_REQUESTS)
-  def canImplement(a: GovUnit) = a.canDo(Permission.IMPLEMENT_REQUESTS)
-
 }
 
 // GENERATED case class start
@@ -52,6 +49,9 @@ case class GovUnit(
 ) extends GovUnitCCGen with Entity[GovUnit]
 // GENERATED case class end
 {
+
+  def canAssess = canDo(Permission.VALIDATE_REQUESTS)
+  def canImplement = canDo(Permission.IMPLEMENT_REQUESTS)
 
   def users:Seq[User] = GovUnit.users(id)
 

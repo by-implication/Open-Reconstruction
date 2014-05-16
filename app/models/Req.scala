@@ -44,6 +44,9 @@ case class Req(
 // GENERATED case class end
 {
 
+  lazy val assessingAgency = assessingAgencyId.map(GovUnit.findById(_).get)
+  lazy val implementingAgency = implementingAgencyId.map(GovUnit.findById(_).get)
+
   lazy val currentCheckpoint: Option[Checkpoint] = DB.withConnection { implicit c =>
     SQL("""
       SELECT * FROM checkpoints

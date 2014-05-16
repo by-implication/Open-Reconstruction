@@ -76,7 +76,7 @@ request.view = function(ctrl){
                       m("h4", [
                         displayEditGroup.view(
                           ctrl,
-                          ctrl.degAssessor,
+                          ctrl.degAssess,
                           function(){
                             return ctrl.assessingAgency() ?
                               m("a", {href: routes.controllers.GovUnits.view(ctrl.assessingAgency().id).url, config: m.route}, [
@@ -85,7 +85,7 @@ request.view = function(ctrl){
                             : "Unassigned";
                           },
                           function(){
-                            return m("select", {onchange: m.withAttr("value", ctrl.degAssessor.input)}, 
+                            return m("select", {onchange: m.withAttr("value", ctrl.degAssess.input)},
                               [m("option", {value: 0}, "None")]
                               .concat(ctrl.assessingAgencies().map(function(agency){
                                 return m("option", {value: agency.id, selected: ctrl.input.assessingAgency() == agency.id}, agency.name)
@@ -103,7 +103,7 @@ request.view = function(ctrl){
                       m("h4", [
                         displayEditGroup.view(
                           ctrl,
-                          ctrl.degImplementor,
+                          ctrl.degImplement,
                           function(){
                             return ctrl.implementingAgency() ?
                               m("a", {href: routes.controllers.GovUnits.view(ctrl.implementingAgency().id).url, config: m.route}, [
@@ -112,7 +112,7 @@ request.view = function(ctrl){
                             : "Unassigned"
                           },
                           function(){
-                            return m("select", {onchange: m.withAttr("value", ctrl.degImplementor.input)}, 
+                            return m("select", {onchange: m.withAttr("value", ctrl.degImplement.input)},
                               [m("option", {value: 0}, "None")]
                               .concat(ctrl.implementingAgencies().map(function(agency){
                                 return m("option", {value: agency.id, selected: ctrl.input.implementingAgency() == agency.id}, agency.name)
@@ -291,7 +291,7 @@ request.summary = function(ctrl){
                 "Date",
                 m("input", {
                   type: "date",
-                  value: ctrl.degDisaster.htmlDate() || helper.toDateValue(ctrl.request().disaster.date),
+                  value: ctrl.assessingAgency() || helper.toDateValue(ctrl.request().disaster.date),
                   onchange: m.withAttr("value", ctrl.degDisaster.input.setDate)
                 })
               ])

@@ -54,8 +54,6 @@ object Application extends Controller {
       Attachments.download,
       Attachments.thumb,
       Assets.at,
-      Requests.assignAssessingAgency,
-      Requests.assignImplementingAgency,
       Requests.comment,
       Requests.create,
       Requests.createMeta,
