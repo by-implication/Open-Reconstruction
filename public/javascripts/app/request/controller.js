@@ -17,7 +17,7 @@ request.controller = function(){
   this.id = m.route.param("id");
 
   this.request = m.prop({
-    amount: "",
+    amount: 0,
     date: "",
     description: "",
     disaster: {
@@ -25,14 +25,14 @@ request.controller = function(){
       name: "",
       type: ""
     },
-    isRejected: "",
-    level: "",
+    isRejected: false,
+    level: 0,
     location: "",
     projectType: ""
   });
 
   this.author = m.prop({
-    id: "",
+    id: 0,
     name: ""
   });
 

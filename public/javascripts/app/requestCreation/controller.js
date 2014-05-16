@@ -1,6 +1,11 @@
 requestCreation.controller = function(){
   var self = this;
   this.app = new app.controller();
+  this.info = new m.prop({
+    disasterTypes: [],
+    projectTypes: [],
+    projectScopes: []
+  });
 
   this.preamble = m.prop(false);
   this.input = {
@@ -75,7 +80,7 @@ requestCreation.controller = function(){
   }.bind(this);
 
   bi.ajax(routes.controllers.Requests.createMeta()).then(function (data){
-    this.requestCreationInfo = data;
+    this.info(data);
     this.input.disasterType(data.disasterTypes[0]);
   }.bind(this));
 

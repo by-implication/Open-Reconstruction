@@ -29,7 +29,7 @@ requestListing.controller = function(){
     {
       identifier: this.tabFilters.SIGNOFF,
       href: routes.controllers.Requests.indexSignoff().url,
-      when: function(){ return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 5) },
+      when: function(){ return _.contains(self.app.currentUser().permissions, 5) },
       filter: function (r){ return r.canSignoff },
       _label: "Needs signoff"
     },
@@ -43,7 +43,7 @@ requestListing.controller = function(){
     {
       identifier: this.tabFilters.MINE,
       href: routes.controllers.Requests.indexMine().url,
-      when: function(){ return self.app.currentUser() && _.contains(self.app.currentUser().permissions, 1) },
+      when: function(){ return _.contains(self.app.currentUser().permissions, 1) },
       filter: function (r){ return r.author.govUnitId === self.app.currentUser().govUnit.id },
       _label: function(){
         if(self.app.currentUser().govUnit && self.app.currentUser().govUnit.role == "LGU") {
@@ -107,9 +107,9 @@ requestListing.controller = function(){
 
       if(this.app.isSuperAdmin()){
         goTo(routes.controllers.Requests.indexAssessor);
-      } else if(this.app.currentUser() && _.contains(this.app.currentUser().permissions, 5)){
+      } else if(_.contains(this.app.currentUser().permissions, 5)){
         goTo(routes.controllers.Requests.indexSignoff);
-      } else if(this.app.currentUser() && _.contains(this.app.currentUser().permissions, 1)){
+      } else if(_.contains(this.app.currentUser().permissions, 1)){
         goTo(routes.controllers.Requests.indexMine);
       } else {
         goTo(routes.controllers.Requests.indexAll);

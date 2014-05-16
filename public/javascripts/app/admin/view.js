@@ -35,7 +35,7 @@ admin.view = function(ctrl){
               .render(),
             ")"
           ])
-        : null,
+        : "",
         (level < 3 ?
           m("a.add.button.micro", {href: routes.controllers.GovUnits.createLgu(level, lgu.id()).url}, [
             m.switch(level)
@@ -54,10 +54,8 @@ admin.view = function(ctrl){
         )
       ]),
       lgu.isExpanded() ?
-        m("ul.children", [
-          (lgu.children && lgu.children() && lgu.children().map(renderLGU)) || []
-        ]) :
-        null
+        m("ul.children", lgu.children().map(renderLGU)) :
+        ""
     ])
   }
 

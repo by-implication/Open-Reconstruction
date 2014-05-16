@@ -13,7 +13,7 @@ requestCreation.view = function(ctrl){
 
   function projectTypeGroups(indexArr){
     return indexArr.map(function(t){
-      return m("option", ctrl.requestCreationInfo.projectTypes[t])
+      return m("option", ctrl.info().projectTypes[t])
     });
   }
 
@@ -24,7 +24,7 @@ requestCreation.view = function(ctrl){
         m("h2", "Disaster"),
         common.field(
           "Type",
-          m("select", {onchange: m.withAttr("value", ctrl.input.disasterType)}, ctrl.requestCreationInfo.disasterTypes.map(function(e){return m("option", e)}))
+          m("select", {onchange: m.withAttr("value", ctrl.input.disasterType)}, ctrl.info().disasterTypes.map(function(e){return m("option", e)}))
         ),
         common.field(
           "Date",
@@ -113,7 +113,7 @@ requestCreation.view = function(ctrl){
         common.field(
           "Scope of Work",
           m("select", {onchange: m.withAttr("value", ctrl.input.scopeOfWork), value: ctrl.input.scopeOfWork()},
-            ctrl.requestCreationInfo.projectScopes.map(function (e){
+            ctrl.info().projectScopes.map(function (e){
               return m("option", {value: e}, scopeLabel(e))
             })
           ),
