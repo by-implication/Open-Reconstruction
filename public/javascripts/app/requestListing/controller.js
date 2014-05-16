@@ -94,26 +94,32 @@ requestListing.controller = function(){
     requests: m.prop("")
   };
 
-  // not sure if should
-  this.app.whenUserInfoLoads = function(){
-    // can't use config for when tabs loads because user data is asynchronous.
-
-    // can't use this anymore because currentTab isn't m.prop anymore.
-    // perhaps should use m.route?
-    // if(this.app.isSuperAdmin()){
-    //   this.tabs.currentTab("Needs assessor");
-    // } else if(this.app.currentUser() && _.contains(this.app.currentUser().permissions, 5)){
-    //   this.tabs.currentTab("Needs signoff");
-    // } else if(this.app.currentUser() && _.contains(this.app.currentUser().permissions, 1)){
-    //   this.tabs.currentTab("My requests");
-    // } else {
-    //   this.tabs.currentTab("All");
-    // }
-  }.bind(this)
-
   bi.ajax(routes.controllers.Requests.indexMeta()).then(function (r){
-    self.requestList = r.list;
-    self.projectFilters = r.filters;
-  });
+
+    if(m.route() == routes.controllers.Requests.index().url){
+
+      function goTo(route){
+        var dest = route().url;
+        if(m.route() != dest){
+          m.route(dest);
+        }
+      }
+
+      if(this.app.isSuperAdmin()){
+        goTo(routes.controllers.Requests.indexAssessor);
+      } else if(this.app.currentUser() && _.contains(this.app.currentUser().permissions, 5)){
+        goTo(routes.controllers.Requests.indexSignoff);
+      } else if(this.app.currentUser() && _.contains(this.app.currentUser().permissions, 1)){
+        goTo(routes.controllers.Requests.indexMine);
+      } else {
+        goTo(routes.controllers.Requests.indexAll);
+      }
+
+    }
+
+    this.requestList = r.list;
+    this.projectFilters = r.filters;
+
+  }.bind(this));
 
 }
