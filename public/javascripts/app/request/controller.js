@@ -25,11 +25,7 @@ request.controller = function(){
   this.canEdit = m.prop(false);
   this.disasterTypes = m.prop([]);
   this.hasSignedoff = m.prop(false);
-  this.input = {
-    assessingAgency: m.prop(),
-    implementingAgency: m.prop(),
-    comment: m.prop()
-  };
+  this.input = { comment: m.prop() };
   this.assessingAgency = m.prop();
   this.implementingAgency = m.prop();
   this.coords = m.prop();
@@ -131,9 +127,6 @@ request.controller = function(){
     this.implementingAgencies(data.implementingAgencies);
     this.assessingAgency(data.assessingAgency);
     this.implementingAgency(data.implementingAgency);
-
-    this.input.assessingAgency(data.request.assessingAgencyId);
-    this.input.implementingAgency(data.request.implementingAgencyId);
 
     this.isInvolved(data.isInvolved);
     this.hasSignedoff(data.hasSignedoff)

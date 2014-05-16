@@ -86,11 +86,26 @@ request.view = function(ctrl){
                           },
                           function(){
                             return m("select", {onchange: m.withAttr("value", ctrl.degAssess.input)},
-                              [m("option", {value: 0}, "None")]
+                              [m("option", {value: 0, selected: !ctrl.assessingAgency()}, "None")]
                               .concat(ctrl.assessingAgencies().map(function(agency){
-                                return m("option", {value: agency.id, selected: ctrl.input.assessingAgency() == agency.id}, agency.name)
+                                return m("option", {value: agency.id, selected: ctrl.assessingAgency() && (ctrl.assessingAgency().id == agency.id)}, agency.name)
                               }
                             )));
+                          },
+                          function (r){
+                            var params = r.event.content.split(" ");
+                            var agencyType = params.pop();
+                            var agency = {
+                              id: parseInt(params.pop()),
+                              name: params.join(" ")
+                            }
+                            if(agency.id){
+                              ctrl.assessingAgency(agency);
+                              ctrl.request().level = 1;
+                            } else {
+                              ctrl.assessingAgency(null);
+                              ctrl.request().level = 0;
+                            }
                           }
                         )
                       ]),
@@ -113,11 +128,24 @@ request.view = function(ctrl){
                           },
                           function(){
                             return m("select", {onchange: m.withAttr("value", ctrl.degImplement.input)},
-                              [m("option", {value: 0}, "None")]
+                              [m("option", {value: 0, selected: !ctrl.implementingAgency()}, "None")]
                               .concat(ctrl.implementingAgencies().map(function(agency){
-                                return m("option", {value: agency.id, selected: ctrl.input.implementingAgency() == agency.id}, agency.name)
+                                return m("option", {value: agency.id, selected: ctrl.implementingAgency() && (ctrl.implementingAgency().id == agency.id)}, agency.name)
                               }
                             )));
+                          },
+                          function (r){
+                            var params = r.event.content.split(" ");
+                            var agencyType = params.pop();
+                            var agency = {
+                              id: parseInt(params.pop()),
+                              name: params.join(" ")
+                            }
+                            if(agency.id){
+                              ctrl.implementingAgency(agency);
+                            } else {
+                              ctrl.implementingAgency(null);
+                            }
                           }
                         )
                       ]),

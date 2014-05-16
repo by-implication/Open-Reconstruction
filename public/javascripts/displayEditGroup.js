@@ -5,7 +5,7 @@ var displayEditGroup = {
     this.req = req;
     this.field = field;
   },
-  view: function(reqCtrl, ctrl, viewView, editView){
+  view: function(reqCtrl, ctrl, viewView, editView, processResult){
     return m(".display-edit-group",{className: (ctrl.isEditMode() ? "edit-mode" : "") + " " + (reqCtrl.canEdit() ? "can-edit": "")}, [
       reqCtrl.canEdit() ?
         !ctrl.isEditMode() ? 
@@ -22,6 +22,7 @@ var displayEditGroup = {
                   if(r.success){
                     ctrl.req()[ctrl.field] = ctrl.input();
                     reqCtrl.history().unshift(r.event);
+                    processResult && processResult(r);
                   } else {
                     alert("Your input was invalid.");
                   }
