@@ -22,7 +22,7 @@ historyEvent.reject = function(data){
     m(".details", [
       m("h3", "Rejected"),
       m("p", [
-        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url}, govUnitName),
+        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
         " rejected this project."
       ]),
       historyEvent.meta("Rejected", data, date)
@@ -116,7 +116,7 @@ historyEvent.assign = function(data){
     historyEvent.date(date),
     m(".details", [
       m("p", isAssign ? [
-        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url}, govUnitName),
+        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
         " was assigned" + prepPhrase + " this project."
       ] : duty.capitalize() + "ing agency was unassigned."),
       historyEvent.meta(isAssign ? "Assigned" : "Unassigned", data, date)
@@ -134,7 +134,7 @@ historyEvent.signoff = function(data){
     m(".details", [
       m("h3", "Sign off"),
       m("p", [
-        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url}, govUnitName),
+        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
         govUnitName == "Department of Budget and Management" ?
         " has approved a SARO for this project." : " signed off on this project."
       ]),

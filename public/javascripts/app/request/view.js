@@ -494,7 +494,7 @@ request.listView = function(reqs, sortBy){
                   }, p.description)
                 ]),
                 m("td", [m("a",
-                  {href: routes.controllers.GovUnits.view(p.author.govUnit.id).url},
+                  {href: routes.controllers.GovUnits.view(p.author.govUnit.id).url, config: m.route},
                   p.author.govUnit.name)]),
                 m("td", [
                   !p.isRejected ?
