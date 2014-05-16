@@ -51,20 +51,35 @@ app.navbar = function(ctrl){
     m("section.top-bar-section", [
       m("ul.left", [
         m("li", [
-          m("a", {href: routes.controllers.Application.dashboard().url, config: m.route, className: (routes.controllers.Application.dashboard().url === m.route.path ? "active" : "")}, "Dashboard")
+          m("a", {
+            href: routes.controllers.Application.dashboard().url,
+            config: m.route,
+            className: (routes.controllers.Application.dashboard().url === m.route() ? "active" : "")
+          }, "Dashboard")
         ]),
         m("li", [
-          m("a", {href: routes.controllers.Requests.index().url, config: m.route, className: (routes.controllers.Requests.index().url === m.route.path ? "active" : "")}, "Requests")
+          m("a", {
+            href: routes.controllers.Requests.index().url,
+            config: m.route,
+            className: (m.route().startsWith(routes.controllers.Requests.index().url) ? "active" : "")
+          }, "Requests")
         ]),
         ctrl.currentUser() && ctrl.currentUser().govUnit ?
           m("li", [
-            m("a", {href: routes.controllers.GovUnits.view(ctrl.currentUser().govUnit.id).url, config: m.route, className: ("/agencies" === m.route.path ? "active" : "")}, 
-              ctrl.currentUser().govUnit.role == "LGU" ? "My LGU" : "My Agency")
+            m("a", {
+              href: routes.controllers.GovUnits.view(ctrl.currentUser().govUnit.id).url,
+              config: m.route,
+              className: (routes.controllers.GovUnits.view(ctrl.currentUser().govUnit.id).url === m.route() ? "active" : "")
+            }, ctrl.currentUser().govUnit.role == "LGU" ? "My LGU" : "My Agency")
           ])
         : "",
         ctrl.currentUser() && ctrl.currentUser().isSuperAdmin ?
           m("li", [
-            m("a", {href: routes.controllers.Application.admin().url, config: m.route, className: ("/admin" === m.route.path ? "active" : "")}, "Admin")
+            m("a", {
+              href: routes.controllers.Application.admin().url,
+              config: m.route,
+              className: (m.route().startsWith(routes.controllers.Application.admin().url) ? "active" : "")
+            }, "Admin")
           ])
         : ""
       ]),

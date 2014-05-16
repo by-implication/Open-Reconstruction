@@ -5,6 +5,10 @@ String.prototype.capitalize = function(){
   return this[0].toUpperCase() + this.slice(1);
 }
 
+String.prototype.startsWith = function(s){
+  return this.indexOf(s) == 0;
+}
+
 var helper = {};
 
 helper.percent = function(value){
