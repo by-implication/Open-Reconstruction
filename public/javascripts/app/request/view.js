@@ -70,65 +70,62 @@ request.view = function(ctrl){
               ]),
               m.switch(ctrl.requestTabs.currentTab()())
                 .case("Assignments", function(){
-                  if(ctrl.app.isSuperAdmin()){
-                    return m(".section", [
-                      m("form", [
-                        m("label", [
-                          "Assessing Agency",
-                          m("select", {onchange: m.withAttr("value", ctrl.updateAssessingAgency), value: ctrl.input.assessingAgency()}, 
-                            [m("option", {value: 0}, "None")]
-                            .concat(ctrl.assessingAgencies().map(function(agency){
-                              return m("option", {value: agency.id, selected: ctrl.input.assessingAgency() == agency.id}, agency.name)
-                            }
-                          ))),
-                          m("p.help", [
-                            "The Assessing Agency you assign will independently validate and assess the suitability of this request for execution. They will be the ones making the program of works, etc... If you are unsure about who to assign, it's generally best to assign DPWH."
-                          ]),
-                        ]),
-                        m("label", [
-                          "Implementing Agency",
-                          m("select", {onchange: m.withAttr("value", ctrl.updateImplementingAgency), value: ctrl.input.implementingAgency()},
-                            [m("option", {value: 0}, "None")]
-                            .concat(ctrl.implementingAgencies().map(function(agency){
-                              return m("option", {value: agency.id, selected: ctrl.input.implementingAgency() == agency.id}, agency.name)
-                            }
-                            ))),
-                          m("p.help", [
-                            "The Implementing Agency will be responsible for the handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
-                          ]),
-                        ]),
+                  return m(".section", [
+                    m("p", [
+                      "Assessing Agency",
+                      m("h4", [
+                        displayEditGroup.view(
+                          ctrl,
+                          ctrl.degAssessor,
+                          function(){
+                            return ctrl.assessingAgency() ?
+                              m("a", {href: routes.controllers.GovUnits.view(ctrl.assessingAgency().id).url, config: m.route}, [
+                                ctrl.assessingAgency().name
+                              ])
+                            : "Unassigned";
+                          },
+                          function(){
+                            return m("select", {onchange: m.withAttr("value", ctrl.degAssessor.input)}, 
+                              [m("option", {value: 0}, "None")]
+                              .concat(ctrl.assessingAgencies().map(function(agency){
+                                return m("option", {value: agency.id, selected: ctrl.input.assessingAgency() == agency.id}, agency.name)
+                              }
+                            )));
+                          }
+                        )
                       ]),
-                    ])
-                  } else {
-                    return m(".section", [
-                      m("p", [
-                        "Assessing Agency",
-                        m("h4", [
-                          ctrl.assessingAgency() ?
-                            m("a", {href: "/agencies/"+ctrl.assessingAgency().id, config: m.route}, [
-                              ctrl.assessingAgency().name
-                            ])
-                          : "Unassigned"
-                        ]),
-                        m("p.help", [
-                          "The Assessing Agency will independently validate and assess the suitability of this request for execution. They will be the ones making the program of works, etc..."
-                        ]),
+                      m("p.help", [
+                        "The Assessing Agency will independently validate and assess the suitability of this request for execution. They will be the ones making the program of works, etc..."
                       ]),
-                      m("p", [
-                        "Implementing Agency",
-                        m("h4", [
-                          ctrl.implementingAgency() ?
-                            m("a", {href: "/agencies/"+ctrl.implementingAgency().id, config: m.route}, [
-                              ctrl.implementingAgency().name
-                            ])
-                          : "Unassigned"
-                        ]),
-                        m("p.help", [
-                          "The Implementing Agency will be responsible for the handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
-                        ]),
+                    ]),
+                    m("p", [
+                      "Implementing Agency",
+                      m("h4", [
+                        displayEditGroup.view(
+                          ctrl,
+                          ctrl.degImplementor,
+                          function(){
+                            return ctrl.implementingAgency() ?
+                              m("a", {href: routes.controllers.GovUnits.view(ctrl.implementingAgency().id).url, config: m.route}, [
+                                ctrl.implementingAgency().name
+                              ])
+                            : "Unassigned"
+                          },
+                          function(){
+                            return m("select", {onchange: m.withAttr("value", ctrl.degImplementor.input)}, 
+                              [m("option", {value: 0}, "None")]
+                              .concat(ctrl.implementingAgencies().map(function(agency){
+                                return m("option", {value: agency.id, selected: ctrl.input.implementingAgency() == agency.id}, agency.name)
+                              }
+                            )));
+                          }
+                        )
                       ]),
-                    ])
-                  }
+                      m("p.help", [
+                        "The Implementing Agency will be responsible for the handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
+                      ]),
+                    ]),
+                  ])
                 })
                 .case("Images", function(){
                   return m(".section", [

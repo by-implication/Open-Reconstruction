@@ -41,6 +41,8 @@ request.controller = function(){
   this.degDescription = new displayEditGroup.controller(this.request, "description");
   this.degAmount = new displayEditGroup.controller(this.request, "amount");
   this.degLocation = new displayEditGroup.controller(this.request, "location");
+  this.degAssessor = new displayEditGroup.controller(this.request, "assessor");
+  this.degImplementor = new displayEditGroup.controller(this.request, "implementor");
 
   this.degDisaster = new displayEditGroup.controller(this.request, "disaster");
   this.degDisaster.htmlDate = m.prop("");
