@@ -1,5 +1,14 @@
 request.view = function(ctrl){
 
+  function extractAgency(r){
+    var params = r.event.content.split(" ");
+    var agencyType = params.pop();
+    return {
+      id: parseInt(params.pop()),
+      name: params.join(" ")
+    };
+  }
+
   return app.template(
     ctrl.app, 
     {class: "detail"}, 
@@ -75,10 +84,11 @@ request.view = function(ctrl){
                       "Assessing Agency",
                       m("h4", [
                         displayEditGroup.view(
-                          ctrl,
+                          ctrl.app.isSuperAdmin(),
+                          ctrl.history(),
                           ctrl.degAssess,
                           function(){
-                            return ctrl.assessingAgency() ?
+                            return ctrl.assessingAgency().id ?
                               m("a", {href: routes.controllers.GovUnits.view(ctrl.assessingAgency().id).url, config: m.route}, [
                                 ctrl.assessingAgency().name
                               ])
@@ -86,24 +96,19 @@ request.view = function(ctrl){
                           },
                           function(){
                             return m("select", {onchange: m.withAttr("value", ctrl.degAssess.input)},
-                              [m("option", {value: 0, selected: !ctrl.assessingAgency()}, "None")]
+                              [m("option", {value: 0, selected: ctrl.assessingAgency().id == 0}, "None")]
                               .concat(ctrl.assessingAgencies().map(function(agency){
-                                return m("option", {value: agency.id, selected: ctrl.assessingAgency() && (ctrl.assessingAgency().id == agency.id)}, agency.name)
+                                return m("option", {value: agency.id, selected: ctrl.assessingAgency().id == agency.id}, agency.name)
                               }
                             )));
                           },
                           function (r){
-                            var params = r.event.content.split(" ");
-                            var agencyType = params.pop();
-                            var agency = {
-                              id: parseInt(params.pop()),
-                              name: params.join(" ")
-                            }
+                            var agency = extractAgency(r);
                             if(agency.id){
                               ctrl.assessingAgency(agency);
                               ctrl.request().level = 1;
                             } else {
-                              ctrl.assessingAgency(null);
+                              ctrl.assessingAgency(ctrl.unassignedAgency);
                               ctrl.request().level = 0;
                             }
                           }
@@ -117,10 +122,11 @@ request.view = function(ctrl){
                       "Implementing Agency",
                       m("h4", [
                         displayEditGroup.view(
-                          ctrl,
+                          ctrl.app.isSuperAdmin(),
+                          ctrl.history(),
                           ctrl.degImplement,
                           function(){
-                            return ctrl.implementingAgency() ?
+                            return ctrl.implementingAgency().id ?
                               m("a", {href: routes.controllers.GovUnits.view(ctrl.implementingAgency().id).url, config: m.route}, [
                                 ctrl.implementingAgency().name
                               ])
@@ -128,23 +134,18 @@ request.view = function(ctrl){
                           },
                           function(){
                             return m("select", {onchange: m.withAttr("value", ctrl.degImplement.input)},
-                              [m("option", {value: 0, selected: !ctrl.implementingAgency()}, "None")]
+                              [m("option", {value: 0, selected: ctrl.implementingAgency().id == 0}, "None")]
                               .concat(ctrl.implementingAgencies().map(function(agency){
-                                return m("option", {value: agency.id, selected: ctrl.implementingAgency() && (ctrl.implementingAgency().id == agency.id)}, agency.name)
+                                return m("option", {value: agency.id, selected: ctrl.implementingAgency().id == agency.id}, agency.name)
                               }
                             )));
                           },
                           function (r){
-                            var params = r.event.content.split(" ");
-                            var agencyType = params.pop();
-                            var agency = {
-                              id: parseInt(params.pop()),
-                              name: params.join(" ")
-                            }
+                            var agency = extractAgency(r);
                             if(agency.id){
                               ctrl.implementingAgency(agency);
                             } else {
-                              ctrl.implementingAgency(null);
+                              ctrl.implementingAgency(ctrl.unassignedAgency);
                             }
                           }
                         )
@@ -260,7 +261,8 @@ request.summary = function(ctrl){
     ]),
     m(".section", [
       displayEditGroup.view(
-        ctrl,
+        ctrl.canEdit(),
+        ctrl.history(),
         ctrl.degDescription,
         function(){ return m("h4", ctrl.request().description) }, 
         function(){
@@ -282,7 +284,8 @@ request.summary = function(ctrl){
       m("h5#pending-for.value", ctrl.stagnation()),
       m("h5", [m("small", "Amount")]),
       displayEditGroup.view(
-        ctrl,
+        ctrl.canEdit(),
+        ctrl.history(),
         ctrl.degAmount,
         function(){ return m("h5.value", [helper.commaize(ctrl.request().amount)]) }, 
         function(){ 
@@ -293,7 +296,8 @@ request.summary = function(ctrl){
       ),
       m("h5", [m("small", "Disaster")]),
       displayEditGroup.view(
-        ctrl,
+        ctrl.canEdit(),
+        ctrl.history(),
         ctrl.degDisaster,
         function(){ return m("h5.value", [ctrl.request().disaster.type + " " + ctrl.request().disaster.name + " in " + common.displayDate(ctrl.request().disaster.date)]) },
         function(){
@@ -329,7 +333,8 @@ request.summary = function(ctrl){
       ),
       m("h5", [m("small", "Location")]),
       displayEditGroup.view(
-        ctrl,
+        ctrl.canEdit(),
+        ctrl.history(),
         ctrl.degLocation, 
         function(){ return m("h5.value", [ctrl.request().location]) }, 
         function(){ 

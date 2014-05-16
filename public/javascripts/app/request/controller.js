@@ -49,8 +49,10 @@ request.controller = function(){
   this.disasterTypes = m.prop([]);
   this.hasSignedoff = m.prop(false);
   this.input = { comment: m.prop() };
-  this.assessingAgency = m.prop();
-  this.implementingAgency = m.prop();
+
+  this.unassignedAgency = {id: 0};
+  this.assessingAgency = m.prop(this.unassignedAgency);
+  this.implementingAgency = m.prop(this.unassignedAgency);
   this.coords = m.prop();
   this.stagnation = m.prop();
   
@@ -142,8 +144,8 @@ request.controller = function(){
     this.history(data.history);
     this.assessingAgencies(data.assessingAgencies);
     this.implementingAgencies(data.implementingAgencies);
-    this.assessingAgency(data.assessingAgency);
-    this.implementingAgency(data.implementingAgency);
+    this.assessingAgency(data.assessingAgency || this.unassignedAgency);
+    this.implementingAgency(data.implementingAgency || this.unassignedAgency);
 
     this.isInvolved(data.isInvolved);
     this.hasSignedoff(data.hasSignedoff)
