@@ -240,10 +240,8 @@ object Requests extends Controller with Secured {
             case _ => GovUnit.findById(id).get.canAssess
           })
         ))
-      )(govUnitId => req.copy(assessingAgencyId = govUnitId match {
-          case 0 => None
-          case _ => Some(govUnitId)
-      }))(_ => None)
+      )(req.assignAssessor(_)
+      )(_ => None)
     }
     case "implement" => {
       mapping(

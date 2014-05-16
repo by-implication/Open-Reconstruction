@@ -44,6 +44,14 @@ case class Req(
 // GENERATED case class end
 {
 
+  def assignAssessor(id: Int): Req = {
+    if(id == 0){
+      copy(assessingAgencyId = None, level = 0)
+    } else {
+      copy(assessingAgencyId = Some(id), level = 1)
+    }
+  }
+
   lazy val assessingAgency = assessingAgencyId.map(GovUnit.findById(_).get)
   lazy val implementingAgency = implementingAgencyId.map(GovUnit.findById(_).get)
 
