@@ -246,7 +246,7 @@ request.summary = function(ctrl){
       ),
       m("p.meta", [
         "Posted by ",
-        m("a",{href: "/users/"+ctrl.request().author.id, config: m.route}, ctrl.author().name),
+        m("a",{href: "/users/"+ctrl.author().id, config: m.route}, ctrl.author().name),
         m("br"),
         " on "+(new Date(ctrl.request().date).toString()), // change this as people modify this. "Last edited by _____"
       ]),

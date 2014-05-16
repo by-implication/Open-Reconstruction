@@ -1,5 +1,7 @@
 # --- !Ups
 
+SET datestyle = "ISO, MDY";
+
 INSERT INTO roles VALUES
     (1, 'LGU', '{1}'),
     (2, 'OCD', '{3, 5}'),
