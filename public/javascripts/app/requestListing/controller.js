@@ -44,7 +44,7 @@ requestListing.controller = function(){
       identifier: this.tabFilters.MINE,
       href: routes.controllers.Requests.indexMine().url,
       when: function(){ return _.contains(self.app.currentUser().permissions, 1) },
-      filter: function (r){ return r.author.govUnitId === self.app.currentUser().govUnit.id },
+      filter: function (r){ return r.author.govUnit.id === self.app.currentUser().govUnit.id },
       _label: function(){
         if(self.app.currentUser().govUnit && self.app.currentUser().govUnit.role == "LGU") {
           return "My LGU's requests";
