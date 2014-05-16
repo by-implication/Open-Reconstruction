@@ -16,6 +16,8 @@ requestCreation.controller = function(){
     scopeOfWork: m.prop("Reconstruction")
   }
 
+  this.submitButtonDisabled = m.prop(false);
+
   this.configShowForm = function(elem){
     window.setTimeout(function(){
       elem.classList.add("expand");
@@ -84,7 +86,7 @@ requestCreation.controller = function(){
     this.input.disasterDate(this.disasterDate.join("-"));
   }.bind(this);
 
-  this.submitNewRequest = function(e){
+  this.submitNewRequest = function(e){;
     e.preventDefault();
     if(this.preamble()) {
 
@@ -96,12 +98,16 @@ requestCreation.controller = function(){
       bi.ajax(routes.controllers.Requests.insert(), {data: this.input}).then(function(r){
         if(r.success){
           window.location = '/';
-        } else if(r.reason == "form error"){
-          alert("Request not created!");
         } else {
-          alert(r.reason);
+          if(r.reason == "form error"){
+            alert("Request not created!");
+          } else {
+            alert(r.reason);
+          }
+          this.submitButtonDisabled(false);
         }
-      })
+      }.bind(this));
+      
     } else {
       alert('To avoid double-budgeting, please make sure to request for assistance only once!');
     }

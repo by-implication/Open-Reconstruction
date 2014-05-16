@@ -64,7 +64,7 @@ app.navbar = function(ctrl){
             className: (m.route().startsWith(routes.controllers.Requests.index().url) ? "active" : "")
           }, "Requests")
         ]),
-        ctrl.currentUser() && ctrl.currentUser().govUnit ?
+        ctrl.currentUser().govUnit ?
           m("li", [
             m("a", {
               href: routes.controllers.GovUnits.view(ctrl.currentUser().govUnit.id).url,
@@ -73,7 +73,7 @@ app.navbar = function(ctrl){
             }, ctrl.currentUser().govUnit.role == "LGU" ? "My LGU" : "My Agency")
           ])
         : "",
-        ctrl.currentUser() && ctrl.currentUser().isSuperAdmin ?
+        ctrl.currentUser().isSuperAdmin ?
           m("li", [
             m("a", {
               href: routes.controllers.Application.admin().url,
@@ -90,7 +90,9 @@ app.navbar = function(ctrl){
               m("span", [
                 m.cookie().logged_in,
                 m("span.label", [
-                  ctrl.currentUser().govUnit.acronym ? ctrl.currentUser().govUnit.acronym : ctrl.currentUser().govUnit.name
+                  ctrl.currentUser().govUnit.acronym ?
+                    ctrl.currentUser().govUnit.acronym
+                    : ctrl.currentUser().govUnit.name
                 ]),
               ])
             : "Guest"

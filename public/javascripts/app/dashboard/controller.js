@@ -1,7 +1,7 @@
 dashboard.controller = function(){
   var self = this;
   this.app = new app.controller();
-  this.requests = m.prop({});
+  this.requests = m.prop([]);
   
   bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
     self.requests(r);

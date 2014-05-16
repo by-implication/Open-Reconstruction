@@ -1,6 +1,14 @@
 app.controller = function(){
   var self = this;
-  this.currentUser = m.prop({});
+  this.currentUser = m.prop({
+    isSuperAdmin: "",
+    govUnit: {
+      acronym: "",
+      id: "",
+      name: "",
+      role: ""
+    }
+  });
 
   bi.ajax(routes.controllers.Users.meta()).then(function (r){
     this.currentUser(r);

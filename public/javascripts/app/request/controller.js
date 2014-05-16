@@ -15,10 +15,33 @@ request.controller = function(){
 
   this.tabs = new common.tabs.controller();
   this.id = m.route.param("id");
-  this.request = m.prop({});
-  this.author = m.prop({});
-  this.attachments = m.prop({});
-  this.history = m.prop({});
+
+  this.request = m.prop({
+    amount: "",
+    date: "",
+    description: "",
+    disaster: {
+      date: "",
+      name: "",
+      type: ""
+    },
+    isRejected: "",
+    level: "",
+    location: "",
+    projectType: ""
+  });
+
+  this.author = m.prop({
+    id: "",
+    name: ""
+  });
+
+  this.attachments = m.prop({
+    imgs: [],
+    docs: []
+  });
+
+  this.history = m.prop([]);
   this.location = m.prop("");
   this.isInvolved = m.prop(false);
   this.canSignoff = m.prop(false);

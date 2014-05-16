@@ -129,7 +129,10 @@ requestCreation.view = function(ctrl){
     },
     {
       content: [
-        m("button", "Submit"),
+        m("button", {disabled: ctrl.submitButtonDisabled(), onclick: function(e){
+          ctrl.submitButtonDisabled(true);
+          ctrl.submitNewRequest(e);
+        }}, "Submit"),
         m("button", {type: "button", class: "alert", onclick: cancel}, "Cancel"),
       ]
     }
