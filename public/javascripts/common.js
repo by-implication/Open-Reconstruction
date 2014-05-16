@@ -215,7 +215,7 @@ common.tabs.content = function(ctrl){
 common.tabs.controller = function(basePath){
   this.tabs = m.prop([]);
   this.currentTab = function() {
-    var item = _.find(this.tabs(), function(tab) { return tab.href == m.route.path });
+    var item = _.find(this.tabs(), function(tab) { return tab.href == m.route() });
     if(item == undefined) {
       item = _.head(this.tabs());
     }
