@@ -102,7 +102,7 @@ historyEvent.newRequest = function(data){
 historyEvent.assign = function(data){
   var date = new Date(data.date);
   var c = data.content.split(" ");
-  var duty = c.pop()
+  var duty = c.pop();
   var cduty = duty.split("");
   cduty[0] = cduty[0].toUpperCase();
   cduty = cduty.join("");
@@ -110,17 +110,16 @@ historyEvent.assign = function(data){
   var govUnitId = c.pop();
   var govUnitName = c.join(" ");
 
-  var assignment = isAssign ? "assigned" : "unassigned";
   var prepPhrase = isAssign ? " to " + duty : " from " + duty + "ing"
 
   return m(".event", [
     historyEvent.date(date),
     m(".details", [
-      m("p", [
+      m("p", isAssign ? [
         m("a", {href: routes.controllers.GovUnits.view(govUnitId).url}, govUnitName),
-        " was " + assignment + prepPhrase + " this project."
-      ]),
-      historyEvent.meta("Assigned", data, date)
+        " was assigned" + prepPhrase + " this project."
+      ] : duty.capitalize() + "ing agency was unassigned."),
+      historyEvent.meta(isAssign ? "Assigned" : "Unassigned", data, date)
     ])
   ])
 }
