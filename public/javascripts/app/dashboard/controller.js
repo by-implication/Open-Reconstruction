@@ -99,8 +99,8 @@ dashboard.controller = function(){
       .compact()
       .sort();
 
-    var first = times.head().value();
-    var last = times.last().value() + 1;
+    var first = times.head().value() || 0;
+    var last = (times.last().value() + 1) || 0;
     var dateRangeObj = _.chain(first).range(last)
 
     var countPerMonth = dateRangeObj
