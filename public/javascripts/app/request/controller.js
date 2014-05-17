@@ -158,7 +158,9 @@ request.controller = function(){
       !function update(){
         this.stagnation(common.stagnation(this));
         m.redraw();
-        setTimeout(update.bind(this), 40);
+        if(m.route().startsWith(routes.controllers.Requests.view(requestId).url)){
+          setTimeout(update.bind(this), 40);
+        }
       }.bind(this)();
     }
 
