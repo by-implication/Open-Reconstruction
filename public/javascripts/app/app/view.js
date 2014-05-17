@@ -64,7 +64,7 @@ app.navbar = function(ctrl){
             className: (m.route().startsWith(routes.controllers.Requests.index().url) ? "active" : "")
           }, "Requests")
         ]),
-        ctrl.currentUser().govUnit ?
+        ctrl.currentUser().govUnit.id ?
           m("li", [
             m("a", {
               href: routes.controllers.GovUnits.view(ctrl.currentUser().govUnit.id).url,

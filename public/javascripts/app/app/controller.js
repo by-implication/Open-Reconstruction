@@ -7,7 +7,7 @@ app.controller = function(){
     permissions: [],
     govUnit: {
       acronym: "",
-      id: "",
+      id: 0,
       name: "",
       role: ""
     }
