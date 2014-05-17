@@ -130,6 +130,10 @@ admin.view = function(ctrl){
             })
             .case("Project Types", function(){
               return m(".tabs-content.vertical", [
+                m("form", {onsubmit: ctrl.createProjectType}, [
+                  m("input", {onchange: m.withAttr("value", ctrl.typeName)}),
+                  m("button", "Submit")
+                ]),
                 m("ul", [
                   ctrl.projectTypes().map(renderType)
                 ])
@@ -137,6 +141,10 @@ admin.view = function(ctrl){
             })
             .case("Disaster Types", function(){
               return m(".tabs-content.vertical", [
+                m("form", {onsubmit: ctrl.createDisasterType}, [
+                  m("input", {onchange: m.withAttr("value", ctrl.typeName)}),
+                  m("button", "Submit")
+                ]),
                 m("ul", [
                   ctrl.disasterTypes().map(renderType)
                 ])

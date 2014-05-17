@@ -21,4 +21,8 @@ object Admin extends Controller with Secured {
   	Ok(DisasterType.jsonList)
   }
 
+  def insertType(kind: String) = IsSuperAdmin(){ implicit user => implicit request =>
+  	Ok(kind)
+  }
+
 }

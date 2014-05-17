@@ -70,4 +70,22 @@ admin.controller = function(){
     }
   }
 
+  this.typeName = m.prop("");
+
+  var createType = function(type){
+    return function (e){
+      e.preventDefault();
+      if(this.typeName()){
+        bi.ajax(routes.controllers.Admin.insertType(type, this.typeName())).then(function (r){
+          console.log(r);
+        });
+      } else {
+        alert("Empty input.");
+      }
+    }.bind(this);
+  }.bind(this);
+
+  this.createProjectType = createType("project");
+  this.createDisasterType = createType("disaster");
+
 }
