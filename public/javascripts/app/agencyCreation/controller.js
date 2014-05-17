@@ -21,7 +21,7 @@ agencyCreation.controller = function(){
   
   this.submit = function(e){
     e.preventDefault();
-    bi.ajax(routes.controllers.GovUnits.insert(), {data: self.input}).then(function (r){
+    bi.ajax(routes.controllers.GovUnits.insertAgency(), {data: self.input}).then(function (r){
       if(r.success){
         window.location = '/';
       } else if(r.reason == "form error"){

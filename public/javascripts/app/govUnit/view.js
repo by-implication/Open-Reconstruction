@@ -19,6 +19,13 @@ govUnit.view = function(ctrl){
               }, 
               ["Add new user"]
             )
+          : "",
+          ctrl.app.isSuperAdmin() ?
+            m(
+              "a.button", 
+              {href: routes.controllers.GovUnits.edit(ctrl.govUnit().id).url, config: m.route}, 
+              "Edit"
+            )
           : ""
         ]),
       ]),

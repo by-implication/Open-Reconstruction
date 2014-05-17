@@ -25,6 +25,7 @@ m.route(document, window.location.pathname == "/" ? "/requests" : window.locatio
   "/gov-units/new/lgu/:level/:parentId": lguCreation,
   "/gov-units/:id/new-user": userCreation,
   "/gov-units/:id": govUnit,
+  "/gov-units/:id/edit": govUnitEdit,
   "/login": login
 });
 

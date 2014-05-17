@@ -70,5 +70,8 @@ GET     /gov-units/new/lgu/:l/:id/meta            controllers.GovUnits.createLgu
 POST    /gov-units/new/lgu/:l/:id                 controllers.GovUnits.insertLgu(l: Int, id: Int)
 GET     /gov-units/:id                            controllers.GovUnits.view(id: Int)
 GET     /gov-units/:id/meta                       controllers.GovUnits.viewMeta(id: Int)
+GET     /gov-units/:id/edit                       controllers.GovUnits.edit(id: Int)
+GET     /gov-units/:id/edit/meta                  controllers.GovUnits.editMeta(id: Int)
+POST    /gov-units/:id/edit                       controllers.GovUnits.update(id: Int)
 GET     /gov-units/:id/new-user                   controllers.Users.create(id: Int)
 POST    /gov-units/:id/new-user                   controllers.Users.insert(id: Int)

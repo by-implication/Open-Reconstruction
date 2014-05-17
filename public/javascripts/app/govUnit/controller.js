@@ -8,7 +8,7 @@ govUnit.controller = function(){
     acronym: "",
     role: ""
   });
-  this.users = m.prop([])
+  this.users = m.prop([]);
 
   bi.ajax(routes.controllers.GovUnits.viewMeta(this.slug())).then(function (r){
     if(r.success){

@@ -12,6 +12,8 @@ object Role extends RoleGen {
 
   def VIEW_ONLY = Role(Id(-1))
 
+  def agencyJsonList = Json.toJson(list().filter(_.name != "LGU").map(_.toJson))
+
 }
 
 // GENERATED case class start

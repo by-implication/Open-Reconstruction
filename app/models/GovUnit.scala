@@ -61,9 +61,12 @@ case class GovUnit(
       "name" -> name,
       "acronym" -> (acronym.getOrElse(""): String),
       "totalUsers" -> users.length,
-      "role" -> Role.findById(roleId).map(_.name)
+      "roleId" -> roleId,
+      "role" -> role.name
     )
   }
+
+  lazy val role = Role.findById(roleId).get
 
   private def canDo(p: Permission): Boolean = DB.withConnection { implicit c =>
     SQL("""
