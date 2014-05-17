@@ -42,14 +42,12 @@ object GovUnits extends Controller with Secured {
     Rest.success("roles" -> Role.agencyJsonList)
   }
 
-  def insertAgency(): Action[AnyContent] = UserAction(){ implicit user => implicit request =>
-    if(user.isSuperAdmin){
-      createAgencyForm.bindFromRequest.fold(
-        Rest.formError(_),
-        _.create().map(_ => Rest.success())
-        .getOrElse(Rest.serverError())
-      )
-    } else Rest.unauthorized()
+  def insertAgency(): Action[AnyContent] = IsSuperAdmin(){ implicit user => implicit request =>
+    createAgencyForm.bindFromRequest.fold(
+      Rest.formError(_),
+      _.create().map(_ => Rest.success())
+      .getOrElse(Rest.serverError())
+    )
   }
 
   def listLgus = UserAction(){ implicit user => implicit request =>
@@ -93,37 +91,33 @@ object GovUnits extends Controller with Secured {
 
   }
 
-  def insertLgu(level: Int, parentId: Int) = UserAction(){ implicit user => implicit request =>
+  def insertLgu(level: Int, parentId: Int) = IsSuperAdmin(){ implicit user => implicit request =>
     if(level >= 0 && level < 3){
-      if(user.isSuperAdmin){
-        createLguForm.bindFromRequest.fold(
-          Rest.formError(_),
-          _.create().map { govUnit =>
-            
-            val lgu = if (level > 0){
-              Lgu(govUnit.id, level + 1, parentLguId = Some(parentId))
-            } else {
-              Lgu(govUnit.id, level + 1, parentRegionId = Some(parentId))
-            }
+      createLguForm.bindFromRequest.fold(
+        Rest.formError(_),
+        _.create().map { govUnit =>
+          
+          val lgu = if (level > 0){
+            Lgu(govUnit.id, level + 1, parentLguId = Some(parentId))
+          } else {
+            Lgu(govUnit.id, level + 1, parentRegionId = Some(parentId))
+          }
 
-            lgu.create().map { _ =>
-              Rest.success()
-            }.getOrElse(Rest.serverError())
-
+          lgu.create().map { _ =>
+            Rest.success()
           }.getOrElse(Rest.serverError())
-        )
-      } else Rest.unauthorized()
+
+        }.getOrElse(Rest.serverError())
+      )
     } else Rest.error("invalid level")
   }
 
-  def editMeta(id: Int) = UserAction(){ implicit user => implicit request =>
-    if(user.isSuperAdmin){
-      GovUnit.findById(id).map(g => Ok(Json.obj(
-        "govUnit" -> g.toJson,
-        "roles" -> Role.agencyJsonList
-      )))
-      .getOrElse(Rest.notFound())
-    } else Rest.unauthorized()
+  def editMeta(id: Int) = IsSuperAdmin(){ implicit user => implicit request =>
+    GovUnit.findById(id).map(g => Ok(Json.obj(
+      "govUnit" -> g.toJson,
+      "roles" -> Role.agencyJsonList
+    )))
+    .getOrElse(Rest.notFound())
   }
 
   def editLguForm(lgu: GovUnit): Form[GovUnit] = Form(
@@ -145,23 +139,21 @@ object GovUnits extends Controller with Secured {
     (_ => None)
   )
 
-  def update(id: Int) = UserAction(){ implicit user => implicit request =>
-    if(user.isSuperAdmin){
-      GovUnit.findById(id).map { g =>
-        g.role.name match {
-          case "LGU" => editLguForm(g).bindFromRequest.fold(
-            Rest.formError(_),
-            _.save().map(_ => Rest.success())
-            .getOrElse(Rest.serverError())
-          )
-          case _ => editAgencyForm(g).bindFromRequest.fold(
-            Rest.formError(_),
-            _.save().map(_ => Rest.success())
-            .getOrElse(Rest.serverError())
-          )
-        }
-      }.getOrElse(Rest.notFound())
-    } else Rest.unauthorized()
+  def update(id: Int) = IsSuperAdmin(){ implicit user => implicit request =>
+    GovUnit.findById(id).map { g =>
+      g.role.name match {
+        case "LGU" => editLguForm(g).bindFromRequest.fold(
+          Rest.formError(_),
+          _.save().map(_ => Rest.success())
+          .getOrElse(Rest.serverError())
+        )
+        case _ => editAgencyForm(g).bindFromRequest.fold(
+          Rest.formError(_),
+          _.save().map(_ => Rest.success())
+          .getOrElse(Rest.serverError())
+        )
+      }
+    }.getOrElse(Rest.notFound())
   }
 
 }

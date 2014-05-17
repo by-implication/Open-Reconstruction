@@ -40,6 +40,14 @@ trait Secured {
     }
   }
 
+  def IsSuperAdmin[A](parser: BodyParser[A] = parse.anyContent)(f: User => Request[A] => Result): Action[A] = {
+    UserAction(parser){ user => req =>
+      if(user.isSuperAdmin){
+        f(user)(req)
+      } else Rest.unauthorized()
+    }
+  }
+
   def GenericAction[A](parser: BodyParser[A] = parse.anyContent)(f: User => Request[A] => Result): Action[A] = {
     Action(parser) { implicit req =>
       val user = currentUser
