@@ -17,6 +17,10 @@ GET     /admin/lgus/meta                          controllers.GovUnits.listLgus
 GET     /admin/lgus/:l/:id                        controllers.GovUnits.getChildren(l: Int, id: Int)
 GET     /admin/agencies                           controllers.Application.adminAgencies
 GET     /admin/agencies/meta                      controllers.GovUnits.listAgencies
+GET     /admin/projectTypes                       controllers.Admin.projectTypes
+GET     /admin/projectTypes/meta                  controllers.Admin.projectTypesMeta
+GET     /admin/disasterTypes                      controllers.Admin.disasterTypes
+GET     /admin/disasterTypes/meta                 controllers.Admin.disasterTypesMeta
 
 # Map static resources from the /public folder to the /assets URL path
 

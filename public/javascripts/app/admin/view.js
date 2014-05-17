@@ -59,13 +59,17 @@ admin.view = function(ctrl){
     ])
   }
 
+  function renderType(t){
+    return m("li", t);
+  }
+
   return app.template(ctrl.app, [
     common.banner("Administrative Interface"),
     ctrl.app.isSuperAdmin()?
       m("section", [
         m(".row", [
           common.tabs.menu(ctrl.tabs, {className: "vertical"}),
-          m.switch(ctrl.tabs.currentTab()())
+          m.switch(ctrl.tabs.currentTab())
             .case("Agencies", function(){
               return m(".tabs-content.vertical", [
                 m("a.button", {href: routes.controllers.GovUnits.createAgency().url, config: m.route}, [
@@ -121,6 +125,20 @@ admin.view = function(ctrl){
                 ]),
                 m("ul", [
                   ctrl.regions().map(renderLGU)
+                ])
+              ])
+            })
+            .case("Project Types", function(){
+              return m(".tabs-content.vertical", [
+                m("ul", [
+                  ctrl.projectTypes().map(renderType)
+                ])
+              ])
+            })
+            .case("Disaster Types", function(){
+              return m(".tabs-content.vertical", [
+                m("ul", [
+                  ctrl.disasterTypes().map(renderType)
                 ])
               ])
             })

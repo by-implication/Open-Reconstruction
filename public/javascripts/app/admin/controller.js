@@ -5,20 +5,13 @@ admin.controller = function(){
   this.tabs = new common.tabs.controller();
   this.tabs.tabs = m.prop([
     {label: m.prop("Agencies"), href: routes.controllers.Application.adminAgencies().url}, 
-    {label: m.prop("LGUs"), href: routes.controllers.Application.adminLgus().url}
+    {label: m.prop("LGUs"), href: routes.controllers.Application.adminLgus().url},
+    {label: m.prop("Project Types"), href: routes.controllers.Admin.projectTypes().url},
+    {label: m.prop("Disaster Types"), href: routes.controllers.Admin.disasterTypes().url}
   ]);
   this.regions = m.prop([]);
-
-  bi.ajax(routes.controllers.GovUnits.createAgencyMeta()).then(function (r){
-    if(r.success){
-      var roles = _.object(r.roles.map(function(role) {
-        return [role.id, role.name];
-      }));
-      this.roles(roles);
-    } else {
-      alert(r.reason);
-    }
-  }.bind(this));
+  this.projectTypes = m.prop([]);
+  this.disasterTypes = m.prop([]);
 
   bi.ajax(routes.controllers.GovUnits.listAgencies()).then(function (r){
     if(r.success){
@@ -38,6 +31,14 @@ admin.controller = function(){
         regions[region.id()] = region;
       });
     this.regions(regions);
+  }.bind(this));
+
+  bi.ajax(routes.controllers.Admin.projectTypesMeta()).then(function (r){
+    this.projectTypes(r);
+  }.bind(this));
+
+  bi.ajax(routes.controllers.Admin.disasterTypesMeta()).then(function (r){
+    this.disasterTypes(r);
   }.bind(this));
 
   var expandCollapseRecurse = function(node, ec){

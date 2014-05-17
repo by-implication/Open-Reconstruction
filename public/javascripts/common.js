@@ -191,7 +191,7 @@ common.tabs.menu = function(ctrl, options){
     })
     .map(function (tab, i){
       var tabClass = function(tab){
-        if(ctrl.isActive((tab.identifier ? tab.identifier : tab.label))){
+        if(ctrl.isActive((tab.identifier ? tab.identifier : tab.label()))){
           return "active";
         } else {
           return "";
@@ -206,7 +206,7 @@ common.tabs.menu = function(ctrl, options){
 
 common.tabs.content = function(ctrl){
   return ctrl.tabs().filter(function (tab){
-    return ctrl.isActive(tab.identifier? tab.identifier : tab.label)
+    return ctrl.isActive(tab.identifier? tab.identifier : tab.label())
   }).map(function (activeTab){
     return activeTab.content()
   })
@@ -219,7 +219,7 @@ common.tabs.controller = function(basePath){
     if(item == undefined) {
       item = _.head(this.tabs());
     }
-    return item.identifier ? item.identifier : item.label;
+    return item.identifier ? item.identifier : item.label();
   }
   this.isActive = function(identifier){
     return this.currentTab() == identifier;
