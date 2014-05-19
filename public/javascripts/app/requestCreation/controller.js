@@ -15,9 +15,9 @@ requestCreation.controller = function(){
     description: m.prop(""),
     disasterDate: m.prop("2001-1-1"),
     disasterName: m.prop(""),
-    disasterType: m.prop(""),
+    disasterTypeId: m.prop(1),
     location: m.prop(""),
-    projectType: m.prop("Road"),
+    projectTypeId: m.prop(1),
     scopeOfWork: m.prop("Reconstruction")
   }
 
@@ -81,7 +81,7 @@ requestCreation.controller = function(){
 
   bi.ajax(routes.controllers.Requests.createMeta()).then(function (data){
     this.info(data);
-    this.input.disasterType(data.disasterTypes[0]);
+    this.input.disasterTypeId(data.disasterTypes[0].id);
   }.bind(this));
 
   this.disasterDate = [2001, 1, 1];

@@ -12,8 +12,9 @@ requestCreation.view = function(ctrl){
   }
 
   function projectTypeGroups(indexArr){
-    return indexArr.map(function(t){
-      return m("option", ctrl.info().projectTypes[t])
+    return indexArr.map(function (i){
+      var projectType = ctrl.info().projectTypes[i];
+      return m("option", {value: projectType.id}, projectType.name);
     });
   }
 
@@ -24,7 +25,11 @@ requestCreation.view = function(ctrl){
         m("h2", "Disaster"),
         common.field(
           "Type",
-          m("select", {onchange: m.withAttr("value", ctrl.input.disasterType)}, ctrl.info().disasterTypes.map(function(e){return m("option", e)}))
+          m("select", {onchange: m.withAttr("value", ctrl.input.disasterTypeId)},
+            ctrl.info().disasterTypes.map(function (e){
+              return m("option", {value: e.id}, e.name);
+            })
+          )
         ),
         common.field(
           "Date",
@@ -77,8 +82,8 @@ requestCreation.view = function(ctrl){
         common.field(
           "Type",
           m("select", {
-            onchange: m.withAttr("value", ctrl.input.projectType), 
-            value: ctrl.input.projectType()
+            onchange: m.withAttr("value", ctrl.input.projectTypeId),
+            value: ctrl.input.projectTypeId()
           }, [
             m("optgroup", {label: "Infrastructure"}, [
               projectTypeGroups([0, 10])
@@ -95,7 +100,7 @@ requestCreation.view = function(ctrl){
           ])
         ),
 
-        m.switch(ctrl.input.projectType())
+        m.switch(ctrl.input.projectTypeId())
           .case("Bridge", function(){
             return common.field(
               "Parent Road",
