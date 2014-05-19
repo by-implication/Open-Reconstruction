@@ -84,6 +84,10 @@ trait LguGen extends EntityCompanion[Lgu] {
     SQL("select * from lgus limit {count} offset {offset}").on('count -> count, 'offset -> offset).list(simple)
   }
 
+  def listAll(): Seq[Lgu] = DB.withConnection { implicit c =>
+    SQL("select * from lgus").list(simple)
+  }
+
   def insert(o: Lgu): Option[Lgu] = DB.withConnection { implicit c =>
     o.id match {
       case NotAssigned => {

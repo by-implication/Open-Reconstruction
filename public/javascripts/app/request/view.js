@@ -77,7 +77,7 @@ request.view = function(ctrl){
               m(".section", [
                 common.tabs.menu(ctrl.requestTabs)
               ]),
-              m.switch(ctrl.requestTabs.currentTab()())
+              m.switch(ctrl.requestTabs.currentTab())
                 .case("Assignments", function(){
                   return m(".section", [
                     m("p", [

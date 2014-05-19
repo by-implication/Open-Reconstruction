@@ -45,7 +45,7 @@ object Event extends EventGen {
   }
 
   def disaster()(implicit req: Req, user: User) = {
-    generate("disaster", req.disasterName.getOrElse("") + ":" + req.disasterType).copy(date = req.disasterDate)
+    generate("disaster", req.disasterName.getOrElse("") + ":" + req.disasterTypeId).copy(date = req.disasterDate)
   }
 
   def archiveAttachment(a: Attachment)(implicit req: Req, user: User) = {
@@ -68,9 +68,9 @@ object Event extends EventGen {
       case "location" => req.location
       case "disaster" => List(
         req.disasterName.getOrElse(""),
-        req.disasterType,
+        req.disasterTypeId,
         req.disasterDate.getTime()
-      ).mkString("|")
+      ).mkString(" ")
     }
     generate("editField", fieldValue + " " + field)
   }
@@ -140,6 +140,10 @@ trait EventGen extends EntityCompanion[Event] {
 
   def list(count: Int = 10, offset: Int = 0): Seq[Event] = DB.withConnection { implicit c =>
     SQL("select * from events limit {count} offset {offset}").on('count -> count, 'offset -> offset).list(simple)
+  }
+
+  def listAll(): Seq[Event] = DB.withConnection { implicit c =>
+    SQL("select * from events").list(simple)
   }
 
   def insert(o: Event): Option[Event] = DB.withConnection { implicit c =>

@@ -108,6 +108,10 @@ trait GovUnitGen extends EntityCompanion[GovUnit] {
     SQL("select * from gov_units limit {count} offset {offset}").on('count -> count, 'offset -> offset).list(simple)
   }
 
+  def listAll(): Seq[GovUnit] = DB.withConnection { implicit c =>
+    SQL("select * from gov_units").list(simple)
+  }
+
   def insert(o: GovUnit): Option[GovUnit] = DB.withConnection { implicit c =>
     o.id match {
       case NotAssigned => {

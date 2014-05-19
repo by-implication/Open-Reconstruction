@@ -291,6 +291,10 @@ trait UserGen extends EntityCompanion[User] {
     SQL("select * from users limit {count} offset {offset}").on('count -> count, 'offset -> offset).list(simple)
   }
 
+  def listAll(): Seq[User] = DB.withConnection { implicit c =>
+    SQL("select * from users").list(simple)
+  }
+
   def insert(o: User): Option[User] = DB.withConnection { implicit c =>
     o.id match {
       case NotAssigned => {

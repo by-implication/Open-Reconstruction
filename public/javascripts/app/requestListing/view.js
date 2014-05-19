@@ -35,11 +35,11 @@ requestListing.view = function(ctrl){
               }, "All")
             ]),
             _.chain(ctrl.projectFilters)
-            .map(function(filter){
+            .map(function (filter){
               return m("li.filter",{className: (ctrl.currentFilter.requests() == filter) ? "active" : ""}, [
                 m("a", {
                   onclick: ctrl.currentFilter.requests.bind(ctrl.currentFilter, filter)
-                }, filter)
+                }, filter.name)
               ])
             })
             .value()

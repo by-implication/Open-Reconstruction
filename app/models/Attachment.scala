@@ -94,6 +94,10 @@ trait AttachmentGen extends EntityCompanion[Attachment] {
     SQL("select * from attachments limit {count} offset {offset}").on('count -> count, 'offset -> offset).list(simple)
   }
 
+  def listAll(): Seq[Attachment] = DB.withConnection { implicit c =>
+    SQL("select * from attachments").list(simple)
+  }
+
   def insert(o: Attachment): Option[Attachment] = DB.withConnection { implicit c =>
     o.id match {
       case NotAssigned => {

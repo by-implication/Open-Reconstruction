@@ -94,6 +94,12 @@ object GenerateSource {
           "}"
         }
 
+        def listAll = {
+          "def listAll(): Seq["+c.name+"] = DB.withConnection { implicit c =>"+i()+
+            "SQL(\"select * from "+c.table.name+"\").list(simple)"+u()+
+          "}"
+        }
+
         def insert =
           "def insert(o: "+c.name+"): Option["+c.name+"] = DB.withConnection { implicit c =>"+i()+
             "o."+c.id.name+" match {"+i()+
@@ -150,6 +156,7 @@ object GenerateSource {
             findAll,
             findById,
             list,
+            listAll,
             insert,
             update,
             delete

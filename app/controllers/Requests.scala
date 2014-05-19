@@ -68,21 +68,21 @@ object Requests extends Controller with Secured {
         "description" -> nonEmptyText,
         "disasterDate" -> longNumber,
         "disasterName" -> optional(text),
-        "disasterType" -> nonEmptyText,
+        "disasterTypeId" -> number,
         "location" -> nonEmptyText,
-        "projectType" -> nonEmptyText,
+        "projectTypeId" -> number,
         "scopeOfWork" -> nonEmptyText
       )
       ((amount, description, 
-        disasterDate, disasterName, disasterType,
-        location, projectType, scope) => {
+        disasterDate, disasterName, disasterTypeId,
+        location, projectTypeId, scope) => {
         Req(
           amount = amount.getOrElse(0),
           description = description,
           disasterDate = new java.sql.Timestamp(disasterDate),
           disasterName = disasterName,
-          disasterType = DisasterType.withName(disasterType),
-          projectType = ProjectType.withName(projectType),
+          disasterTypeId = disasterTypeId,
+          projectTypeId = projectTypeId,
           scope = ProjectScope.withName(scope),
           location = location
         )
@@ -223,12 +223,12 @@ object Requests extends Controller with Secured {
       mapping(
         "input" -> tuple(
           "name" -> optional(text),
-          "type" -> nonEmptyText,
+          "typeId" -> number,
           "date" -> longNumber
         )
-      )({ case (name, dtype, date) => req.copy(
+      )({ case (name, typeId, date) => req.copy(
         disasterName = name,
-        disasterType = DisasterType.withName(dtype),
+        disasterTypeId = typeId,
         disasterDate = new java.sql.Timestamp(date)
       )})(_ => None)
     }

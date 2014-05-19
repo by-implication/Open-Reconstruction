@@ -24,7 +24,7 @@ object Req extends ReqGen {
 case class Req(
   id: Pk[Int] = NA,
   description: String = "",
-  projectType: ProjectType = ProjectType.BRIDGE,
+  projectTypeId: Int = 0,
   amount: BigDecimal = 0,
   scope: ProjectScope = ProjectScope.REPAIR,
   date: Timestamp = Time.now,
@@ -37,12 +37,15 @@ case class Req(
   location: String = "",
   remarks: Option[String] = None,
   attachmentIds: PGIntList = Nil,
-  disasterType: DisasterType = DisasterType.TYPHOON,
+  disasterTypeId: Int = 1,
   disasterDate: Timestamp = Time.now,
   disasterName: Option[String] = None
 ) extends ReqCCGen with Entity[Req]
 // GENERATED case class end
 {
+
+  lazy val projectType = ProjectType.findById(projectTypeId).get
+  lazy val disasterType = DisasterType.findById(disasterTypeId).get
 
   def assignAssessor(id: Int): Req = {
     if(id == 0){
@@ -100,8 +103,8 @@ case class Req(
     "date" -> date,
     "level" -> level,
     "amount" -> amount,
-    "projectType" -> projectType.name,
-    "disasterType" -> disasterType.name
+    "projectTypeId" -> projectTypeId,
+    "disasterTypeId" -> disasterTypeId
   )
 
   def indexJson(implicit user: User) = Json.obj(
@@ -126,7 +129,7 @@ case class Req(
   def viewJson = Json.obj(
     "id" -> id.get,
     "description" -> description,
-    "projectType" -> projectType.toString,
+    "projectType" -> projectType.name,
     "amount" -> amount,
     "scope" -> scope.toString,
     "date" -> date,
@@ -152,7 +155,7 @@ trait ReqGen extends EntityCompanion[Req] {
   val simple = {
     get[Pk[Int]]("req_id") ~
     get[String]("req_description") ~
-    get[ProjectType]("req_project_type") ~
+    get[Int]("project_type_id") ~
     get[java.math.BigDecimal]("req_amount") ~
     get[ProjectScope]("req_scope") ~
     get[Timestamp]("req_date") ~
@@ -165,11 +168,11 @@ trait ReqGen extends EntityCompanion[Req] {
     get[String]("req_location") ~
     get[Option[String]]("req_remarks") ~
     get[PGIntList]("req_attachment_ids") ~
-    get[DisasterType]("req_disaster_type") ~
+    get[Int]("disaster_type_id") ~
     get[Timestamp]("req_disaster_date") ~
     get[Option[String]]("req_disaster_name") map {
-      case id~description~projectType~amount~scope~date~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachmentIds~disasterType~disasterDate~disasterName =>
-        Req(id, description, projectType, amount, scope, date, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachmentIds, disasterType, disasterDate, disasterName)
+      case id~description~projectTypeId~amount~scope~date~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachmentIds~disasterTypeId~disasterDate~disasterName =>
+        Req(id, description, projectTypeId, amount, scope, date, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachmentIds, disasterTypeId, disasterDate, disasterName)
     }
   }
 
@@ -189,6 +192,10 @@ trait ReqGen extends EntityCompanion[Req] {
     SQL("select * from reqs limit {count} offset {offset}").on('count -> count, 'offset -> offset).list(simple)
   }
 
+  def listAll(): Seq[Req] = DB.withConnection { implicit c =>
+    SQL("select * from reqs").list(simple)
+  }
+
   def insert(o: Req): Option[Req] = DB.withConnection { implicit c =>
     o.id match {
       case NotAssigned => {
@@ -196,7 +203,7 @@ trait ReqGen extends EntityCompanion[Req] {
           insert into reqs (
             req_id,
             req_description,
-            req_project_type,
+            project_type_id,
             req_amount,
             req_scope,
             req_date,
@@ -209,13 +216,13 @@ trait ReqGen extends EntityCompanion[Req] {
             req_location,
             req_remarks,
             req_attachment_ids,
-            req_disaster_type,
+            disaster_type_id,
             req_disaster_date,
             req_disaster_name
           ) VALUES (
             DEFAULT,
             {description},
-            {projectType},
+            {projectTypeId},
             {amount},
             {scope},
             {date},
@@ -228,14 +235,14 @@ trait ReqGen extends EntityCompanion[Req] {
             {location},
             {remarks},
             {attachmentIds},
-            {disasterType},
+            {disasterTypeId},
             {disasterDate},
             {disasterName}
           )
         """).on(
           'id -> o.id,
           'description -> o.description,
-          'projectType -> o.projectType,
+          'projectTypeId -> o.projectTypeId,
           'amount -> o.amount.bigDecimal,
           'scope -> o.scope,
           'date -> o.date,
@@ -248,7 +255,7 @@ trait ReqGen extends EntityCompanion[Req] {
           'location -> o.location,
           'remarks -> o.remarks,
           'attachmentIds -> o.attachmentIds,
-          'disasterType -> o.disasterType,
+          'disasterTypeId -> o.disasterTypeId,
           'disasterDate -> o.disasterDate,
           'disasterName -> o.disasterName
         ).executeInsert()
@@ -259,7 +266,7 @@ trait ReqGen extends EntityCompanion[Req] {
           insert into reqs (
             req_id,
             req_description,
-            req_project_type,
+            project_type_id,
             req_amount,
             req_scope,
             req_date,
@@ -272,13 +279,13 @@ trait ReqGen extends EntityCompanion[Req] {
             req_location,
             req_remarks,
             req_attachment_ids,
-            req_disaster_type,
+            disaster_type_id,
             req_disaster_date,
             req_disaster_name
           ) VALUES (
             {id},
             {description},
-            {projectType},
+            {projectTypeId},
             {amount},
             {scope},
             {date},
@@ -291,14 +298,14 @@ trait ReqGen extends EntityCompanion[Req] {
             {location},
             {remarks},
             {attachmentIds},
-            {disasterType},
+            {disasterTypeId},
             {disasterDate},
             {disasterName}
           )
         """).on(
           'id -> o.id,
           'description -> o.description,
-          'projectType -> o.projectType,
+          'projectTypeId -> o.projectTypeId,
           'amount -> o.amount.bigDecimal,
           'scope -> o.scope,
           'date -> o.date,
@@ -311,7 +318,7 @@ trait ReqGen extends EntityCompanion[Req] {
           'location -> o.location,
           'remarks -> o.remarks,
           'attachmentIds -> o.attachmentIds,
-          'disasterType -> o.disasterType,
+          'disasterTypeId -> o.disasterTypeId,
           'disasterDate -> o.disasterDate,
           'disasterName -> o.disasterName
         ).executeInsert().flatMap(x => Some(o))
@@ -323,7 +330,7 @@ trait ReqGen extends EntityCompanion[Req] {
     SQL("""
       update reqs set
         req_description={description},
-        req_project_type={projectType},
+        project_type_id={projectTypeId},
         req_amount={amount},
         req_scope={scope},
         req_date={date},
@@ -336,14 +343,14 @@ trait ReqGen extends EntityCompanion[Req] {
         req_location={location},
         req_remarks={remarks},
         req_attachment_ids={attachmentIds},
-        req_disaster_type={disasterType},
+        disaster_type_id={disasterTypeId},
         req_disaster_date={disasterDate},
         req_disaster_name={disasterName}
       where req_id={id}
     """).on(
       'id -> o.id,
       'description -> o.description,
-      'projectType -> o.projectType,
+      'projectTypeId -> o.projectTypeId,
       'amount -> o.amount.bigDecimal,
       'scope -> o.scope,
       'date -> o.date,
@@ -356,7 +363,7 @@ trait ReqGen extends EntityCompanion[Req] {
       'location -> o.location,
       'remarks -> o.remarks,
       'attachmentIds -> o.attachmentIds,
-      'disasterType -> o.disasterType,
+      'disasterTypeId -> o.disasterTypeId,
       'disasterDate -> o.disasterDate,
       'disasterName -> o.disasterName
     ).executeUpdate() > 0

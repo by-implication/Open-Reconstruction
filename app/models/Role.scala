@@ -59,6 +59,10 @@ trait RoleGen extends EntityCompanion[Role] {
     SQL("select * from roles limit {count} offset {offset}").on('count -> count, 'offset -> offset).list(simple)
   }
 
+  def listAll(): Seq[Role] = DB.withConnection { implicit c =>
+    SQL("select * from roles").list(simple)
+  }
+
   def insert(o: Role): Option[Role] = DB.withConnection { implicit c =>
     o.id match {
       case NotAssigned => {

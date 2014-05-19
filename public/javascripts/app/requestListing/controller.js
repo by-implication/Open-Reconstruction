@@ -89,7 +89,7 @@ requestListing.controller = function(){
 
   this.tabs.tabs = m.prop(tabs);
   this.requestList = [];
-  this.projectFilters = m.prop([]);
+  this.projectFilters = [];
   this.currentFilter = {
     requests: m.prop("")
   };
