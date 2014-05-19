@@ -76,9 +76,10 @@ admin.controller = function(){
     return function (e){
       e.preventDefault();
       if(this.typeName()){
-        bi.ajax(routes.controllers.Admin.insertType(type, this.typeName())).then(function (r){
-          console.log(r);
-        });
+        bi.ajax(routes.controllers.Admin.insertType(type), {data: {name: this.typeName()}})
+        .then(function (r){
+          this[type + "Types"]().push(r[type + "Type"]);
+        }.bind(this));
       } else {
         alert("Empty input.");
       }

@@ -21,8 +21,21 @@ object Admin extends Controller with Secured {
   	Ok(DisasterType.jsonList)
   }
 
+  lazy val typeForm: Form[String] = Form("name" -> nonEmptyText)
+
   def insertType(kind: String) = IsSuperAdmin(){ implicit user => implicit request =>
-  	Ok(kind)
+    typeForm.bindFromRequest.fold(
+      Rest.formError(_),
+      name => kind match {
+        case "project" => ProjectType(name = name).create().map { p =>
+          Rest.success("projectType" -> p.toJson)
+        }.getOrElse(Rest.serverError())
+        case "disaster" => DisasterType(name = name).create().map { d =>
+          Rest.success("disasterType" -> d.toJson)
+        }.getOrElse(Rest.serverError())
+        case _ => Rest.error("invalid type")
+      }
+    )
   }
 
 }
