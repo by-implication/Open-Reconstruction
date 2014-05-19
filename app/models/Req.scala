@@ -110,7 +110,7 @@ case class Req(
   def indexJson(implicit user: User) = Json.obj(
     "id" -> id.get,
     "description" -> description,
-    "projectType" -> projectType.name,
+    "projectTypeId" -> projectTypeId,
     "age" -> age(),
     "level" -> level,
     "amount" -> amount,

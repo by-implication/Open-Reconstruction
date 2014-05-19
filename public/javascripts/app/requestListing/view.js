@@ -29,16 +29,16 @@ requestListing.view = function(ctrl){
             "Filter by Project Type"
           ]),
           m("ul.filters", [
-            m("li.filter", {className: (ctrl.currentFilter.requests() == "") ? "active" : ""}, [
+            m("li.filter", {className: !ctrl.currentFilter() ? "active" : ""}, [
               m("a", {
-                onclick: ctrl.currentFilter.requests.bind(ctrl.currentFilter, "")
+                onclick: ctrl.currentFilter.bind(ctrl.currentFilter, 0)
               }, "All")
             ]),
             _.chain(ctrl.projectFilters)
             .map(function (filter){
-              return m("li.filter",{className: (ctrl.currentFilter.requests() == filter) ? "active" : ""}, [
+              return m("li.filter",{className: (ctrl.currentFilter() == filter.id) ? "active" : ""}, [
                 m("a", {
-                  onclick: ctrl.currentFilter.requests.bind(ctrl.currentFilter, filter)
+                  onclick: ctrl.currentFilter.bind(ctrl.currentFilter, filter.id)
                 }, filter.name)
               ])
             })

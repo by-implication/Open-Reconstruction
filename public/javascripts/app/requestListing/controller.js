@@ -13,10 +13,10 @@ requestListing.controller = function(){
   this.sortBy = m.prop("id");
 
   var requestFilter = function (r){
-    if(!self.currentFilter.requests()){
+    if(!self.currentFilter()){
       return true;
     } else {
-      return r.projectType == self.currentFilter.requests();
+      return r.projectTypeId == self.currentFilter();
     }
   }
 
@@ -90,9 +90,7 @@ requestListing.controller = function(){
   this.tabs.tabs = m.prop(tabs);
   this.requestList = [];
   this.projectFilters = [];
-  this.currentFilter = {
-    requests: m.prop("")
-  };
+  this.currentFilter = m.prop(0);
 
   bi.ajax(routes.controllers.Requests.indexMeta()).then(function (r){
 
