@@ -54,7 +54,6 @@ request.controller = function(){
   this.assessingAgency = m.prop(this.unassignedAgency);
   this.implementingAgency = m.prop(this.unassignedAgency);
   this.coords = m.prop();
-  this.stagnation = m.prop();
   
   this.assessingAgencies = m.prop([]);
   this.implementingAgencies = m.prop([]);
@@ -70,14 +69,14 @@ request.controller = function(){
   this.degDisaster.htmlDate = m.prop("");
   this.degDisaster.input({
     name: "",
-    type: "",
+    typeId: 0,
     date: ""
   });
   this.degDisaster.input.setName = function(v){
     this.degDisaster.input().name = v;
   }.bind(this)
-  this.degDisaster.input.setType = function(v){
-    this.degDisaster.input().type = v;
+  this.degDisaster.input.setTypeId = function(v){
+    this.degDisaster.input().typeId = v;
   }.bind(this)
   this.degDisaster.input.setDate = function(v){
     this.degDisaster.input().date = (new Date(v)).getTime();
@@ -136,7 +135,7 @@ request.controller = function(){
 
     this.request(data.request);
     this.degDisaster.input().name = data.request.disaster.name;
-    this.degDisaster.input().type = data.request.disaster.type;
+    this.degDisaster.input().typeId = data.request.disaster.typeId;
     this.degDisaster.input().date = data.request.disaster.date;
 
     this.author(data.author);
@@ -153,11 +152,12 @@ request.controller = function(){
     this.canEdit(data.canEdit);
     this.disasterTypes(data.disasterTypes);
 
-    this.stagnation(common.stagnation(this));
     if(data.request.level < 4 && !data.request.isRejected){
       !function update(){
-        this.stagnation(common.stagnation(this));
-        m.redraw();
+        var element = document.getElementById("stagnation-" + this.id);
+        if(element){
+          element.innerHTML = common.stagnation(this)
+        }
         if(m.route().startsWith(routes.controllers.Requests.view(requestId).url)){
           setTimeout(update.bind(this), 40);
         }

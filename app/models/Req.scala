@@ -142,7 +142,7 @@ case class Req(
     "location" -> location,
     "remarks" -> (remarks.getOrElse(""):String),
     "disaster" -> Json.obj(
-      "type" -> disasterType.name,
+      "typeId" -> disasterTypeId,
       "date" -> disasterDate,
       "name" -> (disasterName.getOrElse(""):String)
     )

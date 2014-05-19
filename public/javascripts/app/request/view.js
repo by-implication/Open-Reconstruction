@@ -281,7 +281,7 @@ request.summary = function(ctrl){
     m("hr"),
     m("div.section", [
       m("h5", [m("small", "Processing Time")]),
-      m("h5#pending-for.value", ctrl.stagnation()),
+      m("h5#stagnation-" + ctrl.id + ".value"), // actual content c/o recursive update function in controller
       m("h5", [m("small", "Amount")]),
       displayEditGroup.view(
         ctrl.canEdit(),
@@ -299,31 +299,41 @@ request.summary = function(ctrl){
         ctrl.canEdit(),
         ctrl.history(),
         ctrl.degDisaster,
-        function(){ return m("h5.value", [ctrl.request().disaster.type + " " + ctrl.request().disaster.name + " in " + common.displayDate(ctrl.request().disaster.date)]) },
         function(){
+          var disasterType = ctrl.disasterTypes().filter(function (dt){
+            return dt.id == ctrl.request().disaster.typeId;
+          })[0];
+          return m("h5.value", [
+            disasterType.name + " "
+            + ctrl.request().disaster.name + " in "
+            + common.displayDate(ctrl.request().disaster.date)
+          ]
+        )},
+        function(){
+
           return m("div", [
             m("div", [
               m("label", [
                 "Name",
                 m("input", {
                   type: "text",
-                  value: ctrl.request().disaster.name,
+                  value: ctrl.degDisaster.input().name,
                   onchange: m.withAttr("value", ctrl.degDisaster.input.setName)
                 })
               ]),
               m("label", [
                 "Type",
                 m("select", {
-                  onchange: m.withAttr("value", ctrl.degDisaster.input.setType)
+                  onchange: m.withAttr("value", ctrl.degDisaster.input.setTypeId)
                 }, ctrl.disasterTypes().map(function (dt){
-                  return m("option", {value: dt, selected: dt == ctrl.request().disaster.type}, dt)
+                  return m("option", {value: dt.id, selected: dt.id == ctrl.request().disaster.typeId}, dt.name)
                 }))
               ]),
               m("label", [
                 "Date",
                 m("input", {
                   type: "date",
-                  value: ctrl.assessingAgency() || helper.toDateValue(ctrl.request().disaster.date),
+                  value: ctrl.degDisaster.htmlDate() || helper.toDateValue(ctrl.request().disaster.date),
                   onchange: m.withAttr("value", ctrl.degDisaster.input.setDate)
                 })
               ])
