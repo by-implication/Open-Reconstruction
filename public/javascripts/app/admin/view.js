@@ -60,7 +60,7 @@ admin.view = function(ctrl){
   }
 
   function renderType(t){
-    return m("li", t);
+    return m("li", t.name);
   }
 
   return app.template(ctrl.app, [
