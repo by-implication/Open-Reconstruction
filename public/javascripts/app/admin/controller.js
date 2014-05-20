@@ -79,6 +79,7 @@ admin.controller = function(){
         bi.ajax(routes.controllers.Admin.insertType(type), {data: {name: this.typeName()}})
         .then(function (r){
           this[type + "Types"]().push(r[type + "Type"]);
+          alert("Successfully created new " + type + " type.");
         }.bind(this));
       } else {
         alert("Empty input.");
