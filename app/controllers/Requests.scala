@@ -171,19 +171,37 @@ object Requests extends Controller with Secured {
   }
 
   def index = Application.index
-  def indexAll = Application.index
-  def indexApproval = Application.index
-  def indexAssessor = Application.index
-  def indexImplementation = Application.index
-  def indexMine = Application.index
-  def indexSignoff = Application.index
 
-  def indexMeta() = UserAction(){ implicit user => implicit request =>
-    val allRequests = Req.indexList()
-    Ok(Json.obj(
-      "list" -> allRequests.map(_.indexJson),
-      "filters" -> ProjectType.jsonList
-    ))
+  def indexPage(tab: String, page: Int, projectTypeId: Int) = Application.index
+
+  def indexMeta(tab: String, page: Int, projectTypeId: Int) = UserAction(){ implicit user => implicit request =>
+
+    val limit = 50
+    val offset = page * limit
+    val projectTypeIdOption = if (projectTypeId == 0) None else Some(projectTypeId)
+
+    val reqListOption = tab match {
+      case "all" | "approval" | "assessor" | "implementation" | "mine" | "signoff" => {
+        Some(Req.indexList(tab, offset, limit, projectTypeIdOption))
+      }
+      case _ => None
+    }
+
+    reqListOption.map { reqList =>
+      Ok(Json.obj(
+        "list" -> reqList.map(_.indexJson),
+        "filters" -> ProjectType.jsonList,
+        "counts" -> Json.obj(
+          "all" -> Req.indexCount("all", projectTypeIdOption),
+          "approval" -> Req.indexCount("approval", projectTypeIdOption),
+          "assessor" -> Req.indexCount("assessor", projectTypeIdOption),
+          "implementation" -> Req.indexCount("implementation", projectTypeIdOption),
+          "mine" -> Req.indexCount("mine", projectTypeIdOption),
+          "signoff" -> Req.indexCount("signoff", projectTypeIdOption)
+        )
+      ))
+    }.getOrElse(Rest.error("invalid tab"))
+
   }
 
   def comment(id: Int) = UserAction(){ implicit user => implicit request =>

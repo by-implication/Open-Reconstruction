@@ -27,7 +27,7 @@ object Application extends Controller {
   }
 
   def dashboardMeta() = Action {
-    Ok(Json.toJson(Req.indexList.map(_.dashboardJson)))
+    Ok(Json.toJson(Req.listAll.map(_.dashboardJson)))
   }
 
   def jsRoutes = Action { implicit request =>
@@ -64,12 +64,7 @@ object Application extends Controller {
       Requests.createMeta,
       Requests.editField,
       Requests.index,
-      Requests.indexAll,
-      Requests.indexApproval,
-      Requests.indexAssessor,
-      Requests.indexImplementation,
-      Requests.indexMine,
-      Requests.indexSignoff,
+      Requests.indexPage,
       Requests.indexMeta,
       Requests.insert,
       Requests.reject,
