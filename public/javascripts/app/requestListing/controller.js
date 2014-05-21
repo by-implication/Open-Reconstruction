@@ -3,48 +3,47 @@ requestListing.controller = function(){
   this.app = new app.controller();
   this.tabs = new common.tabs.controller();
   this.tabFilters = {
-    ALL: 'ALL',
-    SIGNOFF: 'SIGNOFF',
-    ASSESSOR: 'ASSESSOR',
-    MINE: 'MINE',
-    APPROVAL: 'APPROVAL',
-    IMPLEMENTATION: 'IMPLEMENTATION'
+    ALL: 'all',
+    SIGNOFF: 'signoff',
+    ASSESSOR: 'assessor',
+    MINE: 'mine',
+    APPROVAL: 'approval',
+    IMPLEMENTATION: 'implementation'
   }
   this.sortBy = m.prop("id");
 
-  var requestFilter = function (r){
-    if(!self.currentFilter()){
-      return true;
-    } else {
-      return r.projectTypeId == self.currentFilter();
-    }
+  this.tab = m.route.param("tab") || "all";
+  this.page = parseInt(m.route.param("page")) || 0;
+  this.projectTypeId = m.route.param("projectTypeId") || 0;
+  this.counts = {};
+
+  var targetUrl = routes.controllers.Requests.indexPage(this.tab, this.page, this.projectTypeId).url;
+  if(m.route() != targetUrl){
+    m.route(targetUrl);
   }
 
   var tabs = [
     {
       identifier: this.tabFilters.ALL,
-      href: routes.controllers.Requests.indexAll().url,
+      href: routes.controllers.Requests.indexPage("all", this.page, this.projectTypeId).url,
       _label: "All"
     },
     {
       identifier: this.tabFilters.SIGNOFF,
-      href: routes.controllers.Requests.indexSignoff().url,
+      href: routes.controllers.Requests.indexPage("signoff", this.page, this.projectTypeId).url,
       when: function(){ return _.contains(self.app.currentUser().permissions, 5) },
-      filter: function (r){ return r.canSignoff },
       _label: "Needs signoff"
     },
     {
       identifier: this.tabFilters.ASSESSOR,
-      href: routes.controllers.Requests.indexAssessor().url,
+      href: routes.controllers.Requests.indexPage("assessor", this.page, this.projectTypeId).url,
       when: function(){ return self.app.isSuperAdmin() },
-      filter: function (r){ return r.level === 0 && !r.assessingAgencyId },
       _label: "Needs assessor"
     },
     {
       identifier: this.tabFilters.MINE,
-      href: routes.controllers.Requests.indexMine().url,
+      href: routes.controllers.Requests.indexPage("mine", this.page, this.projectTypeId).url,
       when: function(){ return _.contains(self.app.currentUser().permissions, 1) },
-      filter: function (r){ return r.author.govUnit.id === self.app.currentUser().govUnit.id },
       _label: function(){
         if(self.app.currentUser().govUnit && self.app.currentUser().govUnit.role == "LGU") {
           return "My LGU's requests";
@@ -55,16 +54,14 @@ requestListing.controller = function(){
     },
     {
       identifier: this.tabFilters.APPROVAL,
-      href: routes.controllers.Requests.indexApproval().url,
+      href: routes.controllers.Requests.indexPage("approval", this.page, this.projectTypeId).url,
       when: function(){ return !self.app.currentUser() },
-      filter: function (r){ return r.level <= 4 },
       _label: "Pending Approval"
     },
     {
       identifier: this.tabFilters.IMPLEMENTATION,
-      href: routes.controllers.Requests.indexImplementation().url,
+      href: routes.controllers.Requests.indexPage("implementation", this.page, this.projectTypeId).url,
       when: function(){ return !self.app.currentUser() },
-      filter: function (r){ return r.level > 4 },
       _label: "Implementation"
     },
   ].map(function (tab){
@@ -72,7 +69,6 @@ requestListing.controller = function(){
       return self.requestList
         .filter(function (r){ return tab.filter ? !r.isRejected : true })
         .filter(tab.filter || function(){ return true })
-        .filter(requestFilter)
         .sort(function (a, b){
           return b[self.sortBy()] - a[self.sortBy()]
         })
@@ -80,7 +76,7 @@ requestListing.controller = function(){
     tab.label = function(){
       return [
         typeof tab._label == 'function' ? tab._label() : tab._label,
-        m("span.label.secondary.round", tab.requests().length)
+        m("span.label.secondary.round", self.counts[tab.identifier])
       ]
     }
     tab.content = function(){ return request.listView(this.requests(), self.sortBy) }
@@ -89,10 +85,13 @@ requestListing.controller = function(){
 
   this.tabs.tabs = m.prop(tabs);
   this.requestList = [];
-  this.projectFilters = [];
-  this.currentFilter = m.prop(0);
+  this.projectFilters = [{id: 0, name: "All"}];
+  this.maxPage = function(){
+    var count = parseInt(this.counts[this.tab]) || 0;
+    return Math.floor(count / 20);
+  };
 
-  bi.ajax(routes.controllers.Requests.indexMeta()).then(function (r){
+  bi.ajax(routes.controllers.Requests.indexMeta(this.tab, this.page, this.projectTypeId)).then(function (r){
 
     if(m.route() == routes.controllers.Requests.index().url){
 
@@ -104,11 +103,11 @@ requestListing.controller = function(){
       }
 
       if(this.app.isSuperAdmin()){
-        goTo(routes.controllers.Requests.indexAssessor);
+        goTo(routes.controllers.Requests.indexPage("assessor", this.page, this.projectTypeId));
       } else if(_.contains(this.app.currentUser().permissions, 5)){
-        goTo(routes.controllers.Requests.indexSignoff);
+        goTo(routes.controllers.Requests.indexPage("signoff", this.page, this.projectTypeId));
       } else if(_.contains(this.app.currentUser().permissions, 1)){
-        goTo(routes.controllers.Requests.indexMine);
+        goTo(routes.controllers.Requests.indexPage("mine", this.page, this.projectTypeId));
       } else {
         goTo(routes.controllers.Requests.indexAll);
       }
@@ -116,7 +115,8 @@ requestListing.controller = function(){
     }
 
     this.requestList = r.list;
-    this.projectFilters = r.filters;
+    this.counts = r.counts;
+    this.projectFilters = this.projectFilters.concat(r.filters);
 
   }.bind(this));
 

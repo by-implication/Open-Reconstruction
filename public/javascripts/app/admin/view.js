@@ -131,8 +131,18 @@ admin.view = function(ctrl){
             .case("Project Types", function(){
               return m(".tabs-content.vertical", [
                 m("form", {onsubmit: ctrl.createProjectType}, [
-                  m("input", {onchange: m.withAttr("value", ctrl.typeName)}),
-                  m("button", "Submit")
+                  m(".row", [
+                    m(".columns.medium-6", [
+                      m(".row.collapse", [
+                        m(".columns.medium-8", [
+                          m("input[type='text']", {onchange: m.withAttr("value", ctrl.typeName)}),
+                        ]),
+                        m(".columns.medium-4", [
+                          m("button.postfix[type='submit']", "Add")
+                        ]),
+                      ]),
+                    ]),
+                  ])
                 ]),
                 m("ul", [
                   ctrl.projectTypes().map(renderType)
@@ -142,8 +152,18 @@ admin.view = function(ctrl){
             .case("Disaster Types", function(){
               return m(".tabs-content.vertical", [
                 m("form", {onsubmit: ctrl.createDisasterType}, [
-                  m("input", {onchange: m.withAttr("value", ctrl.typeName)}),
-                  m("button", "Submit")
+                  m(".row", [
+                    m(".columns.medium-6", [
+                      m(".row.collapse", [
+                        m(".columns.medium-8", [
+                          m("input[type='text']", {onchange: m.withAttr("value", ctrl.typeName)}),
+                        ]),
+                        m(".columns.medium-4", [
+                          m("button.postfix[type='submit']", "Add")
+                        ]),
+                      ]),
+                    ]),
+                  ])
                 ]),
                 m("ul", [
                   ctrl.disasterTypes().map(renderType)

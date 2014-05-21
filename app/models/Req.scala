@@ -10,8 +10,82 @@ import recon.support._
 
 object Req extends ReqGen {
 
-  def indexList() = DB.withConnection { implicit c =>
-    SQL("SELECT * FROM reqs ORDER BY req_date DESC").list(simple)
+  private def getSqlParams(tab: String, projectTypeId: Option[Int])(implicit user: User) = {
+
+    var table = "reqs"
+    var whereClauses = List.empty[String]
+    def addWhereClause(clause: String) = whereClauses = whereClauses :+ clause
+
+    projectTypeId.map(_ => addWhereClause("project_type_id = {projectTypeId}"))
+
+    tab match {
+      case "all" => {}
+      case "signoff" => {
+        if(!user.isAnon){
+          table = """
+            reqs LEFT JOIN users ON author_id = user_id
+            NATURAL LEFT JOIN gov_units
+            NATURAL LEFT JOIN roles
+          """
+          addWhereClause("""(
+            (req_level = 1 AND assessing_agency_id = """ + user.govUnitId + """) OR
+            (req_level = 2 AND role_name = 'OCD') OR
+            (req_level = 3 AND role_name = 'OP') OR
+            (req_level = 4 AND role_name = 'DBM')
+          )""")
+        }
+      }
+      case "assessor" => {
+        addWhereClause("req_level = 0")
+        addWhereClause("assessing_agency_id IS NULL")
+      }
+      case "mine" => {
+        if (!user.isAnon){
+          table = "reqs LEFT JOIN users ON author_id = user_id"
+          addWhereClause("gov_unit_id = " + user.govUnit.id.get)
+        }
+      }
+      case "approval" => {
+        addWhereClause("req_level <= 4")
+      }
+      case "implementation" => {
+        addWhereClause("req_level > 4")
+      }
+    }
+
+    (table, whereClauses)
+
+  }
+
+  def indexCount(tab: String, projectTypeId: Option[Int])(implicit user: User): Long = {
+    val (table, whereClauses) = getSqlParams(tab, projectTypeId)
+    DB.withConnection { implicit c =>
+      SQL("SELECT COUNT(*) FROM " + table + {
+        if (!whereClauses.isEmpty) " WHERE " + whereClauses.mkString(" AND ")
+        else ""
+      })
+      .on(
+        'projectTypeId -> projectTypeId
+      ).as(scalar[Long].single)
+    }
+  }
+
+  def indexList(tab: String, offset: Int, limit: Int, projectTypeId: Option[Int])(implicit user: User): Seq[Req] = {
+    val (table, whereClauses) = getSqlParams(tab, projectTypeId)
+    DB.withConnection { implicit c =>
+      SQL("SELECT * FROM " + table + {
+        if (!whereClauses.isEmpty) " WHERE " + whereClauses.mkString(" AND ")
+        else ""
+      } + """
+        ORDER BY req_date DESC
+        OFFSET {offset}
+        LIMIT {limit}
+      """).on(
+        'projectTypeId -> projectTypeId,
+        'offset -> offset,
+        'limit -> limit
+      ).list(simple)
+    }
   }
 
   def authoredBy(id: Int) = DB.withConnection { implicit c =>

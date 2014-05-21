@@ -4,12 +4,7 @@
 
 m.route(document, window.location.pathname == "/" ? "/requests" : window.location.pathname, {
   "/requests": requestListing,
-  "/requests/all": requestListing,
-  "/requests/approval": requestListing,
-  "/requests/assessor": requestListing,
-  "/requests/implementation": requestListing,
-  "/requests/mine": requestListing,
-  "/requests/signoff": requestListing,
+  "/requests/:tab/:page/:projectTypeId": requestListing,
   "/requests/new": requestCreation,
   "/requests/:id": request,
   "/requests/:id/assignments": request,

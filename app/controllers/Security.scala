@@ -20,7 +20,7 @@ trait Secured {
       
       val user = currentUser
       
-      val result = if(user.isAnonymous || !refreshLogin){
+      val result = if(user.isAnon || !refreshLogin){
         f(user)(req)
       } else {
         if(LoginExpiry.isExpired(user)){
@@ -31,7 +31,7 @@ trait Secured {
         }
       }
 
-      if(user.isAnonymous && !session.get("session_id").isDefined){
+      if(user.isAnon && !session.get("session_id").isDefined){
         result.withSession(session + ("session_id" -> user.sessionId.toString))
       } else {
         result
