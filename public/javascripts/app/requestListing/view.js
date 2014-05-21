@@ -16,7 +16,7 @@ requestListing.view = function(ctrl){
               href: routes.controllers.Requests.indexPage(ctrl.tab, page, ctrl.projectTypeId).url, 
               config: m.route
             }, [
-              page
+              page + 1
             ])
           ])
         })
