@@ -11,22 +11,28 @@ govUnit.view = function(ctrl){
     m("section", [
       m(".row", [
         m(".columns.medium-12", [
-          ctrl.app.isGovUnitAdmin(ctrl.govUnit().id) ?
-            m("a.button", 
-              {
-                href: routes.controllers.Users.create(ctrl.govUnit().id).url,
-                config: m.route
-              }, 
-              ["Add new user"]
-            )
-          : "",
-          ctrl.app.isSuperAdmin() ?
-            m(
-              "a.button", 
-              {href: routes.controllers.GovUnits.edit(ctrl.govUnit().id).url, config: m.route}, 
-              "Edit"
-            )
-          : ""
+          m("ul.button-group", [
+            ctrl.app.isGovUnitAdmin(ctrl.govUnit().id) ?
+              m("li", [
+                m("a.button", 
+                  {
+                    href: routes.controllers.Users.create(ctrl.govUnit().id).url,
+                    config: m.route
+                  }, 
+                  ["Add new user"]
+                )
+              ])
+            : "",
+            ctrl.app.isSuperAdmin() ?
+              m("li", [
+                m(
+                  "a.button", 
+                  {href: routes.controllers.GovUnits.edit(ctrl.govUnit().id).url, config: m.route}, 
+                  "Edit"
+                )
+              ])
+            : ""
+          ]),
         ]),
       ]),
       m(".row", [
