@@ -10,8 +10,8 @@ request.view = function(ctrl){
   }
 
   return app.template(
-    ctrl.app, 
-    {class: "detail"}, 
+    ctrl.app,
+    {class: "detail"},
     [ // modals
       common.modal.view(
         ctrl.signoffModal,
@@ -60,8 +60,8 @@ request.view = function(ctrl){
           ])
         }
       )
-    ], 
-    [ 
+    ],
+    [
       // approval section
       ctrl.isInvolved() ? request.approval(ctrl) : "",
       // progress tracker
@@ -83,10 +83,7 @@ request.view = function(ctrl){
                     m("p", [
                       "Assessing Agency",
                       m("h4", [
-                        displayEditGroup.view(
-                          ctrl.app.isSuperAdmin(),
-                          ctrl.history(),
-                          ctrl.degAssess,
+                        ctrl.degAssess.view(
                           function(){
                             return ctrl.assessingAgency().id ?
                               m("a", {href: routes.controllers.GovUnits.view(ctrl.assessingAgency().id).url, config: m.route}, [
@@ -121,10 +118,7 @@ request.view = function(ctrl){
                     m("p", [
                       "Implementing Agency",
                       m("h4", [
-                        displayEditGroup.view(
-                          ctrl.app.isSuperAdmin(),
-                          ctrl.history(),
-                          ctrl.degImplement,
+                        ctrl.degImplement.view(
                           function(){
                             return ctrl.implementingAgency().id ?
                               m("a", {href: routes.controllers.GovUnits.view(ctrl.implementingAgency().id).url, config: m.route}, [
@@ -171,7 +165,7 @@ request.view = function(ctrl){
                               img.filename
                             ]),
                           ]),
-                          
+                         
                           m(".uploader", [
                             "Uploaded by ",
                             m("a", {href: routes.controllers.Users.view(img.uploader.id).url, config: m.route},[
@@ -260,11 +254,8 @@ request.summary = function(ctrl){
       ctrl.request().projectType
     ]),
     m(".section", [
-      displayEditGroup.view(
-        ctrl.canEdit(),
-        ctrl.history(),
-        ctrl.degDescription,
-        function(){ return m("h4", ctrl.request().description) }, 
+      ctrl.degDescription.view(
+        function(){ return m("h4", ctrl.request().description) },
         function(){
           return m("div", [
             m("input", {type: "text", value: ctrl.request().description, onchange: m.withAttr("value", ctrl.degDescription.input)}),
@@ -283,22 +274,16 @@ request.summary = function(ctrl){
       m("h5", [m("small", "Processing Time")]),
       m("h5#stagnation-" + ctrl.id + ".value"), // actual content c/o recursive update function in controller
       m("h5", [m("small", "Amount")]),
-      displayEditGroup.view(
-        ctrl.canEdit(),
-        ctrl.history(),
-        ctrl.degAmount,
-        function(){ return m("h5.value", [helper.commaize(ctrl.request().amount)]) }, 
-        function(){ 
+      ctrl.degAmount.view(
+        function(){ return m("h5.value", [helper.commaize(ctrl.request().amount)]) },
+        function(){
           return m("div", [
             m("input", {type: "text", value: ctrl.request().amount, onchange: m.withAttr("value", ctrl.degAmount.input)}),
           ])
         }
       ),
       m("h5", [m("small", "Disaster")]),
-      displayEditGroup.view(
-        ctrl.canEdit(),
-        ctrl.history(),
-        ctrl.degDisaster,
+      ctrl.degDisaster.view(
         function(){
           var disasterType = ctrl.disasterTypes().filter(function (dt){
             return dt.id == ctrl.request().disaster.typeId;
@@ -342,12 +327,9 @@ request.summary = function(ctrl){
         }
       ),
       m("h5", [m("small", "Location")]),
-      displayEditGroup.view(
-        ctrl.canEdit(),
-        ctrl.history(),
-        ctrl.degLocation, 
-        function(){ return m("h5.value", [ctrl.request().location]) }, 
-        function(){ 
+      ctrl.degLocation.view(
+        function(){ return m("h5.value", [ctrl.request().location]) },
+        function(){
           return m("div", [
             m("input", {type: "text", value: ctrl.request().location, onchange: m.withAttr("value", ctrl.degLocation.input)}),
           ])
@@ -374,7 +356,7 @@ request.approval = function(ctrl){
         ctrl.request().isRejected ?
           m("div", [
             m("h4", [
-              "This request has been rejected." 
+              "This request has been rejected."
             ]),
           ])
         : (

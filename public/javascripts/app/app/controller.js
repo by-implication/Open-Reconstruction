@@ -29,7 +29,7 @@ app.controller = function(){
 
   this.isSuperAdmin = function(){
     return this.currentUser().isSuperAdmin;
-  }
+  }.bind(this);
 
   this.isGovUnitAdmin = function(govUnitId){
     return this.isSuperAdmin() || this.currentUser().isAdmin && this.currentUser().govUnit.id === govUnitId;

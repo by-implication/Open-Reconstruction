@@ -59,19 +59,20 @@ request.controller = function(){
   this.implementingAgencies = m.prop([]);
 
   // displayEditGroups
-  this.degDescription = new displayEditGroup.controller(this.request, "description");
-  this.degAmount = new displayEditGroup.controller(this.request, "amount");
-  this.degLocation = new displayEditGroup.controller(this.request, "location");
-  this.degAssess = new displayEditGroup.controller(this.request, "assess");
-  this.degImplement = new displayEditGroup.controller(this.request, "implement");
+  var deg = displayEditGroup;
+  this.degAssess = new deg(this.app.isSuperAdmin);
+  this.degImplement = new deg(this.app.isSuperAdmin);
+  this.degDescription = new deg(this.canEdit);
+  this.degAmount = new deg(this.canEdit);
+  this.degDisaster = new deg(this.canEdit);
+  this.degLocation = new deg(this.canEdit);
 
-  this.degDisaster = new displayEditGroup.controller(this.request, "disaster");
   this.degDisaster.htmlDate = m.prop("");
-  this.degDisaster.input({
+  this.degDisaster.input = {
     name: "",
     typeId: 0,
     date: ""
-  });
+  };
   this.degDisaster.input.setName = function(v){
     this.degDisaster.input().name = v;
   }.bind(this)
@@ -134,9 +135,9 @@ request.controller = function(){
   bi.ajax(routes.controllers.Requests.viewMeta(this.id)).then(function (data){
 
     this.request(data.request);
-    this.degDisaster.input().name = data.request.disaster.name;
-    this.degDisaster.input().typeId = data.request.disaster.typeId;
-    this.degDisaster.input().date = data.request.disaster.date;
+    this.degDisaster.input.name = data.request.disaster.name;
+    this.degDisaster.input.typeId = data.request.disaster.typeId;
+    this.degDisaster.input.date = data.request.disaster.date;
 
     this.author(data.author);
     this.attachments(data.attachments);
