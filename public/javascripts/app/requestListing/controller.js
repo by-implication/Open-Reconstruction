@@ -88,7 +88,7 @@ requestListing.controller = function(){
   this.projectFilters = [{id: 0, name: "All"}];
   this.maxPage = function(){
     var count = parseInt(this.counts[this.tab]) || 0;
-    return Math.floor(count / 50);
+    return Math.floor(count / 20);
   };
 
   bi.ajax(routes.controllers.Requests.indexMeta(this.tab, this.page, this.projectTypeId)).then(function (r){
