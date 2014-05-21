@@ -205,7 +205,7 @@ object Requests extends Controller with Secured {
   }
 
   def comment(id: Int) = UserAction(){ implicit user => implicit request =>
-    if(!user.isAnonymous){
+    if(!user.isAnon){
       Req.findById(id).map { implicit req =>
         Form("content" -> nonEmptyText).bindFromRequest.fold(
           Rest.formError(_),
@@ -283,7 +283,7 @@ object Requests extends Controller with Secured {
   })
 
   def editField(id: Int, field: String) = UserAction(){ implicit user => implicit request =>
-    if(!user.isAnonymous){
+    if(!user.isAnon){
       Req.findById(id).map { implicit req =>
         if(user.canEditRequest(req)){
           editForm(field).bindFromRequest.fold(

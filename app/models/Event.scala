@@ -77,7 +77,7 @@ object Event extends EventGen {
 
   def findForRequest(id: Int)(implicit user: User): Seq[Event] = DB.withConnection { implicit c =>
     SQL("SELECT * FROM events WHERE req_id = {reqId}" +
-    (if(user.isAnonymous) " AND event_kind != 'comment' " else "") +
+    (if(user.isAnon) " AND event_kind != 'comment' " else "") +
     "ORDER BY event_date DESC"
     ).on('reqId -> id).list(simple)
   }

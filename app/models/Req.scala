@@ -20,31 +20,35 @@ object Req extends ReqGen {
 
     tab match {
       case "all" => {}
-      case "approval" => {
-        table = """
-          reqs LEFT JOIN users ON author_id = user_id
-          NATURAL LEFT JOIN gov_units
-          NATURAL LEFT JOIN roles
-        """
-        addWhereClause("""(
-          (req_level = 1 AND assessing_agency_id = gov_unit_id) OR
-          (req_level = 2 AND role_name = 'OCD') OR
-          (req_level = 3 AND role_name = 'OP') OR
-          (req_level = 4 AND role_name = 'DBM')
-        )""")
+      case "signoff" => {
+        if(!user.isAnon){
+          table = """
+            reqs LEFT JOIN users ON author_id = user_id
+            NATURAL LEFT JOIN gov_units
+            NATURAL LEFT JOIN roles
+          """
+          addWhereClause("""(
+            (req_level = 1 AND assessing_agency_id = """ + user.govUnitId + """) OR
+            (req_level = 2 AND role_name = 'OCD') OR
+            (req_level = 3 AND role_name = 'OP') OR
+            (req_level = 4 AND role_name = 'DBM')
+          )""")
+        }
       }
       case "assessor" => {
         addWhereClause("req_level = 0")
         addWhereClause("assessing_agency_id IS NULL")
       }
-      case "implementation" => {
-        table = "reqs LEFT JOIN users ON author_id = user_id"
-        addWhereClause("gov_unit_id = " + user.govUnit.id.get)
-      }
       case "mine" => {
+        if (!user.isAnon){
+          table = "reqs LEFT JOIN users ON author_id = user_id"
+          addWhereClause("gov_unit_id = " + user.govUnit.id.get)
+        }
+      }
+      case "approval" => {
         addWhereClause("req_level <= 4")
       }
-      case "signoff" => {
+      case "implementation" => {
         addWhereClause("req_level > 4")
       }
     }
