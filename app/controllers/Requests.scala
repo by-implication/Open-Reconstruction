@@ -290,8 +290,8 @@ object Requests extends Controller with Secured {
             Rest.formError(_),
             _.save().map { implicit req =>
               (field match {
-                case "assessingAgency" => Event.assign(field, req.assessingAgency)
-                case "implementingAgency" => Event.assign(field, req.implementingAgency)
+                case "assessingAgency" => Event.assign("assess", req.assessingAgency)
+                case "implementingAgency" => Event.assign("implement", req.implementingAgency)
                 case _ => Event.editField(field)
               }).create().map { e =>
                 Rest.success("event" -> e.listJson)

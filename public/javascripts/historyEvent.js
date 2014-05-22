@@ -107,7 +107,7 @@ historyEvent.assign = function(data){
   cduty[0] = cduty[0].toUpperCase();
   cduty = cduty.join("");
   var isAssign = parseInt(c.pop());
-  var govUnitId = c.pop();
+  var govUnitId = isAssign;
   var govUnitName = c.join(" ");
 
   var prepPhrase = isAssign ? " to " + duty : " from " + duty + "ing"
