@@ -69,7 +69,8 @@ request.controller = function(){
     }
   }
 
-  var save = function(field){
+  var save = function(field, processResult){
+    processResult = processResult || function(){};
     return function (c){
       bi.ajax(routes.controllers.Requests.editField(ctrl.id, field), {
         data: {input: this.input}
@@ -77,12 +78,22 @@ request.controller = function(){
         if(r.success){
           ctrl.request()[field] = this.input();
           ctrl.history().unshift(r.event);
+          processResult(r);
         } else {
           alert("Your input was invalid.");
         }
         c();
       }.bind(this));
     }
+  }
+
+  var extractAgency = function(r){
+    var params = r.event.content.split(" ");
+    var agencyType = params.pop();
+    return {
+      id: parseInt(params.pop()),
+      name: params.join(" ")
+    };
   }
 
   var degs = {
@@ -109,23 +120,29 @@ request.controller = function(){
       }
     }),
 
-    assess: new deg(this.app.isSuperAdmin),
-    // var agency = extractAgency(r);
-    // if(agency.id){
-    //   ctrl.assessingAgency(agency);
-    //   ctrl.request().level = 1;
-    // } else {
-    //   ctrl.assessingAgency(ctrl.unassignedAgency);
-    //   ctrl.request().level = 0;
-    // }
+    assess: new deg(this.app.isSuperAdmin, edit("assessingAgency"), save("assessingAgency",
+      function (r){
+        var agency = extractAgency(r);
+        if(agency.id){
+          ctrl.assessingAgency(agency);
+          ctrl.request().level = 1;
+        } else {
+          ctrl.assessingAgency(ctrl.unassignedAgency);
+          ctrl.request().level = 0;
+        }
+      }
+    )),
 
-    implement: new deg(this.app.isSuperAdmin),
-    // var agency = extractAgency(r);
-    // if(agency.id){
-    //   ctrl.implementingAgency(agency);
-    // } else {
-    //   ctrl.implementingAgency(ctrl.unassignedAgency);
-    // }
+    implement: new deg(this.app.isSuperAdmin, edit("implementingAgency"), save("implementingAgency",
+      function (r){
+        var agency = extractAgency(r);
+        if(agency.id){
+          ctrl.implementingAgency(agency);
+        } else {
+          ctrl.implementingAgency(ctrl.unassignedAgency);
+        }
+      }
+    ))
 
   };
   this.degs = degs;

@@ -250,7 +250,7 @@ object Requests extends Controller with Secured {
         disasterDate = new java.sql.Timestamp(date)
       )})(_ => None)
     }
-    case "assess" => {
+    case "assessingAgency" => {
       mapping(
         "input" -> (number.verifying("Unauthorized",
           id => user.isSuperAdmin && (id match {
@@ -261,7 +261,7 @@ object Requests extends Controller with Secured {
       )(req.assignAssessor(_)
       )(_ => None)
     }
-    case "implement" => {
+    case "implementingAgency" => {
       mapping(
         "input" -> number.verifying("Unauthorized",
           id => user.isSuperAdmin && (id match {
@@ -290,8 +290,8 @@ object Requests extends Controller with Secured {
             Rest.formError(_),
             _.save().map { implicit req =>
               (field match {
-                case "assess" => Event.assign(field, req.assessingAgency)
-                case "implement" => Event.assign(field, req.implementingAgency)
+                case "assessingAgency" => Event.assign(field, req.assessingAgency)
+                case "implementingAgency" => Event.assign(field, req.implementingAgency)
                 case _ => Event.editField(field)
               }).create().map { e =>
                 Rest.success("event" -> e.listJson)

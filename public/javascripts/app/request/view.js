@@ -1,14 +1,5 @@
 request.view = function(ctrl){
 
-  function extractAgency(r){
-    var params = r.event.content.split(" ");
-    var agencyType = params.pop();
-    return {
-      id: parseInt(params.pop()),
-      name: params.join(" ")
-    };
-  }
-
   return app.template(
     ctrl.app,
     {class: "detail"},
