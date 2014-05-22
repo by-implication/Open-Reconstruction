@@ -46,7 +46,6 @@ request.controller = function(){
   this.isInvolved = m.prop(false);
   this.canSignoff = m.prop(false);
   this.canEdit = m.prop(false);
-  this.disasterTypes = m.prop([]);
   this.hasSignedoff = m.prop(false);
   this.input = { comment: m.prop() };
 
@@ -214,7 +213,7 @@ request.controller = function(){
     this.hasSignedoff(data.hasSignedoff)
     this.canSignoff(data.canSignoff);
     this.canEdit(data.canEdit);
-    this.disasterTypes(data.disasterTypes);
+    request.disasterTypes(data.disasterTypes);
 
     if(data.request.level < 4 && !data.request.isRejected){
       !function update(){

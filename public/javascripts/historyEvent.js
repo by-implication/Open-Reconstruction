@@ -54,11 +54,10 @@ historyEvent.editField = function(data){
   var value;
   switch(field){
     case "disaster": {
-      var nameTypeDate = c.join(" ").split("|");
-      var name = nameTypeDate.shift();
-      var type = nameTypeDate.shift();
-      var ddate = parseInt(nameTypeDate.shift());
-      value = name + " (" + type + ") on " + common.displayDate(ddate);
+      var ddate = parseInt(c.pop());
+      var typeId = c.pop();
+      var name = c.join(" ");
+      value = name + " (" + request.disasterTypes()[typeId].name + ") on " + common.displayDate(ddate);
       break;
     }
     default: value = c.join(" ");

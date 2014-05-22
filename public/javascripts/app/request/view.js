@@ -258,7 +258,7 @@ request.summary = function(ctrl){
       m("h5", [m("small", "Disaster")]),
       ctrl.degs.disaster.view(
         function(){
-          var disasterType = ctrl.disasterTypes().filter(function (dt){
+          var disasterType = request.disasterTypes().filter(function (dt){
             return dt.id == ctrl.request().disaster.typeId;
           })[0];
           return m("h5.value", [
