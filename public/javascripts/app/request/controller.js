@@ -64,7 +64,9 @@ request.controller = function(){
   
   var edit = function(field){
     return function (c){
-      this.input(ctrl.request()[field]);
+      var value = ctrl.request()[field];
+      if(typeof value == "object") value = _.extend({}, value);
+      this.input(value);
       c();
     }
   }
@@ -101,24 +103,10 @@ request.controller = function(){
     description: new deg(this.canEdit, edit("description"), save("description")),
     amount: new deg(this.canEdit, edit("amount"), save("amount")),
     location: new deg(this.canEdit, edit("location"), save("location")),
-    disaster: new deg(this.canEdit, edit("disaster"), save("disaster"), null, {
-      htmlDate: m.prop(""),
-      input: {
-        name: "",
-        typeId: 0,
-        date: "",
-        setName: function(v){
-          degs.disaster.input().name = v;
-        },
-        setTypeId: function(v){
-          degs.disaster.input().typeId = v;
-        },
-        setDate: function(v){
-          degs.disaster.input().date = (new Date(v)).getTime();
-          degs.disaster.htmlDate(v);
-        }
-      }
-    }),
+    disaster: new deg(this.canEdit, edit("disaster"), save("disaster"), function (c){
+      this.htmlDate("");
+      c();
+    }, {htmlDate: m.prop("")}),
 
     assess: new deg(this.app.isSuperAdmin, edit("assessingAgency"), save("assessingAgency",
       function (r){
@@ -146,6 +134,18 @@ request.controller = function(){
 
   };
   this.degs = degs;
+
+  degs.disaster.input.setName = function(v){
+    degs.disaster.input().name = v;
+  }
+  degs.disaster.input.setTypeId = function(v){
+    degs.disaster.input().typeId = v;
+  }
+  degs.disaster.input.setDate = function(v){
+    var newDate = (new Date(v)).getTime();
+    degs.disaster.input().date = newDate;
+    degs.disaster.htmlDate(helper.toDateValue(newDate));
+  }
 
   var parseLocation = function(location){
     var split = location.split(',').map(function(coord){return parseFloat(coord)});

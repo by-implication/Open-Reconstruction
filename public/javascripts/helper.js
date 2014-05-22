@@ -24,7 +24,7 @@ helper.pad = function(n, digits){
 
 helper.toDateValue = function(timestamp){
   var d = new Date(timestamp);
-  return [  
+  return [
     d.getFullYear(),
     this.pad(d.getMonth()+1),
     this.pad(d.getDate())

@@ -83,7 +83,7 @@ request.view = function(ctrl){
                             : "Unassigned";
                           },
                           function(){
-                            return m("select", {onchange: m.withAttr("value", ctrl.degs.assess.input)},
+                            return m("select", {onchange: m.withAttr("value", this.input)},
                               [m("option", {value: 0, selected: ctrl.assessingAgency().id == 0}, "None")]
                               .concat(ctrl.assessingAgencies().map(function(agency){
                                 return m("option", {value: agency.id, selected: ctrl.assessingAgency().id == agency.id}, agency.name)
@@ -108,7 +108,7 @@ request.view = function(ctrl){
                             : "Unassigned"
                           },
                           function(){
-                            return m("select", {onchange: m.withAttr("value", ctrl.degs.implement.input)},
+                            return m("select", {onchange: m.withAttr("value", this.input)},
                               [m("option", {value: 0, selected: ctrl.implementingAgency().id == 0}, "None")]
                               .concat(ctrl.implementingAgencies().map(function(agency){
                                 return m("option", {value: agency.id, selected: ctrl.implementingAgency().id == agency.id}, agency.name)
@@ -251,7 +251,7 @@ request.summary = function(ctrl){
         function(){ return m("h5.value", [helper.commaize(ctrl.request().amount)]) },
         function(){
           return m("div", [
-            m("input", {type: "text", value: ctrl.request().amount, onchange: m.withAttr("value", ctrl.degs.amount.input)}),
+            m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),
           ])
         }
       ),
@@ -268,31 +268,30 @@ request.summary = function(ctrl){
           ]
         )},
         function(){
-
           return m("div", [
             m("div", [
               m("label", [
                 "Name",
                 m("input", {
                   type: "text",
-                  value: ctrl.degs.disaster.input().name,
-                  onchange: m.withAttr("value", ctrl.degs.disaster.input.setName)
+                  value: this.input().name,
+                  onchange: m.withAttr("value", this.input.setName)
                 })
               ]),
               m("label", [
                 "Type",
                 m("select", {
-                  onchange: m.withAttr("value", ctrl.degs.disaster.input.setTypeId)
+                  onchange: m.withAttr("value", this.input.setTypeId)
                 }, ctrl.disasterTypes().map(function (dt){
-                  return m("option", {value: dt.id, selected: dt.id == ctrl.request().disaster.typeId}, dt.name)
-                }))
+                  return m("option", {value: dt.id, selected: dt.id == this.input().typeId}, dt.name)
+                }.bind(this)))
               ]),
               m("label", [
                 "Date",
                 m("input", {
                   type: "date",
-                  value: ctrl.degs.disaster.htmlDate() || helper.toDateValue(ctrl.request().disaster.date),
-                  onchange: m.withAttr("value", ctrl.degs.disaster.input.setDate)
+                  value: this.htmlDate() || helper.toDateValue(this.input().date),
+                  onchange: m.withAttr("value", this.input.setDate)
                 })
               ])
             ])
@@ -304,7 +303,7 @@ request.summary = function(ctrl){
         function(){ return m("h5.value", [ctrl.request().location]) },
         function(){
           return m("div", [
-            m("input", {type: "text", value: ctrl.request().location, onchange: m.withAttr("value", ctrl.degs.location.input)}),
+            m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),
           ])
         }
       ),

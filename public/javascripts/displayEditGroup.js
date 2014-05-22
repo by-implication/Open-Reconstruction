@@ -1,6 +1,5 @@
 var displayEditGroup = function(editable, edit, save, cancel, params){
 
-  _.extend(this, params);
   var ctrl = this;
 
   // edit, save, and cancel must be of the form f(callback){ ... callback() }
@@ -43,5 +42,7 @@ var displayEditGroup = function(editable, edit, save, cancel, params){
       : displayView.bind(ctrl)()
     ])
   }
+
+  _.extend(this, params);
 
 }
