@@ -60,29 +60,75 @@ request.controller = function(){
 
   // displayEditGroups
   var deg = displayEditGroup;
-  this.degAssess = new deg(this.app.isSuperAdmin);
-  this.degImplement = new deg(this.app.isSuperAdmin);
-  this.degDescription = new deg(this.canEdit);
-  this.degAmount = new deg(this.canEdit);
-  this.degDisaster = new deg(this.canEdit);
-  this.degLocation = new deg(this.canEdit);
+  var ctrl = this;
+  
+  var edit = function(field){
+    return function (c){
+      this.input(ctrl.request()[field]);
+      c();
+    }
+  }
 
-  this.degDisaster.htmlDate = m.prop("");
-  this.degDisaster.input = {
-    name: "",
-    typeId: 0,
-    date: ""
+  var save = function(field){
+    return function (c){
+      bi.ajax(routes.controllers.Requests.editField(ctrl.id, field), {
+        data: {input: this.input}
+      }).then(function (r){
+        if(r.success){
+          ctrl.request()[field] = this.input();
+          ctrl.history().unshift(r.event);
+        } else {
+          alert("Your input was invalid.");
+        }
+        c();
+      }.bind(this));
+    }
+  }
+
+  var degs = {
+    
+    description: new deg(this.canEdit, edit("description"), save("description")),
+    amount: new deg(this.canEdit, edit("amount"), save("amount")),
+    location: new deg(this.canEdit, edit("location"), save("location")),
+    disaster: new deg(this.canEdit, edit("disaster"), save("disaster"), null, {
+      htmlDate: m.prop(""),
+      input: {
+        name: "",
+        typeId: 0,
+        date: "",
+        setName: function(v){
+          degs.disaster.input().name = v;
+        },
+        setTypeId: function(v){
+          degs.disaster.input().typeId = v;
+        },
+        setDate: function(v){
+          degs.disaster.input().date = (new Date(v)).getTime();
+          degs.disaster.htmlDate(v);
+        }
+      }
+    }),
+
+    assess: new deg(this.app.isSuperAdmin),
+    // var agency = extractAgency(r);
+    // if(agency.id){
+    //   ctrl.assessingAgency(agency);
+    //   ctrl.request().level = 1;
+    // } else {
+    //   ctrl.assessingAgency(ctrl.unassignedAgency);
+    //   ctrl.request().level = 0;
+    // }
+
+    implement: new deg(this.app.isSuperAdmin),
+    // var agency = extractAgency(r);
+    // if(agency.id){
+    //   ctrl.implementingAgency(agency);
+    // } else {
+    //   ctrl.implementingAgency(ctrl.unassignedAgency);
+    // }
+
   };
-  this.degDisaster.input.setName = function(v){
-    this.degDisaster.input().name = v;
-  }.bind(this)
-  this.degDisaster.input.setTypeId = function(v){
-    this.degDisaster.input().typeId = v;
-  }.bind(this)
-  this.degDisaster.input.setDate = function(v){
-    this.degDisaster.input().date = (new Date(v)).getTime();
-    this.degDisaster.htmlDate(v);
-  }.bind(this)
+  this.degs = degs;
 
   var parseLocation = function(location){
     var split = location.split(',').map(function(coord){return parseFloat(coord)});
@@ -135,9 +181,9 @@ request.controller = function(){
   bi.ajax(routes.controllers.Requests.viewMeta(this.id)).then(function (data){
 
     this.request(data.request);
-    this.degDisaster.input.name = data.request.disaster.name;
-    this.degDisaster.input.typeId = data.request.disaster.typeId;
-    this.degDisaster.input.date = data.request.disaster.date;
+    degs.disaster.input.name = data.request.disaster.name;
+    degs.disaster.input.typeId = data.request.disaster.typeId;
+    degs.disaster.input.date = data.request.disaster.date;
 
     this.author(data.author);
     this.attachments(data.attachments);

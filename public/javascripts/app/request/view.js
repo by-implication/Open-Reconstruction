@@ -83,7 +83,7 @@ request.view = function(ctrl){
                     m("p", [
                       "Assessing Agency",
                       m("h4", [
-                        ctrl.degAssess.view(
+                        ctrl.degs.assess.view(
                           function(){
                             return ctrl.assessingAgency().id ?
                               m("a", {href: routes.controllers.GovUnits.view(ctrl.assessingAgency().id).url, config: m.route}, [
@@ -92,22 +92,12 @@ request.view = function(ctrl){
                             : "Unassigned";
                           },
                           function(){
-                            return m("select", {onchange: m.withAttr("value", ctrl.degAssess.input)},
+                            return m("select", {onchange: m.withAttr("value", ctrl.degs.assess.input)},
                               [m("option", {value: 0, selected: ctrl.assessingAgency().id == 0}, "None")]
                               .concat(ctrl.assessingAgencies().map(function(agency){
                                 return m("option", {value: agency.id, selected: ctrl.assessingAgency().id == agency.id}, agency.name)
                               }
                             )));
-                          },
-                          function (r){
-                            var agency = extractAgency(r);
-                            if(agency.id){
-                              ctrl.assessingAgency(agency);
-                              ctrl.request().level = 1;
-                            } else {
-                              ctrl.assessingAgency(ctrl.unassignedAgency);
-                              ctrl.request().level = 0;
-                            }
                           }
                         )
                       ]),
@@ -118,7 +108,7 @@ request.view = function(ctrl){
                     m("p", [
                       "Implementing Agency",
                       m("h4", [
-                        ctrl.degImplement.view(
+                        ctrl.degs.implement.view(
                           function(){
                             return ctrl.implementingAgency().id ?
                               m("a", {href: routes.controllers.GovUnits.view(ctrl.implementingAgency().id).url, config: m.route}, [
@@ -127,20 +117,12 @@ request.view = function(ctrl){
                             : "Unassigned"
                           },
                           function(){
-                            return m("select", {onchange: m.withAttr("value", ctrl.degImplement.input)},
+                            return m("select", {onchange: m.withAttr("value", ctrl.degs.implement.input)},
                               [m("option", {value: 0, selected: ctrl.implementingAgency().id == 0}, "None")]
                               .concat(ctrl.implementingAgencies().map(function(agency){
                                 return m("option", {value: agency.id, selected: ctrl.implementingAgency().id == agency.id}, agency.name)
                               }
                             )));
-                          },
-                          function (r){
-                            var agency = extractAgency(r);
-                            if(agency.id){
-                              ctrl.implementingAgency(agency);
-                            } else {
-                              ctrl.implementingAgency(ctrl.unassignedAgency);
-                            }
                           }
                         )
                       ]),
@@ -254,11 +236,11 @@ request.summary = function(ctrl){
       ctrl.request().projectType
     ]),
     m(".section", [
-      ctrl.degDescription.view(
+      ctrl.degs.description.view(
         function(){ return m("h4", ctrl.request().description) },
         function(){
           return m("div", [
-            m("input", {type: "text", value: ctrl.request().description, onchange: m.withAttr("value", ctrl.degDescription.input)}),
+            m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),
           ])
         }
       ),
@@ -274,16 +256,16 @@ request.summary = function(ctrl){
       m("h5", [m("small", "Processing Time")]),
       m("h5#stagnation-" + ctrl.id + ".value"), // actual content c/o recursive update function in controller
       m("h5", [m("small", "Amount")]),
-      ctrl.degAmount.view(
+      ctrl.degs.amount.view(
         function(){ return m("h5.value", [helper.commaize(ctrl.request().amount)]) },
         function(){
           return m("div", [
-            m("input", {type: "text", value: ctrl.request().amount, onchange: m.withAttr("value", ctrl.degAmount.input)}),
+            m("input", {type: "text", value: ctrl.request().amount, onchange: m.withAttr("value", ctrl.degs.amount.input)}),
           ])
         }
       ),
       m("h5", [m("small", "Disaster")]),
-      ctrl.degDisaster.view(
+      ctrl.degs.disaster.view(
         function(){
           var disasterType = ctrl.disasterTypes().filter(function (dt){
             return dt.id == ctrl.request().disaster.typeId;
@@ -302,14 +284,14 @@ request.summary = function(ctrl){
                 "Name",
                 m("input", {
                   type: "text",
-                  value: ctrl.degDisaster.input().name,
-                  onchange: m.withAttr("value", ctrl.degDisaster.input.setName)
+                  value: ctrl.degs.disaster.input().name,
+                  onchange: m.withAttr("value", ctrl.degs.disaster.input.setName)
                 })
               ]),
               m("label", [
                 "Type",
                 m("select", {
-                  onchange: m.withAttr("value", ctrl.degDisaster.input.setTypeId)
+                  onchange: m.withAttr("value", ctrl.degs.disaster.input.setTypeId)
                 }, ctrl.disasterTypes().map(function (dt){
                   return m("option", {value: dt.id, selected: dt.id == ctrl.request().disaster.typeId}, dt.name)
                 }))
@@ -318,8 +300,8 @@ request.summary = function(ctrl){
                 "Date",
                 m("input", {
                   type: "date",
-                  value: ctrl.degDisaster.htmlDate() || helper.toDateValue(ctrl.request().disaster.date),
-                  onchange: m.withAttr("value", ctrl.degDisaster.input.setDate)
+                  value: ctrl.degs.disaster.htmlDate() || helper.toDateValue(ctrl.request().disaster.date),
+                  onchange: m.withAttr("value", ctrl.degs.disaster.input.setDate)
                 })
               ])
             ])
@@ -327,11 +309,11 @@ request.summary = function(ctrl){
         }
       ),
       m("h5", [m("small", "Location")]),
-      ctrl.degLocation.view(
+      ctrl.degs.location.view(
         function(){ return m("h5.value", [ctrl.request().location]) },
         function(){
           return m("div", [
-            m("input", {type: "text", value: ctrl.request().location, onchange: m.withAttr("value", ctrl.degLocation.input)}),
+            m("input", {type: "text", value: ctrl.request().location, onchange: m.withAttr("value", ctrl.degs.location.input)}),
           ])
         }
       ),
