@@ -8,27 +8,35 @@ import play.api.templates._
 import recon.models._
 import scala.util.Try
 
-object Application extends Controller {
+object Application extends Controller with Secured {
 
-  def index = Action { implicit request =>
+  def index = UserAction(){ implicit user => implicit request =>
 
-    val prerenderFlagOn = current.configuration.getBoolean("recon.prerender").getOrElse(false)
+    if(user.isAnon){
 
-    val doNotPrerender = request.headers.get("X-Do-Not-Prerender") match {
-      case Some(b) => Try(b.toBoolean).getOrElse(false)
-      case None => false
-    }
+      val prerenderFlagOn = current.configuration.getBoolean("recon.prerender").getOrElse(false)
 
-    if(prerenderFlagOn && !doNotPrerender){
-      val port = Play.configuration.getString("http.port")
-      val url = String.format("http://localhost:%s%s", port.getOrElse("9000"), request.uri)
-      prerender(url).map { content =>
-        Ok(Html(content))
-      }.getOrElse(NotFound)
+      val doNotPrerender = request.headers.get("X-Do-Not-Prerender") match {
+        case Some(b) => Try(b.toBoolean).getOrElse(false)
+        case None => false
+      }
+
+      if(prerenderFlagOn && !doNotPrerender){
+        val port = Play.configuration.getString("http.port")
+        val url = String.format("http://localhost:%s%s", port.getOrElse("9000"), request.uri)
+        prerender(url).map { content =>
+          Ok(Html(content))
+        }.getOrElse(NotFound)
+      } else {
+        Ok(views.html.index())
+      }
+
     } else {
+
       Ok(views.html.index())
+      
     }
-    
+
   }
 
   def prerender(url: String): Option[String] = {
