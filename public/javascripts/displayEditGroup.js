@@ -13,8 +13,10 @@ var displayEditGroup = function(editable, edit, save, cancel, params){
   this.input = m.prop();
   this.view = function(displayView, editView){
 
-    return m(".display-edit-group",{className: (editMode ? "edit-mode" : "") + " " + (editable() ? "can-edit": "")}, [
-      editable() ?
+    if (typeof editable == "function"){ editable = editable(); }
+
+    return m(".display-edit-group",{className: (editMode ? "edit-mode" : "") + " " + (editable ? "can-edit": "")}, [
+      editable ?
         editMode ?
           m(".save-cancel-group", [
             m("button.micro.save-button",
@@ -37,7 +39,7 @@ var displayEditGroup = function(editable, edit, save, cancel, params){
             [ m("i.fa.fa-edit.fa-lg") ]
           )
       : "",
-      editable() && editMode ?
+      editable && editMode ?
         editView.bind(ctrl)()
       : displayView.bind(ctrl)()
     ])

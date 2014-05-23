@@ -96,7 +96,7 @@ object GenerateSource {
 
         def listAll = {
           "def listAll(): Seq["+c.name+"] = DB.withConnection { implicit c =>"+i()+
-            "SQL(\"select * from "+c.table.name+"\").list(simple)"+u()+
+            "SQL(\"select * from "+c.table.name+" order by "+c.table.pk.name+"\").list(simple)"+u()+
           "}"
         }
 

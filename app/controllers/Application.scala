@@ -48,6 +48,7 @@ object Application extends Controller {
       Users.view,
       Users.viewMeta,
       Admin.insertType,
+      Admin.updateType,
       Admin.projectTypes,
       Admin.projectTypesMeta,
       Admin.disasterTypes,

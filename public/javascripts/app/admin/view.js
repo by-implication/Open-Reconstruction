@@ -60,7 +60,16 @@ admin.view = function(ctrl){
   }
 
   function renderType(t){
-    return m("li", t.name);
+    return t.view(
+      function(){
+        return m("li", t.value());
+      },
+      function(){
+        return m("div", [
+          m("input", {type: "text", value: t.input(), onchange: m.withAttr("value", t.input)}),
+        ])
+      }
+    )
   }
 
   return app.template(ctrl.app, [
@@ -145,7 +154,7 @@ admin.view = function(ctrl){
                   ])
                 ]),
                 m("ul", [
-                  ctrl.projectTypes().map(renderType)
+                  ctrl.degs.projectTypes().map(renderType)
                 ])
               ])
             })
@@ -166,7 +175,7 @@ admin.view = function(ctrl){
                   ])
                 ]),
                 m("ul", [
-                  ctrl.disasterTypes().map(renderType)
+                  ctrl.degs.disasterTypes().map(renderType)
                 ])
               ])
             })

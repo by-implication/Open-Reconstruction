@@ -52,7 +52,7 @@ trait ProjectTypeGen extends EntityCompanion[ProjectType] {
   }
 
   def listAll(): Seq[ProjectType] = DB.withConnection { implicit c =>
-    SQL("select * from project_types").list(simple)
+    SQL("select * from project_types order by project_type_id").list(simple)
   }
 
   def insert(o: ProjectType): Option[ProjectType] = DB.withConnection { implicit c =>

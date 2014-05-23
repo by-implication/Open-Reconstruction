@@ -85,7 +85,7 @@ trait LguGen extends EntityCompanion[Lgu] {
   }
 
   def listAll(): Seq[Lgu] = DB.withConnection { implicit c =>
-    SQL("select * from lgus").list(simple)
+    SQL("select * from lgus order by lgu_id").list(simple)
   }
 
   def insert(o: Lgu): Option[Lgu] = DB.withConnection { implicit c =>

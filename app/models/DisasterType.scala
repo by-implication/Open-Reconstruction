@@ -52,7 +52,7 @@ trait DisasterTypeGen extends EntityCompanion[DisasterType] {
   }
 
   def listAll(): Seq[DisasterType] = DB.withConnection { implicit c =>
-    SQL("select * from disaster_types").list(simple)
+    SQL("select * from disaster_types order by disaster_type_id").list(simple)
   }
 
   def insert(o: DisasterType): Option[DisasterType] = DB.withConnection { implicit c =>

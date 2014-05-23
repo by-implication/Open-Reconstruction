@@ -60,7 +60,7 @@ trait RoleGen extends EntityCompanion[Role] {
   }
 
   def listAll(): Seq[Role] = DB.withConnection { implicit c =>
-    SQL("select * from roles").list(simple)
+    SQL("select * from roles order by role_id").list(simple)
   }
 
   def insert(o: Role): Option[Role] = DB.withConnection { implicit c =>

@@ -10,8 +10,10 @@ admin.controller = function(){
     {label: m.prop("Disaster Types"), href: routes.controllers.Admin.disasterTypes().url}
   ]);
   this.regions = m.prop([]);
-  this.projectTypes = m.prop([]);
-  this.disasterTypes = m.prop([]);
+  this.degs = {
+    projectTypes: m.prop([]),
+    disasterTypes: m.prop([])
+  }
 
   bi.ajax(routes.controllers.GovUnits.listAgencies()).then(function (r){
     if(r.success){
@@ -33,12 +35,33 @@ admin.controller = function(){
     this.regions(regions);
   }.bind(this));
 
+  var degMaker = function(type){
+    return function(t){
+      var deg = new displayEditGroup(true, function (c){
+        this.input(this.value());
+        c();
+      }, function (c){
+        bi.ajax(routes.controllers.Admin.updateType(type, t.id), {
+          data: {name: this.input}
+        }).then(function (r){
+          if(r.success){
+            this.value(r.type.name);
+          } else {
+            alert("Your input was invalid.");
+          }
+          c();
+        }.bind(this));
+      }, null, {value: m.prop(t.name)});
+      return deg;
+    }
+  }
+
   bi.ajax(routes.controllers.Admin.projectTypesMeta()).then(function (r){
-    this.projectTypes(r);
+    this.degs.projectTypes(r.map(degMaker("project")));
   }.bind(this));
 
   bi.ajax(routes.controllers.Admin.disasterTypesMeta()).then(function (r){
-    this.disasterTypes(r);
+    this.degs.disasterTypes(r.map(degMaker("disaster")));
   }.bind(this));
 
   var expandCollapseRecurse = function(node, ec){
@@ -78,7 +101,7 @@ admin.controller = function(){
       if(this.typeName()){
         bi.ajax(routes.controllers.Admin.insertType(type), {data: {name: this.typeName()}})
         .then(function (r){
-          this[type + "Types"]().push(r[type + "Type"]);
+          this[type + "Types"]().push(degMaker(type)(r[type + "Type"]));
           alert("Successfully created new " + type + " type.");
         }.bind(this));
       } else {

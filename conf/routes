@@ -21,7 +21,8 @@ GET     /admin/types/project                      controllers.Admin.projectTypes
 GET     /admin/types/project/meta                 controllers.Admin.projectTypesMeta
 GET     /admin/types/disaster                     controllers.Admin.disasterTypes
 GET     /admin/types/disaster/meta                controllers.Admin.disasterTypesMeta
-POST    /admin/types/new/:k                       controllers.Admin.insertType(k: String)
+POST    /admin/types/:k/new                       controllers.Admin.insertType(k: String)
+POST    /admin/types/:k/:id                    		controllers.Admin.updateType(k: String, id: Int)
 
 # Map static resources from the /public folder to the /assets URL path
 

@@ -95,7 +95,7 @@ trait AttachmentGen extends EntityCompanion[Attachment] {
   }
 
   def listAll(): Seq[Attachment] = DB.withConnection { implicit c =>
-    SQL("select * from attachments").list(simple)
+    SQL("select * from attachments order by attachment_id").list(simple)
   }
 
   def insert(o: Attachment): Option[Attachment] = DB.withConnection { implicit c =>

@@ -267,7 +267,7 @@ trait ReqGen extends EntityCompanion[Req] {
   }
 
   def listAll(): Seq[Req] = DB.withConnection { implicit c =>
-    SQL("select * from reqs").list(simple)
+    SQL("select * from reqs order by req_id").list(simple)
   }
 
   def insert(o: Req): Option[Req] = DB.withConnection { implicit c =>

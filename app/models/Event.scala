@@ -143,7 +143,7 @@ trait EventGen extends EntityCompanion[Event] {
   }
 
   def listAll(): Seq[Event] = DB.withConnection { implicit c =>
-    SQL("select * from events").list(simple)
+    SQL("select * from events order by event_id").list(simple)
   }
 
   def insert(o: Event): Option[Event] = DB.withConnection { implicit c =>

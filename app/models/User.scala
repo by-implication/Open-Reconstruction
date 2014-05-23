@@ -292,7 +292,7 @@ trait UserGen extends EntityCompanion[User] {
   }
 
   def listAll(): Seq[User] = DB.withConnection { implicit c =>
-    SQL("select * from users").list(simple)
+    SQL("select * from users order by user_id").list(simple)
   }
 
   def insert(o: User): Option[User] = DB.withConnection { implicit c =>

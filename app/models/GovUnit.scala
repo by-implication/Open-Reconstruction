@@ -109,7 +109,7 @@ trait GovUnitGen extends EntityCompanion[GovUnit] {
   }
 
   def listAll(): Seq[GovUnit] = DB.withConnection { implicit c =>
-    SQL("select * from gov_units").list(simple)
+    SQL("select * from gov_units order by gov_unit_id").list(simple)
   }
 
   def insert(o: GovUnit): Option[GovUnit] = DB.withConnection { implicit c =>

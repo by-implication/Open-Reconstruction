@@ -38,4 +38,25 @@ object Admin extends Controller with Secured {
     )
   }
 
+  def updateType(kind: String, id: Int) = IsSuperAdmin(){ implicit user => implicit request =>
+    typeForm.bindFromRequest.fold(
+      Rest.formError(_),
+      name => kind match {
+        case "disaster" => {
+          DisasterType.findById(id).map(
+            _.copy(name = name).save().map(t => Rest.success("type" -> t.toJson))
+            .getOrElse(Rest.serverError())
+          ).getOrElse(Rest.notFound())
+        }
+        case "project" => {
+          ProjectType.findById(id).map(
+            _.copy(name = name).save().map(t => Rest.success("type" -> t.toJson))
+            .getOrElse(Rest.serverError())
+          ).getOrElse(Rest.notFound())
+        }
+        case _ => Rest.error("no such type")
+      }
+    )
+  }
+
 }
