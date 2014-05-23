@@ -7,6 +7,11 @@ dashboard.controller = function(){
     self.requests(r);
   });
 
+  bi.ajax(routes.controllers.Assets.at("data/yolanda.json")).then(function (r){
+    console.log("Yolanda Data");
+    console.log(r);
+  });
+
   this.pendingProjects = function(){
     return this.totalProjects() - this.approvedProjects().length;
   }
