@@ -3,8 +3,11 @@ package recon
 import anorm._
 import java.sql.Timestamp
 import play.api.mvc._
+import play.api.Play.current
 
 package object support {
+
+	lazy val prerender = current.configuration.getBoolean("recon.prerender").getOrElse(false)
 
 	implicit def rowToTimestamp: Column[Timestamp] = {
 	  Column[Timestamp](transformer = { (value, meta) =>
