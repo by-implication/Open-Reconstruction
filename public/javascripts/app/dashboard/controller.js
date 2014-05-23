@@ -9,7 +9,10 @@ dashboard.controller = function(){
 
   bi.ajax(routes.controllers.Assets.at("data/yolanda.json")).then(function (r){
     console.log("Yolanda Data");
-    console.log(r);
+    var data = r.values.map(function(e){
+      return _.object(r.headers, e);
+    })
+    console.log(data);
   });
 
   this.pendingProjects = function(){
