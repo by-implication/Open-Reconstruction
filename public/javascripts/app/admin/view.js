@@ -139,9 +139,9 @@ admin.view = function(ctrl){
             })
             .case("Project Types", function(){
               return m(".tabs-content.vertical", [
-                m("form", {onsubmit: ctrl.createProjectType}, [
-                  m(".row", [
-                    m(".columns.medium-6", [
+                m(".row", [
+                  m(".columns.medium-6", [
+                    m("form", {onsubmit: ctrl.createProjectType}, [
                       m(".row.collapse", [
                         m(".columns.medium-8", [
                           m("input[type='text']", {onchange: m.withAttr("value", ctrl.typeName)}),
@@ -151,18 +151,22 @@ admin.view = function(ctrl){
                         ]),
                       ]),
                     ]),
-                  ])
+                    m(".row", [
+                      m(".columns.medium-12", [
+                        m("ul", [
+                          ctrl.degs.projectTypes().map(renderType)
+                        ])
+                      ]),
+                    ]),
+                  ]),
                 ]),
-                m("ul", [
-                  ctrl.degs.projectTypes().map(renderType)
-                ])
               ])
             })
             .case("Disaster Types", function(){
               return m(".tabs-content.vertical", [
-                m("form", {onsubmit: ctrl.createDisasterType}, [
-                  m(".row", [
-                    m(".columns.medium-6", [
+                m(".row", [
+                  m(".columns.medium-6", [
+                    m("form", {onsubmit: ctrl.createDisasterType}, [
                       m(".row.collapse", [
                         m(".columns.medium-8", [
                           m("input[type='text']", {onchange: m.withAttr("value", ctrl.typeName)}),
@@ -172,11 +176,15 @@ admin.view = function(ctrl){
                         ]),
                       ]),
                     ]),
+                    m(".row", [
+                      m(".columns.medium-12", [
+                        m("ul", [
+                          ctrl.degs.disasterTypes().map(renderType)
+                        ])
+                      ]),
+                    ]),
                   ])
                 ]),
-                m("ul", [
-                  ctrl.degs.disasterTypes().map(renderType)
-                ])
               ])
             })
             .render()
