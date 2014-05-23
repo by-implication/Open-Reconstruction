@@ -44,7 +44,7 @@ app.navbar = function(ctrl){
     m("ul.title-area", [
       m("li.name", [
         m("h1", [
-          m("a", {href: routes.controllers.Requests.index().url, config: m.route}, "Open Reconstruction")
+          m("a", {href: routes.controllers.Application.welcome().url, config: m.route}, "Open Reconstruction")
         ])
       ])
     ]),
