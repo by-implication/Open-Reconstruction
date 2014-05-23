@@ -10,23 +10,45 @@ import scala.util.Try
 
 object Application extends Controller with Secured {
 
+  import scala.collection.JavaConverters._
+  lazy val prerenderEnabled = current.configuration.getBoolean("prerender.enabled").getOrElse(false)
+  lazy val prerenderBotsOnly = current.configuration.getBoolean("prerender.botsOnly").getOrElse(false)
+  lazy val bots = current.configuration.getStringList("prerender.bots").map( _.asScala ).getOrElse(Seq())
+
+  private def isBot(userAgent: String) = {
+    val u = userAgent.toLowerCase
+    bots exists (u contains _)
+  }
+
   def index = UserAction(){ implicit user => implicit request =>
 
     if(user.isAnon){
-
-      val prerenderFlagOn = current.configuration.getBoolean("recon.prerender").getOrElse(false)
 
       val doNotPrerender = request.headers.get("X-Do-Not-Prerender") match {
         case Some(b) => Try(b.toBoolean).getOrElse(false)
         case None => false
       }
 
-      if(prerenderFlagOn && !doNotPrerender){
-        val port = Play.configuration.getString("http.port")
-        val url = String.format("http://localhost:%s%s", port.getOrElse("9000"), request.uri)
-        prerender(url).map { content =>
-          Ok(Html(content))
-        }.getOrElse(NotFound)
+      val isBot = request.headers.get("User-Agent") match {
+        case Some(ua) => Application.isBot(ua)
+        case None => false
+      }
+
+      if(prerenderEnabled){
+        if(!doNotPrerender){
+          if(!prerenderBotsOnly || isBot){
+            play.Logger.info("prerender!")
+            val port = Play.configuration.getString("http.port")
+            val url = String.format("http://localhost:%s%s", port.getOrElse("9000"), request.uri)
+            prerender(url).map { content =>
+              Ok(Html(content))
+            }.getOrElse(NotFound)
+          } else {
+            Ok(views.html.index())
+          }
+        } else {
+          Ok(views.html.index())
+        }
       } else {
         Ok(views.html.index())
       }
