@@ -245,7 +245,7 @@ request.summary = function(ctrl){
     m("hr"),
     m("div.section", [
       m("h5", [m("small", "Processing Time")]),
-      m("h5#stagnation-" + ctrl.id + ".value"), // actual content c/o recursive update function in controller
+      m("h5.display-edit-group#stagnation-" + ctrl.id + ".value"), // actual content c/o recursive update function in controller
       m("h5", [m("small", "Amount")]),
       ctrl.degs.amount.view(
         function(){ return m("h5.value", [helper.commaize(ctrl.request().amount)]) },
@@ -282,7 +282,7 @@ request.summary = function(ctrl){
                 "Type",
                 m("select", {
                   onchange: m.withAttr("value", this.input.setTypeId)
-                }, ctrl.disasterTypes().map(function (dt){
+                }, request.disasterTypes().map(function (dt){
                   return m("option", {value: dt.id, selected: dt.id == this.input().typeId}, dt.name)
                 }.bind(this)))
               ]),
