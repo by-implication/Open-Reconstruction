@@ -10,7 +10,11 @@ dashboard.controller = function(){
   bi.ajax(routes.controllers.Assets.at("data/yolanda.json")).then(function (r){
     console.log("Yolanda Data");
     var data = r.values.map(function(e){
-      return _.object(r.headers, e);
+      var obj = _.object(r.headers, e);
+      if(!_.isUndefined(obj.Amount)){
+        obj.Amount = Number.parseFloat(obj.Amount.replace(/\,/g, ""));
+      }
+      return obj;
     })
     console.log(data);
   });
