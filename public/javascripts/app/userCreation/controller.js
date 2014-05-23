@@ -23,12 +23,12 @@ userCreation.controller = function(){
     e.preventDefault();
     bi.ajax(routes.controllers.Users.insert(this.slug()), {data: this.input}).then(function (r){
       if(r.success){
-        window.location = '/';
+        window.location = routes.controllers.GovUnits.view(this.slug()).url;
       } else if(r.reason == "form error"){
         alert("User not created!");
       } else {
         alert(r.reason);
       }
-    });
+    }.bind(this));
   }.bind(this)
 }
