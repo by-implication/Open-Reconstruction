@@ -97,7 +97,7 @@ dashboard.controller = function(){
 
   this.chartInit = function(elem){
     // elem.width = document.body.offsetWidth;
-    elem.width = 1280;
+    elem.width = document.body.offsetWidth;
     function entryToInt(entry) {
       var date = new Date(entry.date);
       return date.getFullYear() * 12 + date.getMonth();
