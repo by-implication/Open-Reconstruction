@@ -282,7 +282,7 @@ request.summary = function(ctrl){
                 "Type",
                 m("select", {
                   onchange: m.withAttr("value", this.input.setTypeId)
-                }, ctrl.disasterTypes().map(function (dt){
+                }, request.disasterTypes().map(function (dt){
                   return m("option", {value: dt.id, selected: dt.id == this.input().typeId}, dt.name)
                 }.bind(this)))
               ]),
