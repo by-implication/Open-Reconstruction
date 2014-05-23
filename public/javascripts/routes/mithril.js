@@ -12,6 +12,7 @@ m.route(document, window.location.pathname == "/" ? "/requests" : window.locatio
   "/requests/:id/documents": request,
   "/requests/:id/activity": request,
   "/dashboard": dashboard,
+  "/welcome": welcome,
   "/users/:id": user,
   "/admin": admin,
   "/admin/lgus": admin,
