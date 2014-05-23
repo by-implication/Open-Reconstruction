@@ -3,12 +3,41 @@ package controllers
 import play.api._
 import play.api.libs.json._
 import play.api.mvc._
+import play.api.Play.current
+import play.api.templates._
 import recon.models._
+import scala.util.Try
 
 object Application extends Controller {
 
-  def index = Action {
-    Ok(views.html.index())
+  def index = Action { implicit request =>
+
+    val prerenderFlagOn = current.configuration.getBoolean("recon.prerender").getOrElse(false)
+
+    val doNotPrerender = request.headers.get("X-Do-Not-Prerender") match {
+      case Some(b) => Try(b.toBoolean).getOrElse(false)
+      case None => false
+    }
+
+    if(prerenderFlagOn && !doNotPrerender){
+      val port = Play.configuration.getString("http.port")
+      val url = String.format("http://localhost:%s%s", port.getOrElse("9000"), request.uri)
+      prerender(url).map { content =>
+        Ok(Html(content))
+      }.getOrElse(NotFound)
+    } else {
+      Ok(views.html.index())
+    }
+    
+  }
+
+  def prerender(url: String): Option[String] = {
+    import scala.sys.process._
+    val result = Seq("phantomjs", "prerender.js", url).!!
+    val jsResult = Json.parse(result)
+    if ((jsResult \ "status").as[String] == "success"){
+      (jsResult \ "content").asOpt[String]
+    } else None
   }
 
   def index1(x: Int) = index
