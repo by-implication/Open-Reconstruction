@@ -27,7 +27,7 @@ object Application extends Controller {
   }
 
   def dashboardMeta() = Action {
-    Ok(Json.toJson(Req.listAll.map(_.dashboardJson)))
+    Ok(Req.dashboardData)
   }
 
   def jsRoutes = Action { implicit request =>

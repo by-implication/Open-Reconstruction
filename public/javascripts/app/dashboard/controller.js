@@ -1,10 +1,27 @@
 dashboard.controller = function(){
   var self = this;
   this.app = new app.controller();
-  this.requests = m.prop([]);
+
+  this.amountApproved = m.prop(0);
+  this.approvedProjects = m.prop(0);
+  this.mostCommonDisasterType = m.prop(0);
+  this.mostCommonProjectType = m.prop(0);
+  this.pendingProjects = m.prop(0);
+  this.totalProjectCost = m.prop(0);
+  this.totalProjects = m.prop(0);
+
+  this.percentApproved = function(){
+    return self.approvedProjects / self.totalProjects;
+  };
   
   bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
-    self.requests(r);
+    self.amountApproved(r.amountApproved);
+    self.approvedProjects(r.approvedProjects);
+    self.mostCommonDisasterType(r.mostCommonDisasterType);
+    self.mostCommonProjectType(r.mostCommonProjectType);
+    self.pendingProjects(r.pendingProjects);
+    self.totalProjectCost(r.totalProjectCost);
+    self.totalProjects(r.totalProjects);
   });
 
   bi.ajax(routes.controllers.Assets.at("data/yolanda.json")).then(function (r){
@@ -26,74 +43,6 @@ dashboard.controller = function(){
     })
     console.log(data);
   });
-
-  this.pendingProjects = function(){
-    return this.totalProjects() - this.approvedProjects().length;
-  }
-
-  this.approvedProjects = function(){
-    return this.requests().filter(function (r){
-      return r.level >= process.levelDict.indexOf("OP_SIGNOFF");
-    });
-  }
-
-  this.totalProjects = function(){
-    return this.requests().length
-  }
-
-  this.percentApproved = function(){
-    return this.approvedProjects().length / this.totalProjects();
-  }
-
-  this.amountApproved = function(){
-    return this.approvedProjects()
-      .map(function (r){ return r.amount; })
-      .reduce(function (a, b){ return a + b; }, 0);
-  }
-
-  this.totalProjectCost = function(){
-    return helper.truncate(
-      _.chain(this.requests())
-      .map(function(project){
-        return project.amount;
-      })
-      .compact()
-      .reduce(function(a, b){
-        return a + b;
-      }, 0)
-      .value()
-    );
-  }
-
-  this.mostCommonProjectType = function(){
-    return _.chain(this.requests())
-    .countBy(function(r){
-      return r.projectType;
-    })
-    .pairs()
-    .reject(function(p){
-      return p[0] == "OTHERS";
-    })
-    .max(function(r){
-      return r[1];
-    })
-    .value();
-  }
-
-  this.mostCommonDisasterType = function(){
-    return _.chain(this.requests())
-    .countBy(function(r){
-      return r.disasterType;
-    })
-    .pairs()
-    .reject(function(p){
-      return p[0] == "OTHERS";
-    })
-    .max(function(r){
-      return r[1];
-    })
-    .value();
-  }
 
   this.chartInit = function(elem){
     // elem.width = document.body.offsetWidth;
