@@ -70,9 +70,14 @@ dashboard.controller = function(){
     console.log(data);
   });
 
-  this.chartInit = function(elem){
-    // elem.width = document.body.offsetWidth;
-    elem.width = document.body.offsetWidth;
+  this.chartHistory = function(elem){
+
+    // elem.width = elem.parentNode.offsetWidth;
+    elem.width = 1260;
+    function entryToInt(entry) {
+      var date = new Date(entry.date);
+      return date.getFullYear() * 12 + date.getMonth();
+    }
 
     var labels = self.byMonth().map(function (e){
       var yearMonth = e.yearMonth.split("-");
@@ -107,6 +112,69 @@ dashboard.controller = function(){
     var myNewChart = new Chart(ctx).Line(data, {
       bezierCurve: false
     });
-    
+
   }
+
+    
+  this.chartDisasterHistory = function(elem){
+
+    elem.width = Math.floor(document.body.offsetWidth * .66 - 10);
+
+    // this is shit, ok
+    // need to set width dynamically
+
+    var data = {
+      labels : ["January","February","March","April","May","June","July"],
+      datasets : [
+        {
+          fillColor : "rgba(220,220,220,0.5)",
+          strokeColor : "rgba(220,220,220,1)",
+          pointColor : "rgba(220,220,220,1)",
+          pointStrokeColor : "#fff",
+          data : [65,59,90,81,56,55,40]
+        },
+        {
+          fillColor : "rgba(151,187,205,0.5)",
+          strokeColor : "rgba(151,187,205,1)",
+          pointColor : "rgba(151,187,205,1)",
+          pointStrokeColor : "#fff",
+          data : [28,48,40,19,96,27,100]
+        }
+      ]
+    }
+
+    var ctx = elem.getContext("2d");
+    var myNewChart = new Chart(ctx).Line(data, {
+      bezierCurve: false
+    });
+  }
+
+  this.chartDisasterPie = function(elem){
+
+    elem.width = Math.floor(document.body.offsetWidth * .33 - 10);
+
+    // still shit
+
+    var data = [
+      {
+        value: 30,
+        color:"#F38630"
+      },
+      {
+        value : 50,
+        color : "#E0E4CC"
+      },
+      {
+        value : 100,
+        color : "#69D2E7"
+      }     
+    ]
+
+    var ctx = elem.getContext("2d");
+    var myNewChart = new Chart(ctx).Pie(data, {
+      bezierCurve: false
+    });
+
+  }
+
 }

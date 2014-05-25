@@ -44,7 +44,7 @@ app.navbar = function(ctrl){
     m("ul.title-area", [
       m("li.name", [
         m("h1", [
-          m("a", {href: routes.controllers.Requests.index().url, config: m.route}, "Open Reconstruction")
+          m("a", {href: routes.controllers.Application.welcome().url, config: m.route}, "Open Reconstruction")
         ])
       ])
     ]),
@@ -52,10 +52,24 @@ app.navbar = function(ctrl){
       m("ul.left", [
         m("li", [
           m("a", {
+            href: routes.controllers.Application.welcome().url,
+            config: m.route,
+            className: (routes.controllers.Application.welcome().url === m.route() ? "active" : "")
+          }, "Welcome")
+        ]),
+        m("li", [
+          m("a", {
             href: routes.controllers.Application.dashboard().url,
             config: m.route,
             className: (routes.controllers.Application.dashboard().url === m.route() ? "active" : "")
           }, "Dashboard")
+        ]),
+        m("li", [
+          m("a", {
+            href: routes.controllers.Application.saro().url,
+            config: m.route,
+            className: (routes.controllers.Application.saro().url === m.route() ? "active" : "")
+          }, "SAROs")
         ]),
         m("li", [
           m("a", {
