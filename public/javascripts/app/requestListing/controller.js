@@ -17,11 +17,6 @@ requestListing.controller = function(){
   this.projectTypeId = m.route.param("projectTypeId") || 0;
   this.counts = {};
 
-  var targetUrl = routes.controllers.Requests.indexPage(this.tab, this.page, this.projectTypeId).url;
-  if(m.route() != targetUrl){
-    m.route(targetUrl);
-  }
-
   var tabs = [
     {
       identifier: this.tabFilters.ALL,
