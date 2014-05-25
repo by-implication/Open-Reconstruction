@@ -17,32 +17,48 @@ dashboard.view = function(ctrl){
             m("h1", [m("small", "Project Proposals")]),
           ]),
           m(".columns.medium-3", [
-            m("i.fa.fa-file-text-o"),
-            m("h3", ctrl.totalProjects()),
-            m(".caption", "Proposals Submitted"),
-            m("h3", ctrl.totalProjectCost()),
-            m(".caption", "Total Cost (PHP)")
+            m("i.fa.fa-file-text-o.fa-5x"),
+            m(".val-group", [
+              m("h2", ctrl.totalProjects()),
+              m(".caption", "Proposals Submitted"),
+            ]),
+            m(".val-group", [
+              m("h2", ctrl.totalProjectCost()),
+              m(".caption", "Total Cost (PHP)")
+            ]),
           ]),
           m(".columns.medium-3", [
-            m("i.fa.fa-search"),
-            m("h3", ctrl.pendingProjects()),
-            m("span", "Proposals for Assessment"),
-            m("h3", ctrl.totalProjectCost()),
-            m("span", "Cost of pending projects (PHP)")
+            m("i.fa.fa-search.fa-5x"),
+            m(".val-group", [
+              m("h2", ctrl.pendingProjects()),
+              m("span", "Proposals for Assessment"),
+            ]),
+            m(".val-group", [
+              m("h2", ctrl.totalProjectCost()),
+              m("span", "Cost of pending projects (PHP)")
+            ]),
           ]),
           m(".columns.medium-3", [
-            m("i.fa.fa-check-circle-o"),
-            m("h3", "n"),
-            m("span", "Proposals for Approval"),
-            m("h3", ctrl.amountApproved()),
-            m("span", "Total Approved Cost")
+            m("i.fa.fa-check-circle-o.fa-5x"),
+            m(".val-group", [
+              m("h2", "n"),
+              m("span", "Proposals for Approval"),
+            ]),
+            m(".val-group", [
+              m("h2", ctrl.amountApproved()),
+              m("span", "Total Approved Cost")
+            ]),
           ]),
           m(".columns.medium-3", [
-            m("i.fa.fa-money"),
-            m("h3", [ctrl.approvedProjects().length, helper.percent(ctrl.percentApproved())]),
-            m("span", "Projects for funding"),
-            m("h3", "n"),
-            m("span", "Amount for disbursal")
+            m("i.fa.fa-money.fa-5x"),
+            m(".val-group", [
+              m("h2", [ctrl.approvedProjects().length, helper.percent(ctrl.percentApproved())]),
+              m("span", "Projects for funding"),
+            ]),
+            m(".val-group", [
+              m("h2", "n"),
+              m("span", "Amount for disbursal")
+            ]),
           ])
         ])
       ]),
