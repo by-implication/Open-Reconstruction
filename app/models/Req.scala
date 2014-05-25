@@ -88,17 +88,17 @@ object Req extends ReqGen {
       case "all" => {}
       case "signoff" => {
         if(!user.isAnon){
-          table = """
-            reqs LEFT JOIN users ON author_id = user_id
-            NATURAL LEFT JOIN gov_units
-            NATURAL LEFT JOIN roles
-          """
-          addWhereClause("""(
-            (req_level = 1 AND assessing_agency_id = """ + user.govUnitId + """) OR
-            (req_level = 2 AND role_name = 'OCD') OR
-            (req_level = 3 AND role_name = 'OP') OR
-            (req_level = 4 AND role_name = 'DBM')
-          )""")
+          val targetRequestLevelOpt: Option[Int] = user.govUnit.role.name match {
+            case "OCD" => Some(2)
+            case "OP" => Some(3)
+            case "DBM" => Some(4)
+            case _ => None
+          }
+          addWhereClause("(" +
+            "(req_level = 1 AND assessing_agency_id = " + user.govUnitId + ")" +
+            targetRequestLevelOpt.map(t => " OR (req_level = " + t + ")")
+            .getOrElse("") +
+          ")")
         }
       }
       case "assessor" => {

@@ -11,9 +11,7 @@ request.controller = function(){
     {label: m.prop("Documents"), href: routes.controllers.Requests.viewDocuments(requestId).url},
     {label: m.prop("Activity"), href: routes.controllers.Requests.viewActivity(requestId).url}
   ]);
-  this.requestTabs.currentTab(this.requestTabs.tabs()[0].label)
 
-  this.tabs = new common.tabs.controller();
   this.id = m.route.param("id");
 
   this.request = m.prop({

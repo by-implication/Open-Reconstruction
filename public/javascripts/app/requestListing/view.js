@@ -56,23 +56,6 @@ requestListing.view = function(ctrl){
       ]),
       m(".row", [
         m(".columns.medium-9", [
-          // m("a", {
-          //   href: routes.controllers.Requests.indexPage(ctrl.tab, 0, ctrl.projectTypeId).url, 
-          //   config: m.route
-          // }, "<<"),
-          // m("a", {
-          //   href: routes.controllers.Requests.indexPage(ctrl.tab, Math.max(ctrl.page - 1, 0), ctrl.projectTypeId).url, 
-          //   config: m.route
-          // }, "<"),
-          // m("span", ctrl.page),
-          // m("a", {
-          //   href: routes.controllers.Requests.indexPage(ctrl.tab, Math.min(ctrl.page + 1, ctrl.maxPage()), ctrl.projectTypeId).url, 
-          //   config: m.route
-          // }, ">"),
-          // m("a", {
-          //   href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.maxPage(), ctrl.projectTypeId).url, 
-          //   config: m.route
-          // }, ">>"),
           pagination(),
           common.tabs.content(ctrl.tabs),
           pagination(),

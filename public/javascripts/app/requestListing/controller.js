@@ -17,11 +17,6 @@ requestListing.controller = function(){
   this.projectTypeId = m.route.param("projectTypeId") || 0;
   this.counts = {};
 
-  var targetUrl = routes.controllers.Requests.indexPage(this.tab, this.page, this.projectTypeId).url;
-  if(m.route() != targetUrl){
-    m.route(targetUrl);
-  }
-
   var tabs = [
     {
       identifier: this.tabFilters.ALL,
@@ -96,7 +91,7 @@ requestListing.controller = function(){
     if(m.route() == routes.controllers.Requests.index().url){
 
       function goTo(route){
-        var dest = route().url;
+        var dest = route.url;
         if(m.route() != dest){
           m.route(dest);
         }
@@ -109,7 +104,7 @@ requestListing.controller = function(){
       } else if(_.contains(this.app.currentUser().permissions, 1)){
         goTo(routes.controllers.Requests.indexPage("mine", this.page, this.projectTypeId));
       } else {
-        goTo(routes.controllers.Requests.indexAll);
+        goTo(routes.controllers.Requests.indexPage("all", this.page, this.projectTypeId));
       }
 
     }
