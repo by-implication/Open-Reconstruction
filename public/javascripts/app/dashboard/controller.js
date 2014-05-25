@@ -109,7 +109,7 @@ dashboard.controller = function(){
     }
 
     var ctx = elem.getContext("2d");
-    var myNewChart = new Chart(ctx).Line(data, {
+    var myNewChart = new Chart(ctx).Bar(data, {
       bezierCurve: false
     });
 
@@ -144,7 +144,7 @@ dashboard.controller = function(){
     }
 
     var ctx = elem.getContext("2d");
-    var myNewChart = new Chart(ctx).Line(data, {
+    var myNewChart = new Chart(ctx).Bar(data, {
       bezierCurve: false
     });
   }
