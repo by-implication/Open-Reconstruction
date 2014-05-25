@@ -10,24 +10,19 @@ import recon.support._
 
 object Req extends ReqGen {
 
-  private def countAll = DB.withConnection { implicit c =>
-    SQL("SELECT COUNT(*) FROM reqs").as(scalar[Long].single)
-  }
-
-  private def countApproved = DB.withConnection { implicit c =>
-    SQL("SELECT COUNT(*) FROM reqs WHERE req_level >= 4").as(scalar[Long].single)
-  }
-
-  private def countPending = DB.withConnection { implicit c =>
-    SQL("SELECT COUNT(*) FROM reqs WHERE req_level < 4 AND NOT req_rejected").as(scalar[Long].single)
-  }
-
-  private def amountApproved = DB.withConnection { implicit c =>
-    SQL("SELECT SUM(req_amount) FROM reqs WHERE req_level >= 4").as(scalar[Option[java.math.BigDecimal]].single).getOrElse(0)
-  }
-
-  private def amountAll = DB.withConnection { implicit c =>
-    SQL("SELECT SUM(req_amount) FROM reqs").as(scalar[java.math.BigDecimal].single)
+  private def byLevel(level: Int) = DB.withConnection { implicit c =>
+    val r = SQL("SELECT COUNT(*) AS count, SUM(req_amount) AS amount FROM reqs" +
+      (if (level != 0) " WHERE req_level = {level} AND NOT req_rejected" else "")
+    ).on('level -> level).list(
+      get[Long]("count") ~
+      get[Option[java.math.BigDecimal]]("amount") map { case count~amount =>
+        Json.obj(
+          "amount" -> amount.getOrElse(0).toString,
+          "count" -> count
+        )
+      }
+    )
+    r(0)
   }
 
   private def mostCommonProjectType = DB.withConnection { implicit c =>
@@ -73,16 +68,10 @@ object Req extends ReqGen {
   }
 
   def dashboardData = {
-    val totalProjects = countAll
-    val approvedProjects = countApproved
     Json.obj(
-      "amountApproved" -> amountApproved.toString,
-      "approvedProjects" -> approvedProjects,
       "mostCommonDisasterType" -> mostCommonDisasterType,
       "mostCommonProjectType" -> mostCommonProjectType,
-      "pendingProjects" -> countPending,
-      "totalProjectCost" -> amountAll.toString,
-      "totalProjects" -> totalProjects,
+      "byLevel" -> (0 to 5).map(byLevel),
       "byMonth" -> Json.toJson(byMonth)
     )
   }

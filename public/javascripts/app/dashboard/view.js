@@ -19,44 +19,50 @@ dashboard.view = function(ctrl){
           m(".columns.medium-3", [
             m("i.fa.fa-file-text-o.fa-5x"),
             m(".val-group", [
-              m("h2", ctrl.totalProjects()),
+              m("h2", ctrl.byLevel()[0].count),
               m(".caption", "Proposals Submitted"),
             ]),
             m(".val-group", [
-              m("h2", helper.truncate(ctrl.totalProjectCost())),
+              m("h2", helper.truncate(ctrl.byLevel()[0].amount)),
               m(".caption", "Total Cost (PHP)")
             ]),
           ]),
           m(".columns.medium-3", [
             m("i.fa.fa-search.fa-5x"),
             m(".val-group", [
-              m("h2", ctrl.pendingProjects()),
+              m("h2", ctrl.byLevel()[1].count),
               m("span", "Proposals for Assessment"),
             ]),
             m(".val-group", [
-              m("h2", helper.truncate(ctrl.totalProjectCost())),
+              m("h2", helper.truncate(
+                parseFloat(ctrl.byLevel()[1].amount) +
+                parseFloat(ctrl.byLevel()[2].amount)
+              )),
               m("span", "Cost of pending projects (PHP)")
             ]),
           ]),
           m(".columns.medium-3", [
             m("i.fa.fa-check-circle-o.fa-5x"),
             m(".val-group", [
-              m("h2", ctrl.pendingProjects()),
+              m("h2", ctrl.byLevel()[3].count),
               m("span", "Proposals for Approval"),
             ]),
             m(".val-group", [
-              m("h2", helper.truncate(ctrl.amountApproved())),
+              m("h2", helper.truncate(
+                parseFloat(ctrl.byLevel()[4].amount) +
+                parseFloat(ctrl.byLevel()[5].amount)
+              )),
               m("span", "Total Approved Cost")
             ]),
           ]),
           m(".columns.medium-3", [
             m("i.fa.fa-money.fa-5x"),
             m(".val-group", [
-              m("h2", [ctrl.approvedProjects().length, helper.percent(ctrl.percentApproved())]),
+              m("h2", [ctrl.byLevel()[4].count, helper.percent(ctrl.percentApproved())]),
               m("span", "Projects for funding"),
             ]),
             m(".val-group", [
-              m("h2", "n"),
+              m("h2", ctrl.byLevel()[5].amount),
               m("span", "Amount for disbursal")
             ]),
           ])

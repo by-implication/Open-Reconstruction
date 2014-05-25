@@ -2,17 +2,13 @@ dashboard.controller = function(){
   var self = this;
   this.app = new app.controller();
 
-  this.amountApproved = m.prop(0);
-  this.approvedProjects = m.prop(0);
   this.mostCommonDisasterType = m.prop(0);
   this.mostCommonProjectType = m.prop(0);
-  this.pendingProjects = m.prop(0);
-  this.totalProjectCost = m.prop(0);
-  this.totalProjects = m.prop(0);
   this.byMonth = m.prop([]);
+  this.byLevel = m.prop([]);
 
   this.percentApproved = function(){
-    return self.approvedProjects() / self.totalProjects();
+    return self.byLevel()[4].count / self.byLevel()[0].count;
   };
 
   function nextYearMonth(yearMonth){
@@ -40,13 +36,9 @@ dashboard.controller = function(){
   }
   
   bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
-    self.amountApproved(r.amountApproved);
-    self.approvedProjects(r.approvedProjects);
     self.mostCommonDisasterType(r.mostCommonDisasterType);
     self.mostCommonProjectType(r.mostCommonProjectType);
-    self.pendingProjects(r.pendingProjects);
-    self.totalProjectCost(r.totalProjectCost);
-    self.totalProjects(r.totalProjects);
+    self.byLevel(r.byLevel);
     self.byMonth(padMonths(r.byMonth));
   });
 
