@@ -7,25 +7,25 @@ dashboard.controller = function(){
     self.requests(r);
   });
 
-  bi.ajax(routes.controllers.Assets.at("data/yolanda.json")).then(function (r){
-    console.log("Yolanda Data");
-    var data = r.values.map(function(e){
-      var obj = _.object(r.headers, e);
-      if(!_.isUndefined(obj.Amount)){
-        obj.Amount = Number.parseFloat(obj.Amount.replace(/\,/g, ""));
-      }
-      if(!_.isUndefined(obj.Date)){
-        var dateArr = obj.Date.split("/")
-        if(dateArr.length === 3){
-          obj.Date = new Date(Date.parse(dateArr[1] + "/" + dateArr[0] + "/" + dateArr[2]));
-        } else {
-          console.log("tang ina lang. " + obj.Date);
-        }
-      }
-      return obj;
-    })
-    console.log(data);
-  });
+  // bi.ajax(routes.controllers.Assets.at("data/yolanda.json")).then(function (r){
+  //   console.log("Yolanda Data");
+  //   var data = r.values.map(function(e){
+  //     var obj = _.object(r.headers, e);
+  //     if(!_.isUndefined(obj.Amount)){
+  //       obj.Amount = Number.parseFloat(obj.Amount.replace(/\,/g, ""));
+  //     }
+  //     if(!_.isUndefined(obj.Date)){
+  //       var dateArr = obj.Date.split("/")
+  //       if(dateArr.length === 3){
+  //         obj.Date = new Date(Date.parse(dateArr[1] + "/" + dateArr[0] + "/" + dateArr[2]));
+  //       } else {
+  //         console.log("tang ina lang. " + obj.Date);
+  //       }
+  //     }
+  //     return obj;
+  //   })
+  //   console.log(data);
+  // });
 
   this.pendingProjects = function(){
     return this.totalProjects() - this.approvedProjects().length;
@@ -95,7 +95,7 @@ dashboard.controller = function(){
     .value();
   }
 
-  this.chartInit = function(elem){
+  this.chartHistory = function(elem){
     // elem.width = document.body.offsetWidth;
     elem.width = document.body.offsetWidth;
     function entryToInt(entry) {
@@ -106,7 +106,7 @@ dashboard.controller = function(){
     function formatDate(val) {
       var year = Math.floor(val / 12);
       var month = val % 12;
-      return helper.monthArray[month] + ", " + year;
+      return helper.monthArray[month] + " " + year;
     }
 
     var labels = [];
@@ -177,6 +177,69 @@ dashboard.controller = function(){
     var myNewChart = new Chart(ctx).Line(data, {
       bezierCurve: false
     });
-    
+
   }
+
+    
+  this.chartDisasterHistory = function(elem){
+
+    elem.width = Math.floor(document.body.offsetWidth * .66 - 10);
+
+    // this is shit, ok
+    // need to set width dynamically
+
+    var data = {
+      labels : ["January","February","March","April","May","June","July"],
+      datasets : [
+        {
+          fillColor : "rgba(220,220,220,0.5)",
+          strokeColor : "rgba(220,220,220,1)",
+          pointColor : "rgba(220,220,220,1)",
+          pointStrokeColor : "#fff",
+          data : [65,59,90,81,56,55,40]
+        },
+        {
+          fillColor : "rgba(151,187,205,0.5)",
+          strokeColor : "rgba(151,187,205,1)",
+          pointColor : "rgba(151,187,205,1)",
+          pointStrokeColor : "#fff",
+          data : [28,48,40,19,96,27,100]
+        }
+      ]
+    }
+
+    var ctx = elem.getContext("2d");
+    var myNewChart = new Chart(ctx).Line(data, {
+      bezierCurve: false
+    });
+  }
+
+  this.chartDisasterPie = function(elem){
+
+    elem.width = Math.floor(document.body.offsetWidth * .33 - 10);
+
+    // still shit
+
+    var data = [
+      {
+        value: 30,
+        color:"#F38630"
+      },
+      {
+        value : 50,
+        color : "#E0E4CC"
+      },
+      {
+        value : 100,
+        color : "#69D2E7"
+      }     
+    ]
+
+    var ctx = elem.getContext("2d");
+    var myNewChart = new Chart(ctx).Pie(data, {
+      bezierCurve: false
+    });
+
+  }
+
 }

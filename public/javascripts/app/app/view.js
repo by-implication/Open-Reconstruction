@@ -66,6 +66,13 @@ app.navbar = function(ctrl){
         ]),
         m("li", [
           m("a", {
+            href: routes.controllers.Application.saro().url,
+            config: m.route,
+            className: (routes.controllers.Application.saro().url === m.route() ? "active" : "")
+          }, "SAROs")
+        ]),
+        m("li", [
+          m("a", {
             href: routes.controllers.Requests.index().url,
             config: m.route,
             className: (m.route().startsWith(routes.controllers.Requests.index().url) ? "active" : "")
