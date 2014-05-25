@@ -23,7 +23,7 @@ object Req extends ReqGen {
   }
 
   private def amountApproved = DB.withConnection { implicit c =>
-    SQL("SELECT SUM(req_amount) FROM reqs WHERE req_level >= 4").as(scalar[java.math.BigDecimal].single)
+    SQL("SELECT SUM(req_amount) FROM reqs WHERE req_level >= 4").as(scalar[Option[java.math.BigDecimal]].single).getOrElse(0)
   }
 
   private def amountAll = DB.withConnection { implicit c =>
