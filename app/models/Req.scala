@@ -23,11 +23,11 @@ object Req extends ReqGen {
   }
 
   private def amountApproved = DB.withConnection { implicit c =>
-    SQL("SELECT SUM(req_amount) FROM reqs WHERE req_level >= 4").as(scalar[java.math.BigDecimal].single)
+    SQL("SELECT SUM(req_amount) FROM reqs WHERE req_level >= 4").as(scalar[Option[java.math.BigDecimal]].single).getOrElse(0)
   }
 
   private def amountAll = DB.withConnection { implicit c =>
-    SQL("SELECT SUM(req_amount) FROM reqs").as(scalar[java.math.BigDecimal].single)
+    SQL("SELECT SUM(req_amount) FROM reqs").as(scalar[Option[java.math.BigDecimal]].single).getOrElse(0)
   }
 
   private def mostCommonProjectType = DB.withConnection { implicit c =>
@@ -58,7 +58,7 @@ object Req extends ReqGen {
         EXTRACT(MONTH FROM req_date)
     """).list(
       get[Long]("count") ~
-      get[java.math.BigDecimal]("amount") ~
+      get[Option[java.math.BigDecimal]]("amount") ~
       get[Double]("month") ~
       get[Double]("year") map { case count~amount~_month~_year =>
         val year = _year.toInt
@@ -66,7 +66,7 @@ object Req extends ReqGen {
         Json.obj(
           "yearMonth" -> (year + "-" + (if (month < 10) "0" + month else month)),
           "count" -> count,
-          "amount" -> amount.toString
+          "amount" -> amount.getOrElse(0).toString
         )
       }
     )
