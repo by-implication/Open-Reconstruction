@@ -9,10 +9,35 @@ dashboard.controller = function(){
   this.pendingProjects = m.prop(0);
   this.totalProjectCost = m.prop(0);
   this.totalProjects = m.prop(0);
+  this.byMonth = m.prop([]);
 
   this.percentApproved = function(){
-    return self.approvedProjects / self.totalProjects;
+    return self.approvedProjects() / self.totalProjects();
   };
+
+  function nextYearMonth(yearMonth){
+    var ym = yearMonth.split("-");
+    var y = parseInt(ym[0]);
+    var m = parseInt(ym[1]);
+    m++;
+    if(m > 12){
+      m = 1;
+      y++;
+    }
+    return y + "-" + (m < 10 ? "0" + m : m);
+  }
+
+  function padMonths(a){
+    var r = [];
+    for(var ym = a[0].yearMonth; a.length; ym = nextYearMonth(ym)){
+      var nextElem = {yearMonth: ym, amount: 0, count: 0};
+      if(a[0].yearMonth == ym){
+        nextElem = a.shift();
+      }
+      r.push(nextElem);
+    }
+    return r;
+  }
   
   bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
     self.amountApproved(r.amountApproved);
@@ -22,6 +47,7 @@ dashboard.controller = function(){
     self.pendingProjects(r.pendingProjects);
     self.totalProjectCost(r.totalProjectCost);
     self.totalProjects(r.totalProjects);
+    self.byMonth(padMonths(r.byMonth));
   });
 
   bi.ajax(routes.controllers.Assets.at("data/yolanda.json")).then(function (r){
@@ -47,60 +73,15 @@ dashboard.controller = function(){
   this.chartInit = function(elem){
     // elem.width = document.body.offsetWidth;
     elem.width = document.body.offsetWidth;
-    function entryToInt(entry) {
-      var date = new Date(entry.date);
-      return date.getFullYear() * 12 + date.getMonth();
-    }
 
-    function formatDate(val) {
-      var year = Math.floor(val / 12);
-      var month = val % 12;
+    var labels = self.byMonth().map(function (e){
+      var yearMonth = e.yearMonth.split("-");
+      var year = yearMonth[0];
+      var month = parseInt(yearMonth[1]) - 1;
       return helper.monthArray[month] + ", " + year;
-    }
-
-    var labels = [];
-    var rawGroup = _.chain(self.requests()).groupBy(entryToInt)
-
-    var times = rawGroup.keys()
-      .map(function(key) {
-        return parseInt(key);
-      })
-      .compact()
-      .sort();
-
-    var first = times.head().value() || 0;
-    var last = (times.last().value() + 1) || 0;
-    var dateRangeObj = _.chain(first).range(last)
-
-    var countPerMonth = dateRangeObj
-      .map(function(dateYear){
-        var projects = rawGroup.value()[dateYear]
-        return projects ? projects.length : 0;
-      });
-
-    var amountPerMonth = dateRangeObj
-      .map(function(dateYear){
-        var projects = rawGroup.value()[dateYear]
-        var amount = 0;
-
-        if(projects){
-          amount = _.chain(projects)
-          .map(function(project){
-            return project.amount;
-          })
-          .compact()
-          .reduce(function(acc, next){
-            return acc + next;
-          }, 0)
-          .value();
-        }
-
-        return projects ? amount * 0.00000001 : 0;
-      });
-
-    var cpmValues = countPerMonth.value();
-    var apmValues = amountPerMonth.value();
-    var labels = dateRangeObj.map(formatDate).value();
+    });
+    var amountPerMonth = self.byMonth().map(function (e){ return e.amount / 100000000; });
+    var countPerMonth = self.byMonth().map(function (e){ return e.count; });
 
     var data = {
       labels: labels,
@@ -110,14 +91,14 @@ dashboard.controller = function(){
           strokeColor : "#FF851B",
           pointColor : "#FF851B",
           pointStrokeColor : "white",
-          data: apmValues
+          data: amountPerMonth
         },
         {
           fillColor : "rgba(0,0,0,0.3)",
           strokeColor : "rgba(0,0,0,0.3)",
           pointColor : "rgba(0,0,0,1)",
           pointStrokeColor : "white",
-          data: cpmValues
+          data: countPerMonth
         }
       ]
     }
