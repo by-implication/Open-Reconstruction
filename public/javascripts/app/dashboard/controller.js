@@ -89,7 +89,6 @@ dashboard.controller = function(){
     var yAmount = d3.scale.linear()
       .domain([0, d3.max(amountPerMonth)])
       .range([height, 0]);
-    console.log(labels);
     var x = d3.scale.ordinal()
       .domain(labels)
       .rangePoints([0, width], 1);
@@ -116,13 +115,6 @@ dashboard.controller = function(){
       })
       .attr("height", function(d) { return height - yCount(d); })
       .attr("width", barWidth - 1);
-
-    // bar.append("circle")
-    //   .attr("cy", function(d) {
-    //     return yAmount(d);
-    //   })
-    //   .attr("cx", barWidth / 2)
-    //   .attr("r", 2);
 
     var line = d3.svg.line()
       .x(function(d, i){
