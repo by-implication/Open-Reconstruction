@@ -30,7 +30,9 @@ dashboard.view = function(ctrl){
           m(".columns.medium-3", [
             m("i.fa.fa-search.fa-5x"),
             m(".val-group", [
-              m("h2", ctrl.byLevel()[1].count),
+              m("h2", [ctrl.byLevel()[1].count+ " ",
+                m("span", "(n%)")
+              ]),
               m("span", "Proposals for Assessment"),
             ]),
             m(".val-group", [
@@ -44,7 +46,9 @@ dashboard.view = function(ctrl){
           m(".columns.medium-3", [
             m("i.fa.fa-check-circle-o.fa-5x"),
             m(".val-group", [
-              m("h2", ctrl.byLevel()[3].count),
+              m("h2", [ctrl.byLevel()[3].count+ " ",
+                m("span", "(n%)")
+              ]),
               m("span", "Proposals for Approval"),
             ]),
             m(".val-group", [
@@ -58,7 +62,9 @@ dashboard.view = function(ctrl){
           m(".columns.medium-3", [
             m("i.fa.fa-money.fa-5x"),
             m(".val-group", [
-              m("h2", [ctrl.byLevel()[4].count, helper.percent(ctrl.percentApproved())]),
+              m("h2", [ctrl.byLevel()[4].count + " ",
+                m("span", "(" + helper.percent(ctrl.percentApproved()) + ")")
+              ]),
               m("span", "Projects for funding"),
             ]),
             m(".val-group", [
