@@ -104,23 +104,38 @@ dashboard.controller = function(){
       .scale(yAmount)
       .orient("right");
 
-    // console.log(x.range());
-
     var barWidth = width / countPerMonth.length;
 
+    // chart
     var chart = d3.select(elem)
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var bar = chart.selectAll("g")
-      .data(countPerMonth)
-      .enter()
-        .append("g")
-          .attr("transform", function(d, i){
-            return "translate(" + i * barWidth + ",0)";
-          });
+    // axes
+    chart.append("g")
+      .attr("class", "x-axis")
+      .attr("transform", "translate(-0.5," + (height + 0.5) + ")")
+      .call(xAxis);
+    chart.append("g")
+      .attr("class", "y-axis")
+      .attr("transform", "translate(-0.5, 0.5)")
+      .call(yAxisCount);
+    chart.append("g")
+      .attr("class", "y-axis")
+      .attr("transform", "translate(" + (width - 0.5) + ", 0.5)")
+      .call(yAxisAmount);
+
+    // datapoints
+    var bar = chart.append("g")
+      .selectAll("g")
+        .data(countPerMonth)
+        .enter()
+          .append("g")
+            .attr("transform", function(d, i){
+              return "translate(" + i * barWidth + ",0)";
+            });
     
     bar.append("rect")
       .attr("y", function(d) { 
@@ -138,7 +153,7 @@ dashboard.controller = function(){
       });
 
     chart.append("svg:path").attr("d", line(amountPerMonth));
-    chart.selectAll("circle")
+    chart.append("g").selectAll("circle")
       .data(amountPerMonth)
       .enter()
         .append("circle")
@@ -149,21 +164,6 @@ dashboard.controller = function(){
             return yAmount(d);
           })
           .attr("r", 4);
-
-    chart.append("g")
-      .attr("class", "x-axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
-
-    chart.append("g")
-      .attr("class", "y-axis")
-      .attr("transform", "translate(" + 0.5 + ", 0)")
-      .call(yAxisCount);
-
-    chart.append("g")
-      .attr("class", "y-axis")
-      .attr("transform", "translate(" + (width - 0.5) + ", 0)")
-      .call(yAxisAmount);
   }
 
   this.chartHistory = function(elem){
