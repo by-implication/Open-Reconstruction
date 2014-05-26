@@ -75,9 +75,9 @@ dashboard.controller = function(){
     var countPerMonth = self.byMonth().map(function (e){ return e.count; });
 
     // console.log(countPerMonth);
-
-    var width = 960;
-    var height = 200;
+    var margin = {top: 20, right: 30, bottom: 30, left: 40},
+      width = 1260 - margin.left - margin.right,
+      height = 200 - margin.top - margin.bottom;
     var barHeight = 20;
 
     var data = countPerMonth;
@@ -93,13 +93,24 @@ dashboard.controller = function(){
       .domain(labels)
       .rangePoints([0, width], 1);
 
+    var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom");
+
     // console.log(x.range());
 
     var barWidth = width / countPerMonth.length;
 
     var chart = d3.select(elem)
-      .attr("width", width)
-      .attr("height", height);
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        
+    chart.append("g")
+        .attr("class", "x-axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
 
     var bar = chart.selectAll("g")
       .data(countPerMonth)
