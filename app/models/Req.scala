@@ -24,10 +24,11 @@ object Req extends ReqGen {
       get[Double]("year") ~
       get[Double]("month") ~
       get[Int]("disaster_type_id") ~
-      get[Long]("count") map { case year~month~disasterTypeId~count =>
+      get[Long]("count") map { case _year~_month~disasterTypeId~count =>
+        val year = _year.toInt
+        val month = _month.toInt
         Json.obj(
-          "year" -> year.toInt,
-          "month" -> month.toInt,
+          "yearMonth" -> (year + "-" + (if (month < 10) "0" + month else month)),
           "disasterTypeId" -> disasterTypeId,
           "count" -> count
         )

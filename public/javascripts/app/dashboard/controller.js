@@ -40,6 +40,8 @@ dashboard.controller = function(){
     self.mostCommonProjectType(r.mostCommonProjectType);
     self.byLevel(r.byLevel);
     self.byMonth(padMonths(r.byMonth));
+    console.log('Disaster Types by Month:');
+    console.log(r.byDisasterType);
   });
 
   bi.ajax(routes.controllers.Assets.at("data/yolanda.json")).then(function (r){
