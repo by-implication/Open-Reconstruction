@@ -67,6 +67,7 @@ dashboard.controller = function(){
   this.chartHistory = function(elem){
 
     // elem.width = elem.parentNode.offsetWidth;
+    console.log(self.byMonth());
     elem.width = 1260;
     function entryToInt(entry) {
       var date = new Date(entry.date);
@@ -86,25 +87,25 @@ dashboard.controller = function(){
       labels: labels,
       datasets: [
         {
-          fillColor : "#FF851B",
-          strokeColor : "#FF851B",
-          pointColor : "#FF851B",
-          pointStrokeColor : "white",
-          data: amountPerMonth
-        },
-        {
           fillColor : "rgba(0,0,0,0.3)",
           strokeColor : "rgba(0,0,0,0.3)",
           pointColor : "rgba(0,0,0,1)",
           pointStrokeColor : "white",
           data: countPerMonth
+        },
+        {
+          fillColor : "#FF851B",
+          strokeColor : "#FF851B",
+          pointColor : "#FF851B",
+          pointStrokeColor : "white",
+          data: amountPerMonth
         }
       ]
     }
 
     var ctx = elem.getContext("2d");
     var myNewChart = new Chart(ctx).Bar(data, {
-      bezierCurve: false
+      barShowStroke: false
     });
 
   }
