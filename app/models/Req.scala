@@ -19,11 +19,19 @@ object Req extends ReqGen {
         COUNT(req_id)
       FROM reqs
       GROUP BY disaster_type_id, year, month
+      ORDER BY disaster_type_id, year, month
     """).list(
-      get[Int]("year") ~
-      get[Int]("month") ~
+      get[Double]("year") ~
+      get[Double]("month") ~
       get[Int]("disaster_type_id") ~
-      get[Long]("count")
+      get[Long]("count") map { case year~month~disasterTypeId~count =>
+        Json.obj(
+          "year" -> year.toInt,
+          "month" -> month.toInt,
+          "disasterTypeId" -> disasterTypeId,
+          "count" -> count
+        )
+      }
     )
   }
 
@@ -85,7 +93,8 @@ object Req extends ReqGen {
       "mostCommonDisasterType" -> mostCommonDisasterType,
       "mostCommonProjectType" -> mostCommonProjectType,
       "byLevel" -> (0 to 5).map(byLevel),
-      "byMonth" -> Json.toJson(byMonth)
+      "byMonth" -> Json.toJson(byMonth),
+      "byDisasterType" -> byDisasterType
     )
   }
 
