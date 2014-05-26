@@ -103,7 +103,7 @@ dashboard.controller = function(){
       .attr("height", height);
 
     var bar = chart.selectAll("g")
-      .data(data)
+      .data(countPerMonth)
       .enter()
         .append("g")
           .attr("transform", function(d, i){
@@ -133,6 +133,17 @@ dashboard.controller = function(){
       });
 
     chart.append("svg:path").attr("d", line(amountPerMonth));
+    chart.selectAll("circle")
+      .data(amountPerMonth)
+      .enter()
+        .append("circle")
+          .attr("cx", function(d, i){
+            return x.range()[i];
+          })
+          .attr("cy", function(d, i){
+            return yAmount(d);
+          })
+          .attr("r", 4);
   }
 
   this.chartHistory = function(elem){
