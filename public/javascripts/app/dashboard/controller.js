@@ -59,13 +59,86 @@ dashboard.controller = function(){
       }
       return obj;
     })
-    console.log(data);
+    // console.log(data);
   });
+
+  this.d3Chart = function(elem){
+    // console.log(d3.select(elem));
+
+    var labels = self.byMonth().map(function (e){
+      var yearMonth = e.yearMonth.split("-");
+      var year = yearMonth[0];
+      var month = parseInt(yearMonth[1]) - 1;
+      return helper.monthArray[month] + ", " + year;
+    });
+    var amountPerMonth = self.byMonth().map(function (e){ return e.amount / 100000000; });
+    var countPerMonth = self.byMonth().map(function (e){ return e.count; });
+
+    // console.log(countPerMonth);
+
+    var width = 960;
+    var height = 200;
+    var barHeight = 20;
+
+    var data = countPerMonth;
+
+    var yCount = d3.scale.linear()
+      .domain([0, d3.max(countPerMonth)])
+      .range([height, 0]);
+
+    var yAmount = d3.scale.linear()
+      .domain([0, d3.max(amountPerMonth)])
+      .range([height, 0]);
+    console.log(labels);
+    var x = d3.scale.ordinal()
+      .domain(labels)
+      .rangePoints([0, width], 1);
+
+    // console.log(x.range());
+
+    var barWidth = width / countPerMonth.length;
+
+    var chart = d3.select(elem)
+      .attr("width", width)
+      .attr("height", height);
+
+    var bar = chart.selectAll("g")
+      .data(data)
+      .enter()
+        .append("g")
+          .attr("transform", function(d, i){
+            return "translate(" + i * barWidth + ",0)";
+          });
+    
+    bar.append("rect")
+      .attr("y", function(d) { 
+        return yCount(d); 
+      })
+      .attr("height", function(d) { return height - yCount(d); })
+      .attr("width", barWidth - 1);
+
+    // bar.append("circle")
+    //   .attr("cy", function(d) {
+    //     return yAmount(d);
+    //   })
+    //   .attr("cx", barWidth / 2)
+    //   .attr("r", 2);
+
+    var line = d3.svg.line()
+      .x(function(d, i){
+        return x.range()[i];
+      })
+      .y(function(d, i){
+        return yAmount(d);
+      });
+
+    chart.append("svg:path").attr("d", line(amountPerMonth));
+  }
 
   this.chartHistory = function(elem){
 
     // elem.width = elem.parentNode.offsetWidth;
-    console.log(self.byMonth());
+    // console.log(self.byMonth());
     elem.width = 1260;
     function entryToInt(entry) {
       var date = new Date(entry.date);

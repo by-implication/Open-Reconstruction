@@ -71,6 +71,16 @@ dashboard.view = function(ctrl){
       m("section.alt", [
         m(".row", [
           m(".columns.medium-12", [
+            m("h1", [
+              m("small", "Lalalala")
+            ]),
+            m("svg#d3-chart", {config: ctrl.d3Chart}, []),
+          ]),
+        ]),
+      ]),
+      m("section.alt", [
+        m(".row", [
+          m(".columns.medium-12", [
             m("h1", [m("small", "Project Proposals per Month")]),
             m("canvas#chart-history", {config: ctrl.chartHistory, height: 170}),
           ]),
