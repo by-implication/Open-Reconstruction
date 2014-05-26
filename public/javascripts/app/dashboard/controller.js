@@ -102,7 +102,7 @@ dashboard.controller = function(){
 
     var ctx = elem.getContext("2d");
     var myNewChart = new Chart(ctx).Bar(data, {
-      bezierCurve: false
+      barShowStroke: false
     });
 
   }
