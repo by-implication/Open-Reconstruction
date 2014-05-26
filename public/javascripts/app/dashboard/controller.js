@@ -89,6 +89,7 @@ dashboard.controller = function(){
     var yAmount = d3.scale.linear()
       .domain([0, d3.max(amountPerMonth)])
       .range([height, 0]);
+
     var x = d3.scale.ordinal()
       .domain(labels)
       .rangePoints([0, width], 1);
@@ -96,6 +97,12 @@ dashboard.controller = function(){
     var xAxis = d3.svg.axis()
       .scale(x)
       .orient("bottom");
+    var yAxisCount = d3.svg.axis()
+      .scale(yCount)
+      .orient("left");
+    var yAxisAmount = d3.svg.axis()
+      .scale(yAmount)
+      .orient("right");
 
     // console.log(x.range());
 
@@ -106,11 +113,6 @@ dashboard.controller = function(){
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-        
-    chart.append("g")
-        .attr("class", "x-axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
 
     var bar = chart.selectAll("g")
       .data(countPerMonth)
@@ -147,6 +149,21 @@ dashboard.controller = function(){
             return yAmount(d);
           })
           .attr("r", 4);
+
+    chart.append("g")
+      .attr("class", "x-axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+    chart.append("g")
+      .attr("class", "y-axis")
+      .attr("transform", "translate(" + 0.5 + ", 0)")
+      .call(yAxisCount);
+
+    chart.append("g")
+      .attr("class", "y-axis")
+      .attr("transform", "translate(" + (width - 0.5) + ", 0)")
+      .call(yAxisAmount);
   }
 
   this.chartHistory = function(elem){
