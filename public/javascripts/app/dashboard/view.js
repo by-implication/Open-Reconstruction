@@ -121,13 +121,13 @@ dashboard.view = function(ctrl){
         m(".row", [
           m(".columns.medium-6",[
             m("h1", [m("small", "Projects per Disaster")]),
-            m("p", "Horizontal bar chart of number of projects per unique named disaster."),
+            m("p", "Horizontal bar chart of number of projects per unique named disaster. Sorted"),
             m("p", "Think of this as a 'top 10' disasters thing. (e.g. #1 Yolanda, #2 Ondoy.)"),
             m("p")
           ]),
           m(".columns.medium-6",[
             m("h1", [m("small", "Amount per Disaster")]),
-            m("p", "Same, but for amount spent/allocated/disbursed.")
+            m("p", "Same, but for amount spent/allocated/disbursed. Sorted")
           ])
         ])
       ])
