@@ -10,6 +10,32 @@ import recon.support._
 
 object Req extends ReqGen {
 
+  private def byDisasterType = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT
+        EXTRACT(YEAR FROM req_date) AS year,
+        EXTRACT(MONTH FROM req_date) AS month,
+        disaster_type_id,
+        COUNT(req_id)
+      FROM reqs
+      GROUP BY disaster_type_id, year, month
+      ORDER BY disaster_type_id, year, month
+    """).list(
+      get[Double]("year") ~
+      get[Double]("month") ~
+      get[Int]("disaster_type_id") ~
+      get[Long]("count") map { case _year~_month~disasterTypeId~count =>
+        val year = _year.toInt
+        val month = _month.toInt
+        Json.obj(
+          "yearMonth" -> (year + "-" + (if (month < 10) "0" + month else month)),
+          "disasterTypeId" -> disasterTypeId,
+          "count" -> count
+        )
+      }
+    )
+  }
+
   private def byLevel(level: Int) = DB.withConnection { implicit c =>
     val r = SQL("SELECT COUNT(*) AS count, SUM(req_amount) AS amount FROM reqs" +
       (if (level != 0) " WHERE req_level = {level} AND NOT req_rejected" else "")
@@ -45,12 +71,8 @@ object Req extends ReqGen {
         EXTRACT(MONTH FROM req_date) AS month,
         EXTRACT(YEAR FROM req_date) AS year
       FROM reqs
-      GROUP BY
-        EXTRACT(YEAR FROM req_date),
-        EXTRACT(MONTH FROM req_date)
-      ORDER BY
-        EXTRACT(YEAR FROM req_date),
-        EXTRACT(MONTH FROM req_date)
+      GROUP BY year, month
+      ORDER BY year, month
     """).list(
       get[Long]("count") ~
       get[java.math.BigDecimal]("amount") ~
@@ -72,7 +94,8 @@ object Req extends ReqGen {
       "mostCommonDisasterType" -> mostCommonDisasterType,
       "mostCommonProjectType" -> mostCommonProjectType,
       "byLevel" -> (0 to 5).map(byLevel),
-      "byMonth" -> Json.toJson(byMonth)
+      "byMonth" -> Json.toJson(byMonth),
+      "byDisasterType" -> byDisasterType
     )
   }
 
