@@ -129,53 +129,6 @@ dashboard.controller = function(){
 
     elem.appendChild(chart.element);
   }
-
-  // this.chartHistory = function(elem){
-
-  //   // elem.width = elem.parentNode.offsetWidth;
-  //   // console.log(self.byMonth());
-  //   elem.width = 1260;
-  //   function entryToInt(entry) {
-  //     var date = new Date(entry.date);
-  //     return date.getFullYear() * 12 + date.getMonth();
-  //   }
-
-  //   var labels = self.byMonth().map(function (e){
-  //     var yearMonth = e.yearMonth.split("-");
-  //     var year = yearMonth[0];
-  //     var month = parseInt(yearMonth[1]) - 1;
-  //     return helper.monthArray[month] + ", " + year;
-  //   });
-  //   var amountPerMonth = self.byMonth().map(function (e){ return e.amount / 100000000; });
-  //   var countPerMonth = self.byMonth().map(function (e){ return e.count; });
-
-  //   var data = {
-  //     labels: labels,
-  //     datasets: [
-  //       {
-  //         fillColor : "rgba(0,0,0,0.3)",
-  //         strokeColor : "rgba(0,0,0,0.3)",
-  //         pointColor : "rgba(0,0,0,1)",
-  //         pointStrokeColor : "white",
-  //         data: countPerMonth
-  //       },
-  //       {
-  //         fillColor : "#FF851B",
-  //         strokeColor : "#FF851B",
-  //         pointColor : "#FF851B",
-  //         pointStrokeColor : "white",
-  //         data: amountPerMonth
-  //       }
-  //     ]
-  //   }
-
-  //   var ctx = elem.getContext("2d");
-  //   var myNewChart = new Chart(ctx).Bar(data, {
-  //     barShowStroke: false
-  //   });
-
-  // }
-
     
   this.chartDisasterHistory = function(elem){
 
@@ -209,34 +162,6 @@ dashboard.controller = function(){
     });
     elem.appendChild(chart.element);
     
-  }
-
-  this.chartDisasterPie = function(elem){
-
-    elem.width = Math.floor(document.body.offsetWidth * .33 - 10);
-
-    // still shit
-
-    var data = [
-      {
-        value: 30,
-        color:"#F38630"
-      },
-      {
-        value : 50,
-        color : "#E0E4CC"
-      },
-      {
-        value : 100,
-        color : "#69D2E7"
-      }     
-    ]
-
-    var ctx = elem.getContext("2d");
-    var myNewChart = new Chart(ctx).Doughnut(data, {
-      bezierCurve: false
-    });
-
   }
 
 }
