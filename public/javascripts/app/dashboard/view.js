@@ -74,17 +74,17 @@ dashboard.view = function(ctrl){
             m("h1", [
               m("small", "Project Proposals per Month")
             ]),
-            m("#c3-chart", {config: ctrl.c3Chart}, []),
-            m(".legend", [
-              m("span", [
-                m("div.swatch.black"),
-                m("span", "Number of proposals submitted")
-              ]),
-              m("span", [
-                m("div.swatch.orange"),
-                m("span", "Amount")
-              ])
-            ]),
+            m("#c3-chart", {config: ctrl.projectHistory}, []),
+            // m(".legend", [
+            //   m("span", [
+            //     m("div.swatch.black"),
+            //     m("span", "Number of proposals submitted")
+            //   ]),
+            //   m("span", [
+            //     m("div.swatch.orange"),
+            //     m("span", "Amount")
+            //   ])
+            // ]),
             // m(".columns.small-6.legend", [
               
             // ])

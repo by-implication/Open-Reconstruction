@@ -66,7 +66,7 @@ dashboard.controller = function(){
     // console.log(data);
   });
 
-  this.c3Chart = function(elem){
+  this.projectHistory = function(elem){
     var labels = self.byMonth().map(function (e){
       var yearMonth = e.yearMonth.split("-");
       var year = yearMonth[0];
@@ -103,10 +103,6 @@ dashboard.controller = function(){
           show: true
         }
       },
-      legend: {
-        show: false
-        // position: 'right'
-      },
       axis : {
         x : {
           type : 'timeseries',
@@ -133,7 +129,7 @@ dashboard.controller = function(){
   }
 
     
-  this.chartDisasterHistory = function(elem){=
+  this.chartDisasterHistory = function(elem){
 
     var data = _.chain(self.byDisasterType())
       .groupBy(function(p){
