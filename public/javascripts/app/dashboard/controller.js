@@ -74,13 +74,46 @@ dashboard.controller = function(){
     var amountPerMonth = self.byMonth().map(function (e){ return e.amount / 1; });
     var countPerMonth = self.byMonth().map(function (e){ return e.count; });
 
+    d3.locale({
+      "decimal": ".",
+      "thousands": ",",
+      "grouping": [3],
+      "currency": ["PHP", ""],
+      "dateTime": "%a %b %e %X %Y",
+      "date": "%m/%d/%Y",
+      "time": "%H:%M:%S",
+      "periods": ["AM", "PM"],
+      "days": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      "shortDays": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+      "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+      "shortMonths": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    })
     var chart = c3.generate({
       data: {
         x: "x",
         columns: [
           ["x"].concat(labels),
-          ["Count per Month"].concat(countPerMonth)
-        ]
+          ["Count per Month"].concat(countPerMonth),
+          ["Amount per Month"].concat(amountPerMonth)
+        ],
+        axes: {
+          "Count per Month": 'y',
+          "Amount per Month": 'y2'
+        },
+        types: {
+          "Count per Month": 'bar',
+        },
+      },
+      color: {
+        pattern: ['#555', '#ff851b']
+      },
+      grid: {
+        x: {
+          show: true
+        },
+        y: {
+          show: true
+        }
       },
       axis : {
         x : {
@@ -92,7 +125,16 @@ dashboard.controller = function(){
             }
             //format: '%Y' // format string is also available for timeseries data
           }
-        }
+        },
+        y2 : {
+          show: true,
+          tick: {
+            format: function(t){
+              var format =  d3.format(",")
+              return "PHP " + format(t);
+            }
+          }
+        },
       }
     });
 
