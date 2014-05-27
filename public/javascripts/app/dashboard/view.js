@@ -74,7 +74,7 @@ dashboard.view = function(ctrl){
             m("h1", [
               m("small", "Lalalala")
             ]),
-            m("svg#d3-chart", {config: ctrl.d3Chart}, []),
+            m("#c3-chart", {config: ctrl.c3Chart}, []),
           ]),
         ]),
       ]),

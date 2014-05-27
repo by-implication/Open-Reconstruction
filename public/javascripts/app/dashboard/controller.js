@@ -64,6 +64,45 @@ dashboard.controller = function(){
     // console.log(data);
   });
 
+  this.c3Chart = function(elem){
+    var labels = self.byMonth().map(function (e){
+      var yearMonth = e.yearMonth.split("-");
+      var year = yearMonth[0];
+      var month = parseInt(yearMonth[1]) - 1;
+      return helper.monthArray[month] + ", " + year;
+    });
+    var amountPerMonth = self.byMonth().map(function (e){ return e.amount / 1; });
+    var countPerMonth = self.byMonth().map(function (e){ return e.count; });
+
+    var chart = c3.generate({
+      data: {
+        x: "x",
+        columns: [
+          ["x"].concat(labels),
+          ["Count per Month"].concat(countPerMonth)
+        ]
+      },
+      axis : {
+        x : {
+          type : 'timeseries',
+          tick: {
+            format: function (x) { 
+              var monthDict = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+              return monthDict[x.getMonth() + 1] + ", " + x.getFullYear(); 
+            }
+            //format: '%Y' // format string is also available for timeseries data
+          }
+        }
+      }
+    });
+
+    elem.appendChild(chart.element);
+
+    // setTimeout(function () {
+    //   window.document.body.appendChild(chart.element);
+    // }, 1000);
+  }
+
   this.d3Chart = function(elem){
     // console.log(d3.select(elem));
 
