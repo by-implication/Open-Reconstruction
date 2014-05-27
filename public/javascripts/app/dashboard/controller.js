@@ -129,6 +129,7 @@ dashboard.controller = function(){
 
     elem.appendChild(chart.element);
   }
+
     
   this.chartDisasterHistory = function(elem){
 
@@ -144,6 +145,14 @@ dashboard.controller = function(){
         groups: [
           ["Disaster 1", "Disaster 2"]
         ]
+      },
+      grid: {
+        x: {
+          show: true
+        },
+        y: {
+          show: true
+        }
       },
       color: {
         pattern: ['#555', '#ff851b']
