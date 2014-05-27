@@ -91,26 +91,19 @@ dashboard.view = function(ctrl){
           ]),
         ]),
       ]),
-      // m("section.alt", [
-      //   m(".row", [
-      //     m(".columns.medium-12", [
-      //       m("h1", [m("small", "Project Proposals per Month")]),
-      //       m("canvas#chart-history", {config: ctrl.chartHistory, height: 170}),
-      //     ]),
-      // ]),
       m("section", [
         m(".row", [
           m(".columns.medium-12", [
             m("h1", [m("small", "Projects by Disaster Type")])
           ]),
-          m(".columns.medium-8", [
+          m(".columns.medium-12", [
             m("h4", "Projects by disaster types per month"),
-            m("canvas#chart-disaster-history", {config: ctrl.chartDisasterHistory, height: 300}),
+            m("#chart-disaster-history", {config: ctrl.chartDisasterHistory, height: 300}),
           ]),
-          m(".columns.medium-4", [
-            m("h4", "Disaster types breakdown"),
-            m("canvas#chart-disaster-pie", {config: ctrl.chartDisasterPie, height: 300}),
-          ]),
+          // m(".columns.medium-4", [
+          //   m("h4", "Disaster types breakdown"),
+          //   m("canvas#chart-disaster-pie", {config: ctrl.chartDisasterPie, height: 300}),
+          // ]),
         ]),
         m(".row", [
           m(".columns.medium-12.list", [

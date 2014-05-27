@@ -149,193 +149,117 @@ dashboard.controller = function(){
     // }, 1000);
   }
 
-  this.d3Chart = function(elem){
-    // console.log(d3.select(elem));
+  // this.chartHistory = function(elem){
 
-    var labels = self.byMonth().map(function (e){
-      var yearMonth = e.yearMonth.split("-");
-      var year = yearMonth[0];
-      var month = parseInt(yearMonth[1]) - 1;
-      return helper.monthArray[month] + ", " + year;
-    });
-    var amountPerMonth = self.byMonth().map(function (e){ return e.amount / 1; });
-    var countPerMonth = self.byMonth().map(function (e){ return e.count; });
+  //   // elem.width = elem.parentNode.offsetWidth;
+  //   // console.log(self.byMonth());
+  //   elem.width = 1260;
+  //   function entryToInt(entry) {
+  //     var date = new Date(entry.date);
+  //     return date.getFullYear() * 12 + date.getMonth();
+  //   }
 
-    // console.log(countPerMonth);
-    var margin = {top: 20, right: 30, bottom: 30, left: 40},
-      width = 1260 - margin.left - margin.right,
-      height = 200 - margin.top - margin.bottom;
-    var barHeight = 20;
+  //   var labels = self.byMonth().map(function (e){
+  //     var yearMonth = e.yearMonth.split("-");
+  //     var year = yearMonth[0];
+  //     var month = parseInt(yearMonth[1]) - 1;
+  //     return helper.monthArray[month] + ", " + year;
+  //   });
+  //   var amountPerMonth = self.byMonth().map(function (e){ return e.amount / 100000000; });
+  //   var countPerMonth = self.byMonth().map(function (e){ return e.count; });
 
-    var data = countPerMonth;
+  //   var data = {
+  //     labels: labels,
+  //     datasets: [
+  //       {
+  //         fillColor : "rgba(0,0,0,0.3)",
+  //         strokeColor : "rgba(0,0,0,0.3)",
+  //         pointColor : "rgba(0,0,0,1)",
+  //         pointStrokeColor : "white",
+  //         data: countPerMonth
+  //       },
+  //       {
+  //         fillColor : "#FF851B",
+  //         strokeColor : "#FF851B",
+  //         pointColor : "#FF851B",
+  //         pointStrokeColor : "white",
+  //         data: amountPerMonth
+  //       }
+  //     ]
+  //   }
 
-    var yCount = d3.scale.linear()
-      .domain([0, d3.max(countPerMonth)])
-      .range([height, 0]);
+  //   var ctx = elem.getContext("2d");
+  //   var myNewChart = new Chart(ctx).Bar(data, {
+  //     barShowStroke: false
+  //   });
 
-    var yAmount = d3.scale.linear()
-      .domain([0, d3.max(amountPerMonth)])
-      .range([height, 0]);
-
-    console.log(yAmount.range());
-
-    var x = d3.scale.ordinal()
-      .domain(labels)
-      .rangePoints([0, width], 1);
-
-    var xAxis = d3.svg.axis()
-      .scale(x)
-      .orient("bottom");
-    var yAxisCount = d3.svg.axis()
-      .scale(yCount)
-      .orient("left");
-    var yAxisAmount = d3.svg.axis()
-      .scale(yAmount)
-      .orient("right");
-
-    var barWidth = width / countPerMonth.length;
-
-    // chart
-    var chart = d3.select(elem)
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    // axes
-    chart.append("g")
-      .attr("class", "x-axis")
-      .attr("transform", "translate(-0.5," + (height + 0.5) + ")")
-      .call(xAxis);
-    chart.append("g")
-      .attr("class", "y-axis")
-      .attr("transform", "translate(-0.5, 0.5)")
-      .call(yAxisCount);
-    chart.append("g")
-      .attr("class", "y-axis")
-      .attr("transform", "translate(" + (width - 0.5) + ", 0.5)")
-      .call(yAxisAmount);
-
-    // datapoints
-    // bar
-    var bar = chart.append("g")
-      .selectAll("g")
-        .data(countPerMonth)
-        .enter()
-          .append("g")
-            .attr("transform", function(d, i){
-              return "translate(" + i * barWidth + ",0)";
-            });
-    
-    bar.append("rect")
-      .attr("y", function(d) { 
-        return yCount(d); 
-      })
-      .attr("height", function(d) { return height - yCount(d); })
-      .attr("width", barWidth - 1);
-
-    // line
-    var line = d3.svg.line()
-      .x(function(d, i){
-        return x.range()[i];
-      })
-      .y(function(d, i){
-        return yAmount(d);
-      });
-
-    chart.append("svg:path").attr("d", line(amountPerMonth));
-    chart.append("g").selectAll("circle")
-      .data(amountPerMonth)
-      .enter()
-        .append("circle")
-          .attr("cx", function(d, i){
-            return x.range()[i];
-          })
-          .attr("cy", function(d, i){
-            console.log(yAmount(d));
-            return yAmount(d);
-          })
-          .attr("r", 4);
-  }
-
-  this.chartHistory = function(elem){
-
-    // elem.width = elem.parentNode.offsetWidth;
-    // console.log(self.byMonth());
-    elem.width = 1260;
-    function entryToInt(entry) {
-      var date = new Date(entry.date);
-      return date.getFullYear() * 12 + date.getMonth();
-    }
-
-    var labels = self.byMonth().map(function (e){
-      var yearMonth = e.yearMonth.split("-");
-      var year = yearMonth[0];
-      var month = parseInt(yearMonth[1]) - 1;
-      return helper.monthArray[month] + ", " + year;
-    });
-    var amountPerMonth = self.byMonth().map(function (e){ return e.amount / 100000000; });
-    var countPerMonth = self.byMonth().map(function (e){ return e.count; });
-
-    var data = {
-      labels: labels,
-      datasets: [
-        {
-          fillColor : "rgba(0,0,0,0.3)",
-          strokeColor : "rgba(0,0,0,0.3)",
-          pointColor : "rgba(0,0,0,1)",
-          pointStrokeColor : "white",
-          data: countPerMonth
-        },
-        {
-          fillColor : "#FF851B",
-          strokeColor : "#FF851B",
-          pointColor : "#FF851B",
-          pointStrokeColor : "white",
-          data: amountPerMonth
-        }
-      ]
-    }
-
-    var ctx = elem.getContext("2d");
-    var myNewChart = new Chart(ctx).Bar(data, {
-      barShowStroke: false
-    });
-
-  }
+  // }
 
     
   this.chartDisasterHistory = function(elem){
 
-    elem.width = Math.floor(document.body.offsetWidth * .66 - 10);
+    var chart = c3.generate({
+      data: {
+        columns: [
+          ["Disaster 1", 65,59,90,81,56,55,40],
+          ["Disaster 2", 28,48,40,19,96,27,100]
+        ],
+        type: 'area',
+        groups: [
+          ["Disaster 1", "Disaster 2"]
+        ]
+      },
+      // line: {
+      //   min: 0,
+      //   max: 100
+      // }
+  //     gauge: {
+  //     //      color: '', // default value is a grey. "color: '', " is no background.
+  //       label: {
+  //         format: function(value, ratio) {
+  //           return value; 
+  //         },
+  // //        show: false // to turn off the min/max labels.
+  //       },
+  //       min: 0,//can handle negative min e.g. vacuum / voltage / current flow / rate of change
+  //       max: 100,
+  //       style: 'arc', // Only style currently.
+  //       units: ' %',
+  //   //      width: 39 // for adjusting arc thickness
+  //     },
+    });
+    elem.appendChild(chart.element);
+
+    // elem.width = Math.floor(document.body.offsetWidth * .66 - 10);
 
     // this is shit, ok
     // need to set width dynamically
 
-    var data = {
-      labels : ["January","February","March","April","May","June","July"],
-      datasets : [
-        {
-          fillColor : "rgba(220,220,220,0.5)",
-          strokeColor : "rgba(220,220,220,1)",
-          pointColor : "rgba(220,220,220,1)",
-          pointStrokeColor : "#fff",
-          data : [65,59,90,81,56,55,40]
-        },
-        {
-          fillColor : "rgba(151,187,205,0.5)",
-          strokeColor : "rgba(151,187,205,1)",
-          pointColor : "rgba(151,187,205,1)",
-          pointStrokeColor : "#fff",
-          data : [28,48,40,19,96,27,100]
-        }
-      ]
-    }
+    // var data = {
+    //   labels : ["January","February","March","April","May","June","July"],
+    //   datasets : [
+    //     {
+    //       fillColor : "rgba(220,220,220,0.5)",
+    //       strokeColor : "rgba(220,220,220,1)",
+    //       pointColor : "rgba(220,220,220,1)",
+    //       pointStrokeColor : "#fff",
+    //       data : [65,59,90,81,56,55,40]
+    //     },
+    //     {
+    //       fillColor : "rgba(151,187,205,0.5)",
+    //       strokeColor : "rgba(151,187,205,1)",
+    //       pointColor : "rgba(151,187,205,1)",
+    //       pointStrokeColor : "#fff",
+    //       data : [28,48,40,19,96,27,100]
+    //     }
+    //   ]
+    // }
 
-    var ctx = elem.getContext("2d");
-    var myNewChart = new Chart(ctx).Bar(data, {
-      bezierCurve: false
-    });
+    // var ctx = elem.getContext("2d");
+    // var myNewChart = new Chart(ctx).Bar(data, {
+    //   bezierCurve: false
+    // });
+    
   }
 
   this.chartDisasterPie = function(elem){
