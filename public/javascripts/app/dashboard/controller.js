@@ -209,6 +209,9 @@ dashboard.controller = function(){
           ["Disaster 1", "Disaster 2"]
         ]
       },
+      color: {
+        pattern: ['#555', '#ff851b']
+      },
       // line: {
       //   min: 0,
       //   max: 100
