@@ -74,20 +74,6 @@ dashboard.controller = function(){
     var amountPerMonth = self.byMonth().map(function (e){ return e.amount / 1; });
     var countPerMonth = self.byMonth().map(function (e){ return e.count; });
 
-    d3.locale({
-      "decimal": ".",
-      "thousands": ",",
-      "grouping": [3],
-      "currency": ["PHP", ""],
-      "dateTime": "%a %b %e %X %Y",
-      "date": "%m/%d/%Y",
-      "time": "%H:%M:%S",
-      "periods": ["AM", "PM"],
-      "days": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-      "shortDays": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-      "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-      "shortMonths": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    })
     var chart = c3.generate({
       data: {
         x: "x",
@@ -127,7 +113,6 @@ dashboard.controller = function(){
               var monthDict = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
               return monthDict[x.getMonth() + 1] + ", " + x.getFullYear(); 
             }
-            //format: '%Y' // format string is also available for timeseries data
           }
         },
         y2 : {
@@ -143,10 +128,6 @@ dashboard.controller = function(){
     });
 
     elem.appendChild(chart.element);
-
-    // setTimeout(function () {
-    //   window.document.body.appendChild(chart.element);
-    // }, 1000);
   }
 
   // this.chartHistory = function(elem){
@@ -200,7 +181,9 @@ dashboard.controller = function(){
 
     var chart = c3.generate({
       data: {
+        x: "x",
         columns: [
+          ["x", "January 2013","February 2013","March 2013","April 2013","May 2013","June 2013","July 2013"],
           ["Disaster 1", 65,59,90,81,56,55,40],
           ["Disaster 2", 28,48,40,19,96,27,100]
         ],
@@ -212,56 +195,19 @@ dashboard.controller = function(){
       color: {
         pattern: ['#555', '#ff851b']
       },
-      // line: {
-      //   min: 0,
-      //   max: 100
-      // }
-  //     gauge: {
-  //     //      color: '', // default value is a grey. "color: '', " is no background.
-  //       label: {
-  //         format: function(value, ratio) {
-  //           return value; 
-  //         },
-  // //        show: false // to turn off the min/max labels.
-  //       },
-  //       min: 0,//can handle negative min e.g. vacuum / voltage / current flow / rate of change
-  //       max: 100,
-  //       style: 'arc', // Only style currently.
-  //       units: ' %',
-  //   //      width: 39 // for adjusting arc thickness
-  //     },
+      axis: {
+        x : {
+          type : 'timeseries',
+          tick: {
+            format: function (x) { 
+              var monthDict = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+              return monthDict[x.getMonth() + 1] + ", " + x.getFullYear(); 
+            }
+          }
+        },
+      }
     });
     elem.appendChild(chart.element);
-
-    // elem.width = Math.floor(document.body.offsetWidth * .66 - 10);
-
-    // this is shit, ok
-    // need to set width dynamically
-
-    // var data = {
-    //   labels : ["January","February","March","April","May","June","July"],
-    //   datasets : [
-    //     {
-    //       fillColor : "rgba(220,220,220,0.5)",
-    //       strokeColor : "rgba(220,220,220,1)",
-    //       pointColor : "rgba(220,220,220,1)",
-    //       pointStrokeColor : "#fff",
-    //       data : [65,59,90,81,56,55,40]
-    //     },
-    //     {
-    //       fillColor : "rgba(151,187,205,0.5)",
-    //       strokeColor : "rgba(151,187,205,1)",
-    //       pointColor : "rgba(151,187,205,1)",
-    //       pointStrokeColor : "#fff",
-    //       data : [28,48,40,19,96,27,100]
-    //     }
-    //   ]
-    // }
-
-    // var ctx = elem.getContext("2d");
-    // var myNewChart = new Chart(ctx).Bar(data, {
-    //   bezierCurve: false
-    // });
     
   }
 
