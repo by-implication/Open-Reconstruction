@@ -97,12 +97,11 @@ dashboard.view = function(ctrl){
             m("h1", [m("small", "Projects by Disaster Type")])
           ]),
           m(".columns.medium-12", [
-            m("#chart-disaster-history", {config: ctrl.chartDisasterHistory, height: 300}),
+            m("#chart-disaster-history", {config: ctrl.chartDisasterHistory}, []),
           ]),
         ]),
         m(".row", [
           m(".columns.medium-12.list", [
-            m("p", "Legends and filters go here."),
             m("p", "Ideally, we should have date range, filter by project type, and by location (region/province).")
           ])
         ])
@@ -111,10 +110,11 @@ dashboard.view = function(ctrl){
         m(".row", [
           m(".columns.medium-12", [
             m("h1", [m("small", "Types of Projects")]),
-            m("p", "Bar chart of project types (Bridge, River Control, etc.)"),
-            m("p", "There are 15, so horizontal is probably best."),
             m("p", "Filters for [disaster type] and/or [disaster name] ")
-          ])
+          ]),
+          m(".columns.medium-12", [
+            m("#chart-project-types", {config: ctrl.chartProjectTypes}, [])
+          ]),
         ])
       ]),
       m("section", [

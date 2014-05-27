@@ -172,5 +172,29 @@ dashboard.controller = function(){
     elem.appendChild(chart.element);
     
   }
+  this.chartProjectTypes = function(elem){
+    var chart = c3.generate({
+      data: {
+        columns: [
+          ["Number of Projects", 3, 15, 82, 1, 42, 23]
+        ],
+        type: "bar",
+      },
+      legend: {
+        show: false
+      },
+      color: {
+        pattern: ['#ff851b']
+      },
+      axis: {
+        x: {
+          type: "categorized",
+          categories: ["Rivers", "Infrastructure", "Housing", "Roads", "Phi", "Mark"]
+        },
+        rotated: true
+      }
+    })
+    elem.appendChild(chart.element);
+  }
 
 }
