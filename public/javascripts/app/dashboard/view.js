@@ -85,9 +85,6 @@ dashboard.view = function(ctrl){
                 m("span", "Amount")
               ])
             ]),
-            // m(".columns.small-6.legend", [
-              
-            // ])
           ]),
         ]),
       ]),
