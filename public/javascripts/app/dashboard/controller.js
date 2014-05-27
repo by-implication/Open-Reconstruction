@@ -71,7 +71,7 @@ dashboard.controller = function(){
       var month = parseInt(yearMonth[1]) - 1;
       return helper.monthArray[month] + ", " + year;
     });
-    var amountPerMonth = self.byMonth().map(function (e){ return e.amount / 100000000; });
+    var amountPerMonth = self.byMonth().map(function (e){ return e.amount / 1; });
     var countPerMonth = self.byMonth().map(function (e){ return e.count; });
 
     // console.log(countPerMonth);
@@ -89,6 +89,8 @@ dashboard.controller = function(){
     var yAmount = d3.scale.linear()
       .domain([0, d3.max(amountPerMonth)])
       .range([height, 0]);
+
+    console.log(yAmount.range());
 
     var x = d3.scale.ordinal()
       .domain(labels)
@@ -128,6 +130,7 @@ dashboard.controller = function(){
       .call(yAxisAmount);
 
     // datapoints
+    // bar
     var bar = chart.append("g")
       .selectAll("g")
         .data(countPerMonth)
@@ -144,6 +147,7 @@ dashboard.controller = function(){
       .attr("height", function(d) { return height - yCount(d); })
       .attr("width", barWidth - 1);
 
+    // line
     var line = d3.svg.line()
       .x(function(d, i){
         return x.range()[i];
@@ -161,6 +165,7 @@ dashboard.controller = function(){
             return x.range()[i];
           })
           .attr("cy", function(d, i){
+            console.log(yAmount(d));
             return yAmount(d);
           })
           .attr("r", 4);
