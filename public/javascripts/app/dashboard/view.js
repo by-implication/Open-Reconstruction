@@ -74,7 +74,7 @@ dashboard.view = function(ctrl){
             m("h1", [
               m("small", "Project Proposals per Month")
             ]),
-            m("#c3-chart", {config: ctrl.projectHistory}, []),
+            m("#chart-project-history", {config: ctrl.projectHistory}, []),
           ]),
         ]),
       ]),
