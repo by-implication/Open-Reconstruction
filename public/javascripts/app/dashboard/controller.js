@@ -133,19 +133,7 @@ dashboard.controller = function(){
   }
 
     
-  this.chartDisasterHistory = function(elem){
-
-    // console.log(padMonths(self.byDisasterType()));
-
-    // var range = _.chain(2013)
-    //   .range(2015)
-    //   .map(function(y){
-    //     return _.range(1, 13).map(function(m){
-    //       return new Date(y + ", " + m);
-    //     })
-    //   })
-    //   .flatten()
-    //   .value();
+  this.chartDisasterHistory = function(elem){=
 
     var data = _.chain(self.byDisasterType())
       .groupBy(function(p){
@@ -162,29 +150,6 @@ dashboard.controller = function(){
     var range = padMonths(self.byDisasterType()).map(function(d){
       return d.yearMonth;
     })
-
-    // console.log(data2);
-
-    // var data = _.chain(self.byDisasterType())
-    //   .groupBy(function(p){
-    //     return p.disasterTypeId;
-    //   })
-    //   .map(function(subData, key){
-    //     // return [key].concat(value);
-    //     var filledData = range.map(function(t){
-    //       var match = _.find(subData, function(d){
-    //         var dDate = new Date(d.yearMonth)
-    //         return dDate.getMonth() === t.getMonth() && dDate.getFullYear() === t.getFullYear();
-    //       });
-    //       if (_.isUndefined(match)) {
-    //         return 0;
-    //       } else {
-    //         return match.count;
-    //       }
-    //     });
-    //     return [key].concat(filledData);
-    //   })
-    //   .value();
 
     var chart = c3.generate({
       data: {
@@ -219,8 +184,8 @@ dashboard.controller = function(){
       }
     });
     elem.appendChild(chart.element);
-    
   }
+  
   this.chartProjectTypes = function(elem){
     var chart = c3.generate({
       data: {
