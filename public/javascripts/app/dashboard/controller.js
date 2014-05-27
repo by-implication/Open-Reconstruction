@@ -4,6 +4,7 @@ dashboard.controller = function(){
 
   this.mostCommonDisasterType = m.prop(0);
   this.mostCommonProjectType = m.prop(0);
+  this.byDisasterType = m.prop([]);
   this.byMonth = m.prop([]);
   this.byLevel = m.prop([]);
 
@@ -40,8 +41,9 @@ dashboard.controller = function(){
     self.mostCommonProjectType(r.mostCommonProjectType);
     self.byLevel(r.byLevel);
     self.byMonth(padMonths(r.byMonth));
-    console.log('Disaster Types by Month:');
-    console.log(r.byDisasterType);
+    self.byDisasterType(r.byDisasterType);
+    // console.log('Disaster Types by Month:');
+    // console.log(r.byDisasterType);
   });
 
   bi.ajax(routes.controllers.Assets.at("data/yolanda.json")).then(function (r){
@@ -133,17 +135,44 @@ dashboard.controller = function(){
     
   this.chartDisasterHistory = function(elem){
 
+    var range = _.chain(2013)
+      .range(2015)
+      .map(function(y){
+        return _.range(1, 13).map(function(m){
+          return new Date(y + ", " + m);
+        })
+      })
+      .flatten()
+      .value();
+
+    var data = _.chain(self.byDisasterType())
+      .groupBy(function(p){
+        return p.disasterTypeId;
+      })
+      .map(function(subData, key){
+        // return [key].concat(value);
+        var filledData = range.map(function(t){
+          var match = _.find(subData, function(d){
+            var dDate = new Date(d.yearMonth)
+            return dDate.getMonth() === t.getMonth() && dDate.getFullYear() === t.getFullYear();
+          });
+          if (_.isUndefined(match)) {
+            return 0;
+          } else {
+            return match.count;
+          }
+        });
+        return [key].concat(filledData);
+      })
+      .value();
+
     var chart = c3.generate({
       data: {
         x: "x",
-        columns: [
-          ["x", "January 2013","February 2013","March 2013","April 2013","May 2013","June 2013","July 2013"],
-          ["Disaster 1", 65,59,90,81,56,55,40],
-          ["Disaster 2", 28,48,40,19,96,27,100]
-        ],
+        columns: [["x"].concat(range)].concat(data),
         type: 'area',
         groups: [
-          ["Disaster 1", "Disaster 2"]
+          ["Disaster 1"]
         ]
       },
       grid: {
