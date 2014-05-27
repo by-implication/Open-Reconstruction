@@ -72,32 +72,32 @@ dashboard.view = function(ctrl){
         m(".row", [
           m(".columns.medium-12", [
             m("h1", [
-              m("small", "Lalalala")
+              m("small", "Project Proposals per Month")
             ]),
             m("#c3-chart", {config: ctrl.c3Chart}, []),
+            m(".legend", [
+              m("span", [
+                m("div.swatch.black"),
+                m("span", "Number of proposals submitted")
+              ]),
+              m("span", [
+                m("div.swatch.orange"),
+                m("span", "Amount")
+              ])
+            ]),
+            // m(".columns.small-6.legend", [
+              
+            // ])
           ]),
         ]),
       ]),
-      m("section.alt", [
-        m(".row", [
-          m(".columns.medium-12", [
-            m("h1", [m("small", "Project Proposals per Month")]),
-            m("canvas#chart-history", {config: ctrl.chartHistory, height: 170}),
-          ]),
-          m(".columns.small-6.legend", [
-            m("p", [
-              m("div.swatch.black"),
-              m("span", "Number of proposals submitted")
-            ])
-          ]),
-          m(".columns.small-6.legend", [
-            m("p", [
-              m("div.swatch.orange"),
-              m("span", "Amount (In 100 millions)")
-            ])
-          ])
-        ])
-      ]),
+      // m("section.alt", [
+      //   m(".row", [
+      //     m(".columns.medium-12", [
+      //       m("h1", [m("small", "Project Proposals per Month")]),
+      //       m("canvas#chart-history", {config: ctrl.chartHistory, height: 170}),
+      //     ]),
+      // ]),
       m("section", [
         m(".row", [
           m(".columns.medium-12", [

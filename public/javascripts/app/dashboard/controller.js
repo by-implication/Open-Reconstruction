@@ -115,6 +115,10 @@ dashboard.controller = function(){
           show: true
         }
       },
+      legend: {
+        show: false
+        // position: 'right'
+      },
       axis : {
         x : {
           type : 'timeseries',
