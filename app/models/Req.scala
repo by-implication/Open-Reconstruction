@@ -99,6 +99,21 @@ object Req extends ReqGen {
     )
   }
 
+  def visualizationData(v: String): JsObject = {
+    Json.obj(
+      "data" -> {
+        v match {
+          case "mostCommonDisasterType" => mostCommonDisasterType
+          case "mostCommonProjectType" => mostCommonProjectType
+          case "byLevel" => (0 to 5).map(byLevel)
+          case "byMonth" => Json.toJson(byMonth)
+          case "byDisasterType" => byDisasterType
+          case _ => JsNull
+        }
+      } 
+    )
+  }
+
   private def getSqlParams(tab: String, projectTypeId: Option[Int])(implicit user: User) = {
 
     var table = "reqs"

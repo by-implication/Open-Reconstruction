@@ -8,6 +8,7 @@ GET     /                                         controllers.Application.index
 GET     /welcome                                  controllers.Application.welcome
 GET     /dashboard                                controllers.Application.dashboard
 GET     /dashboard/meta                           controllers.Application.dashboardMeta
+GET     /visualizations/:v/meta                   controllers.Requests.visualizationMeta(v: String)
 GET     /saro                                     controllers.Application.saro
 GET     /process                                  controllers.Application.process
 GET     /assets/javascripts/routes/play.js        controllers.Application.jsRoutes
