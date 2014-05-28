@@ -28,11 +28,6 @@ case class Project(
   lazy val req = Req.findById(reqId).get
 
   lazy val disasterName = req.disasterName
-
-  // lazy val saro = saroId match {
-  //   case Some(id) => Saro.findById(id)
-  //   case None => None
-  // }
 }
 // GENERATED object start
 trait ProjectGen extends EntityCompanion[Project] {
