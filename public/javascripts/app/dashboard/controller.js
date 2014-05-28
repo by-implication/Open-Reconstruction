@@ -8,14 +8,14 @@ dashboard.controller = function(){
   this.byMonth = m.prop([]);
   this.byLevel = m.prop([]);
 
-  // m.startComputation();
+  m.startComputation();
   bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
     self.mostCommonDisasterType(r.mostCommonDisasterType);
     self.mostCommonProjectType(r.mostCommonProjectType);
     self.byLevel(r.byLevel);
     self.byMonth(padMonths(r.byMonth));
     self.byDisasterType(r.byDisasterType);
-    // m.endComputation();
+    m.endComputation();
   });
 
   function nextYearMonth(yearMonth){
@@ -163,6 +163,46 @@ dashboard.controller = function(){
   this.projectTypes = new visPanel.controller();
   this.projectTypes.title("Project Type Distribution");
   this.projectTypes.chartSettings = function(){
+    return {
+      data: {
+        columns: [
+          ["Number of Projects", 3, 15, 82, 1, 42, 23]
+        ],
+        type: "bar",
+      },
+      axis: {
+        x: {
+          type: "categorized",
+          categories: ["Rivers", "Infrastructure", "Housing", "Roads", "Phi", "Mark"]
+        },
+        rotated: true
+      }
+    }
+  }
+
+  this.topDisasters = new visPanel.controller();
+  this.topDisasters.title("Number of Projects per Unique Named Disaster");
+  this.topDisasters.chartSettings = function(){
+    return {
+      data: {
+        columns: [
+          ["Number of Projects", 3, 15, 82, 1, 42, 23]
+        ],
+        type: "bar",
+      },
+      axis: {
+        x: {
+          type: "categorized",
+          categories: ["Rivers", "Infrastructure", "Housing", "Roads", "Phi", "Mark"]
+        },
+        rotated: true
+      }
+    }
+  }
+
+  this.topDisastersAmount = new visPanel.controller();
+  this.topDisastersAmount.title("Project Amounts per Unique Named Disaster");
+  this.topDisastersAmount.chartSettings = function(){
     return {
       data: {
         columns: [

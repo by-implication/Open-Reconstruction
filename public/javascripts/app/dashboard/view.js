@@ -70,7 +70,7 @@ dashboard.view = function(ctrl){
       // ]),
       m("section.alt", [
         m(".row", [
-          m(".columns.medium-8", [
+          m(".columns.medium-9", [
             m("ul.medium-block-grid-2", [
               m("li", [
                 visPanel.view(ctrl.projectHistory)
@@ -81,78 +81,33 @@ dashboard.view = function(ctrl){
               m("li", [
                 visPanel.view(ctrl.projectTypes)
               ]),
-              // m("li", [
-              //   m(".vis-panel", [
-              //     m(".section", [
-              //       m("h5", "Project Proposals per Month"),
-              //     ]),
-              //     m("hr"),
-              //     m(".section", [
-              //       m("#chart-project-history", {config: ctrl.projectHistory}, []),
-              //     ]),
-              //   ]),
-              // ]),
-              // m("li", [
-              //   m(".vis-panel", [
-              //     m(".section", [
-              //       m("h5", "Projects by Disaster Type"),
-              //     ]),
-              //     m("hr"),
-              //     m(".section", [
-              //       m("#chart-disaster-history", {config: ctrl.chartDisasterHistory}, []),
-              //     ]),
-              //   ]),
-              // ]),
-              // m("li", [
-              //   m(".vis-panel", [
-              //     m(".section", [
-              //       m("h5", "Types of Projects"),
-              //     ]),
-              //     m("hr"),
-              //     m(".section", [
-              //       m("#chart-project-types", {config: ctrl.chartProjectTypes}, [])
-              //     ]),
-              //   ]),
-              // ]),
+              m("li", [
+                visPanel.view(ctrl.topDisasters)
+              ]),
+              m("li", [
+                visPanel.view(ctrl.topDisastersAmount)
+              ]),
             ]),
           ]),
-          m(".colums.medium-4", [
-            "filters!"
+          m(".columns.medium-3", [
+            m("h4", [
+              "Filter by Visualization Type"
+            ]),
+            m("ul.filters", 
+              _.chain([{name: "hi", id: 2}])
+              .map(function (filter){
+                return m("li.filter",{className: (ctrl.projectTypeId == filter.id) ? "active" : ""}, [
+                  m("a", {
+                    href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page, filter.id).url,
+                    config: m.route
+                  }, filter.name)
+                ])
+              })
+              .value()
+            )
           ]),
         ]),
       ]),
-      // m("section", [
-      //   m(".row", [
-      //     m(".columns.medium-12.list", [
-      //       m("p", "Ideally, we should have date range, filter by project type, and by location (region/province).")
-      //     ])
-      //   ])
-      // ]),
-      // m("section.alt", [
-      //   m(".row", [
-      //     m(".columns.medium-12", [
-            
-      //       m("p", "Filters for [disaster type] and/or [disaster name] ")
-      //     ]),
-      //     m(".columns.medium-12", [
-            
-      //     ]),
-      //   ])
-      // ]),
-      m("section", [
-        m(".row", [
-          m(".columns.medium-6",[
-            m("h1", [m("small", "Projects per Disaster")]),
-            m("p", "Horizontal bar chart of number of projects per unique named disaster. Sorted"),
-            m("p", "Think of this as a 'top 10' disasters thing. (e.g. #1 Yolanda, #2 Ondoy.)"),
-            m("p")
-          ]),
-          m(".columns.medium-6",[
-            m("h1", [m("small", "Amount per Disaster")]),
-            m("p", "Same, but for amount spent/allocated/disbursed. Sorted")
-          ])
-        ])
-      ])
     ])
   ])
 }
