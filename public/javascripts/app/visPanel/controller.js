@@ -1,8 +1,8 @@
 visPanel.controller = function(){
   var self = this;
   this.size = m.prop({
-    height: 240,
-    width: 320
+    height: 200,
+    // width: 320
   });
   this.color = m.prop({
     pattern: ['#555', '#ff851b']
