@@ -72,42 +72,48 @@ dashboard.view = function(ctrl){
         m(".row", [
           m(".columns.medium-8", [
             m("ul.medium-block-grid-2", [
+              m("li", [
+                visPanel.view(ctrl.projectHistory)
+              ]),
+              m("li", [
+                visPanel.view(ctrl.disasterHistory)
+              ]),
+              m("li", [
+                visPanel.view(ctrl.projectTypes)
+              ]),
               // m("li", [
-              //   visPanel.view(ctrl.projectHistory2)
+              //   m(".vis-panel", [
+              //     m(".section", [
+              //       m("h5", "Project Proposals per Month"),
+              //     ]),
+              //     m("hr"),
+              //     m(".section", [
+              //       m("#chart-project-history", {config: ctrl.projectHistory}, []),
+              //     ]),
+              //   ]),
               // ]),
-              m("li", [
-                m(".vis-panel", [
-                  m(".section", [
-                    m("h5", "Project Proposals per Month"),
-                  ]),
-                  m("hr"),
-                  m(".section", [
-                    m("#chart-project-history", {config: ctrl.projectHistory}, []),
-                  ]),
-                ]),
-              ]),
-              m("li", [
-                m(".vis-panel", [
-                  m(".section", [
-                    m("h5", "Projects by Disaster Type"),
-                  ]),
-                  m("hr"),
-                  m(".section", [
-                    m("#chart-disaster-history", {config: ctrl.chartDisasterHistory}, []),
-                  ]),
-                ]),
-              ]),
-              m("li", [
-                m(".vis-panel", [
-                  m(".section", [
-                    m("h5", "Types of Projects"),
-                  ]),
-                  m("hr"),
-                  m(".section", [
-                    m("#chart-project-types", {config: ctrl.chartProjectTypes}, [])
-                  ]),
-                ]),
-              ]),
+              // m("li", [
+              //   m(".vis-panel", [
+              //     m(".section", [
+              //       m("h5", "Projects by Disaster Type"),
+              //     ]),
+              //     m("hr"),
+              //     m(".section", [
+              //       m("#chart-disaster-history", {config: ctrl.chartDisasterHistory}, []),
+              //     ]),
+              //   ]),
+              // ]),
+              // m("li", [
+              //   m(".vis-panel", [
+              //     m(".section", [
+              //       m("h5", "Types of Projects"),
+              //     ]),
+              //     m("hr"),
+              //     m(".section", [
+              //       m("#chart-project-types", {config: ctrl.chartProjectTypes}, [])
+              //     ]),
+              //   ]),
+              // ]),
             ]),
           ]),
           m(".colums.medium-4", [

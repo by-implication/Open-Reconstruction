@@ -23,9 +23,10 @@ visPanel.controller = function(){
   }
   this.title = m.prop("Chart Title");
   this.config = function(elem){
+    var chartSettings = self.chartSettings();
     var chart = c3.generate({
-      data: self.chartSettings().data,
-      axis: self.chartSEttings().axis,
+      data: chartSettings.data,
+      axis: chartSettings.axis,
       color: self.color(),
       grid: self.grid(),
       size: self.size()
