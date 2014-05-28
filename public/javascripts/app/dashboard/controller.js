@@ -1,162 +1,210 @@
 dashboard.controller = function(){
   var self = this;
   this.app = new app.controller();
-  this.requests = m.prop([]);
-  
-  bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
-    self.requests(r);
-  });
 
-  this.pendingProjects = function(){
-    return this.totalProjects() - this.approvedProjects().length;
-  }
-
-  this.approvedProjects = function(){
-    return this.requests().filter(function (r){
-      return r.level >= process.levelDict.indexOf("OP_SIGNOFF");
-    });
-  }
-
-  this.totalProjects = function(){
-    return this.requests().length
-  }
+  this.mostCommonDisasterType = m.prop(0);
+  this.mostCommonProjectType = m.prop(0);
+  this.byDisasterType = m.prop([]);
+  this.byMonth = m.prop([]);
+  this.byLevel = m.prop([]);
 
   this.percentApproved = function(){
-    return this.approvedProjects().length / this.totalProjects();
-  }
+    return self.byLevel()[4].count / self.byLevel()[0].count;
+  };
 
-  this.amountApproved = function(){
-    return this.approvedProjects()
-      .map(function (r){ return r.amount; })
-      .reduce(function (a, b){ return a + b; }, 0);
-  }
-
-  this.totalProjectCost = function(){
-    return helper.truncate(
-      _.chain(this.requests())
-      .map(function(project){
-        return project.amount;
-      })
-      .compact()
-      .reduce(function(a, b){
-        return a + b;
-      }, 0)
-      .value()
-    );
-  }
-
-  this.mostCommonProjectType = function(){
-    return _.chain(this.requests())
-    .countBy(function(r){
-      return r.projectType;
-    })
-    .pairs()
-    .reject(function(p){
-      return p[0] == "OTHERS";
-    })
-    .max(function(r){
-      return r[1];
-    })
-    .value();
-  }
-
-  this.mostCommonDisasterType = function(){
-    return _.chain(this.requests())
-    .countBy(function(r){
-      return r.disasterType;
-    })
-    .pairs()
-    .reject(function(p){
-      return p[0] == "OTHERS";
-    })
-    .max(function(r){
-      return r[1];
-    })
-    .value();
-  }
-
-  this.chartInit = function(elem){
-    // elem.width = document.body.offsetWidth;
-    elem.width = 1280;
-    function entryToInt(entry) {
-      var date = new Date(entry.date);
-      return date.getFullYear() * 12 + date.getMonth();
+  function nextYearMonth(yearMonth){
+    var ym = yearMonth.split("-");
+    var y = parseInt(ym[0]);
+    var m = parseInt(ym[1]);
+    m++;
+    if(m > 12){
+      m = 1;
+      y++;
     }
+    return y + "-" + (m < 10 ? "0" + m : m);
+  }
 
-    function formatDate(val) {
-      var year = Math.floor(val / 12);
-      var month = val % 12;
+  function padMonths(a){
+    var r = [];
+    for(var ym = a[0].yearMonth; a.length; ym = nextYearMonth(ym)){
+      var nextElem = {yearMonth: ym, amount: 0, count: 0};
+      if(a[0].yearMonth == ym){
+        nextElem = a.shift();
+      }
+      r.push(nextElem);
+    }
+    return r;
+  }
+  
+  bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
+    self.mostCommonDisasterType(r.mostCommonDisasterType);
+    self.mostCommonProjectType(r.mostCommonProjectType);
+    self.byLevel(r.byLevel);
+    self.byMonth(padMonths(r.byMonth));
+    self.byDisasterType(r.byDisasterType);
+    // console.log('Disaster Types by Month:');
+    // console.log(r.byDisasterType);
+  });
+
+  bi.ajax(routes.controllers.Assets.at("data/yolanda.json")).then(function (r){
+    console.log("Yolanda Data");
+    var data = r.values.map(function(e){
+      var obj = _.object(r.headers, e);
+      if(!_.isUndefined(obj.Amount)){
+        obj.Amount = Number.parseFloat(obj.Amount.replace(/\,/g, ""));
+      }
+      if(!_.isUndefined(obj.Date)){
+        var dateArr = obj.Date.split("/")
+        if(dateArr.length === 3){
+          obj.Date = new Date(Date.parse(dateArr[1] + "/" + dateArr[0] + "/" + dateArr[2]));
+        } else {
+          console.log("tang ina lang. " + obj.Date);
+        }
+      }
+      return obj;
+    })
+    // console.log(data);
+  });
+
+  this.projectHistory = function(elem){
+    var labels = self.byMonth().map(function (e){
+      var yearMonth = e.yearMonth.split("-");
+      var year = yearMonth[0];
+      var month = parseInt(yearMonth[1]) - 1;
       return helper.monthArray[month] + ", " + year;
-    }
-
-    var labels = [];
-    var rawGroup = _.chain(self.requests()).groupBy(entryToInt)
-
-    var times = rawGroup.keys()
-      .map(function(key) {
-        return parseInt(key);
-      })
-      .compact()
-      .sort();
-
-    var first = times.head().value() || 0;
-    var last = (times.last().value() + 1) || 0;
-    var dateRangeObj = _.chain(first).range(last)
-
-    var countPerMonth = dateRangeObj
-      .map(function(dateYear){
-        var projects = rawGroup.value()[dateYear]
-        return projects ? projects.length : 0;
-      });
-
-    var amountPerMonth = dateRangeObj
-      .map(function(dateYear){
-        var projects = rawGroup.value()[dateYear]
-        var amount = 0;
-
-        if(projects){
-          amount = _.chain(projects)
-          .map(function(project){
-            return project.amount;
-          })
-          .compact()
-          .reduce(function(acc, next){
-            return acc + next;
-          }, 0)
-          .value();
-        }
-
-        return projects ? amount * 0.00000001 : 0;
-      });
-
-    var cpmValues = countPerMonth.value();
-    var apmValues = amountPerMonth.value();
-    var labels = dateRangeObj.map(formatDate).value();
-
-    var data = {
-      labels: labels,
-      datasets: [
-        {
-          fillColor : "#FF851B",
-          strokeColor : "#FF851B",
-          pointColor : "#FF851B",
-          pointStrokeColor : "white",
-          data: apmValues
-        },
-        {
-          fillColor : "rgba(0,0,0,0.3)",
-          strokeColor : "rgba(0,0,0,0.3)",
-          pointColor : "rgba(0,0,0,1)",
-          pointStrokeColor : "white",
-          data: cpmValues
-        }
-      ]
-    }
-
-    var ctx = elem.getContext("2d");
-    var myNewChart = new Chart(ctx).Line(data, {
-      bezierCurve: false
     });
-    
+    var amountPerMonth = self.byMonth().map(function (e){ return e.amount / 1; });
+    var countPerMonth = self.byMonth().map(function (e){ return e.count; });
+
+    var chart = c3.generate({
+      data: {
+        x: "x",
+        columns: [
+          ["x"].concat(labels),
+          ["Count per Month"].concat(countPerMonth),
+          ["Amount per Month"].concat(amountPerMonth)
+        ],
+        axes: {
+          "Count per Month": 'y',
+          "Amount per Month": 'y2'
+        },
+        types: {
+          "Count per Month": 'bar',
+        },
+      },
+      color: {
+        pattern: ['#555', '#ff851b']
+      },
+      grid: {
+        x: {
+          show: true
+        },
+        y: {
+          show: true
+        }
+      },
+      axis : {
+        x : {
+          type : 'timeseries',
+          tick: {
+            format: function (x) { 
+              var monthDict = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+              return monthDict[x.getMonth() + 1] + ", " + x.getFullYear(); 
+            }
+          }
+        },
+        y2 : {
+          show: true,
+          tick: {
+            format: function(t){
+              var format =  d3.format(",")
+              return "PHP " + format(t);
+            }
+          }
+        },
+      }
+    });
+
+    elem.appendChild(chart.element);
   }
+
+    
+  this.chartDisasterHistory = function(elem){
+
+    var data = _.chain(self.byDisasterType())
+      .groupBy(function(p){
+        return p.disasterTypeId;
+      })
+      .map(function(subData, key){
+        return [key]
+          .concat(padMonths(subData).map(function(d){
+            return d.count
+          }));
+      })
+      .value();
+
+    var range = padMonths(self.byDisasterType()).map(function(d){
+      return d.yearMonth;
+    })
+
+    var chart = c3.generate({
+      data: {
+        x: "x",
+        columns: [["x"].concat(range)].concat(data),
+        type: 'area',
+        groups: [
+          ["Disaster 1"]
+        ]
+      },
+      grid: {
+        x: {
+          show: true
+        },
+        y: {
+          show: true
+        }
+      },
+      color: {
+        pattern: ['#555', '#ff851b']
+      },
+      axis: {
+        x : {
+          type : 'timeseries',
+          tick: {
+            format: function (x) { 
+              var monthDict = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+              return monthDict[x.getMonth() + 1] + ", " + x.getFullYear(); 
+            }
+          }
+        },
+      }
+    });
+    elem.appendChild(chart.element);
+  }
+  
+  this.chartProjectTypes = function(elem){
+    var chart = c3.generate({
+      data: {
+        columns: [
+          ["Number of Projects", 3, 15, 82, 1, 42, 23]
+        ],
+        type: "bar",
+      },
+      legend: {
+        show: false
+      },
+      color: {
+        pattern: ['#ff851b']
+      },
+      axis: {
+        x: {
+          type: "categorized",
+          categories: ["Rivers", "Infrastructure", "Housing", "Roads", "Phi", "Mark"]
+        },
+        rotated: true
+      }
+    })
+    elem.appendChild(chart.element);
+  }
+
 }

@@ -15,6 +15,8 @@ object Application extends Controller {
   def index2(x: Int, y: Int) = index
 
   def dashboard = index
+  def welcome = index
+  def saro = index
   def admin = index
   def adminLgus = index
   def adminAgencies = index
@@ -27,7 +29,7 @@ object Application extends Controller {
   }
 
   def dashboardMeta() = Action {
-    Ok(Json.toJson(Req.listAll.map(_.dashboardJson)))
+    Ok(Req.dashboardData)
   }
 
   def jsRoutes = Action { implicit request =>
@@ -37,6 +39,8 @@ object Application extends Controller {
       routes.javascript.Application.adminLgus,
       routes.javascript.Application.adminAgencies,
       routes.javascript.Application.dashboard,
+      routes.javascript.Application.saro,
+      routes.javascript.Application.welcome,
       routes.javascript.Application.dashboardMeta,
       routes.javascript.Application.process,
       Users.authenticate,

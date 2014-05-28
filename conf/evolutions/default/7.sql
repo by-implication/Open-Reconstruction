@@ -1,27 +1,27 @@
 # --- !Ups
 
-CREATE TABLE saros (
-    saro_id serial PRIMARY KEY,
-    saro_number text NOT NULL UNIQUE,
-    saro_public boolean NOT NULL DEFAULT FALSE,
-    saro_amount numeric(12,2) NOT NULL
+CREATE TABLE saro1 (
+    budg_yr text,
+    src_cd text,
+    legal_cd text,
+    doc_type_cd text,
+    rel_type_cd text,
+    clearance_cd text,
+    program_cd text,
+    rcpt_fund_cd text,
+    saro_no text,
+    barcode_no text,
+    rcpt_owner_cd text,
+    issue_date text,
+    status_date text,
+    bureau_cd text,
+    status_dsc text,
+    fpap_cd text,
+    pap_desc text
 );;
 
-CREATE TABLE projects (
-    project_id serial PRIMARY KEY,
-    req_id int NOT NULL REFERENCES reqs,
-    project_source_id text NOT NULL,
-    project_name text NOT NULL,
-    project_amount numeric(12,2) NOT NULL,
-    gov_unit_id int NOT NULL REFERENCES gov_units,
-    project_type_id int NOT NULL REFERENCES project_types,
-    project_scope project_scope NOT NULL DEFAULT 'Repair',
-    saro_id int REFERENCES saros,
-    project_funded boolean NOT NULL DEFAULT FALSE
-);;
+COPY saro1 FROM 'SARO_NOV_DEC2013_FINAL.csv' CSV ENCODING 'ISO_8859_9';;
 
 # --- !Downs
 
-DROP TABLE IF EXISTS projects;;
-
-DROP TABLE IF EXISTS saros;;
+DROP TABLE IF EXISTS saro1;;

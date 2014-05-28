@@ -10,6 +10,95 @@ import recon.support._
 
 object Req extends ReqGen {
 
+  private def byDisasterType = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT
+        EXTRACT(YEAR FROM req_date) AS year,
+        EXTRACT(MONTH FROM req_date) AS month,
+        disaster_type_id,
+        COUNT(req_id)
+      FROM reqs
+      GROUP BY disaster_type_id, year, month
+      ORDER BY disaster_type_id, year, month
+    """).list(
+      get[Double]("year") ~
+      get[Double]("month") ~
+      get[Int]("disaster_type_id") ~
+      get[Long]("count") map { case _year~_month~disasterTypeId~count =>
+        val year = _year.toInt
+        val month = _month.toInt
+        Json.obj(
+          "yearMonth" -> (year + "-" + (if (month < 10) "0" + month else month)),
+          "disasterTypeId" -> disasterTypeId,
+          "count" -> count
+        )
+      }
+    )
+  }
+
+  private def byLevel(level: Int) = DB.withConnection { implicit c =>
+    val r = SQL("SELECT COUNT(*) AS count, SUM(req_amount) AS amount FROM reqs" +
+      (if (level != 0) " WHERE req_level = {level} AND NOT req_rejected" else "")
+    ).on('level -> level).list(
+      get[Long]("count") ~
+      get[Option[java.math.BigDecimal]]("amount") map { case count~amount =>
+        Json.obj(
+          "amount" -> amount.getOrElse(0).toString,
+          "count" -> count
+        )
+      }
+    )
+    r(0)
+  }
+
+  private def mostCommonProjectType = DB.withConnection { implicit c =>
+    val list = SQL("SELECT COUNT(*) FROM reqs GROUP BY project_type_id ORDER BY COUNT(*) DESC")
+    .list(scalar[Long])
+    list(0)
+  }
+
+  private def mostCommonDisasterType = DB.withConnection { implicit c =>
+    val list = SQL("SELECT COUNT(*) FROM reqs GROUP BY disaster_type_id ORDER BY COUNT(*) DESC")
+    .list(scalar[Long])
+    list(0)
+  }
+
+  private def byMonth = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT
+        COUNT(req_id) as count,
+        SUM(req_amount) as amount,
+        EXTRACT(MONTH FROM req_date) AS month,
+        EXTRACT(YEAR FROM req_date) AS year
+      FROM reqs
+      GROUP BY year, month
+      ORDER BY year, month
+    """).list(
+      get[Long]("count") ~
+      get[java.math.BigDecimal]("amount") ~
+      get[Double]("month") ~
+      get[Double]("year") map { case count~amount~_month~_year =>
+        val year = _year.toInt
+        val month = _month.toInt
+        Json.obj(
+          "yearMonth" -> (year + "-" + (if (month < 10) "0" + month else month)),
+          "count" -> count,
+          "amount" -> amount.toString
+        )
+      }
+    )
+  }
+
+  def dashboardData = {
+    Json.obj(
+      "mostCommonDisasterType" -> mostCommonDisasterType,
+      "mostCommonProjectType" -> mostCommonProjectType,
+      "byLevel" -> (0 to 5).map(byLevel),
+      "byMonth" -> Json.toJson(byMonth),
+      "byDisasterType" -> byDisasterType
+    )
+  }
+
   private def getSqlParams(tab: String, projectTypeId: Option[Int])(implicit user: User) = {
 
     var table = "reqs"
@@ -171,15 +260,6 @@ case class Req(
   lazy val author = User.findById(authorId).get
 
   def insertJson = Json.obj("id" -> id.get)
-
-  def dashboardJson = Json.obj(
-    "id" -> id.get,
-    "date" -> date,
-    "level" -> level,
-    "amount" -> amount,
-    "projectTypeId" -> projectTypeId,
-    "disasterTypeId" -> disasterTypeId
-  )
 
   def indexJson(implicit user: User) = Json.obj(
     "id" -> id.get,

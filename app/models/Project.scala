@@ -21,7 +21,6 @@ case class Project(
   govUnitId: Int = 0,
   projectTypeId: Int = 0,
   scope: ProjectScope = ProjectScope.REPAIR,
-  saroId: Option[Int] = None,
   isFunded: Boolean = false
 ) extends ProjectCCGen with Entity[Project]
 // GENERATED case class end
@@ -30,10 +29,10 @@ case class Project(
 
   lazy val disasterName = req.disasterName
 
-  lazy val saro = saroId match {
-    case Some(id) => Saro.findById(id)
-    case None => None
-  }
+  // lazy val saro = saroId match {
+  //   case Some(id) => Saro.findById(id)
+  //   case None => None
+  // }
 }
 // GENERATED object start
 trait ProjectGen extends EntityCompanion[Project] {
@@ -46,10 +45,9 @@ trait ProjectGen extends EntityCompanion[Project] {
     get[Int]("gov_unit_id") ~
     get[Int]("project_type_id") ~
     get[ProjectScope]("project_scope") ~
-    get[Option[Int]]("saro_id") ~
     get[Boolean]("project_funded") map {
-      case id~reqId~projectSourceId~name~amount~govUnitId~projectTypeId~scope~saroId~isFunded =>
-        Project(id, reqId, projectSourceId, name, amount, govUnitId, projectTypeId, scope, saroId, isFunded)
+      case id~reqId~projectSourceId~name~amount~govUnitId~projectTypeId~scope~isFunded =>
+        Project(id, reqId, projectSourceId, name, amount, govUnitId, projectTypeId, scope, isFunded)
     }
   }
 
@@ -86,7 +84,6 @@ trait ProjectGen extends EntityCompanion[Project] {
             gov_unit_id,
             project_type_id,
             project_scope,
-            saro_id,
             project_funded
           ) VALUES (
             DEFAULT,
@@ -97,7 +94,6 @@ trait ProjectGen extends EntityCompanion[Project] {
             {govUnitId},
             {projectTypeId},
             {scope},
-            {saroId},
             {isFunded}
           )
         """).on(
@@ -109,7 +105,6 @@ trait ProjectGen extends EntityCompanion[Project] {
           'govUnitId -> o.govUnitId,
           'projectTypeId -> o.projectTypeId,
           'scope -> o.scope,
-          'saroId -> o.saroId,
           'isFunded -> o.isFunded
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
@@ -125,7 +120,6 @@ trait ProjectGen extends EntityCompanion[Project] {
             gov_unit_id,
             project_type_id,
             project_scope,
-            saro_id,
             project_funded
           ) VALUES (
             {id},
@@ -136,7 +130,6 @@ trait ProjectGen extends EntityCompanion[Project] {
             {govUnitId},
             {projectTypeId},
             {scope},
-            {saroId},
             {isFunded}
           )
         """).on(
@@ -148,7 +141,6 @@ trait ProjectGen extends EntityCompanion[Project] {
           'govUnitId -> o.govUnitId,
           'projectTypeId -> o.projectTypeId,
           'scope -> o.scope,
-          'saroId -> o.saroId,
           'isFunded -> o.isFunded
         ).executeInsert().flatMap(x => Some(o))
       }
@@ -165,7 +157,6 @@ trait ProjectGen extends EntityCompanion[Project] {
         gov_unit_id={govUnitId},
         project_type_id={projectTypeId},
         project_scope={scope},
-        saro_id={saroId},
         project_funded={isFunded}
       where project_id={id}
     """).on(
@@ -177,7 +168,6 @@ trait ProjectGen extends EntityCompanion[Project] {
       'govUnitId -> o.govUnitId,
       'projectTypeId -> o.projectTypeId,
       'scope -> o.scope,
-      'saroId -> o.saroId,
       'isFunded -> o.isFunded
     ).executeUpdate() > 0
   }
