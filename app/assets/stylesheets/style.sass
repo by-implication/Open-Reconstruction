@@ -192,8 +192,8 @@ h1 small
 .swatch
   position: relative
   display: inline-block
-  height: 24px
-  width: 24px
+  height: 18px
+  width: 18px
   border-radius: 50%
   margin-right: 10px
   bottom: -5px
@@ -573,6 +573,13 @@ nav
   .legend
     padding-top: 25px
     text-align: center
+    margin-bottom: 20px
+    font-size: 12px
+    span
+      display: inline-block
+      margin-right: 10px
+      &:last-child
+        margin-right: 0px
   .proposals
     h2 span
       font-size: 50%
@@ -587,3 +594,34 @@ footer
   background: #e9e9e9
   border-top: 1px solid #e1e1e1
   color: #666
+
+#d3-chart
+  div
+    background-color: black
+  rect
+    fill: $gray
+  path
+    fill: transparent
+    stroke: $accent
+    stroke-width: 4px
+  circle
+    fill: #F4F4F4
+    stroke: $accent
+    stroke-width: 4px
+  .x-axis, .y-axis, .domain
+    stroke-width: 1px
+    stroke: $black
+  text
+    fill: $black
+    stroke: transparent
+    font-size: 12px
+
+.c3
+  text
+    font-family: "Roboto Condensed"
+  .c3-shape.c3-area
+    opacity: 0.8
+  // path
+  //   stroke-width: 4px
+  // circle
+  //   stroke-width: 4px

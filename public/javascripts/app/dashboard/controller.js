@@ -4,6 +4,7 @@ dashboard.controller = function(){
 
   this.mostCommonDisasterType = m.prop(0);
   this.mostCommonProjectType = m.prop(0);
+  this.byDisasterType = m.prop([]);
   this.byMonth = m.prop([]);
   this.byLevel = m.prop([]);
 
@@ -40,6 +41,9 @@ dashboard.controller = function(){
     self.mostCommonProjectType(r.mostCommonProjectType);
     self.byLevel(r.byLevel);
     self.byMonth(padMonths(r.byMonth));
+    self.byDisasterType(r.byDisasterType);
+    // console.log('Disaster Types by Month:');
+    // console.log(r.byDisasterType);
   });
 
   bi.ajax(routes.controllers.Assets.at("data/yolanda.json")).then(function (r){
@@ -59,114 +63,148 @@ dashboard.controller = function(){
       }
       return obj;
     })
-    console.log(data);
+    // console.log(data);
   });
 
-  this.chartHistory = function(elem){
-
-    // elem.width = elem.parentNode.offsetWidth;
-    elem.width = 1260;
-    function entryToInt(entry) {
-      var date = new Date(entry.date);
-      return date.getFullYear() * 12 + date.getMonth();
-    }
-
+  this.projectHistory = function(elem){
     var labels = self.byMonth().map(function (e){
       var yearMonth = e.yearMonth.split("-");
       var year = yearMonth[0];
       var month = parseInt(yearMonth[1]) - 1;
       return helper.monthArray[month] + ", " + year;
     });
-    var amountPerMonth = self.byMonth().map(function (e){ return e.amount / 100000000; });
+    var amountPerMonth = self.byMonth().map(function (e){ return e.amount / 1; });
     var countPerMonth = self.byMonth().map(function (e){ return e.count; });
 
-    var data = {
-      labels: labels,
-      datasets: [
-        {
-          fillColor : "#FF851B",
-          strokeColor : "#FF851B",
-          pointColor : "#FF851B",
-          pointStrokeColor : "white",
-          data: amountPerMonth
+    var chart = c3.generate({
+      data: {
+        x: "x",
+        columns: [
+          ["x"].concat(labels),
+          ["Count per Month"].concat(countPerMonth),
+          ["Amount per Month"].concat(amountPerMonth)
+        ],
+        axes: {
+          "Count per Month": 'y',
+          "Amount per Month": 'y2'
         },
-        {
-          fillColor : "rgba(0,0,0,0.3)",
-          strokeColor : "rgba(0,0,0,0.3)",
-          pointColor : "rgba(0,0,0,1)",
-          pointStrokeColor : "white",
-          data: countPerMonth
+        types: {
+          "Count per Month": 'bar',
+        },
+      },
+      color: {
+        pattern: ['#555', '#ff851b']
+      },
+      grid: {
+        x: {
+          show: true
+        },
+        y: {
+          show: true
         }
-      ]
-    }
-
-    var ctx = elem.getContext("2d");
-    var myNewChart = new Chart(ctx).Bar(data, {
-      bezierCurve: false
+      },
+      axis : {
+        x : {
+          type : 'timeseries',
+          tick: {
+            format: function (x) { 
+              var monthDict = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+              return monthDict[x.getMonth() + 1] + ", " + x.getFullYear(); 
+            }
+          }
+        },
+        y2 : {
+          show: true,
+          tick: {
+            format: function(t){
+              var format =  d3.format(",")
+              return "PHP " + format(t);
+            }
+          }
+        },
+      }
     });
 
+    elem.appendChild(chart.element);
   }
 
     
   this.chartDisasterHistory = function(elem){
 
-    elem.width = Math.floor(document.body.offsetWidth * .66 - 10);
+    var data = _.chain(self.byDisasterType())
+      .groupBy(function(p){
+        return p.disasterTypeId;
+      })
+      .map(function(subData, key){
+        return [key]
+          .concat(padMonths(subData).map(function(d){
+            return d.count
+          }));
+      })
+      .value();
 
-    // this is shit, ok
-    // need to set width dynamically
+    var range = padMonths(self.byDisasterType()).map(function(d){
+      return d.yearMonth;
+    })
 
-    var data = {
-      labels : ["January","February","March","April","May","June","July"],
-      datasets : [
-        {
-          fillColor : "rgba(220,220,220,0.5)",
-          strokeColor : "rgba(220,220,220,1)",
-          pointColor : "rgba(220,220,220,1)",
-          pointStrokeColor : "#fff",
-          data : [65,59,90,81,56,55,40]
+    var chart = c3.generate({
+      data: {
+        x: "x",
+        columns: [["x"].concat(range)].concat(data),
+        type: 'area',
+        groups: [
+          ["Disaster 1"]
+        ]
+      },
+      grid: {
+        x: {
+          show: true
         },
-        {
-          fillColor : "rgba(151,187,205,0.5)",
-          strokeColor : "rgba(151,187,205,1)",
-          pointColor : "rgba(151,187,205,1)",
-          pointStrokeColor : "#fff",
-          data : [28,48,40,19,96,27,100]
+        y: {
+          show: true
         }
-      ]
-    }
-
-    var ctx = elem.getContext("2d");
-    var myNewChart = new Chart(ctx).Bar(data, {
-      bezierCurve: false
+      },
+      color: {
+        pattern: ['#555', '#ff851b']
+      },
+      axis: {
+        x : {
+          type : 'timeseries',
+          tick: {
+            format: function (x) { 
+              var monthDict = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+              return monthDict[x.getMonth() + 1] + ", " + x.getFullYear(); 
+            }
+          }
+        },
+      }
     });
+    elem.appendChild(chart.element);
   }
-
-  this.chartDisasterPie = function(elem){
-
-    elem.width = Math.floor(document.body.offsetWidth * .33 - 10);
-
-    // still shit
-
-    var data = [
-      {
-        value: 30,
-        color:"#F38630"
+  
+  this.chartProjectTypes = function(elem){
+    var chart = c3.generate({
+      data: {
+        columns: [
+          ["Number of Projects", 3, 15, 82, 1, 42, 23]
+        ],
+        type: "bar",
       },
-      {
-        value : 50,
-        color : "#E0E4CC"
+      legend: {
+        show: false
       },
-      {
-        value : 100,
-        color : "#69D2E7"
-      }     
-    ]
-
-    var ctx = elem.getContext("2d");
-    var myNewChart = new Chart(ctx).Doughnut(data, {
-      bezierCurve: false
-    });
-
+      color: {
+        pattern: ['#ff851b']
+      },
+      axis: {
+        x: {
+          type: "categorized",
+          categories: ["Rivers", "Infrastructure", "Housing", "Roads", "Phi", "Mark"]
+        },
+        rotated: true
+      }
+    })
+    elem.appendChild(chart.element);
   }
 
 }

@@ -77,40 +77,24 @@ dashboard.view = function(ctrl){
       m("section.alt", [
         m(".row", [
           m(".columns.medium-12", [
-            m("h1", [m("small", "Project Proposals per Month")]),
-            m("canvas#chart-history", {config: ctrl.chartHistory, height: 170}),
+            m("h1", [
+              m("small", "Project Proposals per Month")
+            ]),
+            m("#chart-project-history", {config: ctrl.projectHistory}, []),
           ]),
-          m(".columns.small-6.legend", [
-            m("p", [
-              m("div.swatch.black"),
-              m("span", "Number of proposals submitted")
-            ])
-          ]),
-          m(".columns.small-6.legend", [
-            m("p", [
-              m("div.swatch.orange"),
-              m("span", "Amount (In 100 millions)")
-            ])
-          ])
-        ])
+        ]),
       ]),
       m("section", [
         m(".row", [
           m(".columns.medium-12", [
             m("h1", [m("small", "Projects by Disaster Type")])
           ]),
-          m(".columns.medium-8", [
-            m("h4", "Projects by disaster types per month"),
-            m("canvas#chart-disaster-history", {config: ctrl.chartDisasterHistory, height: 300}),
-          ]),
-          m(".columns.medium-4", [
-            m("h4", "Disaster types breakdown"),
-            m("canvas#chart-disaster-pie", {config: ctrl.chartDisasterPie, height: 300}),
+          m(".columns.medium-12", [
+            m("#chart-disaster-history", {config: ctrl.chartDisasterHistory}, []),
           ]),
         ]),
         m(".row", [
           m(".columns.medium-12.list", [
-            m("p", "Legends and filters go here."),
             m("p", "Ideally, we should have date range, filter by project type, and by location (region/province).")
           ])
         ])
@@ -119,23 +103,24 @@ dashboard.view = function(ctrl){
         m(".row", [
           m(".columns.medium-12", [
             m("h1", [m("small", "Types of Projects")]),
-            m("p", "Bar chart of project types (Bridge, River Control, etc.)"),
-            m("p", "There are 15, so horizontal is probably best."),
             m("p", "Filters for [disaster type] and/or [disaster name] ")
-          ])
+          ]),
+          m(".columns.medium-12", [
+            m("#chart-project-types", {config: ctrl.chartProjectTypes}, [])
+          ]),
         ])
       ]),
       m("section", [
         m(".row", [
           m(".columns.medium-6",[
             m("h1", [m("small", "Projects per Disaster")]),
-            m("p", "Horizontal bar chart of number of projects per unique named disaster."),
+            m("p", "Horizontal bar chart of number of projects per unique named disaster. Sorted"),
             m("p", "Think of this as a 'top 10' disasters thing. (e.g. #1 Yolanda, #2 Ondoy.)"),
             m("p")
           ]),
           m(".columns.medium-6",[
             m("h1", [m("small", "Amount per Disaster")]),
-            m("p", "Same, but for amount spent/allocated/disbursed.")
+            m("p", "Same, but for amount spent/allocated/disbursed. Sorted")
           ])
         ])
       ])
