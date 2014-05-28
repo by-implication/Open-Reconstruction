@@ -86,14 +86,14 @@ dashboard.controller = function(){
     }
     return r;
   }
-  // m.computationStart();
+  m.startComputation();
   bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
     self.mostCommonDisasterType(r.mostCommonDisasterType);
     self.mostCommonProjectType(r.mostCommonProjectType);
     self.byLevel(r.byLevel);
     self.byMonth(padMonths(r.byMonth));
     self.byDisasterType(r.byDisasterType);
-    // m.computationEnd();
+    m.endComputation();
     // console.log('Disaster Types by Month:');
     // console.log(r.byDisasterType);
   });
