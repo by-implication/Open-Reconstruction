@@ -72,9 +72,9 @@ dashboard.view = function(ctrl){
         m(".row", [
           m(".columns.medium-8", [
             m("ul.medium-block-grid-2", [
-              m("li", [
-                visPanel.view(ctrl.projectHistory2)
-              ]),
+              // m("li", [
+              //   visPanel.view(ctrl.projectHistory2)
+              // ]),
               m("li", [
                 m(".vis-panel", [
                   m(".section", [

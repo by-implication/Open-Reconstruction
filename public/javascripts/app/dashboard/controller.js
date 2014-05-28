@@ -42,7 +42,7 @@ dashboard.controller = function(){
           tick: {
             format: function (x) { 
               var monthDict = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-              return monthDict[x.getMonth() + 1] + ", " + x.getFullYear(); 
+              return monthDict[x.getMonth()] + ", " + x.getFullYear(); 
             }
           }
         },
@@ -86,13 +86,14 @@ dashboard.controller = function(){
     }
     return r;
   }
-  
+  m.computationStart();
   bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
     self.mostCommonDisasterType(r.mostCommonDisasterType);
     self.mostCommonProjectType(r.mostCommonProjectType);
     self.byLevel(r.byLevel);
     self.byMonth(padMonths(r.byMonth));
     self.byDisasterType(r.byDisasterType);
+    m.computationEnd();
     // console.log('Disaster Types by Month:');
     // console.log(r.byDisasterType);
   });
@@ -164,7 +165,7 @@ dashboard.controller = function(){
           tick: {
             format: function (x) { 
               var monthDict = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-              return monthDict[x.getMonth() + 1] + ", " + x.getFullYear(); 
+              return monthDict[x.getMonth()] + ", " + x.getFullYear(); 
             }
           }
         },
@@ -228,7 +229,7 @@ dashboard.controller = function(){
           tick: {
             format: function (x) { 
               var monthDict = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-              return monthDict[x.getMonth() + 1] + ", " + x.getFullYear(); 
+              return monthDict[x.getMonth()] + ", " + x.getFullYear(); 
             }
           }
         },
