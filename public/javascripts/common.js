@@ -197,8 +197,12 @@ common.tabs.menu = function(ctrl, options){
           return "";
         }
       };
+      var options = { href: tab.href };
+      if(tab.href.charAt(0) != '#') {
+        options.config = m.route;
+      }
       return m("dd", {class: tabClass(tab)}, [
-        m("a", { href: tab.href, config: m.route }, tab.label())
+        m("a", options, tab.label())
       ]);
     })
   )
