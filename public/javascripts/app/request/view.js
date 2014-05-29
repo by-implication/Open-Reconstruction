@@ -64,7 +64,7 @@ request.view = function(ctrl){
           common.tabs.menu(ctrl.requestTabs, {className: "vertical", config: ctrl.scrollHandler}),
           m(".tabs-content.vertical", [
             m(".card", [
-              m(".section#summary", [
+              m(".big.section#summary", [
                 m("h1", ["Summary"]),
                 m(".content", [
                   request.progress(ctrl),
@@ -172,7 +172,7 @@ request.view = function(ctrl){
                 ]),
               ]),
               m("hr"),
-              m(".section#assignments", [
+              m(".big.section#assignments", [
                 m("h1", ["Assignments"]),
                 m(".content", [
                   m(".row", [
@@ -234,7 +234,7 @@ request.view = function(ctrl){
                 ]),
               ]),
               m("hr"),
-              m(".section#images", [
+              m(".big.section#images", [
                 m("h1", ["Images"]),
                 m(".content", [
                   ctrl.curUserCanUpload() ?
@@ -268,7 +268,7 @@ request.view = function(ctrl){
                 ]),
               ]),
               m("hr"),
-              m(".section#documents", [
+              m(".big.section#documents", [
                 m("h1", ["Documents"]),
                 m(".content", [
                   ctrl.curUserCanUpload() ?
@@ -304,7 +304,7 @@ request.view = function(ctrl){
                 ]),
               ]),
               m("hr"),
-              m(".section#references", [
+              m(".big.section#references", [
                 m("h1", ["References"]),
                 m(".content", [
                   m("table", [
@@ -326,7 +326,7 @@ request.view = function(ctrl){
                 ]),
               ]),
               m("hr"),
-              m(".section#activity", [
+              m(".big.section#activity", [
                 m("h1", ["Activity"]),
                 m(".content", [
                   m("div", ctrl.history().map(function (e){
