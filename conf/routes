@@ -59,8 +59,8 @@ POST    /requests/:id/comment                     controllers.Requests.comment(i
 POST    /requests/:id/edit/:f                     controllers.Requests.editField(id: Int, f: String)
 POST    /requests/:id/attach/:type                controllers.Attachments.add(id: Int, type: String)
 
-GET     /visualizations/:v                        controllers.Requests.visualization(v: String)
-GET     /visualizations/:v/meta                   controllers.Requests.visualizationMeta(v: String)
+GET     /visualizations/:v                        controllers.Visualizations.view(v: String)
+GET     /visualizations/:v/meta                   controllers.Visualizations.viewMeta(v: String)
 
 GET     /attachments/:id/preview                  controllers.Attachments.preview(id: Int)
 GET     /attachments/:id/download                 controllers.Attachments.download(id: Int)

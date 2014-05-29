@@ -204,12 +204,6 @@ object Requests extends Controller with Secured {
 
   }
 
-  def visualization(v: String) = Application.index
-
-  def visualizationMeta(v: String) = Action {
-    Ok(Req.visualizationData(v))
-  }
-
   def comment(id: Int) = UserAction(){ implicit user => implicit request =>
     if(!user.isAnon){
       Req.findById(id).map { implicit req =>

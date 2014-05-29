@@ -1,3 +1,2 @@
 visualization.controller = function(){
-  
 }
