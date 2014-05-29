@@ -6,10 +6,11 @@ request.controller = function(){
   var requestId = m.route.param('id');
   this.requestTabs = new common.tabs.controller();
   this.requestTabs.tabs([
-    {label: m.prop("Assignments"), href: routes.controllers.Requests.viewAssignments(requestId).url},
-    {label: m.prop("Images"), href: routes.controllers.Requests.viewImages(requestId).url},
-    {label: m.prop("Documents"), href: routes.controllers.Requests.viewDocuments(requestId).url},
-    {label: m.prop("Activity"), href: routes.controllers.Requests.viewActivity(requestId).url}
+    {label: m.prop("Summary"), href: "#summary"},
+    {label: m.prop("Assignments"), href: "#assignments"},
+    {label: m.prop("Images"), href: "#images"},
+    {label: m.prop("Documents"), href: "#documents"},
+    {label: m.prop("Activity"), href: "#activity"}
   ]);
 
   this.id = m.route.param("id");
