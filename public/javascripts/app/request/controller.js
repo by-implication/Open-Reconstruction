@@ -1,5 +1,6 @@
 request.controller = function(){
   var map;
+  var self = this;
   this.app = new app.controller();
   this.signoffModal = new common.modal.controller();
   this.rejectModal = new common.modal.controller();
@@ -7,11 +8,12 @@ request.controller = function(){
   var requestId = m.route.param('id');
   this.requestTabs = new common.tabs.controller();
   this.requestTabs.tabs([
-    {label: m.prop("Assignments"), href: routes.controllers.Requests.viewAssignments(requestId).url},
-    {label: m.prop("Images"), href: routes.controllers.Requests.viewImages(requestId).url},
-    {label: m.prop("Documents"), href: routes.controllers.Requests.viewDocuments(requestId).url},
-    {label: m.prop("References"), href: routes.controllers.Requests.viewReferences(requestId).url},
-    {label: m.prop("Activity"), href: routes.controllers.Requests.viewActivity(requestId).url}
+    {label: m.prop("Summary"), href: "#summary"},
+    {label: m.prop("Assignments"), href: "#assignments"},
+    {label: m.prop("Images"), href: "#images"},
+    {label: m.prop("Documents"), href: "#documents"},
+    {label: m.prop("References"), href: "#references"},
+    {label: m.prop("Activity"), href: "#activity"}
   ]);
 
   this.id = m.route.param("id");
@@ -389,4 +391,61 @@ request.controller = function(){
     }
   }.bind(this);
 
+  var scrollInit = false;
+
+  this.scrollHandler = function(elem, isInit){
+    var boundary = function(elem){
+      var posType = $(elem).css("position");
+      var offset = 0;
+      if (posType === "relative") {
+        offset = parseInt($(elem).css("top"));
+      }
+      return $(elem).position().top - offset;
+    }
+    var updateTabMenuPos = function(){
+      if ($(window).scrollTop() > boundary(elem)) {
+        $(".tabs.vertical").css({
+          position: "relative",
+          top: ($(window).scrollTop()) - boundary(elem)
+        })
+      } else {
+        $(".tabs.vertical").removeAttr("style");
+      }
+    }
+    
+    var idPosDict;
+    var poss;
+
+    if (isInit) {
+      updateTabMenuPos();
+      idPosDict = _.chain(self.requestTabs.tabs())
+        .map(function(t){
+          return t.href;
+        })
+        .map(function(i){
+          return [$(i).position().top + $(i).height() - 20, i];
+        })
+        .object()
+        .value();
+      poss = _.chain(idPosDict).map(function(v, k){
+        return k;
+      }).value();
+    }
+    $(window).on("scroll", function(e){
+      if (!scrollInit) {
+        m.redraw();
+        scrollInit = true;
+      } else {
+        updateTabMenuPos()
+        // if (isInit) {
+        //   var windowPos = $(window).scrollTop();
+        //   var closestPos = _.find(poss, function(p){
+        //     return p >= windowPos
+        //   });
+        //   var hash = idPosDict[closestPos];
+        //   window.location.hash = hash;
+        // };
+      }
+    })
+  }
 }
