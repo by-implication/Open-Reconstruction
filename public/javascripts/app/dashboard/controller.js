@@ -68,12 +68,7 @@ dashboard.controller = function(){
   this.projectHistory.title("Project History");
   this.projectHistory.link("projectHistory");
   this.projectHistory.chartSettings = function(){
-    var labels = self.byMonth().map(function (e){
-      var yearMonth = e.yearMonth.split("-");
-      var year = yearMonth[0];
-      var month = parseInt(yearMonth[1]) - 1;
-      return helper.monthArray[month] + ", " + year;
-    });
+    var labels = _.pluck(self.byMonth(), 'yearMonth');
     var amountPerMonth = self.byMonth().map(function (e){ return e.amount / 1; });
     var countPerMonth = self.byMonth().map(function (e){ return e.count; });
 
