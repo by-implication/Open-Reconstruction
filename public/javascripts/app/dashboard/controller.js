@@ -117,50 +117,7 @@ dashboard.controller = function(){
     }
   }
 
-  this.disasterHistory = new visPanel.controller();
-  this.disasterHistory.title("Project History by Type");
-  this.disasterHistory.link("disasterHistory");
-  this.disasterHistory.chartSettings = function(){
-    var data = _.chain(self.byDisasterType())
-      .groupBy(function(p){
-        return p.disasterTypeId;
-      })
-      .map(function(subData, key){
-        return [key].concat(padMonths(subData).map(function(d){
-          return d.count
-        }));
-      })
-      .value();
-
-    var range = padMonths(self.byDisasterType()).map(function(d){
-      return d.yearMonth;
-    });
-
-    return {
-      data: {
-        x: "x",
-        columns: [["x"].concat(range)].concat(data),
-        type: 'area',
-        groups: [
-          ["Disaster 1"]
-        ]
-      },
-      axis: {
-        x : {
-          type : 'timeseries',
-          tick: {
-            format: function (x) { 
-              var monthDict = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-              return monthDict[x.getMonth()] + ", " + x.getFullYear(); 
-            },
-            culling: {
-              max: 4
-            }
-          }
-        },
-      }
-    }
-  }
+  this.disasterHistory = visualizations.library['disasterHistory'](self);
 
   this.projectTypes = new visPanel.controller();
   this.projectTypes.title("Project Type Distribution");
