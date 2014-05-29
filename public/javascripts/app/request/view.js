@@ -308,6 +308,28 @@ request.view = function(ctrl){
                 ]),
               ]),
               m("hr"),
+              m(".section#references", [
+                m("h1", ["References"]),
+                m(".content", [
+                  m("table", [
+                    m("thead", [
+                      m("tr", [
+                        m("td", [
+                          "hi"
+                        ]),
+                      ]),
+                    ]),
+                    m("tbody", [
+                      m("tr", [
+                        m("td", [
+                          "hi"
+                        ]),
+                      ]),
+                    ]),
+                  ]),
+                ]),
+              ]),
+              m("hr"),
               m(".section#activity", [
                 m("h1", ["Activity"]),
                 m(".content", [

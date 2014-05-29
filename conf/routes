@@ -51,6 +51,7 @@ GET     /requests/:id/assignments                 controllers.Requests.viewAssig
 GET     /requests/:id/images                      controllers.Requests.viewImages(id: Int)
 GET     /requests/:id/documents                   controllers.Requests.viewDocuments(id: Int)
 GET     /requests/:id/activity                    controllers.Requests.viewActivity(id: Int)
+GET     /requests/:id/references                  controllers.Requests.viewReferences(id: Int)
 GET     /requests/:id/meta                        controllers.Requests.viewMeta(id: Int)
 
 POST    /requests/:id/signoff                     controllers.Requests.signoff(id: Int)

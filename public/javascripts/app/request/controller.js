@@ -10,6 +10,7 @@ request.controller = function(){
     {label: m.prop("Assignments"), href: "#assignments"},
     {label: m.prop("Images"), href: "#images"},
     {label: m.prop("Documents"), href: "#documents"},
+    {label: m.prop("References"), href: "#references"},
     {label: m.prop("Activity"), href: "#activity"}
   ]);
 

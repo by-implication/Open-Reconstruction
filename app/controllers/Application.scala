@@ -79,6 +79,7 @@ object Application extends Controller {
       Requests.viewImages,
       Requests.viewDocuments,
       Requests.viewActivity,
+      Requests.viewReferences,
       Requests.viewMeta,
       Visualizations.view,
       GovUnits.edit,
