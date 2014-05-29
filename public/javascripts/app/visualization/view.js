@@ -8,7 +8,8 @@ visualization.view = function(ctrl){
             m(".notice",[
               "Some introductory text goes here. Explains that this is a live snapshot of data, but you can access the raw data if you make to make your own visualizations. Other obligatory disclaimers and all that."
             ])
-          ])
+          ]),
+          visPanel.view(ctrl[ctrl.id])
         ])
       ])
     ])

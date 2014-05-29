@@ -118,69 +118,9 @@ dashboard.controller = function(){
   }
 
   this.disasterHistory = visualizations.library['disasterHistory'](self);
-
-  this.projectTypes = new visPanel.controller();
-  this.projectTypes.title("Project Type Distribution");
-  this.projectTypes.link("projectTypes");
-  this.projectTypes.chartSettings = function(){
-    return {
-      data: {
-        columns: [
-          ["Number of Projects", 3, 15, 82, 1, 42, 23]
-        ],
-        type: "bar",
-      },
-      axis: {
-        x: {
-          type: "categorized",
-          categories: ["Rivers", "Infrastructure", "Housing", "Roads", "Phi", "Mark"]
-        },
-        rotated: true
-      }
-    }
-  }
-
-  this.topDisasters = new visPanel.controller();
-  this.topDisasters.link("topDisasters");
-  this.topDisasters.title("Number of Projects per Unique Named Disaster");
-  this.topDisasters.chartSettings = function(){
-    return {
-      data: {
-        columns: [
-          ["Number of Projects", 3, 15, 82, 1, 42, 23]
-        ],
-        type: "bar",
-      },
-      axis: {
-        x: {
-          type: "categorized",
-          categories: ["Rivers", "Infrastructure", "Housing", "Roads", "Phi", "Mark"]
-        },
-        rotated: true
-      }
-    }
-  }
-
-  this.topDisastersAmount = new visPanel.controller();
-  this.topDisastersAmount.title("Project Amounts per Unique Named Disaster");
-  this.topDisastersAmount.link("topDisastersAmount");
-  this.topDisastersAmount.chartSettings = function(){
-    return {
-      data: {
-        columns: [
-          ["Number of Projects", 3, 15, 82, 1, 42, 23]
-        ],
-        type: "bar",
-      },
-      axis: {
-        x: {
-          type: "categorized",
-          categories: ["Rivers", "Infrastructure", "Housing", "Roads", "Phi", "Mark"]
-        },
-        rotated: true
-      }
-    }
-  }
+  this.projectTypes = visualizations.library['projectTypes'](self);
+  this.topDisasters = visualizations.library['topDisasters'](self);
+  this.topDisastersAmount = visualizations.library['topDisastersAmount'](self);
 
   this.percentApproved = function(){
     return self.byLevel()[4].count / self.byLevel()[0].count;

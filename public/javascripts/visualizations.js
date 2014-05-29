@@ -2,17 +2,11 @@ var visualizations = {
   library: {}
 };
 
-// Inner function creates
-// Create function adds creator to library
-// From outer ctrl, call function
-
 visualizations.create = function(title, id, chartSettingsCreator){
   visualizations.library[id] = function(ctrl){
     var visCtrl = new visPanel.controller();
     visCtrl.title(title);
     visCtrl.link(id);
-    console.log('called from the library');
-    console.log(ctrl);
     visCtrl.chartSettings = chartSettingsCreator(ctrl);
     return visCtrl;
   }
@@ -44,10 +38,33 @@ visualizations.padMonths = function padMonths(a){
 }
 
 visualizations.create(
+  'Project Type Distribution',
+  'projectTypes',
+  function(ctrl){
+    return function(){
+      return {
+        data: {
+          columns: [
+            ["Number of Projects", 3, 15, 82, 1, 42, 23]
+          ],
+          type: "bar",
+        },
+        axis: {
+          x: {
+            type: "categorized",
+            categories: ["Rivers", "Infrastructure", "Housing", "Roads", "Phi", "Mark"]
+          },
+          rotated: true
+        }
+      }
+    }
+  }
+)
+
+visualizations.create(
   'Project History by Type', 
   'disasterHistory', 
   function(ctrl){
-
     return function(){
       var data = _.chain(ctrl.byDisasterType())
         .groupBy(function(p){
@@ -86,6 +103,54 @@ visualizations.create(
               }
             }
           },
+        }
+      }
+    }
+  }
+)
+
+visualizations.create(
+  'Number of Projects per Unique Named Disaster',
+  'topDisasters',
+  function(ctrl){
+    return function(){
+      return {
+        data: {
+          columns: [
+            ["Number of Projects", 3, 15, 82, 1, 42, 23]
+          ],
+          type: "bar",
+        },
+        axis: {
+          x: {
+            type: "categorized",
+            categories: ["Rivers", "Infrastructure", "Housing", "Roads", "Phi", "Mark"]
+          },
+          rotated: true
+        }
+      }
+    }
+  }
+)
+
+visualizations.create(
+  'Project Amounts per Unique Named Disaster',
+  'topDisastersAmount',
+  function(ctrl){
+    return function(){
+      return {
+        data: {
+          columns: [
+            ["Number of Projects", 3, 15, 82, 1, 42, 23]
+          ],
+          type: "bar",
+        },
+        axis: {
+          x: {
+            type: "categorized",
+            categories: ["Rivers", "Infrastructure", "Housing", "Roads", "Phi", "Mark"]
+          },
+          rotated: true
         }
       }
     }
