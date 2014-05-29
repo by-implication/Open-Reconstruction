@@ -272,18 +272,13 @@ request.controller = function(){
 
   this.saroModal.submit = function(e){
     e.preventDefault();
-    bi.ajax(routes.controllers.Requests.signoff(this.id), {
-      data: {password: this.saroModal.saroNo}
+    bi.ajax(routes.controllers.Requests.assignSaro(ctrl.id), {
+      data: {input: this.saroModal.content}
     }).then(function (r){
       if(r.success){
-        this.canSignoff(false);
-        this.hasSignedoff(true);
-        alert('Signoff successful!');
-        this.signoffModal.close();
-        this.history().unshift(r.event);
-        this.request().level++;
+        ctrl.history().unshift(r.event);
       } else {
-        alert("Failed to signoff: " + r.messages.password);
+        alert("An error occurred.");
       }
     }.bind(this));
   }.bind(this);

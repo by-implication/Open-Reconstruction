@@ -7,7 +7,7 @@ request.view = function(ctrl){
       common.modal.view(
         ctrl.saroModal,
         function(ctrl){
-          return m("form", {onsubmit: ctrl.saroNo}, [
+          return m("form", {onsubmit: ctrl.submit}, [
             m(".section", [
               m("h3", "SARO Assignment"),
               m("p", [
@@ -17,7 +17,7 @@ request.view = function(ctrl){
             m("hr"),
             m(".section", [
               common.field("SARO Number", m("input", {
-                onchange: m.withAttr("value", ctrl.saroNo)
+                onchange: m.withAttr("value", ctrl.content)
               })),
               m("button", [
                 "Submit"

@@ -27,6 +27,10 @@ object Event extends EventGen {
     generate("reject", govUnit.name + " " + govUnit.id)
   }
 
+  def assignSaro()(implicit req: Req, user: User) = {
+    generate("assignSaro", "")
+  }
+
   def attachment(a: Attachment)(implicit req: Req, user: User) = {
     generate("attachment", asContent(a))
   }

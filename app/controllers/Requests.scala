@@ -277,7 +277,10 @@ object Requests extends Controller with Secured {
     }
     case "saroNo" => {
       mapping(
-        "input" -> nonEmptyText.verifying("Unauthorized", _ => user.isDBM)
+        "input" -> nonEmptyText.verifying("Unauthorized", _ => {
+          play.Logger.info("Checkingg: " + user.isDBM)
+          user.isDBM
+        })
       )(saroNo => req.copy(saroNo = Some(saroNo))
       )(_ => None)
     }
@@ -288,6 +291,21 @@ object Requests extends Controller with Secured {
       )(_ => None)
     }
   })
+
+  def assignSaro(id: Int) = UserAction(){ implicit user => implicit request =>
+    if(!user.isAnon){
+      Req.findById(id).map { implicit req =>
+        editForm("saroNo").bindFromRequest.fold(
+          Rest.formError(_),
+          _.save().map { implicit req =>
+            (Event.assignSaro()).create().map { e =>
+              Rest.success("event" -> e.listJson)
+            }.getOrElse(Rest.serverError())
+          }.getOrElse(Rest.serverError())
+        )
+      }.getOrElse(Rest.notFound())
+    } else Rest.unauthorized()
+  }
 
   def editField(id: Int, field: String) = UserAction(){ implicit user => implicit request =>
     if(!user.isAnon){
