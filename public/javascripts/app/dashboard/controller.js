@@ -13,34 +13,10 @@ dashboard.controller = function(){
     self.mostCommonDisasterType(r.mostCommonDisasterType);
     self.mostCommonProjectType(r.mostCommonProjectType);
     self.byLevel(r.byLevel);
-    self.byMonth(padMonths(r.byMonth));
+    self.byMonth(visualizations.padMonths(r.byMonth));
     self.byDisasterType(r.byDisasterType);
     m.endComputation();
   });
-
-  function nextYearMonth(yearMonth){
-    var ym = yearMonth.split("-");
-    var y = parseInt(ym[0]);
-    var m = parseInt(ym[1]);
-    m++;
-    if(m > 12){
-      m = 1;
-      y++;
-    }
-    return y + "-" + (m < 10 ? "0" + m : m);
-  }
-
-  function padMonths(a){
-    var r = [];
-    for(var ym = a[0].yearMonth; a.length; ym = nextYearMonth(ym)){
-      var nextElem = {yearMonth: ym, amount: 0, count: 0};
-      if(a[0].yearMonth == ym){
-        nextElem = a.shift();
-      }
-      r.push(nextElem);
-    }
-    return r;
-  }
 
   bi.ajax(routes.controllers.Assets.at("data/yolanda.json")).then(function (r){
     console.log("Yolanda Data");
@@ -68,7 +44,4 @@ dashboard.controller = function(){
   this.topDisasters = visualizations.library['topDisasters'](self);
   this.topDisastersAmount = visualizations.library['topDisastersAmount'](self);
 
-  this.percentApproved = function(){
-    return self.byLevel()[4].count / self.byLevel()[0].count;
-  };
 }
