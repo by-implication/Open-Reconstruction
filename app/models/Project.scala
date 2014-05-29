@@ -28,6 +28,12 @@ case class Project(
   lazy val req = Req.findById(reqId).get
 
   lazy val disasterName = req.disasterName
+
+  def requestViewJson = Json.obj(
+    "id" -> id.get,
+    "name" -> name,
+    "amount" -> amount
+  )
 }
 // GENERATED object start
 trait ProjectGen extends EntityCompanion[Project] {

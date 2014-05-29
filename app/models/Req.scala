@@ -196,6 +196,10 @@ object Req extends ReqGen {
     SQL("SELECT * FROM reqs WHERE author_id = {id} ORDER BY req_date DESC").on('id -> id).list(simple)
   }
 
+  def projects(id: Int): Seq[Project] = DB.withConnection { implicit c =>
+    SQL("SELECT * FROM projects WHERE req_id = {id}").on('id -> id).list(Project.simple)
+  }
+
 }
 
 // GENERATED case class start
@@ -276,6 +280,8 @@ case class Req(
   }
 
   lazy val author = User.findById(authorId).get
+
+  def projects: Seq[Project] = Req.projects(id)
 
   def insertJson = Json.obj("id" -> id.get)
 
