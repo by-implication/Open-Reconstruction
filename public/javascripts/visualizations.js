@@ -38,8 +38,8 @@ visualizations.padMonths = function padMonths(a){
 }
 
 visualizations.create(
-  'Project History',
-  'projectHistory',
+  'Request Count and Amount History',
+  'requestHistory',
   function(ctrl){
     return function(){
     var labels = ctrl.byMonth().map(function (e){

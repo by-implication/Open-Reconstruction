@@ -38,7 +38,7 @@ dashboard.controller = function(){
     // console.log(data);
   });
 
-  this.projectHistory = visualizations.library['projectHistory'](self);
+  this.projectHistory = visualizations.library['requestHistory'](self);
   this.disasterHistory = visualizations.library['disasterHistory'](self);
   this.projectTypes = visualizations.library['projectTypes'](self);
   this.topDisasters = visualizations.library['topDisasters'](self);
