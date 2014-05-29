@@ -359,7 +359,7 @@ request.view = function(ctrl){
                 m(".content", [
                   m("h4", [
                     "SARO",
-                    m("button.tiny", {type: "button", onclick: ctrl.saroModal.show.bind(ctrl.saroModal)}, [
+                    m("button.tiny.right", {type: "button", onclick: ctrl.saroModal.show.bind(ctrl.saroModal)}, [
                       "Assign a SARO"
                     ]),
                   ]),
@@ -387,7 +387,7 @@ request.view = function(ctrl){
                   ]),
                   m("h4", [
                     "Project Management",
-                    m("button.tiny", {type: "button", onclick: ctrl.addProjectModal.show.bind(ctrl.addProjectModal)}, [
+                    m("button.tiny.right", {type: "button", onclick: ctrl.addProjectModal.show.bind(ctrl.addProjectModal)}, [
                       "Reference a Project"
                     ]),
                   ]),

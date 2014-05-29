@@ -5,6 +5,7 @@ target
 tmp
 .history
 dist
+!/public/bower_components/*/dist/
 /.idea
 /*.iml
 /out
