@@ -2,7 +2,7 @@ request.view = function(ctrl){
 
   return app.template(
     ctrl.app,
-    {class: "detail"},
+    {className: "detail"},
     [ // modals
       common.modal.view(
         ctrl.signoffModal,

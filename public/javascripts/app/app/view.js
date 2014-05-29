@@ -5,7 +5,7 @@ app.template = function(a, b, c, d){
     case 2:
       ctrl = arguments[0];
       content = arguments[1];
-      attrs = {class: ""};
+      attrs = {className: ""};
       modals = [];
       break;
     case 3:
