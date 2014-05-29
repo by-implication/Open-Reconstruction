@@ -8,6 +8,7 @@ m.route(document, window.location.pathname == "/" ? "/welcome" : window.location
   "/requests/new": requestCreation,
   "/requests/:id": request,
   "/requests/:id/:tab": request,
+  "/visualizations/:v": visualization,
   "/dashboard": dashboard,
   "/saro": saro,
   "/welcome": welcome,

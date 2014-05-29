@@ -8,9 +8,15 @@ dashboard.controller = function(){
   this.byMonth = m.prop([]);
   this.byLevel = m.prop([]);
 
-  this.percentApproved = function(){
-    return self.byLevel()[4].count / self.byLevel()[0].count;
-  };
+  m.startComputation();
+  bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
+    self.mostCommonDisasterType(r.mostCommonDisasterType);
+    self.mostCommonProjectType(r.mostCommonProjectType);
+    self.byLevel(r.byLevel);
+    self.byMonth(padMonths(r.byMonth));
+    self.byDisasterType(r.byDisasterType);
+    m.endComputation();
+  });
 
   function nextYearMonth(yearMonth){
     var ym = yearMonth.split("-");
@@ -35,16 +41,6 @@ dashboard.controller = function(){
     }
     return r;
   }
-  
-  bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
-    self.mostCommonDisasterType(r.mostCommonDisasterType);
-    self.mostCommonProjectType(r.mostCommonProjectType);
-    self.byLevel(r.byLevel);
-    self.byMonth(padMonths(r.byMonth));
-    self.byDisasterType(r.byDisasterType);
-    // console.log('Disaster Types by Month:');
-    // console.log(r.byDisasterType);
-  });
 
   bi.ajax(routes.controllers.Assets.at("data/yolanda.json")).then(function (r){
     console.log("Yolanda Data");
@@ -66,7 +62,10 @@ dashboard.controller = function(){
     // console.log(data);
   });
 
-  this.projectHistory = function(elem){
+  this.projectHistory = new visPanel.controller();
+  this.projectHistory.title("Project History");
+  this.projectHistory.link("projectHistory");
+  this.projectHistory.chartSettings = function(){
     var labels = self.byMonth().map(function (e){
       var yearMonth = e.yearMonth.split("-");
       var year = yearMonth[0];
@@ -76,7 +75,7 @@ dashboard.controller = function(){
     var amountPerMonth = self.byMonth().map(function (e){ return e.amount / 1; });
     var countPerMonth = self.byMonth().map(function (e){ return e.count; });
 
-    var chart = c3.generate({
+    return {
       data: {
         x: "x",
         columns: [
@@ -90,17 +89,6 @@ dashboard.controller = function(){
         },
         types: {
           "Count per Month": 'bar',
-        },
-      },
-      color: {
-        pattern: ['#555', '#ff851b']
-      },
-      grid: {
-        x: {
-          show: true
-        },
-        y: {
-          show: true
         }
       },
       axis : {
@@ -109,7 +97,10 @@ dashboard.controller = function(){
           tick: {
             format: function (x) { 
               var monthDict = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-              return monthDict[x.getMonth() + 1] + ", " + x.getFullYear(); 
+              return monthDict[x.getMonth()] + ", " + x.getFullYear(); 
+            },
+            culling: {
+              max: 3
             }
           }
         },
@@ -123,31 +114,29 @@ dashboard.controller = function(){
           }
         },
       }
-    });
-
-    elem.appendChild(chart.element);
+    }
   }
 
-    
-  this.chartDisasterHistory = function(elem){
-
+  this.disasterHistory = new visPanel.controller();
+  this.disasterHistory.title("Project History by Type");
+  this.disasterHistory.link("disasterHistory");
+  this.disasterHistory.chartSettings = function(){
     var data = _.chain(self.byDisasterType())
       .groupBy(function(p){
         return p.disasterTypeId;
       })
       .map(function(subData, key){
-        return [key]
-          .concat(padMonths(subData).map(function(d){
-            return d.count
-          }));
+        return [key].concat(padMonths(subData).map(function(d){
+          return d.count
+        }));
       })
       .value();
 
     var range = padMonths(self.byDisasterType()).map(function(d){
       return d.yearMonth;
-    })
+    });
 
-    var chart = c3.generate({
+    return {
       data: {
         x: "x",
         columns: [["x"].concat(range)].concat(data),
@@ -156,45 +145,33 @@ dashboard.controller = function(){
           ["Disaster 1"]
         ]
       },
-      grid: {
-        x: {
-          show: true
-        },
-        y: {
-          show: true
-        }
-      },
-      color: {
-        pattern: ['#555', '#ff851b']
-      },
       axis: {
         x : {
           type : 'timeseries',
           tick: {
             format: function (x) { 
               var monthDict = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-              return monthDict[x.getMonth() + 1] + ", " + x.getFullYear(); 
+              return monthDict[x.getMonth()] + ", " + x.getFullYear(); 
+            },
+            culling: {
+              max: 4
             }
           }
         },
       }
-    });
-    elem.appendChild(chart.element);
+    }
   }
-  
-  this.chartProjectTypes = function(elem){
-    var chart = c3.generate({
+
+  this.projectTypes = new visPanel.controller();
+  this.projectTypes.title("Project Type Distribution");
+  this.projectTypes.link("projectTypes");
+  this.projectTypes.chartSettings = function(){
+    return {
       data: {
         columns: [
           ["Number of Projects", 3, 15, 82, 1, 42, 23]
         ],
         type: "bar",
-      },
-      legend: {
-        show: false
-      },
-      color: {
-        pattern: ['#ff851b']
       },
       axis: {
         x: {
@@ -203,8 +180,52 @@ dashboard.controller = function(){
         },
         rotated: true
       }
-    })
-    elem.appendChild(chart.element);
+    }
   }
 
+  this.topDisasters = new visPanel.controller();
+  this.topDisasters.link("topDisasters");
+  this.topDisasters.title("Number of Projects per Unique Named Disaster");
+  this.topDisasters.chartSettings = function(){
+    return {
+      data: {
+        columns: [
+          ["Number of Projects", 3, 15, 82, 1, 42, 23]
+        ],
+        type: "bar",
+      },
+      axis: {
+        x: {
+          type: "categorized",
+          categories: ["Rivers", "Infrastructure", "Housing", "Roads", "Phi", "Mark"]
+        },
+        rotated: true
+      }
+    }
+  }
+
+  this.topDisastersAmount = new visPanel.controller();
+  this.topDisastersAmount.title("Project Amounts per Unique Named Disaster");
+  this.topDisastersAmount.link("topDisastersAmount");
+  this.topDisastersAmount.chartSettings = function(){
+    return {
+      data: {
+        columns: [
+          ["Number of Projects", 3, 15, 82, 1, 42, 23]
+        ],
+        type: "bar",
+      },
+      axis: {
+        x: {
+          type: "categorized",
+          categories: ["Rivers", "Infrastructure", "Housing", "Roads", "Phi", "Mark"]
+        },
+        rotated: true
+      }
+    }
+  }
+
+  this.percentApproved = function(){
+    return self.byLevel()[4].count / self.byLevel()[0].count;
+  };
 }
