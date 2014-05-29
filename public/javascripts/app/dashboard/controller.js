@@ -15,6 +15,8 @@ dashboard.controller = function(){
     self.byLevel(r.byLevel);
     self.byMonth(visualizations.padMonths(r.byMonth));
     self.byDisasterType(r.byDisasterType);
+    console.log("Named Disasters");
+    console.log(r.byNamedDisaster);
     m.endComputation();
   });
 

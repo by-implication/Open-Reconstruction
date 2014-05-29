@@ -42,12 +42,7 @@ visualizations.create(
   'requestHistory',
   function(ctrl){
     return function(){
-    var labels = ctrl.byMonth().map(function (e){
-      var yearMonth = e.yearMonth.split("-");
-      var year = yearMonth[0];
-      var month = parseInt(yearMonth[1]) - 1;
-      return helper.monthArray[month] + ", " + year;
-    });
+    var labels = _.pluck(ctrl.byMonth(), 'yearMonth');
     var amountPerMonth = ctrl.byMonth().map(function (e){ return e.amount / 1; });
     var countPerMonth = ctrl.byMonth().map(function (e){ return e.count; });
 
@@ -71,10 +66,7 @@ visualizations.create(
         x : {
           type : 'timeseries',
           tick: {
-            format: function (x) { 
-              var monthDict = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-              return monthDict[x.getMonth()] + ", " + x.getFullYear(); 
-            },
+            format: '%b, %Y',
             culling: {
               max: 3
             }
@@ -152,10 +144,7 @@ visualizations.create(
           x : {
             type : 'timeseries',
             tick: {
-              format: function (x) { 
-                var monthDict = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                return monthDict[x.getMonth()] + ", " + x.getFullYear(); 
-              },
+              format: '%b, %Y',
               culling: {
                 max: 4
               }
