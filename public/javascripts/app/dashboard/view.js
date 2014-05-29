@@ -11,119 +11,103 @@ dashboard.view = function(ctrl){
           ])
         ])
       ]),
-      m("section.proposals", [
-        m(".row", [
-          m(".columns.medium-12", [
-            m("h1", [m("small", "Project Proposals")]),
-          ]),
-          m(".columns.medium-3", [
-            m("i.fa.fa-file-text-o.fa-5x"),
-            m(".val-group", [
-              m("h2", ctrl.byLevel()[0].count),
-              m(".caption", "Proposals Submitted"),
-            ]),
-            m(".val-group", [
-              m("h2", helper.truncate(ctrl.byLevel()[0].amount)),
-              m(".caption", "Total Cost (PHP)")
-            ]),
-          ]),
-          m(".columns.medium-3", [
-            m("i.fa.fa-search.fa-5x"),
-            m(".val-group", [
-              m("h2", [ctrl.byLevel()[1].count+ " ",
-                m("span", "(n%)")
-              ]),
-              m("span", "Proposals for Assessment"),
-            ]),
-            m(".val-group", [
-              m("h2", helper.truncate(
-                parseFloat(ctrl.byLevel()[1].amount) +
-                parseFloat(ctrl.byLevel()[2].amount)
-              )),
-              m("span", "Cost of pending projects (PHP)")
-            ]),
-          ]),
-          m(".columns.medium-3", [
-            m("i.fa.fa-check-circle-o.fa-5x"),
-            m(".val-group", [
-              m("h2", [ctrl.byLevel()[3].count+ " ",
-                m("span", "(n%)")
-              ]),
-              m("span", "Proposals for Approval"),
-            ]),
-            m(".val-group", [
-              m("h2", helper.truncate(
-                parseFloat(ctrl.byLevel()[4].amount) +
-                parseFloat(ctrl.byLevel()[5].amount)
-              )),
-              m("span", "Total Approved Cost")
-            ]),
-          ]),
-          m(".columns.medium-3", [
-            m("i.fa.fa-money.fa-5x"),
-            m(".val-group", [
-              m("h2", [ctrl.byLevel()[4].count + " ",
-                m("span", "(" + helper.percent(ctrl.percentApproved()) + ")")
-              ]),
-              m("span", "Projects for funding"),
-            ]),
-            m(".val-group", [
-              m("h2", ctrl.byLevel()[5].amount),
-              m("span", "Amount for disbursal")
-            ]),
-          ])
-        ])
-      ]),
+      // m("section.proposals", [
+      //   m(".row", [
+      //     m(".columns.medium-12", [
+      //       m("h1", [m("small", "Project Proposals")]),
+      //     ]),
+      //     m(".columns.medium-3", [
+      //       m("i.fa.fa-file-text-o.fa-5x"),
+      //       m(".val-group", [
+      //         m("h2", ctrl.byLevel()[0].count),
+      //         m(".caption", "Proposals Submitted"),
+      //       ]),
+      //       m(".val-group", [
+      //         m("h2", helper.truncate(ctrl.byLevel()[0].amount)),
+      //         m(".caption", "Total Cost (PHP)")
+      //       ]),
+      //     ]),
+      //     m(".columns.medium-3", [
+      //       m("i.fa.fa-search.fa-5x"),
+      //       m(".val-group", [
+      //         m("h2", ctrl.byLevel()[1].count),
+      //         m("span", "Proposals for Assessment"),
+      //       ]),
+      //       m(".val-group", [
+      //         m("h2", helper.truncate(
+      //           parseFloat(ctrl.byLevel()[1].amount) +
+      //           parseFloat(ctrl.byLevel()[2].amount)
+      //         )),
+      //         m("span", "Cost of pending projects (PHP)")
+      //       ]),
+      //     ]),
+      //     m(".columns.medium-3", [
+      //       m("i.fa.fa-check-circle-o.fa-5x"),
+      //       m(".val-group", [
+      //         m("h2", ctrl.byLevel()[3].count),
+      //         m("span", "Proposals for Approval"),
+      //       ]),
+      //       m(".val-group", [
+      //         m("h2", helper.truncate(
+      //           parseFloat(ctrl.byLevel()[4].amount) +
+      //           parseFloat(ctrl.byLevel()[5].amount)
+      //         )),
+      //         m("span", "Total Approved Cost")
+      //       ]),
+      //     ]),
+      //     m(".columns.medium-3", [
+      //       m("i.fa.fa-money.fa-5x"),
+      //       m(".val-group", [
+      //         m("h2", [ctrl.byLevel()[4].count, helper.percent(ctrl.percentApproved())]),
+      //         m("span", "Projects for funding"),
+      //       ]),
+      //       m(".val-group", [
+      //         m("h2", ctrl.byLevel()[5].amount),
+      //         m("span", "Amount for disbursal")
+      //       ]),
+      //     ])
+      //   ])
+      // ]),
       m("section.alt", [
         m(".row", [
-          m(".columns.medium-12", [
-            m("h1", [
-              m("small", "Project Proposals per Month")
+          m(".columns.medium-9", [
+            m("ul.medium-block-grid-2", [
+              m("li", [
+                visPanel.view(ctrl.projectHistory)
+              ]),
+              m("li", [
+                visPanel.view(ctrl.disasterHistory)
+              ]),
+              m("li", [
+                visPanel.view(ctrl.projectTypes)
+              ]),
+              m("li", [
+                visPanel.view(ctrl.topDisasters)
+              ]),
+              m("li", [
+                visPanel.view(ctrl.topDisastersAmount)
+              ]),
             ]),
-            m("#chart-project-history", {config: ctrl.projectHistory}, []),
+          ]),
+          m(".columns.medium-3", [
+            m("h4", [
+              "Filter by Visualization Type"
+            ]),
+            m("ul.filters", 
+              _.chain([{name: "hi", id: 2}])
+              .map(function (filter){
+                return m("li.filter",{className: (ctrl.projectTypeId == filter.id) ? "active" : ""}, [
+                  m("a", {
+                    href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page, filter.id).url,
+                    config: m.route
+                  }, filter.name)
+                ])
+              })
+              .value()
+            )
           ]),
         ]),
       ]),
-      m("section", [
-        m(".row", [
-          m(".columns.medium-12", [
-            m("h1", [m("small", "Projects by Disaster Type")])
-          ]),
-          m(".columns.medium-12", [
-            m("#chart-disaster-history", {config: ctrl.chartDisasterHistory}, []),
-          ]),
-        ]),
-        m(".row", [
-          m(".columns.medium-12.list", [
-            m("p", "Ideally, we should have date range, filter by project type, and by location (region/province).")
-          ])
-        ])
-      ]),
-      m("section.alt", [
-        m(".row", [
-          m(".columns.medium-12", [
-            m("h1", [m("small", "Types of Projects")]),
-            m("p", "Filters for [disaster type] and/or [disaster name] ")
-          ]),
-          m(".columns.medium-12", [
-            m("#chart-project-types", {config: ctrl.chartProjectTypes}, [])
-          ]),
-        ])
-      ]),
-      m("section", [
-        m(".row", [
-          m(".columns.medium-6",[
-            m("h1", [m("small", "Projects per Disaster")]),
-            m("p", "Horizontal bar chart of number of projects per unique named disaster. Sorted"),
-            m("p", "Think of this as a 'top 10' disasters thing. (e.g. #1 Yolanda, #2 Ondoy.)"),
-            m("p")
-          ]),
-          m(".columns.medium-6",[
-            m("h1", [m("small", "Amount per Disaster")]),
-            m("p", "Same, but for amount spent/allocated/disbursed. Sorted")
-          ])
-        ])
-      ])
     ])
   ])
 }
