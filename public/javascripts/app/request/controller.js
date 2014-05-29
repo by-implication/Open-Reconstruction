@@ -48,6 +48,15 @@ request.controller = function(){
   this.canEdit = m.prop(false);
   this.hasSignedoff = m.prop(false);
   this.input = { comment: m.prop() };
+  this.project = {
+    name: m.prop(),
+    amount: m.prop()
+  }
+
+  this.submitProject = function(e){
+    e.preventDefault();
+    console.log('Submitting project!');
+  }
 
   this.unassignedAgency = {id: 0};
   this.assessingAgency = m.prop(this.unassignedAgency);
