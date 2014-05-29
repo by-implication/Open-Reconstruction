@@ -98,78 +98,86 @@ request.view = function(ctrl){
                     m("br"),
                     " on "+(new Date(ctrl.request().date).toString()), // change this as people modify this. "Last edited by _____"
                   ]),
-                  m("h5", [m("small", "Processing Time")]),
-                  m("h5.display-edit-group#stagnation-" + ctrl.id + ".value"), // actual content c/o recursive update function in controller
-                  m("h5", [m("small", "Amount")]),
-                  ctrl.degs.amount.view(
-                    function(){ return m("h5.value", [helper.commaize(ctrl.request().amount)]) },
-                    function(){
-                      return m("div", [
-                        m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),
-                      ])
-                    }
-                  ),
-                  m("h5", [m("small", "Disaster")]),
-                  ctrl.degs.disaster.view(
-                    function(){
-                      var disasterType = request.disasterTypes().filter(function (dt){
-                        return dt.id == ctrl.request().disaster.typeId;
-                      })[0];
-                      return m("h5.value", [
-                        disasterType.name + " "
-                        + ctrl.request().disaster.name + " in "
-                        + common.displayDate(ctrl.request().disaster.date)
-                      ]
-                    )},
-                    function(){
-                      return m("div", [
-                        m("div", [
-                          m("label", [
-                            "Name",
-                            m("input", {
-                              type: "text",
-                              value: this.input().name,
-                              onchange: m.withAttr("value", this.input.setName)
-                            })
-                          ]),
-                          m("label", [
-                            "Type",
-                            m("select", {
-                              onchange: m.withAttr("value", this.input.setTypeId)
-                            }, request.disasterTypes().map(function (dt){
-                              return m("option", {value: dt.id, selected: dt.id == this.input().typeId}, dt.name)
-                            }.bind(this)))
-                          ]),
-                          m("label", [
-                            "Date",
-                            m("input", {
-                              type: "date",
-                              value: this.htmlDate() || helper.toDateValue(this.input().date),
-                              onchange: m.withAttr("value", this.input.setDate)
-                            })
+                  m("p", [
+                    "Processing Time",
+                    m("h4#stagnation-" + ctrl.id + ".value"), // actual content c/o recursive update function in controller
+                  ]),
+                  m("p", [
+                    "Amount",
+                    ctrl.degs.amount.view(
+                      function(){ return m("h4", [helper.commaize(ctrl.request().amount)]) },
+                      function(){
+                        return m("div", [
+                          m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),
+                        ])
+                      }
+                    ),
+                  ]),
+                  m("p", [
+                    "Disaster",
+                    ctrl.degs.disaster.view(
+                      function(){
+                        var disasterType = request.disasterTypes().filter(function (dt){
+                          return dt.id == ctrl.request().disaster.typeId;
+                        })[0];
+                        return m("h4.value", [
+                          disasterType.name + " "
+                          + ctrl.request().disaster.name + " in "
+                          + common.displayDate(ctrl.request().disaster.date)
+                        ]
+                      )},
+                      function(){
+                        return m("div", [
+                          m("div", [
+                            m("label", [
+                              "Name",
+                              m("input", {
+                                type: "text",
+                                value: this.input().name,
+                                onchange: m.withAttr("value", this.input.setName)
+                              })
+                            ]),
+                            m("label", [
+                              "Type",
+                              m("select", {
+                                onchange: m.withAttr("value", this.input.setTypeId)
+                              }, request.disasterTypes().map(function (dt){
+                                return m("option", {value: dt.id, selected: dt.id == this.input().typeId}, dt.name)
+                              }.bind(this)))
+                            ]),
+                            m("label", [
+                              "Date",
+                              m("input", {
+                                type: "date",
+                                value: this.htmlDate() || helper.toDateValue(this.input().date),
+                                onchange: m.withAttr("value", this.input.setDate)
+                              })
+                            ])
                           ])
                         ])
-                      ])
-                    }
-                  ),
-                  m("h5", [m("small", "Location")]),
-                  ctrl.degs.location.view(
-                    function(){ return m("h5.value", [ctrl.request().location]) },
-                    function(){
-                      return m("div", [
-                        m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),
-                      ])
-                    }
-                  ),
-                  m(".map-container", [
-                    m("#detailMap", {config: ctrl.initMap}),
-                    ctrl.coords() ?
-                      ""
-                    : m(".map-shroud", [
+                      }
+                    ),
+                  ]),
+                  m("p", [
+                    "Location",
+                    ctrl.degs.location.view(
+                      function(){ return m("h4.value", [ctrl.request().location]) },
+                      function(){
+                        return m("div", [
+                          m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),
+                        ])
+                      }
+                    ),
+                    m(".map-container", [
+                      m("#detailMap", {config: ctrl.initMap}),
+                      ctrl.coords() ?
+                        ""
+                      : m(".map-shroud", [
                         m("h3", [
                           "Map unavailable because requester did not supply coordinates"
                         ]),
                       ])
+                    ]),
                   ]),
                 ]),
               ]),
