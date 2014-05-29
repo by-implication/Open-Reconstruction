@@ -275,6 +275,12 @@ object Requests extends Controller with Secured {
           case _ => Some(govUnitId)
       }))(_ => None)
     }
+    case "saroNo" => {
+      mapping(
+        "input" -> nonEmptyText.verifying("Unauthorized", _ => user.isDBM)
+      )(saroNo => req.copy(saroNo = Some(saroNo))
+      )(_ => None)
+    }
     case _ => {
       mapping(
         "input" -> text.verifying("Invalid field", _ => false)

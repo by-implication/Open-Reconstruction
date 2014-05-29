@@ -3,6 +3,7 @@ request.controller = function(){
   this.app = new app.controller();
   this.signoffModal = new common.modal.controller();
   this.rejectModal = new common.modal.controller();
+  this.saroModal = new common.modal.controller();
   var requestId = m.route.param('id');
   this.requestTabs = new common.tabs.controller();
   this.requestTabs.tabs([
@@ -265,6 +266,24 @@ request.controller = function(){
           errors.push([field, r.messages[field]]);
         }
         alert("Failed to reject:\n" + errors.join("\n"));
+      }
+    }.bind(this));
+  }.bind(this);
+
+  this.saroModal.submit = function(e){
+    e.preventDefault();
+    bi.ajax(routes.controllers.Requests.signoff(this.id), {
+      data: {password: this.saroModal.saroNo}
+    }).then(function (r){
+      if(r.success){
+        this.canSignoff(false);
+        this.hasSignedoff(true);
+        alert('Signoff successful!');
+        this.signoffModal.close();
+        this.history().unshift(r.event);
+        this.request().level++;
+      } else {
+        alert("Failed to signoff: " + r.messages.password);
       }
     }.bind(this));
   }.bind(this);

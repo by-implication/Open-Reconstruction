@@ -5,6 +5,28 @@ request.view = function(ctrl){
     {class: "detail"},
     [ // modals
       common.modal.view(
+        ctrl.saroModal,
+        function(ctrl){
+          return m("form", {onsubmit: ctrl.saroNo}, [
+            m(".section", [
+              m("h3", "SARO Assignment"),
+              m("p", [
+                "This will be hidden from public view unless explicitly stated otherwise."
+              ]),
+            ]),
+            m("hr"),
+            m(".section", [
+              common.field("SARO Number", m("input", {
+                onchange: m.withAttr("value", ctrl.saroNo)
+              })),
+              m("button", [
+                "Submit"
+              ]),
+            ]),
+          ])
+        }
+      ),
+      common.modal.view(
         ctrl.signoffModal,
         function(ctrl){
           return m("form", {onsubmit: ctrl.signoff}, [
@@ -360,6 +382,10 @@ request.approval = function(ctrl){
               m("button", {onclick: ctrl.signoffModal.show.bind(ctrl.signoffModal)}, [
                 m("i.fa.fa-fw.fa-check"),
                 "Sign off"
+              ]),
+              m("button", {onclick: ctrl.saroModal.show.bind(ctrl.saroModal)}, [
+                m("i.fa.fa-fw.fa-check"),
+                "Assign SARO"
               ]),
               m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
                 m("i.fa.fa-fw.fa-times"),
