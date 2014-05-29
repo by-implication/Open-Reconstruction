@@ -5,6 +5,11 @@ request.controller = function(){
   this.signoffModal = new common.modal.controller();
   this.rejectModal = new common.modal.controller();
   this.saroModal = new common.modal.controller();
+  this.addProjectModal = new common.modal.controller();
+  this.addProjectModal.project = {
+    name: m.prop(),
+    amount: m.prop()
+  }
   var requestId = m.route.param('id');
   this.requestTabs = new common.tabs.controller();
   this.requestTabs.tabs([
@@ -50,10 +55,6 @@ request.controller = function(){
   this.canEdit = m.prop(false);
   this.hasSignedoff = m.prop(false);
   this.input = { comment: m.prop() };
-  this.project = {
-    name: m.prop(),
-    amount: m.prop()
-  }
 
   this.submitProject = function(e){
     e.preventDefault();
