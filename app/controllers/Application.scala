@@ -81,7 +81,6 @@ object Application extends Controller {
       Requests.viewActivity,
       Requests.viewMeta,
       Visualizations.view,
-      Visualizations.viewMeta,
       GovUnits.edit,
       GovUnits.editMeta,
       GovUnits.update,
