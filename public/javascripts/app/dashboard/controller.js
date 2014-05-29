@@ -64,6 +64,7 @@ dashboard.controller = function(){
 
   this.projectHistory = new visPanel.controller();
   this.projectHistory.title("Project History");
+  this.projectHistory.link("projectHistory");
   this.projectHistory.chartSettings = function(){
     var labels = self.byMonth().map(function (e){
       var yearMonth = e.yearMonth.split("-");
@@ -118,6 +119,7 @@ dashboard.controller = function(){
 
   this.disasterHistory = new visPanel.controller();
   this.disasterHistory.title("Project History by Type");
+  this.disasterHistory.link("disasterHistory");
   this.disasterHistory.chartSettings = function(){
     var data = _.chain(self.byDisasterType())
       .groupBy(function(p){
@@ -162,6 +164,7 @@ dashboard.controller = function(){
 
   this.projectTypes = new visPanel.controller();
   this.projectTypes.title("Project Type Distribution");
+  this.projectTypes.link("projectTypes");
   this.projectTypes.chartSettings = function(){
     return {
       data: {
@@ -181,6 +184,7 @@ dashboard.controller = function(){
   }
 
   this.topDisasters = new visPanel.controller();
+  this.topDisasters.link("topDisasters");
   this.topDisasters.title("Number of Projects per Unique Named Disaster");
   this.topDisasters.chartSettings = function(){
     return {
@@ -202,6 +206,7 @@ dashboard.controller = function(){
 
   this.topDisastersAmount = new visPanel.controller();
   this.topDisastersAmount.title("Project Amounts per Unique Named Disaster");
+  this.topDisastersAmount.link("topDisastersAmount");
   this.topDisastersAmount.chartSettings = function(){
     return {
       data: {

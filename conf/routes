@@ -8,7 +8,6 @@ GET     /                                         controllers.Application.index
 GET     /welcome                                  controllers.Application.welcome
 GET     /dashboard                                controllers.Application.dashboard
 GET     /dashboard/meta                           controllers.Application.dashboardMeta
-GET     /visualizations/:v/meta                   controllers.Requests.visualizationMeta(v: String)
 GET     /saro                                     controllers.Application.saro
 GET     /process                                  controllers.Application.process
 GET     /assets/javascripts/routes/play.js        controllers.Application.jsRoutes
@@ -59,6 +58,9 @@ POST    /requests/:id/reject                      controllers.Requests.reject(id
 POST    /requests/:id/comment                     controllers.Requests.comment(id: Int)
 POST    /requests/:id/edit/:f                     controllers.Requests.editField(id: Int, f: String)
 POST    /requests/:id/attach/:type                controllers.Attachments.add(id: Int, type: String)
+
+GET     /visualizations/:v                        controllers.Requests.visualization(v: String)
+GET     /visualizations/:v/meta                   controllers.Requests.visualizationMeta(v: String)
 
 GET     /attachments/:id/preview                  controllers.Attachments.preview(id: Int)
 GET     /attachments/:id/download                 controllers.Attachments.download(id: Int)
