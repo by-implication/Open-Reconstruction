@@ -120,7 +120,7 @@ request.view = function(ctrl){
                         var disasterType = request.disasterTypes().filter(function (dt){
                           return dt.id == ctrl.request().disaster.typeId;
                         })[0];
-                        return m("h4.value", [
+                        return m("h4", [
                           disasterType.name + " "
                           + ctrl.request().disaster.name + " in "
                           + common.displayDate(ctrl.request().disaster.date)
@@ -168,16 +168,16 @@ request.view = function(ctrl){
                         ])
                       }
                     ),
-                    m(".map-container", [
-                      m("#detailMap", {config: ctrl.initMap}),
-                      ctrl.coords() ?
-                        ""
-                      : m(".map-shroud", [
-                        m("h3", [
-                          "Map unavailable because requester did not supply coordinates"
-                        ]),
-                      ])
-                    ]),
+                  ]),
+                  m(".map-container", [
+                    m("#detailMap", {config: ctrl.initMap}),
+                    ctrl.coords() ?
+                      ""
+                    : m(".map-shroud", [
+                      m("h3", [
+                        "Map unavailable because requester did not supply coordinates"
+                      ]),
+                    ])
                   ]),
                 ]),
               ]),
@@ -187,50 +187,50 @@ request.view = function(ctrl){
                 m(".content", [
                   m("p", [
                     "Assessing Agency",
-                    m("h4", [
-                      ctrl.degs.assess.view(
-                        function(){
-                          return ctrl.assessingAgency().id ?
+                    ctrl.degs.assess.view(
+                      function(){
+                        return ctrl.assessingAgency().id ?
+                          m("h4", [
                             m("a", {href: routes.controllers.GovUnits.view(ctrl.assessingAgency().id).url, config: m.route}, [
                               ctrl.assessingAgency().name
                             ])
-                          : "Unassigned";
-                        },
-                        function(){
-                          return m("select", {onchange: m.withAttr("value", this.input)},
-                            [m("option", {value: 0, selected: ctrl.assessingAgency().id == 0}, "None")]
-                            .concat(ctrl.assessingAgencies().map(function(agency){
-                              return m("option", {value: agency.id, selected: ctrl.assessingAgency().id == agency.id}, agency.name)
-                            }
-                          )));
-                        }
-                      )
-                    ]),
+                          ])
+                        : m("h4", "Unassigned");
+                      },
+                      function(){
+                        return m("select", {onchange: m.withAttr("value", this.input)},
+                          [m("option", {value: 0, selected: ctrl.assessingAgency().id == 0}, "None")]
+                          .concat(ctrl.assessingAgencies().map(function(agency){
+                            return m("option", {value: agency.id, selected: ctrl.assessingAgency().id == agency.id}, agency.name)
+                          }
+                        )));
+                      }
+                    ),
                     m("p.help", [
                       "The Assessing Agency will independently validate and assess the suitability of this request for execution. They will be the ones making the program of works, etc..."
                     ]),
                   ]),
                   m("p", [
                     "Implementing Agency",
-                    m("h4", [
-                      ctrl.degs.implement.view(
-                        function(){
-                          return ctrl.implementingAgency().id ?
+                    ctrl.degs.implement.view(
+                      function(){
+                        return ctrl.implementingAgency().id ?
+                          m("h4", [
                             m("a", {href: routes.controllers.GovUnits.view(ctrl.implementingAgency().id).url, config: m.route}, [
                               ctrl.implementingAgency().name
                             ])
-                          : "Unassigned"
-                        },
-                        function(){
-                          return m("select", {onchange: m.withAttr("value", this.input)},
-                            [m("option", {value: 0, selected: ctrl.implementingAgency().id == 0}, "None")]
-                            .concat(ctrl.implementingAgencies().map(function(agency){
-                              return m("option", {value: agency.id, selected: ctrl.implementingAgency().id == agency.id}, agency.name)
-                            }
-                          )));
-                        }
-                      )
-                    ]),
+                          ])
+                        : m("h4", "Unassigned");
+                      },
+                      function(){
+                        return m("select", {onchange: m.withAttr("value", this.input)},
+                          [m("option", {value: 0, selected: ctrl.implementingAgency().id == 0}, "None")]
+                          .concat(ctrl.implementingAgencies().map(function(agency){
+                            return m("option", {value: agency.id, selected: ctrl.implementingAgency().id == agency.id}, agency.name)
+                          }
+                        )));
+                      }
+                    ),
                     m("p.help", [
                       "The Implementing Agency will be responsible for the handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
                     ]),
