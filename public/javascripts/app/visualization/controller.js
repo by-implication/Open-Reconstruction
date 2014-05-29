@@ -21,6 +21,8 @@ visualization.controller = function(){
     m.endComputation();
   });
 
-  this[this.id] = visualizations.library[this.id](self);
-
+  this.vis = _.extend({}, visualizations.library[this.id](self));
+  this.vis.size().width = undefined;
+  this.vis.size().height = 300;
+  this.vis.showTitle(false);
 }

@@ -1,16 +1,14 @@
 visualization.view = function(ctrl){
-  return app.template(ctrl.app, [
+  return app.template(ctrl.app, {className: "detail"}, [
     m("div#view.dashboard", [
-      common.banner("Dashboard"),
+      common.banner(ctrl.vis.title()),
+      visPanel.view(ctrl.vis),
       m("section", [
-        m(".row",[
-          m(".columns.medium-12",[
-            m(".notice",[
-              "Some introductory text goes here. Explains that this is a live snapshot of data, but you can access the raw data if you make to make your own visualizations. Other obligatory disclaimers and all that."
-            ])
+        m(".row", [
+          m(".columns.medium-12", [
+            "hi"
           ]),
-          visPanel.view(ctrl[ctrl.id])
-        ])
+        ]),
       ])
     ])
   ])  
