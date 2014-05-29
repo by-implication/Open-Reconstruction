@@ -1,6 +1,11 @@
 requestCreation.controller = function(){
   var self = this;
   this.app = new app.controller();
+  this.info = new m.prop({
+    disasterTypes: [],
+    projectTypes: [],
+    projectScopes: []
+  });
 
   this.preamble = m.prop(false);
   this.input = {
@@ -10,11 +15,13 @@ requestCreation.controller = function(){
     description: m.prop(""),
     disasterDate: m.prop("2001-1-1"),
     disasterName: m.prop(""),
-    disasterType: m.prop(""),
+    disasterTypeId: m.prop(1),
     location: m.prop(""),
-    projectType: m.prop("Road"),
+    projectTypeId: m.prop(1),
     scopeOfWork: m.prop("Reconstruction")
   }
+
+  this.submitButtonDisabled = m.prop(false);
 
   this.configShowForm = function(elem){
     window.setTimeout(function(){
@@ -73,8 +80,8 @@ requestCreation.controller = function(){
   }.bind(this);
 
   bi.ajax(routes.controllers.Requests.createMeta()).then(function (data){
-    this.requestCreationInfo = data;
-    this.input.disasterType(data.disasterTypes[0]);
+    this.info(data);
+    this.input.disasterTypeId(data.disasterTypes[0].id);
   }.bind(this));
 
   this.disasterDate = [2001, 1, 1];
@@ -84,18 +91,33 @@ requestCreation.controller = function(){
     this.input.disasterDate(this.disasterDate.join("-"));
   }.bind(this);
 
-  this.submitNewRequest = function(e){
+  this.submitNewRequest = function(e){;
     e.preventDefault();
     if(this.preamble()) {
+
+      // transmit disasterDate as a timestamp
+      var oldDate = this.input.disasterDate();
+      var newDate = (new Date(oldDate)).getTime();
+      this.input.disasterDate(newDate);
+
       bi.ajax(routes.controllers.Requests.insert(), {data: this.input}).then(function(r){
         if(r.success){
           window.location = '/';
-        } else if(r.reason == "form error"){
-          alert("Request not created!");
         } else {
-          alert(r.reason);
+          if(r.reason == "form error"){
+            var msg = "Request not created because of the following:";
+            for(var field in r.messages){
+              var message = r.messages[field];
+              msg += "\n" + field + " - " + message;
+            }
+            alert(msg);
+          } else {
+            alert(r.reason);
+          }
+          this.submitButtonDisabled(false);
         }
-      })
+      }.bind(this));
+      
     } else {
       alert('To avoid double-budgeting, please make sure to request for assistance only once!');
     }

@@ -7,7 +7,6 @@
 
 $red: #cc4136
 
-
 body
   &.detail
     background-color: #eee
@@ -38,6 +37,21 @@ body
   padding-bottom: 20px
   h1
     color: $white
+
+.loader-padding
+  display: inline-block
+  width: 30px
+
+#nprogress
+  .bar
+    background: $orange
+
+  .peg
+    box-shadow: 0 0 10px $orange, 0 0 5px $orange
+
+  .spinner-icon
+    border-top-color: $orange
+    border-left-color: $orange
 
 ul
   list-style: none
@@ -336,16 +350,23 @@ label
 
 button.micro, .button.micro
   @extend .tiny
-  padding: 6px 8px
+  padding: 5px 8px
 
 .display-edit-group
   &.edit-mode
     .edit-button
       display: block
-  &.can-edit:hover
-    background-color: rgba(black, 0.05)
-    .edit-button
-      display: block
+  &.can-edit
+    // padding: 8px
+    // margin-left: -8px
+    // margin-right: -8px
+    // color: $accent
+    // h1, h2, h3, h4, h5, h6
+      // color: $accent
+    &:hover
+      background-color: rgba(black, 0.05)
+      .edit-button
+        display: block
   .edit-button
     display: none
     float: right

@@ -2,7 +2,12 @@ user.controller = function(){
   this.app = new app.controller();
   var self = this;
   this.id = m.route.param("id");
-  this.user = m.prop({});
+  this.user = m.prop({
+    name: "",
+    govUnit: {
+      name: ""
+    }
+  });
   this.requestList = m.prop([]);
   this.currentFilter = {requests: function(){return null}};
   this.sortBy = m.prop("id");

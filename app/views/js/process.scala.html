@@ -1,0 +1,24 @@
+@()
+
+@import recon.models.Permission
+
+var process = {};
+
+process.levelToAgencyName = m.prop([
+  "ASSESSING_AGENCY",
+  "ASSESSING_AGENCY",
+  "Office of Civil Defense",
+  "Office of the President",
+  "Department of Budget and Management"
+]);
+
+process.levelDict = [
+  "RECEIVED",
+  "ASSESSOR_ASSIGNMENT",
+  "ASSESSOR_SIGNOFF",
+  "OCD_SIGNOFF",
+  "OP_SIGNOFF",
+  "SARO_ASSIGNMENT"
+];
+
+process.permissions = @Html(Permission.json.toString);

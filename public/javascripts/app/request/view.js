@@ -1,8 +1,8 @@
 request.view = function(ctrl){
 
   return app.template(
-    ctrl.app, 
-    {class: "detail"}, 
+    ctrl.app,
+    {class: "detail"},
     [ // modals
       common.modal.view(
         ctrl.signoffModal,
@@ -51,8 +51,8 @@ request.view = function(ctrl){
           ])
         }
       )
-    ], 
-    [ 
+    ],
+    [
       // approval section
       ctrl.isInvolved() ? request.approval(ctrl) : "",
       // progress tracker
@@ -68,67 +68,60 @@ request.view = function(ctrl){
               m(".section", [
                 common.tabs.menu(ctrl.requestTabs)
               ]),
-              m.switch(ctrl.requestTabs.currentTab()())
+              m.switch(ctrl.requestTabs.currentTab())
                 .case("Assignments", function(){
-                  if(ctrl.app.isSuperAdmin()){
-                    return m(".section", [
-                      m("form", [
-                        m("label", [
-                          "Assessing Agency",
-                          m("select", {onchange: m.withAttr("value", ctrl.updateAssessingAgency), value: ctrl.input.assessingAgency()}, 
-                            [m("option", {value: 0}, "None")]
-                            .concat(ctrl.assessingAgencies().map(function(agency){
-                              return m("option", {value: agency.id, selected: ctrl.input.assessingAgency() == agency.id}, agency.name)
-                            }
-                          ))),
-                          m("p.help", [
-                            "The Assessing Agency you assign will independently validate and assess the suitability of this request for execution. They will be the ones making the program of works, etc... If you are unsure about who to assign, it's generally best to assign DPWH."
-                          ]),
-                        ]),
-                        m("label", [
-                          "Implementing Agency",
-                          m("select", {onchange: m.withAttr("value", ctrl.updateImplementingAgency), value: ctrl.input.implementingAgency()},
-                            [m("option", {value: 0}, "None")]
-                            .concat(ctrl.implementingAgencies().map(function(agency){
-                              return m("option", {value: agency.id, selected: ctrl.input.implementingAgency() == agency.id}, agency.name)
-                            }
-                            ))),
-                          m("p.help", [
-                            "The Implementing Agency will be responsible for the handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
-                          ]),
-                        ]),
+                  return m(".section", [
+                    m("p", [
+                      "Assessing Agency",
+                      m("h4", [
+                        ctrl.degs.assess.view(
+                          function(){
+                            return ctrl.assessingAgency().id ?
+                              m("a", {href: routes.controllers.GovUnits.view(ctrl.assessingAgency().id).url, config: m.route}, [
+                                ctrl.assessingAgency().name
+                              ])
+                            : "Unassigned";
+                          },
+                          function(){
+                            return m("select", {onchange: m.withAttr("value", this.input)},
+                              [m("option", {value: 0, selected: ctrl.assessingAgency().id == 0}, "None")]
+                              .concat(ctrl.assessingAgencies().map(function(agency){
+                                return m("option", {value: agency.id, selected: ctrl.assessingAgency().id == agency.id}, agency.name)
+                              }
+                            )));
+                          }
+                        )
                       ]),
-                    ])
-                  } else {
-                    return m(".section", [
-                      m("p", [
-                        "Assessing Agency",
-                        m("h4", [
-                          ctrl.assessingAgency() ?
-                            m("a", {href: "/agencies/"+ctrl.assessingAgency().id, config: m.route}, [
-                              ctrl.assessingAgency().name
-                            ])
-                          : "Unassigned"
-                        ]),
-                        m("p.help", [
-                          "The Assessing Agency will independently validate and assess the suitability of this request for execution. They will be the ones making the program of works, etc..."
-                        ]),
+                      m("p.help", [
+                        "The Assessing Agency will independently validate and assess the suitability of this request for execution. They will be the ones making the program of works, etc..."
                       ]),
-                      m("p", [
-                        "Implementing Agency",
-                        m("h4", [
-                          ctrl.implementingAgency() ?
-                            m("a", {href: "/agencies/"+ctrl.implementingAgency().id, config: m.route}, [
-                              ctrl.implementingAgency().name
-                            ])
-                          : "Unassigned"
-                        ]),
-                        m("p.help", [
-                          "The Implementing Agency will be responsible for the handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
-                        ]),
+                    ]),
+                    m("p", [
+                      "Implementing Agency",
+                      m("h4", [
+                        ctrl.degs.implement.view(
+                          function(){
+                            return ctrl.implementingAgency().id ?
+                              m("a", {href: routes.controllers.GovUnits.view(ctrl.implementingAgency().id).url, config: m.route}, [
+                                ctrl.implementingAgency().name
+                              ])
+                            : "Unassigned"
+                          },
+                          function(){
+                            return m("select", {onchange: m.withAttr("value", this.input)},
+                              [m("option", {value: 0, selected: ctrl.implementingAgency().id == 0}, "None")]
+                              .concat(ctrl.implementingAgencies().map(function(agency){
+                                return m("option", {value: agency.id, selected: ctrl.implementingAgency().id == agency.id}, agency.name)
+                              }
+                            )));
+                          }
+                        )
                       ]),
-                    ])
-                  }
+                      m("p.help", [
+                        "The Implementing Agency will be responsible for the handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
+                      ]),
+                    ]),
+                  ])
                 })
                 .case("Images", function(){
                   return m(".section", [
@@ -139,16 +132,16 @@ request.view = function(ctrl){
                     ctrl.attachments().imgs.length ?
                       m("ul.attachments-images.small-block-grid-4", ctrl.attachments().imgs.map(function (img){
                         return m("li", [
-                          m("img", {src: "/attachments/" + img.id + "/thumb"}),
+                          m("img", {src: routes.controllers.Attachments.thumb(img.id).url}),
                           m(".filename", [
-                            m("a", {title: "Preview", href: "/attachments/" + img.id + "/preview", target: "_blank"}, [
+                            m("a", {title: "Preview", href: routes.controllers.Attachments.preview(img.id).url, target: "_blank"}, [
                               img.filename
                             ]),
                           ]),
-                          
+                         
                           m(".uploader", [
                             "Uploaded by ",
-                            m("a", {href: "/users/" + img.uploader.id ,config: m.route},[
+                            m("a", {href: routes.controllers.Users.view(img.uploader.id).url, config: m.route},[
                               img.uploader.name
                             ]),
                             m(".date", [
@@ -184,7 +177,7 @@ request.view = function(ctrl){
                               m("td", doc.filename),
                               m("td", common.displayDate(doc.dateUploaded)),
                               m("td", [
-                                m("a", {href: "/users/" + doc.uploader.id}, doc.uploader.name)
+                                m("a", {href: routes.controllers.Users.view(doc.uploader.id).url, config: m.route}, doc.uploader.name)
                               ]),
                               m("td", common.attachmentActions.bind(ctrl)(doc))
                             ])
@@ -234,55 +227,83 @@ request.summary = function(ctrl){
       ctrl.request().projectType
     ]),
     m(".section", [
-      displayEditGroup.view(
-        ctrl.canEdit(),
-        ctrl.degDescription,
-        function(){ return m("h4", ctrl.request().description) }, 
+      ctrl.degs.description.view(
+        function(){ return m("h4", ctrl.request().description) },
         function(){
           return m("div", [
-            m("input", {type: "text", value: ctrl.request().description, onchange: m.withAttr("value", ctrl.degDescription.input)}),
+            m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),
           ])
         }
       ),
       m("p.meta", [
         "Posted by ",
-        m("a",{href: "/users/"+ctrl.request().authorId, config: m.route}, ctrl.author().name),
+        m("a",{href: routes.controllers.Users.view(ctrl.author().id).url, config: m.route}, ctrl.author().name),
         m("br"),
         " on "+(new Date(ctrl.request().date).toString()), // change this as people modify this. "Last edited by _____"
       ]),
     ]),
     m("hr"),
     m("div.section", [
+      m("h5", [m("small", "Processing Time")]),
+      m("h5.display-edit-group#stagnation-" + ctrl.id + ".value"), // actual content c/o recursive update function in controller
       m("h5", [m("small", "Amount")]),
-      displayEditGroup.view(
-        ctrl.canEdit(),
-        ctrl.degAmount,
-        function(){ return m("h5.value", [helper.commaize(ctrl.request().amount)]) }, 
-        function(){ 
+      ctrl.degs.amount.view(
+        function(){ return m("h5.value", [helper.commaize(ctrl.request().amount)]) },
+        function(){
           return m("div", [
-            m("input", {type: "text", value: ctrl.request().amount, onchange: m.withAttr("value", ctrl.degAmount.input)}),
+            m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),
           ])
         }
       ),
       m("h5", [m("small", "Disaster")]),
-      displayEditGroup.view(
-        ctrl.canEdit(),
-        ctrl.degDisaster, 
-        function(){ return m("h5.value", [ctrl.request().disasterType + " " + ctrl.request().disasterName + " in " + common.displayDate(ctrl.request().disasterDate)]) }, 
-        function(){ 
+      ctrl.degs.disaster.view(
+        function(){
+          var disasterType = request.disasterTypes().filter(function (dt){
+            return dt.id == ctrl.request().disaster.typeId;
+          })[0];
+          return m("h5.value", [
+            disasterType.name + " "
+            + ctrl.request().disaster.name + " in "
+            + common.displayDate(ctrl.request().disaster.date)
+          ]
+        )},
+        function(){
           return m("div", [
-            "Sorry, editing disaster is not yet supported."
+            m("div", [
+              m("label", [
+                "Name",
+                m("input", {
+                  type: "text",
+                  value: this.input().name,
+                  onchange: m.withAttr("value", this.input.setName)
+                })
+              ]),
+              m("label", [
+                "Type",
+                m("select", {
+                  onchange: m.withAttr("value", this.input.setTypeId)
+                }, request.disasterTypes().map(function (dt){
+                  return m("option", {value: dt.id, selected: dt.id == this.input().typeId}, dt.name)
+                }.bind(this)))
+              ]),
+              m("label", [
+                "Date",
+                m("input", {
+                  type: "date",
+                  value: this.htmlDate() || helper.toDateValue(this.input().date),
+                  onchange: m.withAttr("value", this.input.setDate)
+                })
+              ])
+            ])
           ])
         }
       ),
       m("h5", [m("small", "Location")]),
-      displayEditGroup.view(
-        ctrl.canEdit(),
-        ctrl.degLocation, 
-        function(){ return m("h5.value", [ctrl.request().location]) }, 
-        function(){ 
+      ctrl.degs.location.view(
+        function(){ return m("h5.value", [ctrl.request().location]) },
+        function(){
           return m("div", [
-            m("input", {type: "text", value: ctrl.request().location, onchange: m.withAttr("value", ctrl.degLocation.input)}),
+            m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),
           ])
         }
       ),
@@ -307,7 +328,7 @@ request.approval = function(ctrl){
         ctrl.request().isRejected ?
           m("div", [
             m("h4", [
-              "This request has been rejected." 
+              "This request has been rejected."
             ]),
           ])
         : (
@@ -317,10 +338,12 @@ request.approval = function(ctrl){
                 "Sign off on this request only if you feel the information is complete for your step in the approval process."
               ]),
               m("button", {onclick: ctrl.signoffModal.show.bind(ctrl.signoffModal)}, [
-                m("i.fa.fa-check"),
+                m("i.fa.fa-fw.fa-check"),
+                "Sign off"
               ]),
               m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
-                m("i.fa.fa-times"),
+                m("i.fa.fa-fw.fa-times"),
+                "Reject"
               ])
             ])
           : ctrl.hasSignedoff() ?
@@ -331,13 +354,25 @@ request.approval = function(ctrl){
               ]),
             ])
           : m("div", [
-            m("h4", [
+            m("h4",
               ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
                 ctrl.app.isSuperAdmin() ?
                   "Please assign an agency to assess this request."
                 : "Waiting for the Office of Civil Defense to assign an agency to assess this request."
               : "Waiting for " + ctrl.getBlockingAgency() + " approval."
-            ]),
+            ),
+            m("div",
+              ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
+                ctrl.app.isSuperAdmin() ?
+                  [
+                    m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
+                      m("i.fa.fa-fw.fa-times"),
+                      "Reject"
+                    ])
+                  ]
+                : ""
+              : ""
+            ),
           ])
         ),
         ctrl.currentUserIsAuthor() && !ctrl.hasSignedoff() ?
@@ -365,7 +400,7 @@ request.progress = function(ctrl){
                 className: (ctrl.request().level >= step ? 'done ' : '') +
                   (ctrl.request().level === (step - 1) ? 'pending' : '')
               }, [
-                process.levelDict()[step]
+                process.levelDict[step]
               ])
             })
             .value()
@@ -425,7 +460,9 @@ request.listView = function(reqs, sortBy){
                     config: m.route
                   }, p.description)
                 ]),
-                m("td", p.author.govUnit),
+                m("td", [m("a",
+                  {href: routes.controllers.GovUnits.view(p.author.govUnit.id).url, config: m.route},
+                  p.author.govUnit.name)]),
                 m("td", [
                   !p.isRejected ?
                     request.miniProgress(p)

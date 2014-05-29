@@ -5,3 +5,4 @@
 ../bower_components/leaflet/leaflet-src.js
 ../bower_components/leaflet-draw/leaflet.draw.js
 ../bower_components/dropzone/dropzone.js
+../bower_components/nprogress/nprogress.js

@@ -1,7 +1,9 @@
 package controllers
 
 import play.api._
+import play.api.libs.json._
 import play.api.mvc._
+import recon.models._
 
 object Application extends Controller {
 
@@ -17,8 +19,15 @@ object Application extends Controller {
   def adminLgus = index
   def adminAgencies = index
 
-  def csvParser() = Action {
-    Ok(views.html.csvParser())
+  def csvParser() = Action { Ok(views.html.csvParser()) }
+  def lguParser() = Action { Ok(views.html.lguParser()) }
+
+  def process() = Action {
+    Ok(views.html.js.process()).withHeaders("Content-Type" -> "text/javascript")
+  }
+
+  def dashboardMeta() = Action {
+    Ok(Json.toJson(Req.listAll.map(_.dashboardJson)))
   }
 
   def jsRoutes = Action { implicit request =>
@@ -28,6 +37,8 @@ object Application extends Controller {
       routes.javascript.Application.adminLgus,
       routes.javascript.Application.adminAgencies,
       routes.javascript.Application.dashboard,
+      routes.javascript.Application.dashboardMeta,
+      routes.javascript.Application.process,
       Users.authenticate,
       Users.create,
       Users.login,
@@ -36,6 +47,12 @@ object Application extends Controller {
       Users.insert,
       Users.view,
       Users.viewMeta,
+      Admin.insertType,
+      Admin.updateType,
+      Admin.projectTypes,
+      Admin.projectTypesMeta,
+      Admin.disasterTypes,
+      Admin.disasterTypesMeta,
       Attachments.add,
       Attachments.archive,
       Attachments.unarchive,
@@ -43,19 +60,12 @@ object Application extends Controller {
       Attachments.download,
       Attachments.thumb,
       Assets.at,
-      Requests.assignAssessingAgency,
-      Requests.assignImplementingAgency,
       Requests.comment,
       Requests.create,
       Requests.createMeta,
       Requests.editField,
       Requests.index,
-      Requests.indexAll,
-      Requests.indexApproval,
-      Requests.indexAssessor,
-      Requests.indexImplementation,
-      Requests.indexMine,
-      Requests.indexSignoff,
+      Requests.indexPage,
       Requests.indexMeta,
       Requests.insert,
       Requests.reject,
@@ -66,6 +76,10 @@ object Application extends Controller {
       Requests.viewDocuments,
       Requests.viewActivity,
       Requests.viewMeta,
+      GovUnits.edit,
+      GovUnits.editMeta,
+      GovUnits.update,
+      GovUnits.getChildren,
       GovUnits.listAgencies,
       GovUnits.listLgus,
       GovUnits.view,

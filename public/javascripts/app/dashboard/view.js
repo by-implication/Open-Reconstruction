@@ -12,15 +12,15 @@ dashboard.view = function(ctrl){
             m("p", "Total number of projects")
           ]),
           m(".columns.medium-3", [
-            m("h1", ctrl.totalProjects()),
+            m("h1", ctrl.pendingProjects()),
             m("p", "Pending projects")
           ]),
           m(".columns.medium-3", [
-            m("h1", "0"),
+            m("h1", ctrl.approvedProjects().length),
             m("p", "Approved projects")
           ]),
           m(".columns.medium-3", [
-            m("h1", "0%"),
+            m("h1", helper.percent(ctrl.percentApproved())),
             m("p", "Percent of approved projects")
           ])
         ])
@@ -39,7 +39,7 @@ dashboard.view = function(ctrl){
             m("p", "Cost of pending projects")
           ]),
           m(".columns.medium-3.end", [
-            m("h1", "0"),
+            m("h1", ctrl.amountApproved()),
             m("p", "Amount approved")
           ]),
         ])

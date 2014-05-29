@@ -6,13 +6,23 @@
 
 GET     /                                         controllers.Application.index
 GET     /dashboard                                controllers.Application.dashboard
+GET     /dashboard/meta                           controllers.Application.dashboardMeta
+GET     /process                                  controllers.Application.process
 GET     /assets/javascripts/routes/play.js        controllers.Application.jsRoutes
 GET     /csvParser                                controllers.Application.csvParser
+GET     /lguParser                                controllers.Application.lguParser
 GET     /admin                                    controllers.Application.admin
 GET     /admin/lgus                               controllers.Application.adminLgus
 GET     /admin/lgus/meta                          controllers.GovUnits.listLgus
+GET     /admin/lgus/:l/:id                        controllers.GovUnits.getChildren(l: Int, id: Int)
 GET     /admin/agencies                           controllers.Application.adminAgencies
 GET     /admin/agencies/meta                      controllers.GovUnits.listAgencies
+GET     /admin/types/project                      controllers.Admin.projectTypes
+GET     /admin/types/project/meta                 controllers.Admin.projectTypesMeta
+GET     /admin/types/disaster                     controllers.Admin.disasterTypes
+GET     /admin/types/disaster/meta                controllers.Admin.disasterTypesMeta
+POST    /admin/types/:k/new                       controllers.Admin.insertType(k: String)
+POST    /admin/types/:k/:id                    		controllers.Admin.updateType(k: String, id: Int)
 
 # Map static resources from the /public folder to the /assets URL path
 
@@ -26,14 +36,9 @@ GET     /users/meta                               controllers.Users.meta
 GET     /users/:id                                controllers.Users.view(id: Int)
 GET     /users/:id/meta                           controllers.Users.viewMeta(id: Int)
 
-GET     /requests                                 controllers.Requests.index
-GET     /requests/all                             controllers.Requests.indexAll
-GET     /requests/approval                        controllers.Requests.indexApproval
-GET     /requests/assessor                        controllers.Requests.indexAssessor
-GET     /requests/implementation                  controllers.Requests.indexImplementation
-GET     /requests/mine                            controllers.Requests.indexMine
-GET     /requests/signoff                         controllers.Requests.indexSignoff
-GET     /requests/meta                            controllers.Requests.indexMeta
+GET			/requests																	controllers.Requests.index
+GET     /requests/:t/:p/:pid                      controllers.Requests.indexPage(t: String, p: Int, pid: Int)
+GET     /requests/:t/:p/:pid/meta                 controllers.Requests.indexMeta(t: String, p: Int, pid: Int)
 
 GET     /requests/new                             controllers.Requests.create
 GET     /requests/new/meta                        controllers.Requests.createMeta
@@ -49,8 +54,6 @@ GET     /requests/:id/meta                        controllers.Requests.viewMeta(
 POST    /requests/:id/signoff                     controllers.Requests.signoff(id: Int)
 POST    /requests/:id/reject                      controllers.Requests.reject(id: Int)
 POST    /requests/:id/comment                     controllers.Requests.comment(id: Int)
-POST    /requests/:rid/assign/assessing/:aid      controllers.Requests.assignAssessingAgency(rid: Int, aid: Int)
-POST    /requests/:rid/assign/implementing/:aid   controllers.Requests.assignImplementingAgency(rid: Int, aid: Int)
 POST    /requests/:id/edit/:f                     controllers.Requests.editField(id: Int, f: String)
 POST    /requests/:id/attach/:type                controllers.Attachments.add(id: Int, type: String)
 
@@ -68,5 +71,8 @@ GET     /gov-units/new/lgu/:l/:id/meta            controllers.GovUnits.createLgu
 POST    /gov-units/new/lgu/:l/:id                 controllers.GovUnits.insertLgu(l: Int, id: Int)
 GET     /gov-units/:id                            controllers.GovUnits.view(id: Int)
 GET     /gov-units/:id/meta                       controllers.GovUnits.viewMeta(id: Int)
-GET     /gov-units/:id/new-user                    controllers.Users.create(id: Int)
-POST    /gov-units/:id/new-user                    controllers.Users.insert(id: Int)
+GET     /gov-units/:id/edit                       controllers.GovUnits.edit(id: Int)
+GET     /gov-units/:id/edit/meta                  controllers.GovUnits.editMeta(id: Int)
+POST    /gov-units/:id/edit                       controllers.GovUnits.update(id: Int)
+GET     /gov-units/:id/new-user                   controllers.Users.create(id: Int)
+POST    /gov-units/:id/new-user                   controllers.Users.insert(id: Int)

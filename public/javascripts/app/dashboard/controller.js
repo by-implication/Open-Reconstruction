@@ -1,20 +1,41 @@
 dashboard.controller = function(){
   var self = this;
   this.app = new app.controller();
-  this.requests = m.prop({});
-  database.pull().then(function(data){
-    self.requests(database.requestList());
-  })
+  this.requests = m.prop([]);
+  
+  bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
+    self.requests(r);
+  });
+
+  this.pendingProjects = function(){
+    return this.totalProjects() - this.approvedProjects().length;
+  }
+
+  this.approvedProjects = function(){
+    return this.requests().filter(function (r){
+      return r.level >= process.levelDict.indexOf("OP_SIGNOFF");
+    });
+  }
 
   this.totalProjects = function(){
     return this.requests().length
+  }
+
+  this.percentApproved = function(){
+    return this.approvedProjects().length / this.totalProjects();
+  }
+
+  this.amountApproved = function(){
+    return this.approvedProjects()
+      .map(function (r){ return r.amount; })
+      .reduce(function (a, b){ return a + b; }, 0);
   }
 
   this.totalProjectCost = function(){
     return helper.truncate(
       _.chain(this.requests())
       .map(function(project){
-        return project.amount();
+        return project.amount;
       })
       .compact()
       .reduce(function(a, b){
@@ -27,7 +48,7 @@ dashboard.controller = function(){
   this.mostCommonProjectType = function(){
     return _.chain(this.requests())
     .countBy(function(r){
-      return r.type();
+      return r.projectType;
     })
     .pairs()
     .reject(function(p){
@@ -42,7 +63,7 @@ dashboard.controller = function(){
   this.mostCommonDisasterType = function(){
     return _.chain(this.requests())
     .countBy(function(r){
-      return r.disaster().type();
+      return r.disasterType;
     })
     .pairs()
     .reject(function(p){
@@ -58,7 +79,7 @@ dashboard.controller = function(){
     // elem.width = document.body.offsetWidth;
     elem.width = 1280;
     function entryToInt(entry) {
-      var date = entry.date();
+      var date = new Date(entry.date);
       return date.getFullYear() * 12 + date.getMonth();
     }
 
@@ -78,8 +99,8 @@ dashboard.controller = function(){
       .compact()
       .sort();
 
-    var first = times.head().value();
-    var last = times.last().value() + 1;
+    var first = times.head().value() || 0;
+    var last = (times.last().value() + 1) || 0;
     var dateRangeObj = _.chain(first).range(last)
 
     var countPerMonth = dateRangeObj
@@ -96,7 +117,7 @@ dashboard.controller = function(){
         if(projects){
           amount = _.chain(projects)
           .map(function(project){
-            return project.amount();
+            return project.amount;
           })
           .compact()
           .reduce(function(acc, next){
@@ -136,6 +157,6 @@ dashboard.controller = function(){
     var myNewChart = new Chart(ctx).Line(data, {
       bezierCurve: false
     });
-    // console.log(lol);
+    
   }
 }

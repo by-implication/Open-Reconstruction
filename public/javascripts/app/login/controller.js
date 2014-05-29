@@ -4,7 +4,7 @@ login.controller = function(){
     handle: m.prop(""),
     password: m.prop("")
   }
-  database.pull();
+
   var self = this;
   this.submit = function(e){
     e.preventDefault();

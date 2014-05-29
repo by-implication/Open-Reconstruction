@@ -12,6 +12,7 @@ object GovUnits extends Controller with Secured {
 
   def createAgency = Application.index
   def view = Application.index1 _
+  def edit = Application.index1 _
 
   def viewMeta(id: Int): Action[AnyContent] = GenericAction(){ implicit user => implicit request =>
     GovUnit.findById(id) match {
@@ -38,33 +39,34 @@ object GovUnits extends Controller with Secured {
   )
 
   def createAgencyMeta() = UserAction(){ implicit user => implicit request =>
-    Rest.success("roles" ->  Json.toJson(Role.list().map(_.toJson)))
+    Rest.success("roles" -> Role.agencyJsonList)
   }
 
-  def insertAgency(): Action[AnyContent] = UserAction(){ implicit user => implicit request =>
-    if(user.isSuperAdmin){
-      createAgencyForm.bindFromRequest.fold(
-        Rest.formError(_),
-        _.create().map(_ => Rest.success())
-        .getOrElse(Rest.serverError())
-      )
-    } else Rest.unauthorized()
+  def insertAgency(): Action[AnyContent] = IsSuperAdmin(){ implicit user => implicit request =>
+    createAgencyForm.bindFromRequest.fold(
+      Rest.formError(_),
+      _.create().map(_ => Rest.success())
+      .getOrElse(Rest.serverError())
+    )
   }
 
   def listLgus = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
       "regions" -> Json.toJson(Lgu.REGIONS.toSeq.map {
         case (id, name) => Json.obj("id" -> id, "name" -> name)
-      }),
-      "lgus" -> Lgu.jsonList
+      })
     ))
+  }
+
+  def getChildren(level: Int, id: Int) = UserAction(){ implicit user => implicit request =>
+    Ok(Json.toJson(Lgu.getChildren(level, id)))
   }
 
   lazy val LGUroleId = {
     Role.findOne("role_name", "LGU").get.id
   }
 
-  lazy val lguForm: Form[GovUnit] = Form(
+  lazy val createLguForm: Form[GovUnit] = Form(
     mapping(
       "name" -> nonEmptyText,
       "acronym" -> optional(text)
@@ -89,27 +91,69 @@ object GovUnits extends Controller with Secured {
 
   }
 
-  def insertLgu(level: Int, parentId: Int) = UserAction(){ implicit user => implicit request =>
+  def insertLgu(level: Int, parentId: Int) = IsSuperAdmin(){ implicit user => implicit request =>
     if(level >= 0 && level < 3){
-      if(user.isSuperAdmin){
-        lguForm.bindFromRequest.fold(
-          Rest.formError(_),
-          _.create().map { govUnit =>
-            
-            val lgu = if (level > 0){
-              Lgu(govUnit.id, level + 1, parentLguId = Some(parentId))
-            } else {
-              Lgu(govUnit.id, level + 1, parentRegionId = Some(parentId))
-            }
+      createLguForm.bindFromRequest.fold(
+        Rest.formError(_),
+        _.create().map { govUnit =>
+          
+          val lgu = if (level > 0){
+            Lgu(govUnit.id, level + 1, parentLguId = Some(parentId))
+          } else {
+            Lgu(govUnit.id, level + 1, parentRegionId = Some(parentId))
+          }
 
-            lgu.create().map { _ =>
-              Rest.success()
-            }.getOrElse(Rest.serverError())
-
+          lgu.create().map { _ =>
+            Rest.success()
           }.getOrElse(Rest.serverError())
-        )
-      } else Rest.unauthorized()
+
+        }.getOrElse(Rest.serverError())
+      )
     } else Rest.error("invalid level")
+  }
+
+  def editMeta(id: Int) = IsSuperAdmin(){ implicit user => implicit request =>
+    GovUnit.findById(id).map(g => Ok(Json.obj(
+      "govUnit" -> g.toJson,
+      "roles" -> Role.agencyJsonList
+    )))
+    .getOrElse(Rest.notFound())
+  }
+
+  def editLguForm(lgu: GovUnit): Form[GovUnit] = Form(
+    mapping(
+      "name" -> nonEmptyText,
+      "acronym" -> optional(text)
+    )
+    ((name, acronym) => lgu.copy(name = name, acronym = acronym))
+    (_ => None)
+  )
+
+  def editAgencyForm(agency: GovUnit): Form[GovUnit] = Form(
+    mapping(
+      "name" -> nonEmptyText,
+      "acronym" -> optional(text),
+      "roleId" -> number
+    )
+    ((name, acronym, roleId) => agency.copy(name = name, acronym = acronym, roleId = roleId))
+    (_ => None)
+  )
+
+  def update(id: Int) = IsSuperAdmin(){ implicit user => implicit request =>
+    GovUnit.findById(id).map { g =>
+      g.role.name match {
+        case "LGU" => editLguForm(g).bindFromRequest.fold(
+          Rest.formError(_),
+          _.save().map(_ => Rest.success())
+          .getOrElse(Rest.serverError())
+        )
+        case _ => editAgencyForm(g).bindFromRequest.fold(
+          Rest.formError(_),
+          _.save().map(_ => Rest.success())
+          .getOrElse(Rest.serverError())
+        )
+      }
+    }.getOrElse(Rest.notFound())
   }
 
 }

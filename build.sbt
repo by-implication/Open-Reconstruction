@@ -20,7 +20,7 @@ javascriptEntryPoints <<= baseDirectory(base =>
 // import sbt-js
 seq(jsSettings: _*)
 
-(includeFilter in (Compile, JsKeys.js)) := "main.jsm"
+(includeFilter in (Compile, JsKeys.js)) := "main.jsm" || "lib.jsm"
 
 (JsKeys.compilationLevel in (Compile, JsKeys.js)) := CompilationLevel.WHITESPACE_ONLY
 

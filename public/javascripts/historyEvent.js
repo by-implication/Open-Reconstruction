@@ -22,7 +22,7 @@ historyEvent.reject = function(data){
     m(".details", [
       m("h3", "Rejected"),
       m("p", [
-        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url}, govUnitName),
+        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
         " rejected this project."
       ]),
       historyEvent.meta("Rejected", data, date)
@@ -51,14 +51,24 @@ historyEvent.editField = function(data){
   var date = new Date(data.date);
   var c = data.content.split(" ");
   var field = c.pop();
-  var value = c.join(" ");
+  var value;
+  switch(field){
+    case "disaster": {
+      var ddate = parseInt(c.pop());
+      var typeId = c.pop();
+      var name = c.join(" ");
+      value = name + " (" + request.disasterTypes()[typeId].name + ") on " + common.displayDate(ddate);
+      break;
+    }
+    default: value = c.join(" ");
+  }
   return m(".event", [
     historyEvent.date(date),
     m(".details", [
       m("p", "Project " + field + " was set to \"" + value + "\""),
       historyEvent.meta("Modified", data, date)
     ]),
-  ])
+  ]);
 }
 
 historyEvent.disaster = function(data){
@@ -91,25 +101,24 @@ historyEvent.newRequest = function(data){
 historyEvent.assign = function(data){
   var date = new Date(data.date);
   var c = data.content.split(" ");
-  var duty = c.pop()
+  var duty = c.pop();
   var cduty = duty.split("");
   cduty[0] = cduty[0].toUpperCase();
   cduty = cduty.join("");
   var isAssign = parseInt(c.pop());
-  var govUnitId = c.pop();
+  var govUnitId = isAssign;
   var govUnitName = c.join(" ");
 
-  var assignment = isAssign ? "assigned" : "unassigned";
   var prepPhrase = isAssign ? " to " + duty : " from " + duty + "ing"
 
   return m(".event", [
     historyEvent.date(date),
     m(".details", [
-      m("p", [
-        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url}, govUnitName),
-        " was " + assignment + prepPhrase + " this project."
-      ]),
-      historyEvent.meta("Assigned", data, date)
+      m("p", isAssign ? [
+        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
+        " was assigned" + prepPhrase + " this project."
+      ] : duty.capitalize() + "ing agency was unassigned."),
+      historyEvent.meta(isAssign ? "Assigned" : "Unassigned", data, date)
     ])
   ])
 }
@@ -124,7 +133,7 @@ historyEvent.signoff = function(data){
     m(".details", [
       m("h3", "Sign off"),
       m("p", [
-        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url}, govUnitName),
+        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
         govUnitName == "Department of Budget and Management" ?
         " has approved a SARO for this project." : " signed off on this project."
       ]),

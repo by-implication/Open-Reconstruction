@@ -78,6 +78,10 @@ trait CheckpointGen extends EntityCompanion[Checkpoint] {
     SQL("select * from checkpoints limit {count} offset {offset}").on('count -> count, 'offset -> offset).list(simple)
   }
 
+  def listAll(): Seq[Checkpoint] = DB.withConnection { implicit c =>
+    SQL("select * from checkpoints order by checkpoint_id").list(simple)
+  }
+
   def insert(o: Checkpoint): Option[Checkpoint] = DB.withConnection { implicit c =>
     o.id match {
       case NotAssigned => {

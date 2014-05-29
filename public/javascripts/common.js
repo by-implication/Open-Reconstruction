@@ -1,5 +1,46 @@
 var common = {};
 
+common.stagnation = function(reqCtrl){
+
+  function getDateRejected(history){
+    var rejection = history.filter(function (h){
+      return h.kind == "reject";
+    })[0];
+    return new Date(rejection.date);
+  }
+
+  function getDateApproved(history){
+    var approval = history.filter(function (h){
+      return h.kind == "signoff" && h.govUnit.name == "Office of the President";
+    })[0];
+    return new Date(approval.date);
+  }
+
+  var req = reqCtrl.request();
+  var timestamp = req.date;
+
+  var current;
+  if(req.isRejected){
+    current = getDateRejected(reqCtrl.history());
+  } else if(req.level > 3){
+    current = getDateApproved(reqCtrl.history());
+  } else {
+    current = new Date();
+  }
+
+  var dd = current - timestamp;
+  var ms = helper.pad(Math.floor((dd%1000)/10));
+  dd/=1000;
+  var s = helper.pad(Math.floor(dd%60));
+  dd/=60;
+  var m = helper.pad(Math.floor(dd%60));
+  dd/=60;
+  var h = helper.pad(Math.floor(dd%24));
+  dd/=24;
+  var d = Math.floor(dd);
+  return d + " DAYS " + h + ":" + m + ":" + s + "." + ms;
+}
+
 common.duration = function(ms){
   var cur = ms / 1000;
   var next = cur / 60;
@@ -150,7 +191,7 @@ common.tabs.menu = function(ctrl, options){
     })
     .map(function (tab, i){
       var tabClass = function(tab){
-        if(ctrl.isActive((tab.identifier ? tab.identifier : tab.label))){
+        if(ctrl.isActive((tab.identifier ? tab.identifier : tab.label()))){
           return "active";
         } else {
           return "";
@@ -165,7 +206,7 @@ common.tabs.menu = function(ctrl, options){
 
 common.tabs.content = function(ctrl){
   return ctrl.tabs().filter(function (tab){
-    return ctrl.isActive(tab.identifier? tab.identifier : tab.label)
+    return ctrl.isActive(tab.identifier? tab.identifier : tab.label())
   }).map(function (activeTab){
     return activeTab.content()
   })
@@ -174,11 +215,11 @@ common.tabs.content = function(ctrl){
 common.tabs.controller = function(basePath){
   this.tabs = m.prop([]);
   this.currentTab = function() {
-    var item = _.find(this.tabs(), function(tab) { return tab.href == m.route.path });
+    var item = _.find(this.tabs(), function(tab) { return tab.href == m.route() });
     if(item == undefined) {
       item = _.head(this.tabs());
     }
-    return item.identifier ? item.identifier : item.label;
+    return item.identifier ? item.identifier : item.label();
   }
   this.isActive = function(identifier){
     return this.currentTab() == identifier;

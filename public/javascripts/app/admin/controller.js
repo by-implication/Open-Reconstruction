@@ -5,20 +5,15 @@ admin.controller = function(){
   this.tabs = new common.tabs.controller();
   this.tabs.tabs = m.prop([
     {label: m.prop("Agencies"), href: routes.controllers.Application.adminAgencies().url}, 
-    {label: m.prop("LGUs"), href: routes.controllers.Application.adminLgus().url}
+    {label: m.prop("LGUs"), href: routes.controllers.Application.adminLgus().url},
+    {label: m.prop("Project Types"), href: routes.controllers.Admin.projectTypes().url},
+    {label: m.prop("Disaster Types"), href: routes.controllers.Admin.disasterTypes().url}
   ]);
   this.regions = m.prop([]);
-
-  bi.ajax(routes.controllers.GovUnits.createAgencyMeta()).then(function (r){
-    if(r.success){
-      var roles = _.object(r.roles.map(function(role) {
-        return [role.id, role.name];
-      }));
-      this.roles(roles);
-    } else {
-      alert(r.reason);
-    }
-  }.bind(this));
+  this.degs = {
+    projectTypes: m.prop([]),
+    disasterTypes: m.prop([])
+  }
 
   bi.ajax(routes.controllers.GovUnits.listAgencies()).then(function (r){
     if(r.success){
@@ -29,7 +24,6 @@ admin.controller = function(){
   }.bind(this));
 
   bi.ajax(routes.controllers.GovUnits.listLgus()).then(function (r){
-
     var regions = [];
     r.regions
       .map(function(r){
@@ -38,23 +32,36 @@ admin.controller = function(){
       .forEach(function (region){
         regions[region.id()] = region;
       });
-
-    var r_lgus = r.lgus.map(function(lgu){
-        return new govUnit.LGU(lgu);
-    })
-
-    var lgus = [];
-    r_lgus.forEach(function (lgu){
-      lgus[lgu.id()] = lgu;
-    });
-
-    r_lgus.forEach(function (lgu){
-      var parent = lgu.parentLGU() ? lgus[lgu.parentLGU()] : regions[lgu.parentRegion()];
-      parent.children( parent.children().concat(lgu) );
-    });
-
     this.regions(regions);
+  }.bind(this));
 
+  var degMaker = function(type){
+    return function(t){
+      var deg = new displayEditGroup(true, function (c){
+        this.input(this.value());
+        c();
+      }, function (c){
+        bi.ajax(routes.controllers.Admin.updateType(type, t.id), {
+          data: {name: this.input}
+        }).then(function (r){
+          if(r.success){
+            this.value(r.type.name);
+          } else {
+            alert("Your input was invalid.");
+          }
+          c();
+        }.bind(this));
+      }, null, {value: m.prop(t.name)});
+      return deg;
+    }
+  }
+
+  bi.ajax(routes.controllers.Admin.projectTypesMeta()).then(function (r){
+    this.degs.projectTypes(r.map(degMaker("project")));
+  }.bind(this));
+
+  bi.ajax(routes.controllers.Admin.disasterTypesMeta()).then(function (r){
+    this.degs.disasterTypes(r.map(degMaker("disaster")));
   }.bind(this));
 
   var expandCollapseRecurse = function(node, ec){
@@ -66,15 +73,44 @@ admin.controller = function(){
     }
   }
 
-  this.expandAll = function(){
-    this.regions().forEach(function(r){
-      expandCollapseRecurse(r, true);
-    })
-  }
-
   this.collapseAll = function(){
     this.regions().forEach(function(r){
       expandCollapseRecurse(r, false);
     })
   }
+
+  this.toggleLguExpansion = function(lgu){
+    var isExpanded = !lgu.isExpanded();
+    if(isExpanded){
+      bi.ajax(routes.controllers.GovUnits.getChildren(lgu.level(), lgu.id())).then(function (r){
+        lgu.children(r.map(function (child){
+          return new govUnit.LGU(child);
+        }));
+        lgu.isExpanded(isExpanded);
+      });
+    } else {
+      lgu.isExpanded(isExpanded);
+    }
+  }
+
+  this.typeName = m.prop("");
+
+  var createType = function(type){
+    return function (e){
+      e.preventDefault();
+      if(this.typeName()){
+        bi.ajax(routes.controllers.Admin.insertType(type), {data: {name: this.typeName()}})
+        .then(function (r){
+          this[type + "Types"]().push(degMaker(type)(r[type + "Type"]));
+          alert("Successfully created new " + type + " type.");
+        }.bind(this));
+      } else {
+        alert("Empty input.");
+      }
+    }.bind(this);
+  }.bind(this);
+
+  this.createProjectType = createType("project");
+  this.createDisasterType = createType("disaster");
+
 }

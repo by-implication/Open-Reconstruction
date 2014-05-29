@@ -12,6 +12,8 @@ object Role extends RoleGen {
 
   def VIEW_ONLY = Role(Id(-1))
 
+  def agencyJsonList = Json.toJson(list().filter(_.name != "LGU").map(_.toJson))
+
 }
 
 // GENERATED case class start
@@ -55,6 +57,10 @@ trait RoleGen extends EntityCompanion[Role] {
 
   def list(count: Int = 10, offset: Int = 0): Seq[Role] = DB.withConnection { implicit c =>
     SQL("select * from roles limit {count} offset {offset}").on('count -> count, 'offset -> offset).list(simple)
+  }
+
+  def listAll(): Seq[Role] = DB.withConnection { implicit c =>
+    SQL("select * from roles order by role_id").list(simple)
   }
 
   def insert(o: Role): Option[Role] = DB.withConnection { implicit c =>
@@ -131,4 +137,12 @@ object Permission {
   val SIGNOFF = Permission(5)
   val ASSIGN_FUNDING = Permission(6)
 
+  def json = Json.obj(
+    "CREATE_REQUESTS" -> CREATE_REQUESTS.value,
+    "VALIDATE_REQUESTS" -> VALIDATE_REQUESTS.value,
+    "EDIT_REQUESTS" -> EDIT_REQUESTS.value,
+    "IMPLEMENT_REQUESTS" -> IMPLEMENT_REQUESTS.value,
+    "SIGNOFF" -> SIGNOFF.value,
+    "ASSIGN_FUNDING" ->ASSIGN_FUNDING.value 
+  )
 }

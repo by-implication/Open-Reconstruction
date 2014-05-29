@@ -1,10 +1,7 @@
-lib.jsm
 bi.js
 helper.js
-db.js
-process.js
 common.js
 historyEvent.js
-displayEditgroup.js
+displayEditGroup.js
 app/module.jsm
 routes/mithril.js

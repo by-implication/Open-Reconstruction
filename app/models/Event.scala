@@ -35,8 +35,9 @@ object Event extends EventGen {
     generate("comment", content)
   }
 
-  def assign(agencyType: String, assign: Boolean, govUnit: GovUnit)(implicit req: Req, user: User) = {
-    generate("assign", Seq(govUnit.name, govUnit.id, (if (assign) 1 else 0), agencyType).mkString(" "))
+  def assign(agencyType: String, govUnit: Option[GovUnit])(implicit req: Req, user: User) = {
+    val params = govUnit.map( g => Seq(g.name, g.id, agencyType) ).getOrElse(Seq(0, agencyType))
+    generate("assign", params.mkString(" "))
   }
 
   def newRequest()(implicit req: Req, user: User) = {
@@ -44,7 +45,7 @@ object Event extends EventGen {
   }
 
   def disaster()(implicit req: Req, user: User) = {
-    generate("disaster", req.disasterName.getOrElse("") + ":" + req.disasterType).copy(date = req.disasterDate)
+    generate("disaster", req.disasterName.getOrElse("") + ":" + req.disasterTypeId).copy(date = req.disasterDate)
   }
 
   def archiveAttachment(a: Attachment)(implicit req: Req, user: User) = {
@@ -65,13 +66,18 @@ object Event extends EventGen {
       case "amount" => req.amount
       case "description" => req.description
       case "location" => req.location
+      case "disaster" => List(
+        req.disasterName.getOrElse(""),
+        req.disasterTypeId,
+        req.disasterDate.getTime()
+      ).mkString(" ")
     }
     generate("editField", fieldValue + " " + field)
   }
 
   def findForRequest(id: Int)(implicit user: User): Seq[Event] = DB.withConnection { implicit c =>
     SQL("SELECT * FROM events WHERE req_id = {reqId}" +
-    (if(user.isAnonymous) " AND event_kind != 'comment' " else "") +
+    (if(user.isAnon) " AND event_kind != 'comment' " else "") +
     "ORDER BY event_date DESC"
     ).on('reqId -> id).list(simple)
   }
@@ -93,7 +99,7 @@ case class Event(
   def listJson = Json.obj(
     "kind" -> kind,
     "content" -> content,
-    "date" -> date,
+    "date" -> date.getTime,
     "user" -> userId.map(User.findById(_).map(u => Json.obj(
       "id" -> u.id.get,
       "name" -> u.name
@@ -134,6 +140,10 @@ trait EventGen extends EntityCompanion[Event] {
 
   def list(count: Int = 10, offset: Int = 0): Seq[Event] = DB.withConnection { implicit c =>
     SQL("select * from events limit {count} offset {offset}").on('count -> count, 'offset -> offset).list(simple)
+  }
+
+  def listAll(): Seq[Event] = DB.withConnection { implicit c =>
+    SQL("select * from events order by event_id").list(simple)
   }
 
   def insert(o: Event): Option[Event] = DB.withConnection { implicit c =>
