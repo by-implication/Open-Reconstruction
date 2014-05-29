@@ -1,5 +1,6 @@
 request.controller = function(){
   var map;
+  var self = this;
   this.app = new app.controller();
   this.signoffModal = new common.modal.controller();
   this.rejectModal = new common.modal.controller();
@@ -388,9 +389,24 @@ request.controller = function(){
         $(".tabs.vertical").removeAttr("style");
       }
     }
+    
+    var idPosDict;
+    var poss;
 
     if (isInit) {
       updateTabMenuPos();
+      idPosDict = _.chain(self.requestTabs.tabs())
+        .map(function(t){
+          return t.href;
+        })
+        .map(function(i){
+          return [$(i).position().top + $(i).height() - 20, i];
+        })
+        .object()
+        .value();
+      poss = _.chain(idPosDict).map(function(v, k){
+        return k;
+      }).value();
     }
     $(window).on("scroll", function(e){
       if (!scrollInit) {
@@ -398,6 +414,14 @@ request.controller = function(){
         scrollInit = true;
       } else {
         updateTabMenuPos()
+        // if (isInit) {
+        //   var windowPos = $(window).scrollTop();
+        //   var closestPos = _.find(poss, function(p){
+        //     return p >= windowPos
+        //   });
+        //   var hash = idPosDict[closestPos];
+        //   window.location.hash = hash;
+        // };
       }
     })
   }
