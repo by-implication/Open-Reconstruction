@@ -1,5 +1,5 @@
 visualization.view = function(ctrl){
-  return app.template(ctrl.app, {className: "detail"}, [
+  return app.template(ctrl.app, [
     m("div#view.dashboard", [
       common.banner(ctrl.vis.title()),
       visPanel.view(ctrl.vis),
