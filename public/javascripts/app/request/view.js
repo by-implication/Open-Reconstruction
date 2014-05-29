@@ -78,7 +78,7 @@ request.view = function(ctrl){
         //   ]),
         // ]),
         m(".row", [
-          common.tabs.menu(ctrl.requestTabs, {className: "vertical"}),
+          common.tabs.menu(ctrl.requestTabs, {className: "vertical", config: ctrl.scrollHandler}),
           m(".tabs-content.vertical", [
             m(".card", [
               m(".section#summary", [

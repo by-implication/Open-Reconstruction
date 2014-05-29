@@ -367,31 +367,72 @@ request.controller = function(){
     }
   }.bind(this);
 
-  // don't judge, ok
-
   var scrollInit = false;
+  var isTabControlSet = false;
   var tabControlPos;
 
-  $(window).on("scroll",function(e){
-    var marginTop = 30;
-    console.log(scrollInit);
-    if (scrollInit === false) { // fake document.ready
-      tabControlPos = $(".tabs.vertical").position();
-      // console.log("first")
-    } else {
-      // console.log("succeeding")
-      if ( $(window).scrollTop() > tabControlPos.top + marginTop ) {
+  this.scrollHandler = function(elem, isInit){
+    var boundary = function(elem){
+      var posType = $(elem).css("position");
+      var offset = 0;
+      if (posType === "relative") {
+        offset = parseInt($(elem).css("top"));
+      }
+      return $(elem).position().top - offset;
+    }
+
+    if (isInit) {
+      if ($(window).scrollTop() > boundary(elem)) {
         $(".tabs.vertical").css({
           position: "relative",
-          top: ($(window).scrollTop()) - tabControlPos.top + marginTop
+          top: ($(window).scrollTop()) - boundary(elem)
         })
       } else {
         $(".tabs.vertical").removeAttr("style");
       }
-
     }
-    scrollInit = true;
+    $(window).on("scroll", function(e){
+      if (!scrollInit) {
+        m.redraw();
+        scrollInit = true;
+      } else {
+        if ($(window).scrollTop() > boundary(elem)) {
+          $(".tabs.vertical").css({
+            position: "relative",
+            top: ($(window).scrollTop()) - boundary(elem)
+          })
+        } else {
+          $(".tabs.vertical").removeAttr("style");
+        }
+      }
+    })
+  }
 
-  })
+  // don't judge, ok
+
+  // var scrollInit = false;
+  // var tabControlPos;
+
+  // $(window).on("scroll",function(e){
+  //   var marginTop = 30;
+  //   console.log(scrollInit);
+  //   if (scrollInit === false) { // fake document.ready
+  //     tabControlPos = $(".tabs.vertical").position();
+  //     // console.log("first")
+  //   } else {
+  //     // console.log("succeeding")
+  //     if ( $(window).scrollTop() > tabControlPos.top + marginTop ) {
+  //       $(".tabs.vertical").css({
+  //         position: "relative",
+  //         top: ($(window).scrollTop()) - tabControlPos.top + marginTop
+  //       })
+  //     } else {
+  //       $(".tabs.vertical").removeAttr("style");
+  //     }
+
+  //   }
+  //   scrollInit = true;
+
+  // })
 
 }
