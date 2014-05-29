@@ -23,7 +23,7 @@ visPanel.controller = function(){
   }
   this.title = m.prop("Chart Title");
   this.link = m.prop("Chart Link");
-  this.fullView = m.prop(false);
+  this.isFullView = m.prop(false);
   this.config = function(elem){
     var chartSettings = self.chartSettings();
     var chart = c3.generate({

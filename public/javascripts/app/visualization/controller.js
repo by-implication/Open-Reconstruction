@@ -24,5 +24,5 @@ visualization.controller = function(){
   this.vis = _.extend({}, visualizations.library[this.id](self));
   this.vis.size().width = undefined;
   this.vis.size().height = 300;
-  this.vis.fullView(true);
+  this.vis.isFullView(true);
 }
