@@ -25,11 +25,11 @@ case class Project(
 ) extends ProjectCCGen with Entity[Project]
 // GENERATED case class end
 {
-  lazy val req = Req.findById(reqId).get
+  lazy val req: Req = Req.findById(reqId).get
 
-  lazy val disasterName = req.disasterName
+  lazy val disasterName: Option[String] = req.disasterName
 
-  def requestViewJson = Json.obj(
+  def requestViewJson: JsObject = Json.obj(
     "id" -> id.get,
     "name" -> name,
     "amount" -> amount
