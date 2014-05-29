@@ -368,8 +368,6 @@ request.controller = function(){
   }.bind(this);
 
   var scrollInit = false;
-  var isTabControlSet = false;
-  var tabControlPos;
 
   this.scrollHandler = function(elem, isInit){
     var boundary = function(elem){
@@ -407,32 +405,4 @@ request.controller = function(){
       }
     })
   }
-
-  // don't judge, ok
-
-  // var scrollInit = false;
-  // var tabControlPos;
-
-  // $(window).on("scroll",function(e){
-  //   var marginTop = 30;
-  //   console.log(scrollInit);
-  //   if (scrollInit === false) { // fake document.ready
-  //     tabControlPos = $(".tabs.vertical").position();
-  //     // console.log("first")
-  //   } else {
-  //     // console.log("succeeding")
-  //     if ( $(window).scrollTop() > tabControlPos.top + marginTop ) {
-  //       $(".tabs.vertical").css({
-  //         position: "relative",
-  //         top: ($(window).scrollTop()) - tabControlPos.top + marginTop
-  //       })
-  //     } else {
-  //       $(".tabs.vertical").removeAttr("style");
-  //     }
-
-  //   }
-  //   scrollInit = true;
-
-  // })
-
 }
