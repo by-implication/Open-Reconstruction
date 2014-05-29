@@ -189,6 +189,11 @@ request.view = function(ctrl){
                       ])
                   ])
                 })
+                .case("References", function(){
+                  return m(".section", [
+                    "hi"
+                  ]);
+                })
                 .case("Activity", function(){
                   return m("div", [
                     m(".section", ctrl.history().map(function (e){

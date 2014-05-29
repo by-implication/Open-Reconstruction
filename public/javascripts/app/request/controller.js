@@ -9,8 +9,8 @@ request.controller = function(){
     {label: m.prop("Assignments"), href: routes.controllers.Requests.viewAssignments(requestId).url},
     {label: m.prop("Images"), href: routes.controllers.Requests.viewImages(requestId).url},
     {label: m.prop("Documents"), href: routes.controllers.Requests.viewDocuments(requestId).url},
-    {label: m.prop("Activity"), href: routes.controllers.Requests.viewActivity(requestId).url},
-    {label: m.prop("References"), href: routes.controllers.Requests.viewReferences(requestId).url}
+    {label: m.prop("References"), href: routes.controllers.Requests.viewReferences(requestId).url},
+    {label: m.prop("Activity"), href: routes.controllers.Requests.viewActivity(requestId).url}
   ]);
 
   this.id = m.route.param("id");
