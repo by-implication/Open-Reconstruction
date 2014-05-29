@@ -378,8 +378,7 @@ request.controller = function(){
       }
       return $(elem).position().top - offset;
     }
-
-    if (isInit) {
+    var updateTabMenuPos = function(){
       if ($(window).scrollTop() > boundary(elem)) {
         $(".tabs.vertical").css({
           position: "relative",
@@ -389,19 +388,16 @@ request.controller = function(){
         $(".tabs.vertical").removeAttr("style");
       }
     }
+
+    if (isInit) {
+      updateTabMenuPos();
+    }
     $(window).on("scroll", function(e){
       if (!scrollInit) {
         m.redraw();
         scrollInit = true;
       } else {
-        if ($(window).scrollTop() > boundary(elem)) {
-          $(".tabs.vertical").css({
-            position: "relative",
-            top: ($(window).scrollTop()) - boundary(elem)
-          })
-        } else {
-          $(".tabs.vertical").removeAttr("style");
-        }
+        updateTabMenuPos()
       }
     })
   }
