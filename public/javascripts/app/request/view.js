@@ -191,7 +191,22 @@ request.view = function(ctrl){
                 })
                 .case("References", function(){
                   return m(".section", [
-                    "hi"
+                    m("table", [
+                      m("thead", [
+                        m("tr", [
+                          m("td", [
+                            "wut"
+                          ]),
+                        ]),
+                      ]),
+                      m("tbody", [
+                        m("tr", [
+                          m("td", [
+                            "wut"
+                          ]),
+                        ]),
+                      ]),
+                    ]),
                   ]);
                 })
                 .case("Activity", function(){
