@@ -120,7 +120,7 @@ request.view = function(ctrl){
                         var disasterType = request.disasterTypes().filter(function (dt){
                           return dt.id == ctrl.request().disaster.typeId;
                         })[0];
-                        return m("h4.value", [
+                        return m("h4", [
                           disasterType.name + " "
                           + ctrl.request().disaster.name + " in "
                           + common.displayDate(ctrl.request().disaster.date)
