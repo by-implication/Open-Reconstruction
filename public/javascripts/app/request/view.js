@@ -422,31 +422,6 @@ request.view = function(ctrl){
                 ]),
               ]),
               m("hr"),
-              // m("div", [
-              //   m("form", {onsubmit: ctrl.submitProject}, [
-              //     m(".section", [
-              //       m("h3", "Add a Project"),
-              //       m("p", [
-              //         "Please enter the project details."
-              //       ]),
-              //     ]),
-              //     m("hr"),
-              //     m(".section", [
-              //       common.field(
-              //         "Name",
-              //         m("input[type='text']", {onchange: m.withAttr("value", ctrl.project.name), placeholder: "Reconstruction of Yolanda-damaged Seawall"})
-              //       ),
-              //       common.field(
-              //         "Amount",
-              //         m("input[type='text']", {onchange: m.withAttr("value", ctrl.project.amount), placeholder: "1750000"})
-              //       ),
-              //       m("button", [
-              //         "Submit"
-              //       ]),
-              //     ]),
-              //   ]),
-              // ]),
-              // m("hr"),
               m(".big.section#activity", [
                 m("h1", ["Activity"]),
                 m(".content", [
