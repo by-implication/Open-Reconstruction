@@ -5,8 +5,15 @@ visualization.view = function(ctrl){
       visPanel.view(ctrl.vis),
       m("section", [
         m(".row", [
-          m(".columns.medium-12", [
-            "hi"
+          m(".columns.medium-8", [
+            m("h1", [
+              "Comments go here"
+            ]),
+          ]),
+          m(".columns.medium-4", [
+            m("h1", [
+              "Share options here"
+            ]),
           ]),
         ]),
       ])

@@ -1,6 +1,6 @@
 visPanel.view = function(ctrl){
   return m(".vis-panel", [
-    !ctrl.fullView() ?
+    !ctrl.isFullView() ?
       m("div", [
         m(".section", [
           m("h5", [
