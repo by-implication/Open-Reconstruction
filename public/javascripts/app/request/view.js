@@ -57,26 +57,9 @@ request.view = function(ctrl){
       ctrl.isInvolved() ? request.approval(ctrl) : "",
       // progress tracker
 
-      // request.progress(ctrl),
 
       // actual content
       m("section", [
-        // m(".row", [
-        //   ctrl.degs.description.view(
-        //     function(){ return m("h4", ctrl.request().description) },
-        //     function(){
-        //       return m("div", [
-        //         m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),
-        //       ])
-        //     }
-        //   ),
-        //   m("p.meta", [
-        //     "Posted by ",
-        //     m("a",{href: routes.controllers.Users.view(ctrl.author().id).url, config: m.route}, ctrl.author().name),
-        //     m("br"),
-        //     " on "+(new Date(ctrl.request().date).toString()), // change this as people modify this. "Last edited by _____"
-        //   ]),
-        // ]),
         m(".row", [
           common.tabs.menu(ctrl.requestTabs, {className: "vertical", config: ctrl.scrollHandler}),
           m(".tabs-content.vertical", [
@@ -84,6 +67,7 @@ request.view = function(ctrl){
               m(".section#summary", [
                 m("h1", ["Summary"]),
                 m(".content", [
+                  request.progress(ctrl),
                   ctrl.degs.description.view(
                     function(){ return m("h2", ctrl.request().description) },
                     function(){
@@ -98,86 +82,92 @@ request.view = function(ctrl){
                     m("br"),
                     " on "+(new Date(ctrl.request().date).toString()), // change this as people modify this. "Last edited by _____"
                   ]),
-                  m("p", [
-                    "Processing Time",
-                    m("h4#stagnation-" + ctrl.id + ".value"), // actual content c/o recursive update function in controller
-                  ]),
-                  m("p", [
-                    "Amount",
-                    ctrl.degs.amount.view(
-                      function(){ return m("h4", [helper.commaize(ctrl.request().amount)]) },
-                      function(){
-                        return m("div", [
-                          m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),
-                        ])
-                      }
-                    ),
-                  ]),
-                  m("p", [
-                    "Disaster",
-                    ctrl.degs.disaster.view(
-                      function(){
-                        var disasterType = request.disasterTypes().filter(function (dt){
-                          return dt.id == ctrl.request().disaster.typeId;
-                        })[0];
-                        return m("h4", [
-                          disasterType.name + " "
-                          + ctrl.request().disaster.name + " in "
-                          + common.displayDate(ctrl.request().disaster.date)
-                        ]
-                      )},
-                      function(){
-                        return m("div", [
-                          m("div", [
-                            m("label", [
-                              "Name",
-                              m("input", {
-                                type: "text",
-                                value: this.input().name,
-                                onchange: m.withAttr("value", this.input.setName)
-                              })
-                            ]),
-                            m("label", [
-                              "Type",
-                              m("select", {
-                                onchange: m.withAttr("value", this.input.setTypeId)
-                              }, request.disasterTypes().map(function (dt){
-                                return m("option", {value: dt.id, selected: dt.id == this.input().typeId}, dt.name)
-                              }.bind(this)))
-                            ]),
-                            m("label", [
-                              "Date",
-                              m("input", {
-                                type: "date",
-                                value: this.htmlDate() || helper.toDateValue(this.input().date),
-                                onchange: m.withAttr("value", this.input.setDate)
-                              })
-                            ])
-                          ])
-                        ])
-                      }
-                    ),
-                  ]),
-                  m("p", [
-                    "Location",
-                    ctrl.degs.location.view(
-                      function(){ return m("h4.value", [ctrl.request().location]) },
-                      function(){
-                        return m("div", [
-                          m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),
-                        ])
-                      }
-                    ),
-                  ]),
-                  m(".map-container", [
-                    m("#detailMap", {config: ctrl.initMap}),
-                    ctrl.coords() ?
-                      ""
-                    : m(".map-shroud", [
-                      m("h3", [
-                        "Map unavailable because requester did not supply coordinates"
+                  m(".row", [
+                    m(".columns.medium-6", [
+                      m("p", [
+                        "Processing Time",
+                        m("h4#stagnation-" + ctrl.id + ".value"), // actual content c/o recursive update function in controller
                       ]),
-                    ])
+                      m("p", [
+                        "Amount",
+                        ctrl.degs.amount.view(
+                          function(){ return m("h4", [helper.commaize(ctrl.request().amount)]) },
+                          function(){
+                            return m("div", [
+                              m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),
+                            ])
+                          }
+                        ),
+                      ]),
+                      m("p", [
+                        "Disaster",
+                        ctrl.degs.disaster.view(
+                          function(){
+                            var disasterType = request.disasterTypes().filter(function (dt){
+                              return dt.id == ctrl.request().disaster.typeId;
+                            })[0];
+                            return m("h4", [
+                              disasterType.name + " "
+                              + ctrl.request().disaster.name + " in "
+                              + common.displayDate(ctrl.request().disaster.date)
+                            ]
+                          )},
+                          function(){
+                            return m("div", [
+                              m("div", [
+                                m("label", [
+                                  "Name",
+                                  m("input", {
+                                    type: "text",
+                                    value: this.input().name,
+                                    onchange: m.withAttr("value", this.input.setName)
+                                  })
+                                ]),
+                                m("label", [
+                                  "Type",
+                                  m("select", {
+                                    onchange: m.withAttr("value", this.input.setTypeId)
+                                  }, request.disasterTypes().map(function (dt){
+                                    return m("option", {value: dt.id, selected: dt.id == this.input().typeId}, dt.name)
+                                  }.bind(this)))
+                                ]),
+                                m("label", [
+                                  "Date",
+                                  m("input", {
+                                    type: "date",
+                                    value: this.htmlDate() || helper.toDateValue(this.input().date),
+                                    onchange: m.withAttr("value", this.input.setDate)
+                                  })
+                                ])
+                              ])
+                            ])
+                          }
+                        ),
+                      ]),
+                      m("p", [
+                        "Location",
+                        ctrl.degs.location.view(
+                          function(){ return m("h4.value", [ctrl.request().location]) },
+                          function(){
+                            return m("div", [
+                              m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),
+                            ])
+                          }
+                        ),
+                      ]),
+                    ]),
+                    m(".columns.medium-6", [
+                      m(".map-container", [
+                        m("#detailMap", {config: ctrl.initMap}),
+                        ctrl.coords() ?
+                          ""
+                        : m(".map-shroud", [
+                          m("h3", [
+                            "Map unavailable because requester did not supply coordinates"
+                          ]),
+                        ])
+                      ]),
+                    ]),
                   ]),
                 ]),
               ]),
@@ -185,54 +175,60 @@ request.view = function(ctrl){
               m(".section#assignments", [
                 m("h1", ["Assignments"]),
                 m(".content", [
-                  m("p", [
-                    "Assessing Agency",
-                    ctrl.degs.assess.view(
-                      function(){
-                        return ctrl.assessingAgency().id ?
-                          m("h4", [
-                            m("a", {href: routes.controllers.GovUnits.view(ctrl.assessingAgency().id).url, config: m.route}, [
-                              ctrl.assessingAgency().name
-                            ])
-                          ])
-                        : m("h4", "Unassigned");
-                      },
-                      function(){
-                        return m("select", {onchange: m.withAttr("value", this.input)},
-                          [m("option", {value: 0, selected: ctrl.assessingAgency().id == 0}, "None")]
-                          .concat(ctrl.assessingAgencies().map(function(agency){
-                            return m("option", {value: agency.id, selected: ctrl.assessingAgency().id == agency.id}, agency.name)
+                  m(".row", [
+                    m(".columns.medium-6", [
+                      m("p", [
+                        "Assessing Agency",
+                        ctrl.degs.assess.view(
+                          function(){
+                            return ctrl.assessingAgency().id ?
+                              m("h4", [
+                                m("a", {href: routes.controllers.GovUnits.view(ctrl.assessingAgency().id).url, config: m.route}, [
+                                  ctrl.assessingAgency().name
+                                ])
+                              ])
+                            : m("h4", "Unassigned");
+                          },
+                          function(){
+                            return m("select", {onchange: m.withAttr("value", this.input)},
+                              [m("option", {value: 0, selected: ctrl.assessingAgency().id == 0}, "None")]
+                              .concat(ctrl.assessingAgencies().map(function(agency){
+                                return m("option", {value: agency.id, selected: ctrl.assessingAgency().id == agency.id}, agency.name)
+                              }
+                            )));
                           }
-                        )));
-                      }
-                    ),
-                    m("p.help", [
-                      "The Assessing Agency will independently validate and assess the suitability of this request for execution. They will be the ones making the program of works, etc..."
+                        ),
+                        m("p.help", [
+                          "The Assessing Agency will independently validate and assess the suitability of this request for execution. They will be the ones making the program of works, etc..."
+                        ]),
+                      ]),
                     ]),
-                  ]),
-                  m("p", [
-                    "Implementing Agency",
-                    ctrl.degs.implement.view(
-                      function(){
-                        return ctrl.implementingAgency().id ?
-                          m("h4", [
-                            m("a", {href: routes.controllers.GovUnits.view(ctrl.implementingAgency().id).url, config: m.route}, [
-                              ctrl.implementingAgency().name
-                            ])
-                          ])
-                        : m("h4", "Unassigned");
-                      },
-                      function(){
-                        return m("select", {onchange: m.withAttr("value", this.input)},
-                          [m("option", {value: 0, selected: ctrl.implementingAgency().id == 0}, "None")]
-                          .concat(ctrl.implementingAgencies().map(function(agency){
-                            return m("option", {value: agency.id, selected: ctrl.implementingAgency().id == agency.id}, agency.name)
+                    m(".columns.medium-6", [
+                      m("p", [
+                        "Implementing Agency",
+                        ctrl.degs.implement.view(
+                          function(){
+                            return ctrl.implementingAgency().id ?
+                              m("h4", [
+                                m("a", {href: routes.controllers.GovUnits.view(ctrl.implementingAgency().id).url, config: m.route}, [
+                                  ctrl.implementingAgency().name
+                                ])
+                              ])
+                            : m("h4", "Unassigned");
+                          },
+                          function(){
+                            return m("select", {onchange: m.withAttr("value", this.input)},
+                              [m("option", {value: 0, selected: ctrl.implementingAgency().id == 0}, "None")]
+                              .concat(ctrl.implementingAgencies().map(function(agency){
+                                return m("option", {value: agency.id, selected: ctrl.implementingAgency().id == agency.id}, agency.name)
+                              }
+                            )));
                           }
-                        )));
-                      }
-                    ),
-                    m("p.help", [
-                      "The Implementing Agency will be responsible for the handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
+                        ),
+                        m("p.help", [
+                          "The Implementing Agency will be responsible for the handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
+                        ]),
+                      ]),
                     ]),
                   ]),
                 ]),
