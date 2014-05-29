@@ -38,6 +38,64 @@ visualizations.padMonths = function padMonths(a){
 }
 
 visualizations.create(
+  'Project History',
+  'projectHistory',
+  function(ctrl){
+    return function(){
+    var labels = ctrl.byMonth().map(function (e){
+      var yearMonth = e.yearMonth.split("-");
+      var year = yearMonth[0];
+      var month = parseInt(yearMonth[1]) - 1;
+      return helper.monthArray[month] + ", " + year;
+    });
+    var amountPerMonth = ctrl.byMonth().map(function (e){ return e.amount / 1; });
+    var countPerMonth = ctrl.byMonth().map(function (e){ return e.count; });
+
+    return {
+      data: {
+        x: "x",
+        columns: [
+          ["x"].concat(labels),
+          ["Count per Month"].concat(countPerMonth),
+          ["Amount per Month"].concat(amountPerMonth)
+        ],
+        axes: {
+          "Count per Month": 'y',
+          "Amount per Month": 'y2'
+        },
+        types: {
+          "Count per Month": 'bar',
+        }
+      },
+      axis : {
+        x : {
+          type : 'timeseries',
+          tick: {
+            format: function (x) { 
+              var monthDict = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+              return monthDict[x.getMonth()] + ", " + x.getFullYear(); 
+            },
+            culling: {
+              max: 3
+            }
+          }
+        },
+        y2 : {
+          show: true,
+          tick: {
+            format: function(t){
+              var format =  d3.format(",")
+              return "PHP " + format(t);
+            }
+          }
+        },
+      }
+    }
+  }
+  }
+)
+
+visualizations.create(
   'Project Type Distribution',
   'projectTypes',
   function(ctrl){

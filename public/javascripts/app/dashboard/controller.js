@@ -62,61 +62,7 @@ dashboard.controller = function(){
     // console.log(data);
   });
 
-  this.projectHistory = new visPanel.controller();
-  this.projectHistory.title("Project History");
-  this.projectHistory.link("projectHistory");
-  this.projectHistory.chartSettings = function(){
-    var labels = self.byMonth().map(function (e){
-      var yearMonth = e.yearMonth.split("-");
-      var year = yearMonth[0];
-      var month = parseInt(yearMonth[1]) - 1;
-      return helper.monthArray[month] + ", " + year;
-    });
-    var amountPerMonth = self.byMonth().map(function (e){ return e.amount / 1; });
-    var countPerMonth = self.byMonth().map(function (e){ return e.count; });
-
-    return {
-      data: {
-        x: "x",
-        columns: [
-          ["x"].concat(labels),
-          ["Count per Month"].concat(countPerMonth),
-          ["Amount per Month"].concat(amountPerMonth)
-        ],
-        axes: {
-          "Count per Month": 'y',
-          "Amount per Month": 'y2'
-        },
-        types: {
-          "Count per Month": 'bar',
-        }
-      },
-      axis : {
-        x : {
-          type : 'timeseries',
-          tick: {
-            format: function (x) { 
-              var monthDict = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-              return monthDict[x.getMonth()] + ", " + x.getFullYear(); 
-            },
-            culling: {
-              max: 3
-            }
-          }
-        },
-        y2 : {
-          show: true,
-          tick: {
-            format: function(t){
-              var format =  d3.format(",")
-              return "PHP " + format(t);
-            }
-          }
-        },
-      }
-    }
-  }
-
+  this.projectHistory = visualizations.library['projectHistory'](self);
   this.disasterHistory = visualizations.library['disasterHistory'](self);
   this.projectTypes = visualizations.library['projectTypes'](self);
   this.topDisasters = visualizations.library['topDisasters'](self);
