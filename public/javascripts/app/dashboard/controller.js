@@ -35,7 +35,6 @@ dashboard.controller = function(){
       }
       return obj;
     })
-    // console.log(data);
   });
 
   this.projectHistory = visualizations.library['requestHistory'](self);

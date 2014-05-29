@@ -301,54 +301,6 @@ request.view = function(ctrl){
                     m("table.doc-list", [
                       m("thead", [
                         m("tr", [
-// <<<<<<< HEAD
-//                           m("td", [
-//                             "Item"
-//                           ]),
-//                           m("td", [
-//                             "Details"
-//                           ]),
-//                         ]),
-//                       ]),
-//                       m("tbody", [
-//                         m("tr", [
-//                           m("td", [
-//                             "SARO",
-//                           ]),
-//                           m("td", [
-//                             ctrl.request().isSaroAssigned ? "Hidden" : "Unassigned"
-//                           ]),
-//                         ]),
-//                       ]),
-//                     ]),
-//                     m("hr"),
-//                     m("div", [
-//                       m("form", {onsubmit: ctrl.submitProject}, [
-//                         m(".section", [
-//                           m("h3", "Add a Project"),
-//                           m("p", [
-//                             "Please enter the project details."
-//                           ]),
-//                         ]),
-//                         m("hr"),
-//                         m(".section", [
-//                           common.field(
-//                             "Name",
-//                             m("input[type='text']", {onchange: m.withAttr("value", ctrl.project.name), placeholder: "Reconstruction of Yolanda-damaged Seawall"})
-//                           ),
-//                           common.field(
-//                             "Amount",
-//                             m("input[type='text']", {onchange: m.withAttr("value", ctrl.project.amount), placeholder: "1750000"})
-//                           ),
-//                           m("button", [
-//                             "Submit"
-//                           ]),
-//                         ]),
-//                       ]),
-//                     ])
-//                   ]);
-//                 })
-// =======
                           m("td", "Filename"),
                           m("td", "Date Uploaded"),
                           m("td", "Uploader"),
@@ -362,7 +314,6 @@ request.view = function(ctrl){
                             m("td", common.displayDate(doc.dateUploaded)),
                             m("td", [
                               m("a", {href: routes.controllers.Users.view(doc.uploader.id).url, config: m.route}, doc.uploader.name)
-// >>>>>>> c313e02ed68b46c48d54b2895d5b142273101263
                             ]),
                             m("td", common.attachmentActions.bind(ctrl)(doc))
                           ])
