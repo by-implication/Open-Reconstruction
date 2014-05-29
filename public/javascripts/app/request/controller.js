@@ -56,20 +56,21 @@ request.controller = function(){
   this.hasSignedoff = m.prop(false);
   this.input = { comment: m.prop() };
 
-  this.submitProject = function(e){
+  this.addProjectModal.submitProject = function(e){
     e.preventDefault();
     bi.ajax(routes.controllers.Projects.insert(self.id), {
       data: {
-        name: self.project.name(),
-        amount: self.project.amount()
+        name: self.addProjectModal.project.name(),
+        amount: self.addProjectModal.project.amount()
       }
     }).then(function (r){
       if(r.success){
         alert('Submitted!')
+        self.history().unshift(r.event);
       } else {
         alert("Your input was invalid.");
       }
-    }.bind(self));
+    }.bind(this));
   }
 
   this.unassignedAgency = {id: 0};
