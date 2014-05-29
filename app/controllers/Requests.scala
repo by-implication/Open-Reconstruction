@@ -17,6 +17,7 @@ object Requests extends Controller with Secured {
   def viewImages = Application.index1 _
   def viewDocuments = Application.index1 _
   def viewActivity = Application.index1 _
+  def viewLinkage = Application.index1 _
 
   def createMeta() = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
