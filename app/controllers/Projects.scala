@@ -17,6 +17,7 @@ object Projects extends Controller with Secured {
       req <- Req.findById(id)
       implementingAgencyId <- req.implementingAgencyId
     } yield {
+      implicit val r: Req = req
       if(implementingAgencyId == user.govUnitId) {
         val createForm: Form[Project] = Form(
           mapping(
@@ -37,8 +38,10 @@ object Projects extends Controller with Secured {
         )
         createForm.bindFromRequest.fold(
           Rest.formError(_),
-          _.save().map { project =>
-            Rest.success("id" -> project.requestViewJson)
+          _.save().map { project => 
+            Event.addProject(project).create().map {e =>
+              Rest.success("event" -> e.listJson)
+            }.getOrElse(Rest.serverError)
           }.getOrElse(Rest.serverError())
         )
       } else Rest.unauthorized()
