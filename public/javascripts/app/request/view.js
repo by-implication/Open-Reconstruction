@@ -17,6 +17,7 @@ request.view = function(ctrl){
             m("hr"),
             m(".section", [
               common.field("SARO Number", m("input", {
+                type: "text",
                 onchange: m.withAttr("value", ctrl.content)
               })),
               m("button", [
@@ -66,6 +67,33 @@ request.view = function(ctrl){
               common.field("Remarks", m("textarea", {
                 onchange: m.withAttr("value", ctrl.content)
               }), "Please state the reason for rejection"),
+              m("button", [
+                "Submit"
+              ]),
+            ]),
+          ])
+        }
+      ),
+      common.modal.view(
+        ctrl.addProjectModal,
+        function(ctrl){
+          return m("form", {onsubmit: ctrl.submitProject}, [
+            m(".section", [
+              m("h3", "Reference a Project"),
+              m("p", [
+                "Should be from the project management system of the implementing agency."
+              ]),
+            ]),
+            m("hr"),
+            m(".section", [
+              common.field(
+                "Name",
+                m("input[type='text']", {onchange: m.withAttr("value", ctrl.project.name), placeholder: "Reconstruction of Yolanda-damaged Seawall"})
+              ),
+              common.field(
+                "Amount",
+                m("input[type='text']", {onchange: m.withAttr("value", ctrl.project.amount), placeholder: "1750000"})
+              ),
               m("button", [
                 "Submit"
               ]),
@@ -329,21 +357,27 @@ request.view = function(ctrl){
               m(".big.section#references", [
                 m("h1", ["References"]),
                 m(".content", [
+                  m("h4", [
+                    "SARO",
+                    m("button.tiny", {type: "button", onclick: ctrl.saroModal.show.bind(ctrl.saroModal)}, [
+                      "Assign a SARO"
+                    ]),
+                  ]),
                   m("table", [
                     m("thead", [
                       m("tr", [
                         m("td", [
-                          "Item"
+                          "SARO Number"
                         ]),
                         m("td", [
-                          "Details"
+                          "Amount"
                         ]),
                       ]),
                     ]),
                     m("tbody", [
                       m("tr", [
                         m("td", [
-                          "SARO",
+                          ctrl.request().isSaroAssigned ? "Hidden" : "Unassigned"
                         ]),
                         m("td", [
                           ctrl.request().isSaroAssigned ? "Hidden" : "Unassigned"
@@ -351,34 +385,68 @@ request.view = function(ctrl){
                       ]),
                     ]),
                   ]),
+                  m("h4", [
+                    "Project Management",
+                    m("button.tiny", {type: "button", onclick: ctrl.addProjectModal.show.bind(ctrl.addProjectModal)}, [
+                      "Reference a Project"
+                    ]),
+                  ]),
+                  m("table", [
+                    m("thead", [
+                      m("tr", [
+                        m("td", [
+                          "Id"
+                        ]),
+                        m("td", [
+                          "Description"
+                        ]),
+                        m("td", [
+                          "Progress"
+                        ]),
+                      ]),
+                    ]),
+                    m("tbody", [
+                      m("tr", [
+                        m("td", [
+                          "Id"
+                        ]),
+                        m("td", [
+                          "Description"
+                        ]),
+                        m("td", [
+                          "Progress"
+                        ]),
+                      ]),
+                    ]),
+                  ]),
                 ]),
               ]),
               m("hr"),
-              m("div", [
-                m("form", {onsubmit: ctrl.submitProject}, [
-                  m(".section", [
-                    m("h3", "Add a Project"),
-                    m("p", [
-                      "Please enter the project details."
-                    ]),
-                  ]),
-                  m("hr"),
-                  m(".section", [
-                    common.field(
-                      "Name",
-                      m("input[type='text']", {onchange: m.withAttr("value", ctrl.project.name), placeholder: "Reconstruction of Yolanda-damaged Seawall"})
-                    ),
-                    common.field(
-                      "Amount",
-                      m("input[type='text']", {onchange: m.withAttr("value", ctrl.project.amount), placeholder: "1750000"})
-                    ),
-                    m("button", [
-                      "Submit"
-                    ]),
-                  ]),
-                ]),
-              ]),
-              m("hr"),
+              // m("div", [
+              //   m("form", {onsubmit: ctrl.submitProject}, [
+              //     m(".section", [
+              //       m("h3", "Add a Project"),
+              //       m("p", [
+              //         "Please enter the project details."
+              //       ]),
+              //     ]),
+              //     m("hr"),
+              //     m(".section", [
+              //       common.field(
+              //         "Name",
+              //         m("input[type='text']", {onchange: m.withAttr("value", ctrl.project.name), placeholder: "Reconstruction of Yolanda-damaged Seawall"})
+              //       ),
+              //       common.field(
+              //         "Amount",
+              //         m("input[type='text']", {onchange: m.withAttr("value", ctrl.project.amount), placeholder: "1750000"})
+              //       ),
+              //       m("button", [
+              //         "Submit"
+              //       ]),
+              //     ]),
+              //   ]),
+              // ]),
+              // m("hr"),
               m(".big.section#activity", [
                 m("h1", ["Activity"]),
                 m(".content", [

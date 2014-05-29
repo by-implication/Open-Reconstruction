@@ -242,6 +242,8 @@ common.modal.controller = function(){
   this.show = function(){
     this.isVisible(true);
     this.height = helper.docHeight;
+    // console.log($("html, body"));
+    $("html, body").animate({ scrollTop: "0px" });
   }
   this.close = function(){
     this.isVisible(false);
