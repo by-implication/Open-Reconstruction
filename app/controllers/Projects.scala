@@ -27,7 +27,10 @@ object Projects extends Controller with Secured {
             Project(
               name = name,
               amount = amount.getOrElse(0),
-              reqId = id
+              reqId = id,
+              govUnitId = implementingAgencyId,
+              projectTypeId = req.projectTypeId,
+              scope = req.scope
             )
           })
           (_ => None)

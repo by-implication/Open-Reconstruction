@@ -57,7 +57,18 @@ request.controller = function(){
 
   this.submitProject = function(e){
     e.preventDefault();
-    console.log('Submitting project!');
+    bi.ajax(routes.controllers.Projects.insert(self.id), {
+      data: {
+        name: self.project.name(),
+        amount: self.project.amount()
+      }
+    }).then(function (r){
+      if(r.success){
+        alert('Submitted!')
+      } else {
+        alert("Your input was invalid.");
+      }
+    }.bind(self));
   }
 
   this.unassignedAgency = {id: 0};
