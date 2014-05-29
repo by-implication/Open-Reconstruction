@@ -237,6 +237,8 @@ case class Req(
   lazy val assessingAgency = assessingAgencyId.map(GovUnit.findById(_).get)
   lazy val implementingAgency = implementingAgencyId.map(GovUnit.findById(_).get)
 
+  lazy val isSaroAssigned: Boolean = saroNo.isDefined
+
   lazy val currentCheckpoint: Option[Checkpoint] = DB.withConnection { implicit c =>
     SQL("""
       SELECT * FROM checkpoints
@@ -306,6 +308,7 @@ case class Req(
     "level" -> level,
     "isValidated" -> isValidated,
     "isRejected" -> isRejected,
+    "isSaroAssigned" -> isSaroAssigned,
     "authorId" -> authorId,
     "assessingAgencyId" -> assessingAgencyId,
     "implementingAgencyId" -> implementingAgencyId,

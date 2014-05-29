@@ -134,8 +134,7 @@ historyEvent.signoff = function(data){
       m("h3", "Sign off"),
       m("p", [
         m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
-        govUnitName == "Department of Budget and Management" ?
-        " has approved a SARO for this project." : " signed off on this project."
+        " signed off on this project."
       ]),
       historyEvent.meta("Signed off", data, date)
     ])
@@ -178,6 +177,20 @@ historyEvent.date = function(date){
       m("div.year", date.getFullYear())
     ]),
     m(".divider")
+  ])
+}
+
+historyEvent.assignSaro = function(data){
+  var date = new Date(data.date);
+  return m(".event", [
+    historyEvent.date(date),
+    m(".details", [
+      m("h3", "SARO assignment"),
+      m("p", [
+        "A SARO has been assigned to this request."
+      ]),
+      historyEvent.meta("Assigned ", data, date)
+    ])
   ])
 }
 
