@@ -9,8 +9,4 @@ object Visualizations extends Controller with Secured {
 
   def view(v: String) = Application.index
 
-  def viewMeta(v: String) = Action {
-    Ok(Req.visualizationData(v))
-  }
-
 }
