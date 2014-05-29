@@ -92,10 +92,7 @@ dashboard.controller = function(){
         x : {
           type : 'timeseries',
           tick: {
-            format: function (x) { 
-              var monthDict = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-              return monthDict[x.getMonth()] + ", " + x.getFullYear(); 
-            },
+            format: '%b, %Y',
             culling: {
               max: 3
             }
@@ -146,10 +143,7 @@ dashboard.controller = function(){
         x : {
           type : 'timeseries',
           tick: {
-            format: function (x) { 
-              var monthDict = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-              return monthDict[x.getMonth()] + ", " + x.getFullYear(); 
-            },
+            format: '%b, %Y',
             culling: {
               max: 4
             }
