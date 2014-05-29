@@ -217,14 +217,20 @@ request.view = function(ctrl){
                       m("thead", [
                         m("tr", [
                           m("td", [
-                            "wut"
+                            "Item"
+                          ]),
+                          m("td", [
+                            "Details"
                           ]),
                         ]),
                       ]),
                       m("tbody", [
                         m("tr", [
                           m("td", [
-                            "wut"
+                            "SARO",
+                          ]),
+                          m("td", [
+                            ctrl.request().isSaroAssigned ? "Hidden" : "Unassigned"
                           ]),
                         ]),
                       ]),
