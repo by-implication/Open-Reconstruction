@@ -32,6 +32,13 @@ object Application extends Controller {
     Ok(Req.dashboardData)
   }
 
+  def populate() = Action { implicit request =>
+    play.Logger.info("Populating database:")
+    Req.createSampleRequests
+    play.Logger.info("* requests created")
+    Redirect(routes.Application.index)
+  }
+
   def jsRoutes = Action { implicit request =>
     import routes.javascript._
     Ok(Routes.javascriptRouter("routes")(

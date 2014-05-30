@@ -32,7 +32,7 @@ object Req extends ReqGen {
       INSERT INTO reqs (req_description, project_type_id, req_scope, req_disaster_name, req_amount, author_id, req_location, req_disaster_date)
       SELECT DISTINCT group_id, coalesce(project_type_id, (SELECT project_type_id FROM project_types WHERE project_type_name = 'Others')) as project_type_id, initcap(scope)::project_scope, disaster_name, 0 as amount, 1 as author_id, group_id as loc, NOW() FROM oparr_bohol
       LEFT JOIN project_types on initcap(project_type_name) = initcap(project_type)
-    """)
+    """).execute()
   }
 
   private def byDisasterType = DB.withConnection { implicit c =>

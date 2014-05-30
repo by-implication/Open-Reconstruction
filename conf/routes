@@ -6,6 +6,7 @@
 
 GET     /                                         controllers.Application.index
 GET     /welcome                                  controllers.Application.welcome
+GET     /populate                                 controllers.Application.populate
 GET     /dashboard                                controllers.Application.dashboard
 GET     /dashboard/meta                           controllers.Application.dashboardMeta
 GET     /saro                                     controllers.Application.saro
