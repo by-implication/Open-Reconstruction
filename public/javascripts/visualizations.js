@@ -88,21 +88,32 @@ visualizations.create(
 )
 
 visualizations.create(
-  'Project Type Distribution',
+  'Request Type Distribution',
   'projectTypes',
   function(ctrl){
     return function(){
+      var data = _.chain(ctrl.byProjectType())
+        .sortBy(function(t){
+          return t.count * -1;
+        })
+        .value();
+      var counts = data.map(function(t){
+        return t.count;
+      });
+      var types = data.map(function(t){
+        return t.name;
+      });
       return {
         data: {
           columns: [
-            ["Number of Projects", 3, 15, 82, 1, 42, 23]
+            ["Number of Projects"].concat(counts)
           ],
           type: "bar",
         },
         axis: {
           x: {
             type: "categorized",
-            categories: ["Rivers", "Infrastructure", "Housing", "Roads", "Phi", "Mark"]
+            categories: types
           },
           rotated: true
         }
@@ -205,7 +216,7 @@ visualizations.create(
 )
 
 visualizations.create(
-  'Project Amounts per Unique Named Disaster',
+  'Request Amounts per Unique Named Disaster',
   'topDisastersAmount',
   function(ctrl){
     return function(){
