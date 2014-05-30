@@ -362,9 +362,9 @@ request.view = function(ctrl){
                 m(".content", [
                   m("h4", [
                     "SARO",
-                    m("button.tiny.right", {type: "button", onclick: ctrl.saroModal.show.bind(ctrl.saroModal)}, [
+                    (ctrl.request().level > 3 && ctrl.currentUserCanAssignFunding() ? m("button.tiny.right", {type: "button", onclick: ctrl.saroModal.show.bind(ctrl.saroModal)}, [
                       "Assign a SARO"
-                    ]),
+                    ]): "")
                   ]),
                   m("table", [
                     m("thead", [

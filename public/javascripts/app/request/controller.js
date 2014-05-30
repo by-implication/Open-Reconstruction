@@ -207,6 +207,10 @@ request.controller = function(){
     return this.implementingAgency() && this.app.getCurrentUserProp("govUnit") && (this.implementingAgency().id === this.app.getCurrentUserProp("govUnit").id);
   }
 
+  this.currentUserCanAssignFunding = function(){
+    return this.app.getCurrentUserProp("govUnit") && this.app.getCurrentUserProp("govUnit").role == "DBM"
+  }
+
   this.currentUserIsAuthor = function(){
     return this.author().handle === this.app.getCurrentUserProp("handle");
   }
