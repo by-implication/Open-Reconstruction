@@ -1,4 +1,6 @@
-var request = {};
+var request = {
+	disasterTypes: m.prop([])
+};
 
 request.Request = function(data){
   for(prop in data){

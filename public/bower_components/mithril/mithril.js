@@ -32,11 +32,8 @@ Mithril = m = new function app(window) {
 		}
 		return cell
 	}
-	function build(parentElement, parentTag, data, cached, shouldReattach, index, namespace) {
-		if (data === null || data === undefined) {
-			if (cached) clear(cached.nodes)
-			return 
-		}
+	function build(parentElement, parentTag, data, cached, shouldReattach, index, editable, namespace) {
+		if (data === null || data === undefined) data = ""
 		if (data.subtree === "retain") return
 		
 		var cachedType = type.call(cached), dataType = type.call(data)
@@ -49,7 +46,7 @@ Mithril = m = new function app(window) {
 		if (dataType == "[object Array]") {
 			var nodes = [], intact = cached.length === data.length, subArrayCount = 0
 			for (var i = 0, cacheCount = 0; i < data.length; i++) {
-				var item = build(parentElement, null, data[i], cached[cacheCount], shouldReattach, index + subArrayCount || subArrayCount, namespace)
+				var item = build(parentElement, null, data[i], cached[cacheCount], shouldReattach, index + subArrayCount || subArrayCount, editable, namespace)
 				if (item === undefined) continue
 				if (!item.nodes.intact) intact = false
 				subArrayCount += item instanceof Array ? item.length : 1
@@ -74,7 +71,7 @@ Mithril = m = new function app(window) {
 				cached = {
 					tag: data.tag,
 					attrs: setAttributes(node, data.tag, data.attrs, {}, namespace),
-					children: build(node, data.tag, data.children, cached.children, true, 0, namespace),
+					children: build(node, data.tag, data.children, cached.children, true, 0, data.attrs.contenteditable ? node : editable, namespace),
 					nodes: [node]
 				}
 				parentElement.insertBefore(node, parentElement.childNodes[index] || null)
@@ -82,7 +79,7 @@ Mithril = m = new function app(window) {
 			else {
 				node = cached.nodes[0]
 				setAttributes(node, data.tag, data.attrs, cached.attrs, namespace)
-				cached.children = build(node, data.tag, data.children, cached.children, false, 0, namespace)
+				cached.children = build(node, data.tag, data.children, cached.children, false, 0, data.attrs.contenteditable ? node : editable, namespace)
 				cached.nodes.intact = true
 				if (shouldReattach === true) parentElement.insertBefore(node, parentElement.childNodes[index] || null)
 			}
@@ -102,20 +99,25 @@ Mithril = m = new function app(window) {
 				cached.nodes = [node]
 			}
 			else if (cached.valueOf() !== data.valueOf() || shouldReattach === true) {
-				if (data.$trusted) {
-					var current = cached.nodes[0], nodes = [current]
-					if (current) {
-						while (current = current.nextSibling) nodes.push(current)
-						clear(nodes)
-						node = injectHTML(parentElement, index, data)
+				if (!editable || editable !== window.document.activeElement) {
+					if (data.$trusted) {
+						var current = cached.nodes[0], nodes = [current]
+						if (current) {
+							while (current = current.nextSibling) nodes.push(current)
+							clear(nodes)
+							node = injectHTML(parentElement, index, data)
+						}
+						else parentElement.innerHTML = data
 					}
-					else parentElement.innerHTML = data
-				}
-				else {
-					node = cached.nodes[0]
-					if (parentTag === "textarea") parentElement.value = data
-					else parentElement.insertBefore(node, parentElement.childNodes[index] || null)
-					node.nodeValue = data
+					else {
+						node = cached.nodes[0]
+						if (parentTag === "textarea") parentElement.value = data
+						else if (editable) editable.innerHTML = data
+						else {
+							parentElement.insertBefore(node, parentElement.childNodes[index] || null)
+							node.nodeValue = data
+						}
+					}
 				}
 				cached = new data.constructor(data)
 				cached.nodes = [node]
@@ -135,9 +137,12 @@ Mithril = m = new function app(window) {
 				else if (typeof dataAttr == "function" && attrName.indexOf("on") == 0) {
 					node[attrName] = autoredraw(dataAttr, node)
 				}
-				else if (attrName === "style") {
+				else if (attrName === "style" && typeof dataAttr == "object") {
 					for (var rule in dataAttr) {
 						if (cachedAttr === undefined || cachedAttr[rule] !== dataAttr[rule]) node.style[rule] = dataAttr[rule]
+					}
+					for (var rule in cachedAttr) {
+						if (!(rule in dataAttr)) node.style[rule] = ""
 					}
 				}
 				else if (namespace !== undefined) {
@@ -148,14 +153,14 @@ Mithril = m = new function app(window) {
 				else if (attrName === "value" && tag === "input") {
 					if (node.value !== dataAttr) node.value = dataAttr
 				}
-				else if (attrName in node) node[attrName] = dataAttr
+				else if (attrName in node && !(attrName == "list" || attrName == "style")) node[attrName] = dataAttr
 				else node.setAttribute(attrName, dataAttr)
 			}
 		}
 		return cachedAttrs
 	}
 	function clear(nodes) {
-		for (var i = 0; i < nodes.length; i++) nodes[i].parentNode.removeChild(nodes[i])
+		for (var i = nodes.length - 1; i > -1; i--) nodes[i].parentNode.removeChild(nodes[i])
 		nodes.length = 0
 	}
 	function injectHTML(parentElement, index, data) {
@@ -172,9 +177,8 @@ Mithril = m = new function app(window) {
 	function autoredraw(callback, object) {
 		return function(e) {
 			m.startComputation()
-			var output = callback.call(object, e)
-			m.endComputation()
-			return output
+			try {return callback.call(object, e)}
+			finally {m.endComputation()}
 		}
 	}
 	
@@ -192,7 +196,7 @@ Mithril = m = new function app(window) {
 				window.document.replaceChild(html, window.document.documentElement)
 			}
 		},
-		insertBefore: function(node, reference) {
+		insertBefore: function(node) {
 			this.appendChild(node)
 		},
 		childNodes: []
@@ -202,7 +206,7 @@ Mithril = m = new function app(window) {
 		var index = nodeCache.indexOf(root)
 		var id = index < 0 ? nodeCache.push(root) - 1 : index
 		var node = root == window.document || root == window.document.documentElement ? documentNode : root
-		cellCache[id] = build(node, null, cell, cellCache[id], false, 0)
+		cellCache[id] = build(node, null, cell, cellCache[id], false, 0, null, undefined)
 	}
 	
 	m.trust = function(value) {
@@ -211,44 +215,43 @@ Mithril = m = new function app(window) {
 		return value
 	}
 	
-	var roots = [], modules = [], controllers = [], now = 0, lastRedraw = 0, lastRedrawId = 0
+	var roots = [], modules = [], controllers = [], now = 0, lastRedraw = 0, lastRedrawId = 0, computePostRedrawHook = null
 	m.module = function(root, module) {
 		m.startComputation()
 		var index = roots.indexOf(root)
 		if (index < 0) index = roots.length
 		roots[index] = root
 		modules[index] = module
+		if (controllers[index] && typeof controllers[index].onunload == "function") controllers[index].onunload()
 		controllers[index] = new module.controller
 		m.endComputation()
 	}
 	m.redraw = function() {
-		for (var i = 0; i < roots.length; i++) {
-			m.render(roots[i], modules[i].view(controllers[i]))
-		}
-		lastRedraw = now
-	}
-	function redraw() {
 		now = window.performance && window.performance.now ? window.performance.now() : new window.Date().getTime()
-		if (now - lastRedraw > 16) m.redraw()
+		if (now - lastRedraw > 16) redraw()
 		else {
 			var cancel = window.cancelAnimationFrame || window.clearTimeout
 			var defer = window.requestAnimationFrame || window.setTimeout
 			cancel(lastRedrawId)
-			lastRedrawId = defer(m.redraw, 0)
+			lastRedrawId = defer(redraw, 0)
 		}
 	}
+	function redraw() {
+		for (var i = 0; i < roots.length; i++) {
+			m.render(roots[i], modules[i].view(controllers[i]))
+		}
+		if (computePostRedrawHook) {
+			computePostRedrawHook()
+			computePostRedrawHook = null
+		}
+		lastRedraw = now
+	}
 	
-	var pendingRequests = 0, computePostRedrawHook = null
+	var pendingRequests = 0
 	m.startComputation = function() {pendingRequests++}
 	m.endComputation = function() {
 		pendingRequests = Math.max(pendingRequests - 1, 0)
-		if (pendingRequests == 0) {
-			redraw()
-			if (computePostRedrawHook) {
-				computePostRedrawHook()
-				computePostRedrawHook = null
-			}
-		}
+		if (pendingRequests == 0) m.redraw()
 	}
 	
 	m.withAttr = function(prop, withAttrCallback) {
@@ -257,14 +260,18 @@ Mithril = m = new function app(window) {
 	
 	//routing
 	var modes = {pathname: "", hash: "#", search: "?"}
-	var redirect = function() {}, routeParams = {}
+	var redirect = function() {}, routeParams = {}, currentRoute
 	m.route = function() {
-		if (arguments.length == 3) {
+		if (arguments.length === 0) return currentRoute
+		else if (arguments.length === 3) {
+			currentRoute = window.location[m.route.mode].slice(modes[m.route.mode].length)
 			var root = arguments[0], defaultRoute = arguments[1], router = arguments[2]
 			redirect = function(source) {
 				var path = source.slice(modes[m.route.mode].length)
 				if (!routeByValue(root, router, path)) {
 					m.route(defaultRoute, true)
+				} else {
+					currentRoute = path
 				}
 			}
 			var listener = m.route.mode == "hash" ? "onhashchange" : "onpopstate"
@@ -277,38 +284,41 @@ Mithril = m = new function app(window) {
 		else if (arguments[0].addEventListener) {
 			var element = arguments[0]
 			var isInitialized = arguments[1]
+			if (element.href.indexOf(modes[m.route.mode]) < 0) {
+				element.href = location.pathname + modes[m.route.mode] + element.pathname
+			}
 			if (!isInitialized) {
 				element.removeEventListener("click", routeUnobtrusive)
 				element.addEventListener("click", routeUnobtrusive)
 			}
 		}
 		else if (typeof arguments[0] == "string") {
-			var route = arguments[0]
+			currentRoute = arguments[0]
 			var shouldReplaceHistoryEntry = arguments[1] === true
 			if (window.history.pushState) {
 				computePostRedrawHook = function() {
-					window.history[shouldReplaceHistoryEntry ? "replaceState" : "pushState"](null, window.document.title, modes[m.route.mode] + route)
+					window.history[shouldReplaceHistoryEntry ? "replaceState" : "pushState"](null, window.document.title, modes[m.route.mode] + currentRoute)
 					scrollToHash()
 				}
-				redirect(modes[m.route.mode] + route)
+				redirect(modes[m.route.mode] + currentRoute)
 			}
-			else window.location[m.route.mode] = route
+			else window.location[m.route.mode] = currentRoute
 		}
 	}
 	m.route.param = function(key) {return routeParams[key]}
 	m.route.mode = "search"
 	function routeByValue(root, router, path) {
-		m.route.path = path
 		routeParams = {}
 		for (var route in router) {
 			if (route == path) return !void m.module(root, router[route])
 			
-			var matcher = new RegExp("^" + route.replace(/:[^\/]+/g, "([^\\/]+)") + "$")
+			var matcher = new RegExp("^" + route.replace(/:[^\/]+?\.{3}/g, "(.*?)").replace(/:[^\/]+/g, "([^\\/]+)") + "$")
+			
 			if (matcher.test(path)) {
 				return !void path.replace(matcher, function() {
 					var keys = route.match(/:[^\/]+/g)
 					var values = [].slice.call(arguments, 1, -2)
-					for (var i = 0; i < keys.length; i++) routeParams[keys[i].slice(1)] = values[i]
+					for (var i = 0; i < keys.length; i++) routeParams[keys[i].replace(/:|\./g, "")] = decodeURIComponent(values[i])
 					m.module(root, router[route])
 				})
 			}
@@ -317,7 +327,7 @@ Mithril = m = new function app(window) {
 	function routeUnobtrusive(e) {
 		if (e.ctrlKey || e.metaKey || e.which == 2) return
 		e.preventDefault()
-		m.route(e.currentTarget.getAttribute("href"))
+		m.route(e.currentTarget[m.route.mode].slice(modes[m.route.mode].length))
 	}
 	function scrollToHash() {
 		if (m.route.mode != "hash" && window.location.hash) window.location.hash = window.location.hash
@@ -336,13 +346,17 @@ Mithril = m = new function app(window) {
 	}
 
 	m.deferred = function() {
-		var resolvers = [], rejecters = []
+		var resolvers = [], rejecters = [], resolved, rejected
 		var object = {
 			resolve: function(value) {
+				if (resolved === undefined) resolved = value
 				for (var i = 0; i < resolvers.length; i++) resolvers[i](value)
+				resolvers.length = rejecters.length = 0
 			},
 			reject: function(value) {
+				if (rejected === undefined) rejected = value
 				for (var i = 0; i < rejecters.length; i++) rejecters[i](value)
+				resolvers.length = rejecters.length = 0
 			},
 			promise: m.prop()
 		}
@@ -351,8 +365,8 @@ Mithril = m = new function app(window) {
 			var next = m.deferred()
 			if (!success) success = identity
 			if (!error) error = identity
-			function push(list, method, callback) {
-				list.push(function(value) {
+			function callback(method, callback) {
+				return function(value) {
 					try {
 						var result = callback(value)
 						if (result && typeof result.then == "function") result.then(next[method], error)
@@ -362,10 +376,14 @@ Mithril = m = new function app(window) {
 						if (e instanceof Error && e.constructor !== Error) throw e
 						else next.reject(e)
 					}
-				})
+				}
 			}
-			push(resolvers, "resolve", success)
-			push(rejecters, "reject", error)
+			if (resolved !== undefined) callback("resolve", success)(resolved)
+			else if (rejected !== undefined) callback("reject", error)(rejected)
+			else {
+				resolvers.push(callback("resolve", success))
+				rejecters.push(callback("reject", error))
+			}
 			return next.promise
 		}
 		return object
@@ -398,6 +416,11 @@ Mithril = m = new function app(window) {
 		xhr.open(options.method, options.url, true, options.user, options.password)
 		xhr.onload = typeof options.onload == "function" ? options.onload : function() {}
 		xhr.onerror = typeof options.onerror == "function" ? options.onerror : function() {}
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState === 4 && xhr.status === 0) {
+				xhr.onerror({type: "error", target: xhr})
+			}
+		}
 		if (typeof options.config == "function") options.config(xhr, options)
 		xhr.send(options.data)
 		return xhr
@@ -432,12 +455,13 @@ Mithril = m = new function app(window) {
 	}
 
 	m.request = function(xhrOptions) {
-		m.startComputation()
+		if (xhrOptions.background !== true) m.startComputation()
 		var deferred = m.deferred()
 		var serialize = xhrOptions.serialize || JSON.stringify
 		var deserialize = xhrOptions.deserialize || JSON.parse
-		var extract = xhrOptions.extract || function(xhr, xhrOptions) {return xhr.responseText}
-		xhrOptions.url = xhrOptions.url || window.location.href
+		var extract = xhrOptions.extract || function(xhr) {
+			return xhr.responseText.length === 0 && deserialize === JSON.parse ? null : xhr.responseText
+		}
 		xhrOptions.url = parameterizeUrl(xhrOptions.url, xhrOptions.data)
 		xhrOptions = bindData(xhrOptions, xhrOptions.data, serialize)
 		xhrOptions.onload = xhrOptions.onerror = function(e) {
@@ -449,7 +473,7 @@ Mithril = m = new function app(window) {
 			else if (xhrOptions.type) response = new xhrOptions.type(response)
 			deferred.promise(response)
 			deferred[e.type == "load" ? "resolve" : "reject"](response)
-			m.endComputation()
+			if (xhrOptions.background !== true) m.endComputation()
 		}
 		ajax(xhrOptions)
 		deferred.promise.then = propBinder(deferred.promise)
@@ -466,6 +490,8 @@ Mithril = m = new function app(window) {
 	
 	//testing API
 	m.deps = function(mock) {return window = mock}
+	//for internal testing only, do not use `m.deps.factory`
+	m.deps.factory = app
 	
 	return m
 }(this)

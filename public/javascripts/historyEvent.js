@@ -8,7 +8,9 @@ historyEvent.meta = function(verbed, data, date){
     ", of ",
     m("a", {href: routes.controllers.GovUnits.view(data.govUnit.id).url, config: m.route}, data.govUnit.name),
     " ",
-    helper.timeago(date)
+    helper.timeago(date),
+    " on, ",
+    date.toDateString()
   ])
 }
 
@@ -18,14 +20,16 @@ historyEvent.reject = function(data){
   var govUnitId = c.pop();
   var govUnitName = c.join(" ");
   return m(".event", [
-    historyEvent.date(date),
+    m(".type.request", [
+      m("i.fa.fa-lg.fa-fw.fa-times")
+    ]),
     m(".details", [
       m("h3", "Rejected"),
       m("p", [
-        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url}, govUnitName),
+        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
         " rejected this project."
       ]),
-      historyEvent.meta("Rejected", data, date)
+      historyEvent.meta("Rejected", data, date),
     ])
   ])
 }
@@ -37,7 +41,9 @@ historyEvent.archiveAttachment = function(data){
   var isImage = parseInt(c.pop());
   var filename = c.join(" ");
   return m(".event", [
-    historyEvent.date(date),
+    m(".type.edit", [
+      m("i.fa.fa-lg.fa-fw.fa-archive")
+    ]),
     m(".details", [
       m("p", [(isImage ? "Image" : "Document") + " archived: " + filename].concat(
         common.attachmentActions.bind(this)({id: attachmentId, isArchived: true})
@@ -54,17 +60,18 @@ historyEvent.editField = function(data){
   var value;
   switch(field){
     case "disaster": {
-      var nameTypeDate = c.join(" ").split("|");
-      var name = nameTypeDate.shift();
-      var type = nameTypeDate.shift();
-      var ddate = parseInt(nameTypeDate.shift());
-      value = name + " (" + type + ") on " + common.displayDate(ddate);
+      var ddate = parseInt(c.pop());
+      var typeId = c.pop();
+      var name = c.join(" ");
+      value = name + " (" + request.disasterTypes()[typeId].name + ") on " + common.displayDate(ddate);
       break;
     }
     default: value = c.join(" ");
   }
   return m(".event", [
-    historyEvent.date(date),
+    m(".type.edit", [
+      m("i.fa.fa-lg.fa-fw.fa-edit")
+    ]),
     m(".details", [
       m("p", "Project " + field + " was set to \"" + value + "\""),
       historyEvent.meta("Modified", data, date)
@@ -79,7 +86,9 @@ historyEvent.disaster = function(data){
   var disasterName = c.join(":");
   var title = disasterName ? (disasterName + " (" + disasterType + ")") : disasterType
   return m(".event", [
-    historyEvent.date(date),
+    m(".type.disaster", [
+      m("i.fa.fa-lg.fa-fw.fa-warning")
+    ]),
     m(".details", [
       m("p", title),
       m("p.meta", helper.timeago(date))
@@ -90,7 +99,9 @@ historyEvent.disaster = function(data){
 historyEvent.newRequest = function(data){
   var date = new Date(data.date);
   return m(".event", [
-    historyEvent.date(date),
+    m(".type.request", [
+      m("i.fa.fa-lg.fa-fw.fa-bullhorn")
+    ]),
     m(".details", [
       // m("h3", "Request posted"),
       m("p", "Request posted: " + data.content),
@@ -102,25 +113,26 @@ historyEvent.newRequest = function(data){
 historyEvent.assign = function(data){
   var date = new Date(data.date);
   var c = data.content.split(" ");
-  var duty = c.pop()
+  var duty = c.pop();
   var cduty = duty.split("");
   cduty[0] = cduty[0].toUpperCase();
   cduty = cduty.join("");
   var isAssign = parseInt(c.pop());
-  var govUnitId = c.pop();
+  var govUnitId = isAssign;
   var govUnitName = c.join(" ");
 
-  var assignment = isAssign ? "assigned" : "unassigned";
   var prepPhrase = isAssign ? " to " + duty : " from " + duty + "ing"
 
   return m(".event", [
-    historyEvent.date(date),
+    m(".type.edit", [
+      m("i.fa.fa-lg.fa-fw.fa-mail-forward")
+    ]),
     m(".details", [
-      m("p", [
-        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url}, govUnitName),
-        " was " + assignment + prepPhrase + " this project."
-      ]),
-      historyEvent.meta("Assigned", data, date)
+      m("p", isAssign ? [
+        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
+        " was assigned" + prepPhrase + " this project."
+      ] : duty.capitalize() + "ing agency was unassigned."),
+      historyEvent.meta(isAssign ? "Assigned" : "Unassigned", data, date)
     ])
   ])
 }
@@ -131,13 +143,14 @@ historyEvent.signoff = function(data){
   var govUnitId = c.pop();
   var govUnitName = c.join(" ");
   return m(".event", [
-    historyEvent.date(date),
+    m(".type.request", [
+      m("i.fa.fa-lg.fa-fw.fa-check")
+    ]),
     m(".details", [
       m("h3", "Sign off"),
       m("p", [
-        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url}, govUnitName),
-        govUnitName == "Department of Budget and Management" ?
-        " has approved a SARO for this project." : " signed off on this project."
+        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
+        " signed off on this project."
       ]),
       historyEvent.meta("Signed off", data, date)
     ])
@@ -151,7 +164,9 @@ historyEvent.attachment = function(data){
   var isImage = parseInt(c.pop());
   var filename = c.join(" ");
   return m(".event", [
-    historyEvent.date(date),
+    m(".type.edit", [
+      m("i.fa.fa-lg.fa-fw.fa-paperclip")
+    ]),
     m(".details", [
       m("p", [
         (isImage ? "Image" : "Document") + " uploaded: " + filename,
@@ -165,6 +180,9 @@ historyEvent.attachment = function(data){
 historyEvent.comment = function(data){
   var date = new Date(data.date);
   return m(".event.comment", [
+    m(".type.comment", [
+      m("i.fa.fa-lg.fa-fw.fa-comment")
+    ]),
     m(".details", [
       m("p", data.content),
       historyEvent.meta("Posted", data, date)
@@ -172,14 +190,36 @@ historyEvent.comment = function(data){
   ])
 }
 
-historyEvent.date = function(date){
-  return m(".dateGroup", [
-    m(".date", [
-      m("div.month", helper.monthArray[date.getMonth()]),
-      m("h5.day", date.getDate()),
-      m("div.year", date.getFullYear())
+historyEvent.assignSaro = function(data){
+  var date = new Date(data.date);
+  return m(".event", [
+    m(".type.edit", [
+      m("i.fa.fa-lg.fa-fw.fa-money")
     ]),
-    m(".divider")
+    m(".details", [
+      m("h3", "SARO assignment"),
+      m("p", [
+        "A SARO has been assigned to this request."
+      ]),
+      historyEvent.meta("Assigned", data, date)
+    ])
+  ])
+}
+
+historyEvent.addProject = function(data){
+  var date = new Date(data.date);
+  var c = data.content.split(" ");
+  var projectId = c.pop();
+  var projectName = c.join(" ");
+  return m(".event", [
+    historyEvent.date(date),
+    m(".details", [
+      m("h3", "New project"),
+      m("p", [
+        "Project " + "\""+ projectName +"\" has been added to this request."
+      ]),
+      historyEvent.meta("Added", data, date)
+    ])
   ])
 }
 

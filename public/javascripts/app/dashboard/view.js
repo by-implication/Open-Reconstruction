@@ -1,87 +1,66 @@
 dashboard.view = function(ctrl){
   return app.template(ctrl.app, [
-    m("div#view", [
-      common.banner("Dashboard"),
+    m("div#view.dashboard", [
+      common.banner("Visualizations"),
       m("section", [
-        m(".row", [
-          m(".columns.medium-12", [
-            m("h1", [m("small", "Project Status")]),
-          ]),
-          m(".columns.medium-3", [
-            m("h1", ctrl.totalProjects()),
-            m("p", "Total number of projects")
-          ]),
-          m(".columns.medium-3", [
-            m("h1", ctrl.pendingProjects()),
-            m("p", "Pending projects")
-          ]),
-          m(".columns.medium-3", [
-            m("h1", ctrl.approvedProjects().length),
-            m("p", "Approved projects")
-          ]),
-          m(".columns.medium-3", [
-            m("h1", helper.percent(ctrl.percentApproved())),
-            m("p", "Percent of approved projects")
-          ])
-        ])
-      ]),
-      m("section.alt", [
-        m(".row", [
-          m(".columns.medium-12", [
-            m("h1", [m("small", "Project Costs")])
-          ]),
-          m(".columns.medium-3", [
-            m("h1", ctrl.totalProjectCost()),
-            m("p", "Total cost of all projects")
-          ]),
-          m(".columns.medium-3", [
-            m("h1", ctrl.totalProjectCost()),
-            m("p", "Cost of pending projects")
-          ]),
-          m(".columns.medium-3.end", [
-            m("h1", ctrl.amountApproved()),
-            m("p", "Amount approved")
-          ]),
-        ])
-      ]),
-      m("section", [
-        m(".row", [
-          m(".columns.medium-12", [
-            m("h1", [m("small", "Trends")])
-          ]),
-          m(".columns.medium-3", [
-            m("h1", ctrl.mostCommonProjectType()[0]),
-            m("p", "Most common project type")
-          ]),
-          m(".columns.medium-3", [
-            m("h1", ctrl.mostCommonDisasterType()[0]),
-            m("p", "Most common disaster type")
-          ]),
-          m(".columns.medium-3.end", [
-            m("h1", "You"),
-            m("p", "Most awesome person")
-          ])
-        ])
-      ]),
-      m("section.alt", [
-        m(".row", [
-          m(".columns.medium-12", [
-            m("h1", [m("small", "History")]),
-            m("h4.text-center", "The number of requests per month plotted against amount"),
-            m("canvas#chart", {config: ctrl.chartInit, height: 300}),
-            m("div.legend", [
-              m("p", [
-                m("div.swatch.black"),
-                m("span", "Number of requests")
-              ]),
-              m("p", [
-                m("div.swatch.orange"),
-                m("span", "Amount (In 100 millions)")
-              ])
+        m(".row",[
+          m(".columns.medium-12",[
+            m(".notice",[
+              "Some introductory text goes here. Explains that this is a live snapshot of data, but you can access the raw data if you make to make your own visualizations. Other obligatory disclaimers and all that."
             ])
           ])
         ])
-      ])
+      ]),
+      m("section.alt", [
+        m(".row", [
+          m(".columns.medium-3", [
+            m("h4", [
+              "Request Visualizations"
+            ]),
+            _.chain(visualizations.library)
+              .groupBy(function(v){
+                return v(ctrl).type();
+              })
+              .map(function(g){
+                return m("ul.filters", g.map(function(v){
+                  return m("li.filter", [
+                    m("a", {href: "visualizations/"+v(ctrl).link(), config: m.route}, [
+                      v(ctrl).title()
+                    ])
+                  ])
+                }))
+              })
+              .value(),
+            m("h4", [
+              "PMS Visualizations"
+            ]),
+            m("ul.filters", [
+              m("li", [
+                "Nothing here yet"
+              ]),
+            ]),
+            m("h4", [
+              "SARO Visualizations"
+            ]),
+            m("ul.filters", [
+              m("li", [
+                "Nothing here yet"
+              ]),
+            ]),
+          ]),
+          m(".columns.medium-9", [
+            m("ul.medium-block-grid-2",
+              _.chain(visualizations.library)
+                .map(function(v){
+                  return m("li", [
+                    visPanel.view(v(ctrl))
+                  ]);
+                })
+                .value()
+            ),
+          ]),
+        ]),
+      ]),
     ])
   ])
 }

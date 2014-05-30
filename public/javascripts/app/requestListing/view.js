@@ -1,4 +1,36 @@
 requestListing.view = function(ctrl){
+  var pagination = function(){
+    return m("ul.pagination", [
+      m("li.arrow",{className: ctrl.page === 0 ? "unavailable" : ""}, [
+        m("a", {
+          href: routes.controllers.Requests.indexPage(ctrl.tab, 0, ctrl.projectTypeId).url, 
+          config: m.route
+        }, [
+          "«"
+        ]),
+      ]),
+      _.chain(_.range(0, ctrl.maxPage() + 1))
+        .map(function(page){
+          return m("li", {className: page === ctrl.page ? "current" : ""}, [
+            m("a", {
+              href: routes.controllers.Requests.indexPage(ctrl.tab, page, ctrl.projectTypeId).url, 
+              config: m.route
+            }, [
+              page + 1
+            ])
+          ])
+        })
+        .value(),
+      m("li.arrow",{className: ctrl.page === ctrl.maxPage() ? "unavailable" : ""}, [
+        m("a", {
+          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.maxPage(), ctrl.projectTypeId).url, 
+          config: m.route
+        },[
+          "»"
+        ]),
+      ]),
+    ])
+  }
   return app.template(ctrl.app, [
     common.banner("List of Requested Projects"),
     m("section", [
@@ -23,27 +55,27 @@ requestListing.view = function(ctrl){
         ]),
       ]),
       m(".row", [
-        m(".columns.medium-9", common.tabs.content(ctrl.tabs)),
+        m(".columns.medium-9", [
+          pagination(),
+          common.tabs.content(ctrl.tabs),
+          pagination(),
+        ]),
         m(".columns.medium-3", [
           m("h4", [
             "Filter by Project Type"
           ]),
-          m("ul.filters", [
-            m("li.filter", {className: (ctrl.currentFilter.requests() == "") ? "active" : ""}, [
-              m("a", {
-                onclick: ctrl.currentFilter.requests.bind(ctrl.currentFilter, "")
-              }, "All")
-            ]),
+          m("ul.filters", 
             _.chain(ctrl.projectFilters)
-            .map(function(filter){
-              return m("li.filter",{className: (ctrl.currentFilter.requests() == filter) ? "active" : ""}, [
+            .map(function (filter){
+              return m("li.filter",{className: (ctrl.projectTypeId == filter.id) ? "active" : ""}, [
                 m("a", {
-                  onclick: ctrl.currentFilter.requests.bind(ctrl.currentFilter, filter)
-                }, filter)
+                  href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page, filter.id).url,
+                  config: m.route
+                }, filter.name)
               ])
             })
             .value()
-          ])
+          )
         ])
       ])
     ])

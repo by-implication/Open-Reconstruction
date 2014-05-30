@@ -191,14 +191,18 @@ common.tabs.menu = function(ctrl, options){
     })
     .map(function (tab, i){
       var tabClass = function(tab){
-        if(ctrl.isActive((tab.identifier ? tab.identifier : tab.label))){
+        if(ctrl.isActive((tab.identifier ? tab.identifier : tab.label()))){
           return "active";
         } else {
           return "";
         }
       };
+      var options = { href: tab.href };
+      if(tab.href.charAt(0) != '#') {
+        options.config = m.route;
+      }
       return m("dd", {class: tabClass(tab)}, [
-        m("a", { href: tab.href, config: m.route }, tab.label())
+        m("a", options, tab.label())
       ]);
     })
   )
@@ -206,7 +210,7 @@ common.tabs.menu = function(ctrl, options){
 
 common.tabs.content = function(ctrl){
   return ctrl.tabs().filter(function (tab){
-    return ctrl.isActive(tab.identifier? tab.identifier : tab.label)
+    return ctrl.isActive(tab.identifier? tab.identifier : tab.label())
   }).map(function (activeTab){
     return activeTab.content()
   })
@@ -215,11 +219,17 @@ common.tabs.content = function(ctrl){
 common.tabs.controller = function(basePath){
   this.tabs = m.prop([]);
   this.currentTab = function() {
-    var item = _.find(this.tabs(), function(tab) { return tab.href == m.route.path });
+    var item = _.find(this.tabs(), function(tab) {
+      if(window.location.hash){
+        return tab.href === window.location.hash;
+      } else {
+        return tab.href == m.route() 
+      }
+    });
     if(item == undefined) {
       item = _.head(this.tabs());
     }
-    return item.identifier ? item.identifier : item.label;
+    return item.identifier ? item.identifier : item.label();
   }
   this.isActive = function(identifier){
     return this.currentTab() == identifier;
@@ -232,6 +242,8 @@ common.modal.controller = function(){
   this.show = function(){
     this.isVisible(true);
     this.height = helper.docHeight;
+    // console.log($("html, body"));
+    // $("html, body").animate({ scrollTop: "0px" });
   }
   this.close = function(){
     this.isVisible(false);
@@ -245,7 +257,8 @@ common.modal.controller = function(){
   }
   this.dialogConfig = function(elem){
     window.setTimeout(function(){
-      elem.style.top = "0px";
+      var scrollPos = $(window).scrollTop();
+      elem.style.top = scrollPos + "px";
     }, 0); 
   }
 }

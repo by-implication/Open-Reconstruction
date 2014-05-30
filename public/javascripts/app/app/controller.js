@@ -1,13 +1,28 @@
 app.controller = function(){
   var self = this;
-  this.currentUser = m.prop({});
+
+  $(window).off("scroll"); // todo: refactor
+
+  var anon = {
+    isSuperAdmin: false,
+    isAdmin: false,
+    permissions: [],
+    govUnit: {
+      acronym: "",
+      id: 0,
+      name: "",
+      role: ""
+    }
+  };
+
+  this.currentUser = m.prop(anon);
 
   bi.ajax(routes.controllers.Users.meta()).then(function (r){
-    this.currentUser(r);
+    this.currentUser(r || anon);
   }.bind(this));
 
   this.isAuthorized = function(permission){
-    return this.currentUser() && _.contains(this.currentUser().permissions, permission);
+    return _.contains(this.currentUser().permissions, permission);
   }
 
   this.isUserAuthorized = function(user, permission){
@@ -15,11 +30,11 @@ app.controller = function(){
   }
 
   this.isSuperAdmin = function(){
-    return this.currentUser() && this.currentUser().isSuperAdmin;
-  }
+    return this.currentUser().isSuperAdmin;
+  }.bind(this);
 
   this.isGovUnitAdmin = function(govUnitId){
-    return this.isSuperAdmin() || this.currentUser() && this.currentUser().isAdmin && this.currentUser().govUnit.id === govUnitId;
+    return this.isSuperAdmin() || this.currentUser().isAdmin && this.currentUser().govUnit.id === govUnitId;
   }
 
   this.getCurrentUserProp = function(prop){

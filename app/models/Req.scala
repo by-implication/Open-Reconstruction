@@ -10,12 +10,216 @@ import recon.support._
 
 object Req extends ReqGen {
 
-  def indexList() = DB.withConnection { implicit c =>
-    SQL("SELECT * FROM reqs ORDER BY req_date DESC").list(simple)
+  private def byProjectType = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT project_type_name, COUNT(*), SUM(req_amount)
+      FROM reqs NATURAL JOIN project_types
+      GROUP BY project_type_name;
+    """).list(
+      get[String]("project_type_name") ~
+      get[Long]("count") ~
+      get[Option[java.math.BigDecimal]]("sum") map { case name~count~amount =>
+        Json.obj(
+          "name" -> name,
+          "count" -> count,
+          "amount" -> amount.getOrElse(0).toString
+        )
+      }
+    )
+  }
+
+  private def byNamedDisaster = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT req_disaster_name, COUNT(*), SUM(req_amount)
+      FROM reqs GROUP BY req_disaster_name
+    """).list(
+      get[String]("req_disaster_name") ~
+      get[Long]("count") ~
+      get[Option[java.math.BigDecimal]]("sum") map { case name~count~amount =>
+        Json.obj(
+          "name" -> name,
+          "count" -> count,
+          "amount" -> amount.getOrElse(0).toString
+        )
+      }
+    )
+  }
+
+  private def byDisasterType = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT
+        EXTRACT(YEAR FROM req_date) AS year,
+        EXTRACT(MONTH FROM req_date) AS month,
+        disaster_type_id,
+        COUNT(req_id)
+      FROM reqs
+      GROUP BY disaster_type_id, year, month
+      ORDER BY disaster_type_id, year, month
+    """).list(
+      get[Double]("year") ~
+      get[Double]("month") ~
+      get[Int]("disaster_type_id") ~
+      get[Long]("count") map { case _year~_month~disasterTypeId~count =>
+        val year = _year.toInt
+        val month = _month.toInt
+        Json.obj(
+          "yearMonth" -> (year + "-" + (if (month < 10) "0" + month else month)),
+          "disasterTypeId" -> disasterTypeId,
+          "count" -> count
+        )
+      }
+    )
+  }
+
+  private def byLevel(level: Int) = DB.withConnection { implicit c =>
+    val r = SQL("SELECT COUNT(*) AS count, SUM(req_amount) AS amount FROM reqs" +
+      (if (level != 0) " WHERE req_level = {level} AND NOT req_rejected" else "")
+    ).on('level -> level).list(
+      get[Long]("count") ~
+      get[Option[java.math.BigDecimal]]("amount") map { case count~amount =>
+        Json.obj(
+          "amount" -> amount.getOrElse(0).toString,
+          "count" -> count
+        )
+      }
+    )
+    r(0)
+  }
+
+  private def mostCommonProjectType = DB.withConnection { implicit c =>
+    val list = SQL("SELECT COUNT(*) FROM reqs GROUP BY project_type_id ORDER BY COUNT(*) DESC")
+    .list(scalar[Long])
+    list(0)
+  }
+
+  private def mostCommonDisasterType = DB.withConnection { implicit c =>
+    val list = SQL("SELECT COUNT(*) FROM reqs GROUP BY disaster_type_id ORDER BY COUNT(*) DESC")
+    .list(scalar[Long])
+    list(0)
+  }
+
+  private def byMonth = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT
+        COUNT(req_id) as count,
+        SUM(req_amount) as amount,
+        EXTRACT(MONTH FROM req_date) AS month,
+        EXTRACT(YEAR FROM req_date) AS year
+      FROM reqs
+      GROUP BY year, month
+      ORDER BY year, month
+    """).list(
+      get[Long]("count") ~
+      get[java.math.BigDecimal]("amount") ~
+      get[Double]("month") ~
+      get[Double]("year") map { case count~amount~_month~_year =>
+        val year = _year.toInt
+        val month = _month.toInt
+        Json.obj(
+          "yearMonth" -> (year + "-" + (if (month < 10) "0" + month else month)),
+          "count" -> count,
+          "amount" -> amount.toString
+        )
+      }
+    )
+  }
+
+  def dashboardData = {
+    Json.obj(
+      "mostCommonDisasterType" -> mostCommonDisasterType,
+      "mostCommonProjectType" -> mostCommonProjectType,
+      "byLevel" -> (0 to 5).map(byLevel),
+      "byMonth" -> Json.toJson(byMonth),
+      "byDisasterType" -> byDisasterType,
+      "byProjectType" -> byProjectType,
+      "byNamedDisaster" -> byNamedDisaster
+    )
+  }
+
+  private def getSqlParams(tab: String, projectTypeId: Option[Int])(implicit user: User) = {
+
+    var table = "reqs"
+    var whereClauses = List.empty[String]
+    def addWhereClause(clause: String) = whereClauses = whereClauses :+ clause
+
+    projectTypeId.map(_ => addWhereClause("project_type_id = {projectTypeId}"))
+
+    tab match {
+      case "all" => {}
+      case "signoff" => {
+        if(!user.isAnon){
+          val targetRequestLevelOpt: Option[Int] = user.govUnit.role.name match {
+            case "OCD" => Some(2)
+            case "OP" => Some(3)
+            case "DBM" => Some(4)
+            case _ => None
+          }
+          addWhereClause("(" +
+            "(req_level = 1 AND assessing_agency_id = " + user.govUnitId + ")" +
+            targetRequestLevelOpt.map(t => " OR (req_level = " + t + ")")
+            .getOrElse("") +
+          ")")
+        }
+      }
+      case "assessor" => {
+        addWhereClause("req_level = 0")
+        addWhereClause("assessing_agency_id IS NULL")
+      }
+      case "mine" => {
+        if (!user.isAnon){
+          table = "reqs LEFT JOIN users ON author_id = user_id"
+          addWhereClause("gov_unit_id = " + user.govUnit.id.get)
+        }
+      }
+      case "approval" => {
+        addWhereClause("req_level <= 4")
+      }
+      case "implementation" => {
+        addWhereClause("req_level > 4")
+      }
+    }
+
+    (table, whereClauses)
+
+  }
+
+  def indexCount(tab: String, projectTypeId: Option[Int])(implicit user: User): Long = {
+    val (table, whereClauses) = getSqlParams(tab, projectTypeId)
+    DB.withConnection { implicit c =>
+      SQL("SELECT COUNT(*) FROM " + table + {
+        if (!whereClauses.isEmpty) " WHERE " + whereClauses.mkString(" AND ")
+        else ""
+      })
+      .on(
+        'projectTypeId -> projectTypeId
+      ).as(scalar[Long].single)
+    }
+  }
+
+  def indexList(tab: String, offset: Int, limit: Int, projectTypeId: Option[Int])(implicit user: User): Seq[Req] = {
+    val (table, whereClauses) = getSqlParams(tab, projectTypeId)
+    DB.withConnection { implicit c =>
+      SQL("SELECT * FROM " + table + {
+        if (!whereClauses.isEmpty) " WHERE " + whereClauses.mkString(" AND ")
+        else ""
+      } + """
+        ORDER BY req_date DESC
+        OFFSET {offset}
+        LIMIT {limit}
+      """).on(
+        'projectTypeId -> projectTypeId,
+        'offset -> offset,
+        'limit -> limit
+      ).list(simple)
+    }
   }
 
   def authoredBy(id: Int) = DB.withConnection { implicit c =>
     SQL("SELECT * FROM reqs WHERE author_id = {id} ORDER BY req_date DESC").on('id -> id).list(simple)
+  }
+
+  def projects(id: Int): Seq[Project] = DB.withConnection { implicit c =>
+    SQL("SELECT * FROM projects WHERE req_id = {id}").on('id -> id).list(Project.simple)
   }
 
 }
@@ -24,7 +228,7 @@ object Req extends ReqGen {
 case class Req(
   id: Pk[Int] = NA,
   description: String = "",
-  projectType: ProjectType = ProjectType.BRIDGE,
+  projectTypeId: Int = 0,
   amount: BigDecimal = 0,
   scope: ProjectScope = ProjectScope.REPAIR,
   date: Timestamp = Time.now,
@@ -37,12 +241,29 @@ case class Req(
   location: String = "",
   remarks: Option[String] = None,
   attachmentIds: PGIntList = Nil,
-  disasterType: DisasterType = DisasterType.TYPHOON,
+  disasterTypeId: Int = 1,
   disasterDate: Timestamp = Time.now,
-  disasterName: Option[String] = None
+  disasterName: Option[String] = None,
+  saroNo: Option[String] = None
 ) extends ReqCCGen with Entity[Req]
 // GENERATED case class end
 {
+
+  lazy val projectType = ProjectType.findById(projectTypeId).get
+  lazy val disasterType = DisasterType.findById(disasterTypeId).get
+
+  def assignAssessor(id: Int): Req = {
+    if(id == 0){
+      copy(assessingAgencyId = None, level = 0)
+    } else {
+      copy(assessingAgencyId = Some(id), level = 1)
+    }
+  }
+
+  lazy val assessingAgency = assessingAgencyId.map(GovUnit.findById(_).get)
+  lazy val implementingAgency = implementingAgencyId.map(GovUnit.findById(_).get)
+
+  lazy val isSaroAssigned: Boolean = saroNo.isDefined
 
   lazy val currentCheckpoint: Option[Checkpoint] = DB.withConnection { implicit c =>
     SQL("""
@@ -82,29 +303,24 @@ case class Req(
 
   lazy val author = User.findById(authorId).get
 
-  def insertJson = Json.obj("id" -> id.get)
+  def projects: Seq[Project] = Req.projects(id)
 
-  def dashboardJson = Json.obj(
-    "id" -> id.get,
-    "date" -> date,
-    "level" -> level,
-    "amount" -> amount,
-    "projectType" -> projectType.name,
-    "disasterType" -> disasterType.name
-  )
+  def insertJson = Json.obj("id" -> id.get)
 
   def indexJson(implicit user: User) = Json.obj(
     "id" -> id.get,
     "description" -> description,
-    "projectType" -> projectType.name,
+    "projectTypeId" -> projectTypeId,
     "age" -> age(),
     "level" -> level,
     "amount" -> amount,
     "author" -> Json.obj(
-      "govUnit" -> author.govUnit.name,
-      "govUnitId" -> author.govUnit.id.get
-      ),
-    "authorId" -> authorId,
+      "id" -> authorId,
+      "govUnit" -> Json.obj(
+        "name" -> author.govUnit.name,
+        "id" -> author.govUnit.id.get
+      )
+    ),
     "assessingAgencyId" -> assessingAgencyId,
     "canSignoff" -> user.canSignoff(this),
     "isRejected" -> isRejected
@@ -113,20 +329,21 @@ case class Req(
   def viewJson = Json.obj(
     "id" -> id.get,
     "description" -> description,
-    "projectType" -> projectType.toString,
+    "projectType" -> projectType.name,
     "amount" -> amount,
     "scope" -> scope.toString,
     "date" -> date,
     "level" -> level,
     "isValidated" -> isValidated,
     "isRejected" -> isRejected,
+    "isSaroAssigned" -> isSaroAssigned,
     "authorId" -> authorId,
     "assessingAgencyId" -> assessingAgencyId,
     "implementingAgencyId" -> implementingAgencyId,
     "location" -> location,
     "remarks" -> (remarks.getOrElse(""):String),
     "disaster" -> Json.obj(
-      "type" -> disasterType.name,
+      "typeId" -> disasterTypeId,
       "date" -> disasterDate,
       "name" -> (disasterName.getOrElse(""):String)
     )
@@ -139,7 +356,7 @@ trait ReqGen extends EntityCompanion[Req] {
   val simple = {
     get[Pk[Int]]("req_id") ~
     get[String]("req_description") ~
-    get[ProjectType]("req_project_type") ~
+    get[Int]("project_type_id") ~
     get[java.math.BigDecimal]("req_amount") ~
     get[ProjectScope]("req_scope") ~
     get[Timestamp]("req_date") ~
@@ -152,11 +369,12 @@ trait ReqGen extends EntityCompanion[Req] {
     get[String]("req_location") ~
     get[Option[String]]("req_remarks") ~
     get[PGIntList]("req_attachment_ids") ~
-    get[DisasterType]("req_disaster_type") ~
+    get[Int]("disaster_type_id") ~
     get[Timestamp]("req_disaster_date") ~
-    get[Option[String]]("req_disaster_name") map {
-      case id~description~projectType~amount~scope~date~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachmentIds~disasterType~disasterDate~disasterName =>
-        Req(id, description, projectType, amount, scope, date, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachmentIds, disasterType, disasterDate, disasterName)
+    get[Option[String]]("req_disaster_name") ~
+    get[Option[String]]("saro_no") map {
+      case id~description~projectTypeId~amount~scope~date~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachmentIds~disasterTypeId~disasterDate~disasterName~saroNo =>
+        Req(id, description, projectTypeId, amount, scope, date, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachmentIds, disasterTypeId, disasterDate, disasterName, saroNo)
     }
   }
 
@@ -176,6 +394,10 @@ trait ReqGen extends EntityCompanion[Req] {
     SQL("select * from reqs limit {count} offset {offset}").on('count -> count, 'offset -> offset).list(simple)
   }
 
+  def listAll(): Seq[Req] = DB.withConnection { implicit c =>
+    SQL("select * from reqs order by req_id").list(simple)
+  }
+
   def insert(o: Req): Option[Req] = DB.withConnection { implicit c =>
     o.id match {
       case NotAssigned => {
@@ -183,7 +405,7 @@ trait ReqGen extends EntityCompanion[Req] {
           insert into reqs (
             req_id,
             req_description,
-            req_project_type,
+            project_type_id,
             req_amount,
             req_scope,
             req_date,
@@ -196,13 +418,14 @@ trait ReqGen extends EntityCompanion[Req] {
             req_location,
             req_remarks,
             req_attachment_ids,
-            req_disaster_type,
+            disaster_type_id,
             req_disaster_date,
-            req_disaster_name
+            req_disaster_name,
+            saro_no
           ) VALUES (
             DEFAULT,
             {description},
-            {projectType},
+            {projectTypeId},
             {amount},
             {scope},
             {date},
@@ -215,14 +438,15 @@ trait ReqGen extends EntityCompanion[Req] {
             {location},
             {remarks},
             {attachmentIds},
-            {disasterType},
+            {disasterTypeId},
             {disasterDate},
-            {disasterName}
+            {disasterName},
+            {saroNo}
           )
         """).on(
           'id -> o.id,
           'description -> o.description,
-          'projectType -> o.projectType,
+          'projectTypeId -> o.projectTypeId,
           'amount -> o.amount.bigDecimal,
           'scope -> o.scope,
           'date -> o.date,
@@ -235,9 +459,10 @@ trait ReqGen extends EntityCompanion[Req] {
           'location -> o.location,
           'remarks -> o.remarks,
           'attachmentIds -> o.attachmentIds,
-          'disasterType -> o.disasterType,
+          'disasterTypeId -> o.disasterTypeId,
           'disasterDate -> o.disasterDate,
-          'disasterName -> o.disasterName
+          'disasterName -> o.disasterName,
+          'saroNo -> o.saroNo
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -246,7 +471,7 @@ trait ReqGen extends EntityCompanion[Req] {
           insert into reqs (
             req_id,
             req_description,
-            req_project_type,
+            project_type_id,
             req_amount,
             req_scope,
             req_date,
@@ -259,13 +484,14 @@ trait ReqGen extends EntityCompanion[Req] {
             req_location,
             req_remarks,
             req_attachment_ids,
-            req_disaster_type,
+            disaster_type_id,
             req_disaster_date,
-            req_disaster_name
+            req_disaster_name,
+            saro_no
           ) VALUES (
             {id},
             {description},
-            {projectType},
+            {projectTypeId},
             {amount},
             {scope},
             {date},
@@ -278,14 +504,15 @@ trait ReqGen extends EntityCompanion[Req] {
             {location},
             {remarks},
             {attachmentIds},
-            {disasterType},
+            {disasterTypeId},
             {disasterDate},
-            {disasterName}
+            {disasterName},
+            {saroNo}
           )
         """).on(
           'id -> o.id,
           'description -> o.description,
-          'projectType -> o.projectType,
+          'projectTypeId -> o.projectTypeId,
           'amount -> o.amount.bigDecimal,
           'scope -> o.scope,
           'date -> o.date,
@@ -298,9 +525,10 @@ trait ReqGen extends EntityCompanion[Req] {
           'location -> o.location,
           'remarks -> o.remarks,
           'attachmentIds -> o.attachmentIds,
-          'disasterType -> o.disasterType,
+          'disasterTypeId -> o.disasterTypeId,
           'disasterDate -> o.disasterDate,
-          'disasterName -> o.disasterName
+          'disasterName -> o.disasterName,
+          'saroNo -> o.saroNo
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -310,7 +538,7 @@ trait ReqGen extends EntityCompanion[Req] {
     SQL("""
       update reqs set
         req_description={description},
-        req_project_type={projectType},
+        project_type_id={projectTypeId},
         req_amount={amount},
         req_scope={scope},
         req_date={date},
@@ -323,14 +551,15 @@ trait ReqGen extends EntityCompanion[Req] {
         req_location={location},
         req_remarks={remarks},
         req_attachment_ids={attachmentIds},
-        req_disaster_type={disasterType},
+        disaster_type_id={disasterTypeId},
         req_disaster_date={disasterDate},
-        req_disaster_name={disasterName}
+        req_disaster_name={disasterName},
+        saro_no={saroNo}
       where req_id={id}
     """).on(
       'id -> o.id,
       'description -> o.description,
-      'projectType -> o.projectType,
+      'projectTypeId -> o.projectTypeId,
       'amount -> o.amount.bigDecimal,
       'scope -> o.scope,
       'date -> o.date,
@@ -343,9 +572,10 @@ trait ReqGen extends EntityCompanion[Req] {
       'location -> o.location,
       'remarks -> o.remarks,
       'attachmentIds -> o.attachmentIds,
-      'disasterType -> o.disasterType,
+      'disasterTypeId -> o.disasterTypeId,
       'disasterDate -> o.disasterDate,
-      'disasterName -> o.disasterName
+      'disasterName -> o.disasterName,
+      'saroNo -> o.saroNo
     ).executeUpdate() > 0
   }
 

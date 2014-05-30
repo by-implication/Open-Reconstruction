@@ -38,9 +38,6 @@ object GovUnit extends GovUnitGen {
     ).list(User.simple)
   }
 
-  def canAssess(a: GovUnit) = a.canDo(Permission.VALIDATE_REQUESTS)
-  def canImplement(a: GovUnit) = a.canDo(Permission.IMPLEMENT_REQUESTS)
-
 }
 
 // GENERATED case class start
@@ -53,6 +50,9 @@ case class GovUnit(
 // GENERATED case class end
 {
 
+  def canAssess = canDo(Permission.VALIDATE_REQUESTS)
+  def canImplement = canDo(Permission.IMPLEMENT_REQUESTS)
+
   def users:Seq[User] = GovUnit.users(id)
 
   def toJson: JsObject = {
@@ -61,9 +61,12 @@ case class GovUnit(
       "name" -> name,
       "acronym" -> (acronym.getOrElse(""): String),
       "totalUsers" -> users.length,
-      "role" -> Role.findById(roleId).map(_.name)
+      "roleId" -> roleId,
+      "role" -> role.name
     )
   }
+
+  lazy val role = Role.findById(roleId).get
 
   private def canDo(p: Permission): Boolean = DB.withConnection { implicit c =>
     SQL("""
@@ -103,6 +106,10 @@ trait GovUnitGen extends EntityCompanion[GovUnit] {
 
   def list(count: Int = 10, offset: Int = 0): Seq[GovUnit] = DB.withConnection { implicit c =>
     SQL("select * from gov_units limit {count} offset {offset}").on('count -> count, 'offset -> offset).list(simple)
+  }
+
+  def listAll(): Seq[GovUnit] = DB.withConnection { implicit c =>
+    SQL("select * from gov_units order by gov_unit_id").list(simple)
   }
 
   def insert(o: GovUnit): Option[GovUnit] = DB.withConnection { implicit c =>

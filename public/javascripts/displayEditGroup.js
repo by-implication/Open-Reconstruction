@@ -1,45 +1,50 @@
-var displayEditGroup = {
-  controller: function(req, field){
-    this.isEditMode = m.prop(false);
-    this.input = m.prop("");
-    this.req = req;
-    this.field = field;
-  },
-  view: function(reqCtrl, ctrl, viewView, editView){
-    return m(".display-edit-group",{className: (ctrl.isEditMode() ? "edit-mode" : "") + " " + (reqCtrl.canEdit() ? "can-edit": "")}, [
-      reqCtrl.canEdit() ?
-        !ctrl.isEditMode() ? 
-          m("button.micro.edit-button", 
-            {type: "button", onclick: function(){ ctrl.isEditMode(true); }}, 
-            [ m("i.fa.fa-edit.fa-lg") ]
-          )
-        : m(".save-cancel-group", [
-            m("button.micro.save-button", 
+var displayEditGroup = function(editable, edit, save, cancel, params){
+
+  var ctrl = this;
+
+  // edit, save, and cancel must be of the form f(callback){ ... callback() }
+  edit = edit || function (c){ c(); }
+  save = save || function (c){ c(); }
+  cancel = cancel || function (c){ c(); }
+
+  var editMode = false;
+  var editModeSetter = function(v){ return function(){ editMode = v; } }
+
+  this.input = m.prop();
+  this.view = function(displayView, editView){
+
+    if (typeof editable == "function"){ editable = editable(); }
+
+    return m(".display-edit-group",{className: (editMode ? "edit-mode" : "") + " " + (editable ? "can-edit": "")}, [
+      editable ?
+        editMode ?
+          m(".save-cancel-group", [
+            m("button.micro.save-button",
               {type: "button", onclick: function(){
-                bi.ajax(routes.controllers.Requests.editField(ctrl.req().id, ctrl.field), {
-                  data: {input: ctrl.input}
-                }).then(function (r){
-                  if(r.success){
-                    ctrl.req()[ctrl.field] = ctrl.input();
-                    reqCtrl.history().unshift(r.event);
-                  } else {
-                    alert("Your input was invalid.");
-                  }
-                  ctrl.isEditMode(false);
-                });
-              } }, 
+                save.bind(ctrl)(editModeSetter(false));
+              }},
               [ "Save Changes", m("i.fa.fa-check.fa-lg") ]
             ),
-            m("button.micro.cancel-button.alert", 
-              {type: "button", onclick: function(){ ctrl.isEditMode(false); } }, 
+            m("button.micro.cancel-button.alert",
+              {type: "button", onclick: function(){
+                cancel.bind(ctrl)(editModeSetter(false));
+              } },
               [ m("i.fa.fa-times.fa-lg") ]
             ),
           ])
+        : m("button.micro.edit-button",
+            {type: "button", onclick: function(){
+              edit.bind(ctrl)(editModeSetter(true));
+            }},
+            [ m("i.fa.fa-edit.fa-lg") ]
+          )
       : "",
-      
-      ctrl.isEditMode() && reqCtrl.canEdit() ?
-        editView()
-      : viewView()
+      editable && editMode ?
+        editView.bind(ctrl)()
+      : displayView.bind(ctrl)()
     ])
   }
+
+  _.extend(this, params);
+
 }

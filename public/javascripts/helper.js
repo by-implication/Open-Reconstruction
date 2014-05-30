@@ -1,6 +1,14 @@
 // ////////////////////////////////////////////////////
 // // Helpers
 
+String.prototype.capitalize = function(){
+  return this[0].toUpperCase() + this.slice(1);
+}
+
+String.prototype.startsWith = function(s){
+  return this.indexOf(s) == 0;
+}
+
 var helper = {};
 
 helper.percent = function(value){
@@ -16,7 +24,7 @@ helper.pad = function(n, digits){
 
 helper.toDateValue = function(timestamp){
   var d = new Date(timestamp);
-  return [  
+  return [
     d.getFullYear(),
     this.pad(d.getMonth()+1),
     this.pad(d.getDate())
@@ -70,28 +78,11 @@ helper.truncate = function(input, place){
   out = roundTo(buffer[0], place) + " " + suffix;
   return out;
 };
-// helper.commaize = function(number){
-//   if(!number){return "";}
 
-//   var process = function(acc, arr){
-//     if (acc.length < 1){
-//       return arr;
-//     } else {
-//       arr.push(acc.substr(-3));
-//       return process(acc.substr(0, acc.length-3), arr);
-//     }
-//   }
-//   return process(number + "", []).reduceRight(function(acc, head){
-//     if(acc == ""){
-//       return head + "";
-//     } else {
-//       return acc + "," + head;
-//     }
-//   }, "");
-// };
 helper.commaize = function(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
+
 helper.timeago = function (time, local, raw) {
   //time: the time
   //local: compared to what time? default: now

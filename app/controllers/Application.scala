@@ -15,6 +15,8 @@ object Application extends Controller {
   def index2(x: Int, y: Int) = index
 
   def dashboard = index
+  def welcome = index
+  def saro = index
   def admin = index
   def adminLgus = index
   def adminAgencies = index
@@ -27,7 +29,7 @@ object Application extends Controller {
   }
 
   def dashboardMeta() = Action {
-    Ok(Json.toJson(Req.indexList.map(_.dashboardJson)))
+    Ok(Req.dashboardData)
   }
 
   def jsRoutes = Action { implicit request =>
@@ -37,6 +39,8 @@ object Application extends Controller {
       routes.javascript.Application.adminLgus,
       routes.javascript.Application.adminAgencies,
       routes.javascript.Application.dashboard,
+      routes.javascript.Application.saro,
+      routes.javascript.Application.welcome,
       routes.javascript.Application.dashboardMeta,
       routes.javascript.Application.process,
       Users.authenticate,
@@ -47,6 +51,12 @@ object Application extends Controller {
       Users.insert,
       Users.view,
       Users.viewMeta,
+      Admin.insertType,
+      Admin.updateType,
+      Admin.projectTypes,
+      Admin.projectTypesMeta,
+      Admin.disasterTypes,
+      Admin.disasterTypesMeta,
       Attachments.add,
       Attachments.archive,
       Attachments.unarchive,
@@ -54,19 +64,14 @@ object Application extends Controller {
       Attachments.download,
       Attachments.thumb,
       Assets.at,
-      Requests.assignAssessingAgency,
-      Requests.assignImplementingAgency,
+      Projects.insert,
+      Requests.assignSaro,
       Requests.comment,
       Requests.create,
       Requests.createMeta,
       Requests.editField,
       Requests.index,
-      Requests.indexAll,
-      Requests.indexApproval,
-      Requests.indexAssessor,
-      Requests.indexImplementation,
-      Requests.indexMine,
-      Requests.indexSignoff,
+      Requests.indexPage,
       Requests.indexMeta,
       Requests.insert,
       Requests.reject,
@@ -76,7 +81,12 @@ object Application extends Controller {
       Requests.viewImages,
       Requests.viewDocuments,
       Requests.viewActivity,
+      Requests.viewReferences,
       Requests.viewMeta,
+      Visualizations.view,
+      GovUnits.edit,
+      GovUnits.editMeta,
+      GovUnits.update,
       GovUnits.getChildren,
       GovUnits.listAgencies,
       GovUnits.listLgus,

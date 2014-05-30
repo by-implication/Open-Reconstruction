@@ -5,9 +5,6 @@
 
 @import variables
 
-$red: #cc4136
-
-
 body
   &.detail
     background-color: #eee
@@ -38,6 +35,8 @@ body
   padding-bottom: 20px
   h1
     color: $white
+  p
+    color: $white
 
 .loader-padding
   display: inline-block
@@ -45,14 +44,14 @@ body
 
 #nprogress
   .bar
-    background: $orange
+    background: $accent
 
   .peg
-    box-shadow: 0 0 10px $orange, 0 0 5px $orange
+    box-shadow: 0 0 10px $accent, 0 0 5px $accent
 
   .spinner-icon
-    border-top-color: $orange
-    border-left-color: $orange
+    border-top-color: $accent
+    border-left-color: $accent
 
 ul
   list-style: none
@@ -147,25 +146,26 @@ section.history
   &:last-child
     .details
       border-bottom: none
-  .date
+  .type
     +box-sizing(border-box)
-    position: relative
-    z-index: 1
-    height: 64px
-    width: 64px
+    height: 54px
+    width: 54px
     border-radius: 50%
-    // background-color: #eee
-    border: 1px solid #ccc
-    color: #ccc
+    // border-width: 4px
+    // border-style: solid
     text-align: center
     float: left
-    padding-top: 6px
-    top: -6px
-    .day
-      color: #ccc
-      margin: 0px
-    .month, .year
-      font-size: 12px
+    color: white
+    i
+      margin-top: 19px
+    &.disaster
+      background-color: $red
+    &.request
+      background-color: $orange
+    &.edit
+      background-color: $silver
+    &.comment
+      background-color: $teal
   .dateGroup
     .divider
       position: absolute
@@ -177,9 +177,9 @@ section.history
       border-right: 4px solid white
 
   .details
-    margin-left: 80px
+    margin-left: 72px
     padding-bottom: 20px
-    border-bottom: 1px dashed $gray
+    border-bottom: 1px solid #eee
   // .comment
 
 
@@ -189,20 +189,17 @@ section.history
 h1 small
   color: $accent
 
-.legend
-  margin-left: 36px
-
 
 .swatch
   position: relative
   display: inline-block
-  height: 24px
-  width: 24px
+  height: 18px
+  width: 18px
   border-radius: 50%
   margin-right: 10px
   bottom: -5px
   &.orange
-    background-color: $orange
+    background-color: $accent
   &.black
     background-color: rgba(black, 0.3)
 
@@ -241,18 +238,22 @@ h1 small
   box-shadow: 0px 2px 2px rgba(black, 0.05)
   margin-bottom: 20px
   .section
-    padding: 14px
-    // border-bottom: 1px solid #eee
+    padding: 20px 30px
     &.type
-      background-color: $orange
+      background-color: $accent
       color: white
-    // .info
-    //   font-size: 10px
-    //   margin-bottom: 0px
-    //   line-height: 18px
-    //   color: $gray
+    &.big
+      padding: 50px 40px
+      h1
+        margin-bottom: 0
+      .header
+        margin-bottom: 30px
+      .help
+        color: $gray
   h4
     font-weight: 300
+  // h1
+  //   margin: 30px 0px
   hr
     border-top: 0px
     border-bottom: 1px solid #eee
@@ -269,7 +270,6 @@ hr.dashed
   color: $gray
   font-size: 12px
   line-height: 18px
-  margin-bottom: 0px
 
 .dropzone
   +clearfix
@@ -351,16 +351,29 @@ label
 
 button.micro, .button.micro
   @extend .tiny
-  padding: 6px 8px
+  padding: 5px 8px
 
 .display-edit-group
+  margin-bottom: 10px
+  h4, h2
+    margin-bottom: 0px
   &.edit-mode
     .edit-button
       display: block
-  &.can-edit:hover
-    background-color: rgba(black, 0.05)
-    .edit-button
-      display: block
+      margin: 0
+  &.can-edit
+    border-bottom: 1px solid $gray
+
+    // padding: 8px
+    // margin-left: -8px
+    // margin-right: -8px
+    // color: $accent
+    // h1, h2, h3, h4, h5, h6
+      // color: $accent
+    &:hover
+      background-color: rgba(black, 0.05)
+      .edit-button
+        display: block
   .edit-button
     display: none
     float: right
@@ -477,7 +490,7 @@ nav
       & > a.active, & > a.active:hover
         color: $accent
 
-.field-icon
+.field-icon p
   text-align: right
 
 .age
@@ -510,11 +523,11 @@ nav
     font-size: 12px
     color: rgba(black, 0.2)
     &.done
-      background-color: $teal
-      color: rgba(black, 0.4)
+      background-color: $accent
+      color: rgba(white, 0.4)
     &.pending
-      background-color: darken($teal, 10%)
-      color: rgba(black, 0.4)
+      background-color: darken($accent, 10%)
+      color: rgba(white, 0.4)
 
 .filters
   .filter
@@ -528,3 +541,125 @@ nav
       a
         background-color: $accent
         color: white
+
+.welcome
+  .banner
+    padding: 0
+    h1
+      padding-top: 40px
+      margin-bottom: 0
+    p
+      padding-bottom: 15px
+    .row
+      position: relative
+    .info
+      @media #{$medium-up}
+        position: absolute
+        right: 0
+        min-height: 100%
+      background: darken($accent, 12%)
+  .notice
+    text-align: center
+    i
+      margin-right: 10px
+      color: $orange
+  .proposals
+    padding-top: 0
+    i
+      color: $accent
+    h2
+      span
+        font-size: 50%
+    h3
+      margin-bottom: 0
+    .caption
+      margin-bottom: 10px
+  .row.info
+    text-align: center
+    h2, h4
+      color: $accent
+    a
+      // padding: 0.75rem 1.5rem
+      margin-right: 2px
+      // background: $white
+      // color: $accent 
+  figure
+    display: inline-block
+    width: 100%
+    margin: 0
+    padding: 0
+    border: 1px solid $accent
+    &.small
+      height: 180px
+    &.large
+      height: 320px
+
+
+
+.notice
+  color: #777
+  font-weight: 300
+
+.dashboard
+  .val-group
+    margin-bottom: 20px
+  i
+    display: block
+    // font-size: 40px
+    // float: left
+  .legend
+    padding-top: 25px
+    text-align: center
+    margin-bottom: 20px
+    font-size: 12px
+    span
+      display: inline-block
+      margin-right: 10px
+      &:last-child
+        margin-right: 0px
+
+footer
+  padding: 20px 0px
+  // colors taken from gov.ph sites. sorry.
+  background: #e9e9e9
+  border-top: 1px solid #e1e1e1
+  color: #666
+
+#d3-chart
+  div
+    background-color: black
+  rect
+    fill: $gray
+  path
+    fill: transparent
+    stroke: $accent
+    stroke-width: 4px
+  circle
+    fill: #F4F4F4
+    stroke: $accent
+    stroke-width: 4px
+  .x-axis, .y-axis, .domain
+    stroke-width: 1px
+    stroke: $black
+  text
+    fill: $black
+    stroke: transparent
+    font-size: 12px
+
+.c3
+  text
+    font-family: "Roboto Condensed"
+  .c3-shape.c3-area
+    opacity: 0.8
+  // path
+  //   stroke-width: 4px
+  // circle
+  //   stroke-width: 4px
+
+.vis-panel
+  @extend .card
+  margin-bottom: 0
+  h5
+    text-align: center
+    font-weight: 100
+

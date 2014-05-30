@@ -147,7 +147,7 @@ case class User(
 {
 
   lazy val infoJson = {
-    if(!isAnonymous){
+    if(!isAnon){
       Json.obj(
         "handle" -> handle,
         "id" -> id.get,
@@ -173,9 +173,9 @@ case class User(
   private lazy val OP = "OP"
   private lazy val DBM = "DBM"
 
-  lazy val isSuperAdmin = !isAnonymous && role.name == OCD
-  lazy val isOP = !isAnonymous && role.name == OP
-  lazy val isDBM = !isAnonymous && role.name == DBM
+  lazy val isSuperAdmin = !isAnon && role.name == OCD
+  lazy val isOP = !isAnon && role.name == OP
+  lazy val isDBM = !isAnon && role.name == DBM
 
   lazy val role: Role = DB.withConnection { implicit c =>
     SQL("""
@@ -189,7 +189,7 @@ case class User(
   def authoredRequests: Seq[Req] = Req.authoredBy(id)
 
   def isInvolvedWith(r: Req): Boolean = {
-    !isAnonymous && (r.authorId == id.get || {role.name match {
+    !isAnon && (r.authorId == id.get || {role.name match {
       case OCD | OP | DBM => true
       case _ => r.assessingAgencyId.map(_ == govUnitId).getOrElse(false)
     }})
@@ -212,11 +212,26 @@ case class User(
   def canAssignFunding = canDo(Permission.ASSIGN_FUNDING)
 
   def canSignoff(r: Req): Boolean = {
-    if(isAnonymous) {
+    if(isAnon) {
       false
     } else {
       r.level match {
         case 1 => r.assessingAgencyId.map(_ == govUnitId).getOrElse(false)
+        case 2 => isSuperAdmin
+        case 3 => isOP
+        case 4 => isDBM
+        case _ => false
+      }
+    }
+  }
+
+  def canReject(r: Req): Boolean = {
+    if(isAnon) {
+      false
+    } else {
+      r.level match {
+        case 0 => isSuperAdmin
+        case 1 => isSuperAdmin || r.assessingAgencyId.map(_ == govUnitId).getOrElse(false)
         case 2 => isSuperAdmin
         case 3 => isOP
         case 4 => isDBM
@@ -242,7 +257,7 @@ case class User(
     r.implementingAgencyId.map(_ == govUnitId).getOrElse(false)
   }
 
-  def isAnonymous = id.get == -1
+  def isAnon = id.get == -1
 
 }
 
@@ -274,6 +289,10 @@ trait UserGen extends EntityCompanion[User] {
 
   def list(count: Int = 10, offset: Int = 0): Seq[User] = DB.withConnection { implicit c =>
     SQL("select * from users limit {count} offset {offset}").on('count -> count, 'offset -> offset).list(simple)
+  }
+
+  def listAll(): Seq[User] = DB.withConnection { implicit c =>
+    SQL("select * from users order by user_id").list(simple)
   }
 
   def insert(o: User): Option[User] = DB.withConnection { implicit c =>

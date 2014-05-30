@@ -17,6 +17,7 @@ object Requests extends Controller with Secured {
   def viewImages = Application.index1 _
   def viewDocuments = Application.index1 _
   def viewActivity = Application.index1 _
+  def viewReferences = Application.index1 _
 
   def createMeta() = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
@@ -54,6 +55,7 @@ object Requests extends Controller with Secured {
           )
         },
         "history" -> Json.toJson(Event.findForRequest(id).map(_.listJson)),
+        "projects" -> Json.toJson(req.projects.map(_.requestViewJson)),
         "disasterTypes" -> DisasterType.jsonList
       )
     }.getOrElse(Rest.notFound())
@@ -68,21 +70,21 @@ object Requests extends Controller with Secured {
         "description" -> nonEmptyText,
         "disasterDate" -> longNumber,
         "disasterName" -> optional(text),
-        "disasterType" -> nonEmptyText,
+        "disasterTypeId" -> number,
         "location" -> nonEmptyText,
-        "projectType" -> nonEmptyText,
+        "projectTypeId" -> number,
         "scopeOfWork" -> nonEmptyText
       )
       ((amount, description, 
-        disasterDate, disasterName, disasterType,
-        location, projectType, scope) => {
+        disasterDate, disasterName, disasterTypeId,
+        location, projectTypeId, scope) => {
         Req(
           amount = amount.getOrElse(0),
           description = description,
           disasterDate = new java.sql.Timestamp(disasterDate),
           disasterName = disasterName,
-          disasterType = DisasterType.withName(disasterType),
-          projectType = ProjectType.withName(projectType),
+          disasterTypeId = disasterTypeId,
+          projectTypeId = projectTypeId,
           scope = ProjectScope.withName(scope),
           location = location
         )
@@ -139,7 +141,7 @@ object Requests extends Controller with Secured {
   def reject(id: Int) = UserAction(){ implicit user => implicit request =>
     Req.findById(id).map { r =>
 
-      if(user.canSignoff(r)){
+      if(user.canReject(r)){
 
         val rejectForm: Form[(Req, String)] = Form(
           mapping(
@@ -171,23 +173,41 @@ object Requests extends Controller with Secured {
   }
 
   def index = Application.index
-  def indexAll = Application.index
-  def indexApproval = Application.index
-  def indexAssessor = Application.index
-  def indexImplementation = Application.index
-  def indexMine = Application.index
-  def indexSignoff = Application.index
 
-  def indexMeta() = UserAction(){ implicit user => implicit request =>
-    val allRequests = Req.indexList()
-    Ok(Json.obj(
-      "list" -> allRequests.map(_.indexJson),
-      "filters" -> ProjectType.jsonList
-    ))
+  def indexPage(tab: String, page: Int, projectTypeId: Int) = Application.index
+
+  def indexMeta(tab: String, page: Int, projectTypeId: Int) = UserAction(){ implicit user => implicit request =>
+
+    val limit = 20
+    val offset = page * limit
+    val projectTypeIdOption = if (projectTypeId == 0) None else Some(projectTypeId)
+
+    val reqListOption = tab match {
+      case "all" | "approval" | "assessor" | "implementation" | "mine" | "signoff" => {
+        Some(Req.indexList(tab, offset, limit, projectTypeIdOption))
+      }
+      case _ => None
+    }
+
+    reqListOption.map { reqList =>
+      Ok(Json.obj(
+        "list" -> reqList.map(_.indexJson),
+        "filters" -> ProjectType.jsonList,
+        "counts" -> Json.obj(
+          "all" -> Req.indexCount("all", projectTypeIdOption),
+          "approval" -> Req.indexCount("approval", projectTypeIdOption),
+          "assessor" -> Req.indexCount("assessor", projectTypeIdOption),
+          "implementation" -> Req.indexCount("implementation", projectTypeIdOption),
+          "mine" -> Req.indexCount("mine", projectTypeIdOption),
+          "signoff" -> Req.indexCount("signoff", projectTypeIdOption)
+        )
+      ))
+    }.getOrElse(Rest.error("invalid tab"))
+
   }
 
   def comment(id: Int) = UserAction(){ implicit user => implicit request =>
-    if(!user.isAnonymous){
+    if(!user.isAnon){
       Req.findById(id).map { implicit req =>
         Form("content" -> nonEmptyText).bindFromRequest.fold(
           Rest.formError(_),
@@ -200,56 +220,7 @@ object Requests extends Controller with Secured {
 
   }
 
-  private def assignGovUnit(
-      isAuthorized: GovUnit => Boolean,
-      assign: (Req, Int) => Req,
-      unassign: Req => (Req, GovUnit),
-      agencyType: String
-    )(reqId: Int, govUnitId: Int) = UserAction(){ implicit user => implicit request =>
-    if(user.isSuperAdmin){
-      Req.findById(reqId).map { implicit req =>
-        govUnitId match {
-          case 0 => {
-            val (r, govUnit) = unassign(req)
-            r.save().map { r =>
-              Event.assign(agencyType, false, govUnit).create().map { _ =>
-                if(agencyType == "assess") Checkpoint.pop()(r)
-                Rest.success()
-              }.getOrElse(Rest.serverError())
-            }.getOrElse(Rest.serverError())
-          }
-          case _ => {
-            GovUnit.findById(govUnitId).map { govUnit =>
-              if(isAuthorized(govUnit)){
-                assign(req, govUnitId).save().map { r =>
-                  Event.assign(agencyType, true, govUnit).create().map { _ =>
-                    if(agencyType == "assess") Checkpoint.push(user)(r)
-                    Rest.success("agency" -> govUnit.toJson)
-                  }.getOrElse(Rest.serverError())
-                }.getOrElse(Rest.serverError())
-              } else Rest.error("GovUnit not authorized to assess.")
-            }.getOrElse(Rest.notFound())
-          }
-        }
-      }.getOrElse(Rest.notFound())
-    } else Rest.unauthorized()
-  }
-
-  def assignAssessingAgency = assignGovUnit(
-    GovUnit.canAssess,
-    (r, id) => r.copy(assessingAgencyId = Some(id), level = 1),
-    r => (r.copy(assessingAgencyId = None, level = 0), GovUnit.findById(r.assessingAgencyId.get).get),
-    "assess"
-  ) _
-
-  def assignImplementingAgency = assignGovUnit(
-    GovUnit.canImplement,
-    (r, id) => r.copy(implementingAgencyId = Some(id)),
-    r => (r.copy(implementingAgencyId = None), GovUnit.findById(r.implementingAgencyId.get).get),
-    "implement"
-  ) _
-
-  private def editForm(field: String)(implicit req: Req): Form[Req] = Form(field match {
+  private def editForm(field: String)(implicit req: Req, user: User): Form[Req] = Form(field match {
     case "description" => {
       mapping(
         "input" -> nonEmptyText
@@ -272,14 +243,47 @@ object Requests extends Controller with Secured {
       mapping(
         "input" -> tuple(
           "name" -> optional(text),
-          "type" -> nonEmptyText,
+          "typeId" -> number,
           "date" -> longNumber
         )
-      )({ case (name, dtype, date) => req.copy(
+      )({ case (name, typeId, date) => req.copy(
         disasterName = name,
-        disasterType = DisasterType.withName(dtype),
+        disasterTypeId = typeId,
         disasterDate = new java.sql.Timestamp(date)
       )})(_ => None)
+    }
+    case "assessingAgency" => {
+      mapping(
+        "input" -> (number.verifying("Unauthorized",
+          id => user.isSuperAdmin && (id match {
+            case 0 => true
+            case _ => GovUnit.findById(id).get.canAssess
+          })
+        ))
+      )(req.assignAssessor(_)
+      )(_ => None)
+    }
+    case "implementingAgency" => {
+      mapping(
+        "input" -> number.verifying("Unauthorized",
+          id => user.isSuperAdmin && (id match {
+            case 0 => true
+            case _ => GovUnit.findById(id).get.canImplement
+          })
+        )
+      )(govUnitId => req.copy(implementingAgencyId = govUnitId match {
+          case 0 => None
+          case _ => Some(govUnitId)
+      }))(_ => None)
+    }
+    case "saroNo" => {
+      mapping(
+        "input" -> nonEmptyText.verifying("Unauthorized", _ => {
+          play.Logger.info("Checkingg: " + user.isDBM)
+          user.isDBM
+        })
+      )(saroNo => req.copy(saroNo = Some(saroNo))
+      )(_ => None)
     }
     case _ => {
       mapping(
@@ -289,14 +293,33 @@ object Requests extends Controller with Secured {
     }
   })
 
+  def assignSaro(id: Int) = UserAction(){ implicit user => implicit request =>
+    if(!user.isAnon){
+      Req.findById(id).map { implicit req =>
+        editForm("saroNo").bindFromRequest.fold(
+          Rest.formError(_),
+          _.save().map { implicit req =>
+            (Event.assignSaro()).create().map { e =>
+              Rest.success("event" -> e.listJson)
+            }.getOrElse(Rest.serverError())
+          }.getOrElse(Rest.serverError())
+        )
+      }.getOrElse(Rest.notFound())
+    } else Rest.unauthorized()
+  }
+
   def editField(id: Int, field: String) = UserAction(){ implicit user => implicit request =>
-    if(!user.isAnonymous){
+    if(!user.isAnon){
       Req.findById(id).map { implicit req =>
         if(user.canEditRequest(req)){
           editForm(field).bindFromRequest.fold(
             Rest.formError(_),
             _.save().map { implicit req =>
-              Event.editField(field).create().map { e =>
+              (field match {
+                case "assessingAgency" => Event.assign("assess", req.assessingAgency)
+                case "implementingAgency" => Event.assign("implement", req.implementingAgency)
+                case _ => Event.editField(field)
+              }).create().map { e =>
                 Rest.success("event" -> e.listJson)
               }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())
