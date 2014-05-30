@@ -4,7 +4,7 @@ visPanel.view = function(ctrl){
       m("div", [
         m(".section", [
           m("h5", [
-            m("a", {href: routes.controllers.Visualizations.view(ctrl.link()).url}, ctrl.title())
+            m("a", {href: routes.controllers.Visualizations.view(ctrl.link()).url, config: m.route}, ctrl.title())
           ]),
         ]),
         m("hr")
