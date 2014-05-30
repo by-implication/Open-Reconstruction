@@ -10,6 +10,24 @@ import recon.support._
 
 object Req extends ReqGen {
 
+  private def byProjectType = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT project_type_name, COUNT(*), SUM(req_amount)
+      FROM reqs NATURAL JOIN project_types
+      GROUP BY project_type_name;
+    """).list(
+      get[String]("project_type_name") ~
+      get[Long]("count") ~
+      get[Option[java.math.BigDecimal]]("sum") map { case name~count~amount =>
+        Json.obj(
+          "name" -> name,
+          "count" -> count,
+          "amount" -> amount.getOrElse(0).toString
+        )
+      }
+    )
+  }
+
   private def byNamedDisaster = DB.withConnection { implicit c =>
     SQL("""
       SELECT req_disaster_name, COUNT(*), SUM(req_amount)
@@ -113,6 +131,7 @@ object Req extends ReqGen {
       "byLevel" -> (0 to 5).map(byLevel),
       "byMonth" -> Json.toJson(byMonth),
       "byDisasterType" -> byDisasterType,
+      "byProjectType" -> byProjectType,
       "byNamedDisaster" -> byNamedDisaster
     )
   }
