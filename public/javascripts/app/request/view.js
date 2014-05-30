@@ -115,7 +115,9 @@ request.view = function(ctrl){
           m(".tabs-content.vertical", [
             m(".card", [
               m(".big.section#summary", [
-                m("h1", ["Summary"]),
+                m(".header", [
+                  m("h1", ["Summary"]),
+                ]),
                 m(".content", [
                   request.progress(ctrl),
                   ctrl.degs.description.view(
@@ -223,7 +225,12 @@ request.view = function(ctrl){
               ]),
               m("hr"),
               m(".big.section#assignments", [
-                m("h1", ["Assignments"]),
+                m(".header", [
+                  m("h1", ["Assignments"]),
+                  m("p.help", [
+                    "Because the tasks described below are technical, they need to be assigned to the appropriate agencies specialized to handle this request. Currently, the OCD assigns the appropriate agencies."
+                  ]),
+                ]),
                 m(".content", [
                   m(".row", [
                     m(".columns.medium-6", [
@@ -285,7 +292,9 @@ request.view = function(ctrl){
               ]),
               m("hr"),
               m(".big.section#images", [
-                m("h1", ["Images"]),
+                m(".header", [
+                  m("h1", ["Images"]),
+                ]),
                 m(".content", [
                   ctrl.curUserCanUpload() ?
                     m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
@@ -319,7 +328,9 @@ request.view = function(ctrl){
               ]),
               m("hr"),
               m(".big.section#documents", [
-                m("h1", ["Documents"]),
+                m(".header", [
+                  m("h1", ["Documents"]),
+                ]),
                 m(".content", [
                   ctrl.curUserCanUpload() ?
                     m("div.dropzone", {config: ctrl.initDocDropzone})
@@ -355,9 +366,11 @@ request.view = function(ctrl){
               ]),
               m("hr"),
               m(".big.section#references", [
-                m("h1", ["References"]),
-                m("p", [
-                  "hi"
+                m(".header", [
+                  m("h1", ["References"]),
+                  m("p.help", [
+                    "These are references to other systems. For example, the SAROs are generated independently by the eBudget system, but is ultimately associated with a request. The projects, on the other hand are created independently by the implementing agency, effectively splitting the request into manageable projects."
+                  ]),
                 ]),
                 m(".content", [
                   m("h4", [
@@ -426,7 +439,9 @@ request.view = function(ctrl){
               ]),
               m("hr"),
               m(".big.section#activity", [
-                m("h1", ["Activity"]),
+                m(".header", [
+                  m("h1", ["Activity"]),
+                ]),
                 m(".content", [
                   m("div", ctrl.history().map(function (e){
                     return historyEvent[e.kind].bind(ctrl)(e);
