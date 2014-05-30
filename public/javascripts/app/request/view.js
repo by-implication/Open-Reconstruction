@@ -356,6 +356,9 @@ request.view = function(ctrl){
               m("hr"),
               m(".big.section#references", [
                 m("h1", ["References"]),
+                m("p", [
+                  "hi"
+                ]),
                 m(".content", [
                   m("h4", [
                     "SARO",

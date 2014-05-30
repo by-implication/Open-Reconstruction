@@ -112,7 +112,7 @@ visualizations.create(
 )
 
 visualizations.create(
-  'Project History by Type', 
+  'Request History by Disaster Type', 
   'disasterHistory', 
   function(ctrl){
     return function(){
