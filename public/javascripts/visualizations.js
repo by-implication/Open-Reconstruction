@@ -260,13 +260,15 @@ visualizations.create(
         axis: {
           x: {
             type: "categorized",
-            tick: {
-              rotate: 75
-            },
             categories: cats,
           },
           y: {
-            
+            tick: {
+              format: function(t){
+                var format =  d3.format(",")
+                return "PHP " + format(t);
+              }
+            },
           },
           rotated: true
         }
