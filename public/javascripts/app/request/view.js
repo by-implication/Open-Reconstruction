@@ -401,26 +401,34 @@ request.view = function(ctrl){
                           "Id"
                         ]),
                         m("td", [
-                          "Description"
+                          "Name"
                         ]),
                         m("td", [
-                          "Progress"
+                          "Scope"
                         ]),
+                        m("td", [
+                          "Amount"
+                        ])
                       ]),
                     ]),
-                    m("tbody", [
-                      m("tr", [
-                        m("td", [
-                          "Id"
-                        ]),
-                        m("td", [
-                          "Description"
-                        ]),
-                        m("td", [
-                          "Progress"
-                        ]),
-                      ]),
-                    ]),
+                    m("tbody",
+                      ctrl.projects().map(function(p){
+                        return m("tr", [
+                          m("td", [
+                            p.id
+                          ]),
+                          m("td", [
+                            p.name
+                          ]),
+                          m("td", [
+                            p.scope
+                          ]),
+                          m("td", [
+                            p.amount
+                          ])
+                        ])
+                      })
+                    ),
                   ]),
                 ]),
               ]),

@@ -38,6 +38,8 @@ request.controller = function(){
     projectType: ""
   });
 
+  this.projects = m.prop([]);
+
   this.author = m.prop({
     id: 0,
     name: ""
@@ -221,6 +223,7 @@ request.controller = function(){
   bi.ajax(routes.controllers.Requests.viewMeta(this.id)).then(function (data){
 
     this.request(data.request);
+    this.projects(data.projects);
     degs.disaster.input.name = data.request.disaster.name;
     degs.disaster.input.typeId = data.request.disaster.typeId;
     degs.disaster.input.date = data.request.disaster.date;
