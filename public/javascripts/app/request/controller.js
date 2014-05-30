@@ -200,7 +200,11 @@ request.controller = function(){
   }
 
   this.currentUserBelongsToAssessingAgency = function(){
-    return this.assessingAgency() && this.app.getCurrentUserProp("agency") && (this.assessingAgency().id === this.app.getCurrentUserProp("agency").id);
+    return this.assessingAgency() && this.app.getCurrentUserProp("govUnit") && (this.assessingAgency().id === this.app.getCurrentUserProp("govUnit").id);
+  }
+
+  this.currentUserBelongsToImplementingAgency = function(){
+    return this.implementingAgency() && this.app.getCurrentUserProp("govUnit") && (this.implementingAgency().id === this.app.getCurrentUserProp("govUnit").id);
   }
 
   this.currentUserIsAuthor = function(){

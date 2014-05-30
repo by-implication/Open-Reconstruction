@@ -388,12 +388,12 @@ request.view = function(ctrl){
                       ]),
                     ]),
                   ]),
-                  m("h4", [
+                  m("h4", ((ctrl.request().level > 4 && ctrl.currentUserBelongsToImplementingAgency()) ? [
                     "Project Management",
                     m("button.tiny.right", {type: "button", onclick: ctrl.addProjectModal.show.bind(ctrl.addProjectModal)}, [
                       "Reference a Project"
                     ]),
-                  ]),
+                  ] : ("Projects"))),
                   m("table", [
                     m("thead", [
                       m("tr", [
