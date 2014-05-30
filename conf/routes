@@ -42,6 +42,7 @@ GET			/requests																	controllers.Requests.index
 GET     /requests/:t/:p/:pid                      controllers.Requests.indexPage(t: String, p: Int, pid: Int)
 GET     /requests/:t/:p/:pid/meta                 controllers.Requests.indexMeta(t: String, p: Int, pid: Int)
 
+
 GET     /requests/new                             controllers.Requests.create
 GET     /requests/new/meta                        controllers.Requests.createMeta
 POST    /requests/new                             controllers.Requests.insert
@@ -53,10 +54,11 @@ GET     /requests/:id/documents                   controllers.Requests.viewDocum
 GET     /requests/:id/activity                    controllers.Requests.viewActivity(id: Int)
 GET     /requests/:id/references                  controllers.Requests.viewReferences(id: Int)
 GET     /requests/:id/meta                        controllers.Requests.viewMeta(id: Int)
+POST    /requests/:id/new-project                 controllers.Projects.insert(id: Int)
 
 POST    /requests/:id/signoff                     controllers.Requests.signoff(id: Int)
 POST    /requests/:id/reject                      controllers.Requests.reject(id: Int)
-POST    /requests/:id/assignSaro                  controllers.Requests.assignSaro(id: Int)
+POST    /requests/:id/assign-saro                  controllers.Requests.assignSaro(id: Int)
 POST    /requests/:id/comment                     controllers.Requests.comment(id: Int)
 POST    /requests/:id/edit/:f                     controllers.Requests.editField(id: Int, f: String)
 POST    /requests/:id/attach/:type                controllers.Attachments.add(id: Int, type: String)

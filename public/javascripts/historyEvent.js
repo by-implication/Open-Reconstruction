@@ -201,7 +201,24 @@ historyEvent.assignSaro = function(data){
       m("p", [
         "A SARO has been assigned to this request."
       ]),
-      historyEvent.meta("Assigned ", data, date)
+      historyEvent.meta("Assigned", data, date)
+    ])
+  ])
+}
+
+historyEvent.addProject = function(data){
+  var date = new Date(data.date);
+  var c = data.content.split(" ");
+  var projectId = c.pop();
+  var projectName = c.join(" ");
+  return m(".event", [
+    historyEvent.date(date),
+    m(".details", [
+      m("h3", "New project"),
+      m("p", [
+        "Project " + "\""+ projectName +"\" has been added to this request."
+      ]),
+      historyEvent.meta("Added", data, date)
     ])
   ])
 }
