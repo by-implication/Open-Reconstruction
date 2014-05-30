@@ -379,27 +379,31 @@ request.view = function(ctrl){
                       "Assign a SARO"
                     ]),
                   ]),
-                  m("table", [
-                    m("thead", [
-                      m("tr", [
-                        m("td", [
-                          "SARO Number"
-                        ]),
-                        m("td", [
-                          "Amount"
-                        ]),
-                      ]),
-                    ]),
-                    m("tbody", [
-                      m("tr", [
-                        m("td", [
-                          ctrl.request().isSaroAssigned ? "Hidden" : "Unassigned"
-                        ]),
-                        m("td", [
-                          ctrl.request().isSaroAssigned ? "Hidden" : "Unassigned"
+                  ctrl.request().isSaroAssigned ?
+                    m("table", [
+                      m("thead", [
+                        m("tr", [
+                          m("td", [
+                            "SARO Number"
+                          ]),
+                          m("td", [
+                            "Amount"
+                          ]),
                         ]),
                       ]),
-                    ]),
+                      m("tbody", [
+                        m("tr", [
+                          m("td", [
+                            "hidden"
+                          ]),
+                          m("td", [
+                            "hidden"
+                          ]),
+                        ]),
+                      ]),
+                    ])
+                  : m("p", [
+                    "No SARO has been referenced yet."
                   ]),
                   m("h4", [
                     "Project Management",
@@ -407,41 +411,45 @@ request.view = function(ctrl){
                       "Reference a Project"
                     ]),
                   ]),
-                  m("table", [
-                    m("thead", [
-                      m("tr", [
-                        m("td", [
-                          "Id"
-                        ]),
-                        m("td", [
-                          "Name"
-                        ]),
-                        m("td", [
-                          "Scope"
-                        ]),
-                        m("td", [
-                          "Amount"
-                        ])
-                      ]),
-                    ]),
-                    m("tbody",
-                      ctrl.projects().map(function(p){
-                        return m("tr", [
+                  ctrl.projects().length ?
+                    m("table", [
+                      m("thead", [
+                        m("tr", [
                           m("td", [
-                            p.id
+                            "Id"
                           ]),
                           m("td", [
-                            p.name
+                            "Name"
                           ]),
                           m("td", [
-                            p.scope
+                            "Scope"
                           ]),
                           m("td", [
-                            p.amount
+                            "Amount"
                           ])
-                        ])
-                      })
-                    ),
+                        ]),
+                      ]),
+                      m("tbody",
+                        ctrl.projects().map(function(p){
+                          return m("tr", [
+                            m("td", [
+                              p.id
+                            ]),
+                            m("td", [
+                              p.name
+                            ]),
+                            m("td", [
+                              p.scope
+                            ]),
+                            m("td", [
+                              p.amount
+                            ])
+                          ])
+                        })
+                      ),
+                    ])
+                  : m("p", [
+                    "No projects have been referenced yet."
                   ]),
                 ]),
               ]),
