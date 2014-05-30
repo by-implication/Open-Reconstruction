@@ -88,7 +88,7 @@ visualizations.create(
 )
 
 visualizations.create(
-  'Project Type Distribution',
+  'Request Type Distribution',
   'projectTypes',
   function(ctrl){
     return function(){
@@ -205,7 +205,7 @@ visualizations.create(
 )
 
 visualizations.create(
-  'Project Amounts per Unique Named Disaster',
+  'Request Amounts per Unique Named Disaster',
   'topDisastersAmount',
   function(ctrl){
     return function(){

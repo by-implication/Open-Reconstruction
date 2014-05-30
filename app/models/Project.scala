@@ -32,7 +32,8 @@ case class Project(
   def requestViewJson: JsObject = Json.obj(
     "id" -> id.get,
     "name" -> name,
-    "amount" -> amount
+    "amount" -> amount,
+    "scope" -> scope.toString
   )
 }
 // GENERATED object start

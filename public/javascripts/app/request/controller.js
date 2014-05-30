@@ -38,6 +38,8 @@ request.controller = function(){
     projectType: ""
   });
 
+  this.projects = m.prop([]);
+
   this.author = m.prop({
     id: 0,
     name: ""
@@ -56,9 +58,21 @@ request.controller = function(){
   this.hasSignedoff = m.prop(false);
   this.input = { comment: m.prop() };
 
-  this.submitProject = function(e){
+  this.addProjectModal.submitProject = function(e){
     e.preventDefault();
-    console.log('Submitting project!');
+    bi.ajax(routes.controllers.Projects.insert(self.id), {
+      data: {
+        name: self.addProjectModal.project.name(),
+        amount: self.addProjectModal.project.amount()
+      }
+    }).then(function (r){
+      if(r.success){
+        alert('Submitted!')
+        self.history().unshift(r.event);
+      } else {
+        alert("Your input was invalid.");
+      }
+    }.bind(this));
   }
 
   this.unassignedAgency = {id: 0};
@@ -186,7 +200,15 @@ request.controller = function(){
   }
 
   this.currentUserBelongsToAssessingAgency = function(){
-    return this.assessingAgency() && this.app.getCurrentUserProp("agency") && (this.assessingAgency().id === this.app.getCurrentUserProp("agency").id);
+    return this.assessingAgency() && this.app.getCurrentUserProp("govUnit") && (this.assessingAgency().id === this.app.getCurrentUserProp("govUnit").id);
+  }
+
+  this.currentUserBelongsToImplementingAgency = function(){
+    return this.implementingAgency() && this.app.getCurrentUserProp("govUnit") && (this.implementingAgency().id === this.app.getCurrentUserProp("govUnit").id);
+  }
+
+  this.currentUserCanAssignFunding = function(){
+    return this.app.getCurrentUserProp("govUnit") && this.app.getCurrentUserProp("govUnit").role == "DBM"
   }
 
   this.currentUserIsAuthor = function(){
@@ -209,6 +231,7 @@ request.controller = function(){
   bi.ajax(routes.controllers.Requests.viewMeta(this.id)).then(function (data){
 
     this.request(data.request);
+    this.projects(data.projects);
     degs.disaster.input.name = data.request.disaster.name;
     degs.disaster.input.typeId = data.request.disaster.typeId;
     degs.disaster.input.date = data.request.disaster.date;

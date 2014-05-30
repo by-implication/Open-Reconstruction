@@ -64,6 +64,7 @@ object Application extends Controller {
       Attachments.download,
       Attachments.thumb,
       Assets.at,
+      Projects.insert,
       Requests.assignSaro,
       Requests.comment,
       Requests.create,

@@ -31,6 +31,10 @@ object Event extends EventGen {
     generate("assignSaro", "")
   }
 
+  def addProject(project: Project)(implicit req: Req, user: User) = {
+    generate("addProject", project.name + " " + project.id)
+  }
+
   def attachment(a: Attachment)(implicit req: Req, user: User) = {
     generate("attachment", asContent(a))
   }
