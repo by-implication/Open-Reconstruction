@@ -8,6 +8,7 @@ visualization.controller = function(){
   this.byDisasterType = m.prop([]);
   this.byMonth = m.prop([]);
   this.byLevel = m.prop([]);
+  this.byNamedDisaster = m.prop();
 
   this.id = m.route.param('v');
 
@@ -18,6 +19,7 @@ visualization.controller = function(){
     self.byLevel(r.byLevel);
     self.byMonth(visualizations.padMonths(r.byMonth));
     self.byDisasterType(r.byDisasterType);
+    self.byNamedDisaster(r.byNamedDisaster);
     m.endComputation();
   });
 

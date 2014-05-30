@@ -7,6 +7,7 @@ dashboard.controller = function(){
   this.byDisasterType = m.prop([]);
   this.byMonth = m.prop([]);
   this.byLevel = m.prop([]);
+  this.byNamedDisaster = m.prop();
 
   m.startComputation();
   bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
@@ -15,8 +16,7 @@ dashboard.controller = function(){
     self.byLevel(r.byLevel);
     self.byMonth(visualizations.padMonths(r.byMonth));
     self.byDisasterType(r.byDisasterType);
-    console.log("Named Disasters");
-    console.log(r.byNamedDisaster);
+    self.byNamedDisaster(r.byNamedDisaster);
     m.endComputation();
   });
 
@@ -44,5 +44,4 @@ dashboard.controller = function(){
   this.projectTypes = visualizations.library['projectTypes'](self);
   this.topDisasters = visualizations.library['topDisasters'](self);
   this.topDisastersAmount = visualizations.library['topDisastersAmount'](self);
-
 }

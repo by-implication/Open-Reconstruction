@@ -157,21 +157,45 @@ visualizations.create(
 )
 
 visualizations.create(
-  'Number of Projects per Unique Named Disaster',
+  'Number of Requests per Unique Named Disaster',
   'topDisasters',
   function(ctrl){
     return function(){
+      var data = _.chain(ctrl.byNamedDisaster())
+        .sortBy(function(d){
+          return d.count * -1;
+        })
+        .take(5)
+        .value();
+      var counts = data.map(function(d){
+        return d.count / 1;
+      });
+      var cats = data.map(function(d){
+        if (d.name) {
+          if (d.name.length > 12) {
+            return _.chain(d.name)
+              .take(12)
+              .reduce(function(a, b){
+                return a + b;
+              })
+              .value();
+          };
+          return d.name;
+        } else {
+          return "unnamed";
+        }
+      });
       return {
         data: {
           columns: [
-            ["Number of Projects", 3, 15, 82, 1, 42, 23]
+            ["Number of Requests"].concat(counts)
           ],
           type: "bar",
         },
         axis: {
           x: {
             type: "categorized",
-            categories: ["Rivers", "Infrastructure", "Housing", "Roads", "Phi", "Mark"]
+            categories: cats
           },
           rotated: true
         }
@@ -185,17 +209,47 @@ visualizations.create(
   'topDisastersAmount',
   function(ctrl){
     return function(){
+      var data = _.chain(ctrl.byNamedDisaster())
+        .sortBy(function(d){
+          return d.amount * -1;
+        })
+        .take(5)
+        .value();
+      var amounts = data.map(function(d){
+        return d.amount / 1;
+      });
+      var cats = data.map(function(d){
+        if (d.name) {
+          if (d.name.length > 12) {
+            return _.chain(d.name)
+              .take(12)
+              .reduce(function(a, b){
+                return a + b;
+              })
+              .value();
+          };
+          return d.name;
+        } else {
+          return "unnamed";
+        }
+      });
       return {
         data: {
           columns: [
-            ["Number of Projects", 3, 15, 82, 1, 42, 23]
+            ["Number of Requests"].concat(amounts)
           ],
-          type: "bar",
+          type: "bar"
         },
         axis: {
           x: {
             type: "categorized",
-            categories: ["Rivers", "Infrastructure", "Housing", "Roads", "Phi", "Mark"]
+            tick: {
+              rotate: 75
+            },
+            categories: cats,
+          },
+          y: {
+            
           },
           rotated: true
         }
