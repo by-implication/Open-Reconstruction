@@ -23,6 +23,7 @@ visPanel.controller = function(){
   }
   this.title = m.prop("Chart Title");
   this.link = m.prop("Chart Link");
+  this.type = m.prop("type");
   this.isFullView = m.prop(false);
   this.config = function(elem){
     var chartSettings = self.chartSettings();

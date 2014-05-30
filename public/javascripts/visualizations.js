@@ -2,11 +2,12 @@ var visualizations = {
   library: {}
 };
 
-visualizations.create = function(title, id, chartSettingsCreator){
+visualizations.create = function(title, id, type, chartSettingsCreator){
   visualizations.library[id] = function(ctrl){
     var visCtrl = new visPanel.controller();
     visCtrl.title(title);
     visCtrl.link(id);
+    visCtrl.type(type);
     visCtrl.chartSettings = chartSettingsCreator(ctrl);
     return visCtrl;
   }
@@ -40,6 +41,7 @@ visualizations.padMonths = function padMonths(a){
 visualizations.create(
   'Request Count and Amount History',
   'requestHistory',
+  'request',
   function(ctrl){
     return function(){
     var labels = _.pluck(ctrl.byMonth(), 'yearMonth');
@@ -90,6 +92,7 @@ visualizations.create(
 visualizations.create(
   'Request Type Distribution',
   'projectTypes',
+  'request',
   function(ctrl){
     return function(){
       var data = _.chain(ctrl.byProjectType())
@@ -125,6 +128,7 @@ visualizations.create(
 visualizations.create(
   'Request History by Disaster Type', 
   'disasterHistory', 
+  'request',
   function(ctrl){
     return function(){
       var data = _.chain(ctrl.byDisasterType())
@@ -170,6 +174,7 @@ visualizations.create(
 visualizations.create(
   'Number of Requests per Unique Named Disaster',
   'topDisasters',
+  'request',
   function(ctrl){
     return function(){
       var data = _.chain(ctrl.byNamedDisaster())
@@ -218,6 +223,7 @@ visualizations.create(
 visualizations.create(
   'Request Amounts per Unique Named Disaster',
   'topDisastersAmount',
+  'request',
   function(ctrl){
     return function(){
       var data = _.chain(ctrl.byNamedDisaster())
