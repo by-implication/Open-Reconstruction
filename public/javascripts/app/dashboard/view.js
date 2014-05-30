@@ -1,7 +1,7 @@
 dashboard.view = function(ctrl){
   return app.template(ctrl.app, [
     m("div#view.dashboard", [
-      common.banner("Dashboard"),
+      common.banner("Visualizations"),
       m("section", [
         m(".row",[
           m(".columns.medium-12",[

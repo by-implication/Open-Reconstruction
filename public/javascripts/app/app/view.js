@@ -63,15 +63,15 @@ app.navbar = function(ctrl){
             href: routes.controllers.Application.dashboard().url,
             config: m.route,
             className: (routes.controllers.Application.dashboard().url === m.route() ? "active" : "")
-          }, "Dashboard")
+          }, "Visualizations")
         ]),
-        m("li", [
-          m("a", {
-            href: routes.controllers.Application.saro().url,
-            config: m.route,
-            className: (routes.controllers.Application.saro().url === m.route() ? "active" : "")
-          }, "SAROs")
-        ]),
+        // m("li", [
+        //   m("a", {
+        //     href: routes.controllers.Application.saro().url,
+        //     config: m.route,
+        //     className: (routes.controllers.Application.saro().url === m.route() ? "active" : "")
+        //   }, "SAROs")
+        // ]),
         m("li", [
           m("a", {
             href: routes.controllers.Requests.index().url,
