@@ -56,7 +56,7 @@ app.navbar = function(ctrl){
             href: routes.controllers.Application.welcome().url,
             config: m.route,
             className: (routes.controllers.Application.welcome().url === m.route() ? "active" : "")
-          }, "Welcome")
+          }, "Home")
         ]),
         m("li", [
           m("a", {
