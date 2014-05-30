@@ -19,8 +19,6 @@ dashboard.controller = function(){
     self.byDisasterType(r.byDisasterType);
     self.byProjectType(r.byProjectType);
     self.byNamedDisaster(r.byNamedDisaster);
-    console.log("By Project Type");
-    console.log(self.byProjectType());
     m.endComputation();
   });
 
