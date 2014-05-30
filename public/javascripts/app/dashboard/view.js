@@ -24,7 +24,7 @@ dashboard.view = function(ctrl){
               .map(function(g){
                 return m("ul.filters", g.map(function(v){
                   return m("li.filter", [
-                    m("a", {href: v(ctrl).link(), config: m.route}, [
+                    m("a", {href: "visualizations/"+v(ctrl).link(), config: m.route}, [
                       v(ctrl).title()
                     ])
                   ])
