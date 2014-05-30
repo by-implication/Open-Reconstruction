@@ -622,7 +622,13 @@ request.approval = function(ctrl){
             m("h4",
               ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
                 ctrl.app.isSuperAdmin() ?
-                  "Please assign an agency to assess this request."
+                  [
+                    "Please ",
+                    m("a", {href: "#assignments"}, [
+                      "assign an agency"
+                    ]),
+                    " to assess this request."
+                  ]
                 : "Waiting for the Office of Civil Defense to assign an agency to assess this request."
               : "Waiting for " + ctrl.getBlockingAgency() + " approval."
             ),
