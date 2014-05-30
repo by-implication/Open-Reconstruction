@@ -5,7 +5,7 @@ app.template = function(a, b, c, d){
     case 2:
       ctrl = arguments[0];
       content = arguments[1];
-      attrs = {class: ""};
+      attrs = {className: ""};
       modals = [];
       break;
     case 3:
@@ -32,7 +32,8 @@ app.template = function(a, b, c, d){
       m("link[href='/assets/stylesheets/fonts.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/bower_components/font-awesome/css/font-awesome.min.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/bower_components/leaflet/leaflet.css'][rel='stylesheet'][type='text/css']"),
-      m("link[href='/assets/bower_components/leaflet-draw/leaflet.draw.css'][rel='stylesheet'][type='text/css']")
+      m("link[href='/assets/bower_components/leaflet-draw/leaflet.draw.css'][rel='stylesheet'][type='text/css']"),
+      m("link[href='/assets/bower_components/c3/c3.css'][rel='stylesheet'][type='text/css']")
     ]),
     m("body", attrs, modals.concat(app.navbar(ctrl), content))
   ])
@@ -44,7 +45,7 @@ app.navbar = function(ctrl){
     m("ul.title-area", [
       m("li.name", [
         m("h1", [
-          m("a", {href: routes.controllers.Requests.index().url, config: m.route}, "Open Reconstruction")
+          m("a", {href: routes.controllers.Application.welcome().url, config: m.route}, "Open Reconstruction")
         ])
       ])
     ]),
@@ -52,11 +53,25 @@ app.navbar = function(ctrl){
       m("ul.left", [
         m("li", [
           m("a", {
+            href: routes.controllers.Application.welcome().url,
+            config: m.route,
+            className: (routes.controllers.Application.welcome().url === m.route() ? "active" : "")
+          }, "Home")
+        ]),
+        m("li", [
+          m("a", {
             href: routes.controllers.Application.dashboard().url,
             config: m.route,
             className: (routes.controllers.Application.dashboard().url === m.route() ? "active" : "")
-          }, "Dashboard")
+          }, "Visualizations")
         ]),
+        // m("li", [
+        //   m("a", {
+        //     href: routes.controllers.Application.saro().url,
+        //     config: m.route,
+        //     className: (routes.controllers.Application.saro().url === m.route() ? "active" : "")
+        //   }, "SAROs")
+        // ]),
         m("li", [
           m("a", {
             href: routes.controllers.Requests.index().url,

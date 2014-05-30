@@ -6,3 +6,6 @@
 ../bower_components/leaflet-draw/leaflet.draw.js
 ../bower_components/dropzone/dropzone.js
 ../bower_components/nprogress/nprogress.js
+../bower_components/d3/d3.js
+../bower_components/c3/c3.js
+../bower_components/jquery/dist/jquery.min.js

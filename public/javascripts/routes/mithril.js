@@ -2,13 +2,16 @@
 ////////////////////////////////////////////////////
 // routes
 
-m.route(document, window.location.pathname == "/" ? "/requests" : window.location.pathname, {
+m.route(document, window.location.pathname == "/" ? "/welcome" : window.location.pathname, {
   "/requests": requestListing,
   "/requests/:tab/:page/:projectTypeId": requestListing,
   "/requests/new": requestCreation,
   "/requests/:id": request,
   "/requests/:id/:tab": request,
+  "/visualizations/:v": visualization,
   "/dashboard": dashboard,
+  "/saro": saro,
+  "/welcome": welcome,
   "/users/:id": user,
   "/admin": admin,
   "/admin/lgus": admin,

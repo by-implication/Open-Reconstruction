@@ -1,6 +1,8 @@
 app.controller = function(){
   var self = this;
-  
+
+  $(window).off("scroll"); // todo: refactor
+
   var anon = {
     isSuperAdmin: false,
     isAdmin: false,

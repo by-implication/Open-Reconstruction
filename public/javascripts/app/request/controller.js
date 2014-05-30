@@ -1,15 +1,24 @@
 request.controller = function(){
   var map;
+  var self = this;
   this.app = new app.controller();
   this.signoffModal = new common.modal.controller();
   this.rejectModal = new common.modal.controller();
+  this.saroModal = new common.modal.controller();
+  this.addProjectModal = new common.modal.controller();
+  this.addProjectModal.project = {
+    name: m.prop(),
+    amount: m.prop()
+  }
   var requestId = m.route.param('id');
   this.requestTabs = new common.tabs.controller();
   this.requestTabs.tabs([
-    {label: m.prop("Assignments"), href: routes.controllers.Requests.viewAssignments(requestId).url},
-    {label: m.prop("Images"), href: routes.controllers.Requests.viewImages(requestId).url},
-    {label: m.prop("Documents"), href: routes.controllers.Requests.viewDocuments(requestId).url},
-    {label: m.prop("Activity"), href: routes.controllers.Requests.viewActivity(requestId).url}
+    {label: m.prop("Summary"), href: "#summary"},
+    {label: m.prop("Assignments"), href: "#assignments"},
+    {label: m.prop("Images"), href: "#images"},
+    {label: m.prop("Documents"), href: "#documents"},
+    {label: m.prop("References"), href: "#references"},
+    {label: m.prop("Activity"), href: "#activity"}
   ]);
 
   this.id = m.route.param("id");
@@ -29,6 +38,8 @@ request.controller = function(){
     projectType: ""
   });
 
+  this.projects = m.prop([]);
+
   this.author = m.prop({
     id: 0,
     name: ""
@@ -46,6 +57,23 @@ request.controller = function(){
   this.canEdit = m.prop(false);
   this.hasSignedoff = m.prop(false);
   this.input = { comment: m.prop() };
+
+  this.addProjectModal.submitProject = function(e){
+    e.preventDefault();
+    bi.ajax(routes.controllers.Projects.insert(self.id), {
+      data: {
+        name: self.addProjectModal.project.name(),
+        amount: self.addProjectModal.project.amount()
+      }
+    }).then(function (r){
+      if(r.success){
+        alert('Submitted!')
+        self.history().unshift(r.event);
+      } else {
+        alert("Your input was invalid.");
+      }
+    }.bind(this));
+  }
 
   this.unassignedAgency = {id: 0};
   this.assessingAgency = m.prop(this.unassignedAgency);
@@ -172,7 +200,15 @@ request.controller = function(){
   }
 
   this.currentUserBelongsToAssessingAgency = function(){
-    return this.assessingAgency() && this.app.getCurrentUserProp("agency") && (this.assessingAgency().id === this.app.getCurrentUserProp("agency").id);
+    return this.assessingAgency() && this.app.getCurrentUserProp("govUnit") && (this.assessingAgency().id === this.app.getCurrentUserProp("govUnit").id);
+  }
+
+  this.currentUserBelongsToImplementingAgency = function(){
+    return this.implementingAgency() && this.app.getCurrentUserProp("govUnit") && (this.implementingAgency().id === this.app.getCurrentUserProp("govUnit").id);
+  }
+
+  this.currentUserCanAssignFunding = function(){
+    return this.app.getCurrentUserProp("govUnit") && this.app.getCurrentUserProp("govUnit").role == "DBM"
   }
 
   this.currentUserIsAuthor = function(){
@@ -195,6 +231,7 @@ request.controller = function(){
   bi.ajax(routes.controllers.Requests.viewMeta(this.id)).then(function (data){
 
     this.request(data.request);
+    this.projects(data.projects);
     degs.disaster.input.name = data.request.disaster.name;
     degs.disaster.input.typeId = data.request.disaster.typeId;
     degs.disaster.input.date = data.request.disaster.date;
@@ -264,6 +301,19 @@ request.controller = function(){
           errors.push([field, r.messages[field]]);
         }
         alert("Failed to reject:\n" + errors.join("\n"));
+      }
+    }.bind(this));
+  }.bind(this);
+
+  this.saroModal.submit = function(e){
+    e.preventDefault();
+    bi.ajax(routes.controllers.Requests.assignSaro(ctrl.id), {
+      data: {input: this.saroModal.content}
+    }).then(function (r){
+      if(r.success){
+        ctrl.history().unshift(r.event);
+      } else {
+        alert("An error occurred.");
       }
     }.bind(this));
   }.bind(this);
@@ -365,4 +415,61 @@ request.controller = function(){
     }
   }.bind(this);
 
+  var scrollInit = false;
+
+  this.scrollHandler = function(elem, isInit){
+    var boundary = function(elem){
+      var posType = $(elem).css("position");
+      var offset = 0;
+      if (posType === "relative") {
+        offset = parseInt($(elem).css("top"));
+      }
+      return $(elem).position().top - offset;
+    }
+    var updateTabMenuPos = function(){
+      if ($(window).scrollTop() > boundary(elem)) {
+        $(".tabs.vertical").css({
+          position: "relative",
+          top: ($(window).scrollTop()) - boundary(elem)
+        })
+      } else {
+        $(".tabs.vertical").removeAttr("style");
+      }
+    }
+    
+    var idPosDict;
+    var poss;
+
+    if (isInit) {
+      updateTabMenuPos();
+      idPosDict = _.chain(self.requestTabs.tabs())
+        .map(function(t){
+          return t.href;
+        })
+        .map(function(i){
+          return [$(i).position().top + $(i).height() - 20, i];
+        })
+        .object()
+        .value();
+      poss = _.chain(idPosDict).map(function(v, k){
+        return k;
+      }).value();
+    }
+    $(window).on("scroll", function(e){
+      if (!scrollInit) {
+        m.redraw();
+        scrollInit = true;
+      } else {
+        updateTabMenuPos()
+        // if (isInit) {
+        //   var windowPos = $(window).scrollTop();
+        //   var closestPos = _.find(poss, function(p){
+        //     return p >= windowPos
+        //   });
+        //   var hash = idPosDict[closestPos];
+        //   window.location.hash = hash;
+        // };
+      }
+    })
+  }
 }

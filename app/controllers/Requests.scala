@@ -17,6 +17,7 @@ object Requests extends Controller with Secured {
   def viewImages = Application.index1 _
   def viewDocuments = Application.index1 _
   def viewActivity = Application.index1 _
+  def viewReferences = Application.index1 _
 
   def createMeta() = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
@@ -54,6 +55,7 @@ object Requests extends Controller with Secured {
           )
         },
         "history" -> Json.toJson(Event.findForRequest(id).map(_.listJson)),
+        "projects" -> Json.toJson(req.projects.map(_.requestViewJson)),
         "disasterTypes" -> DisasterType.jsonList
       )
     }.getOrElse(Rest.notFound())
@@ -274,6 +276,15 @@ object Requests extends Controller with Secured {
           case _ => Some(govUnitId)
       }))(_ => None)
     }
+    case "saroNo" => {
+      mapping(
+        "input" -> nonEmptyText.verifying("Unauthorized", _ => {
+          play.Logger.info("Checkingg: " + user.isDBM)
+          user.isDBM
+        })
+      )(saroNo => req.copy(saroNo = Some(saroNo))
+      )(_ => None)
+    }
     case _ => {
       mapping(
         "input" -> text.verifying("Invalid field", _ => false)
@@ -281,6 +292,21 @@ object Requests extends Controller with Secured {
       )(_ => None)
     }
   })
+
+  def assignSaro(id: Int) = UserAction(){ implicit user => implicit request =>
+    if(!user.isAnon){
+      Req.findById(id).map { implicit req =>
+        editForm("saroNo").bindFromRequest.fold(
+          Rest.formError(_),
+          _.save().map { implicit req =>
+            (Event.assignSaro()).create().map { e =>
+              Rest.success("event" -> e.listJson)
+            }.getOrElse(Rest.serverError())
+          }.getOrElse(Rest.serverError())
+        )
+      }.getOrElse(Rest.notFound())
+    } else Rest.unauthorized()
+  }
 
   def editField(id: Int, field: String) = UserAction(){ implicit user => implicit request =>
     if(!user.isAnon){

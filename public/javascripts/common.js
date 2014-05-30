@@ -197,8 +197,12 @@ common.tabs.menu = function(ctrl, options){
           return "";
         }
       };
+      var options = { href: tab.href };
+      if(tab.href.charAt(0) != '#') {
+        options.config = m.route;
+      }
       return m("dd", {class: tabClass(tab)}, [
-        m("a", { href: tab.href, config: m.route }, tab.label())
+        m("a", options, tab.label())
       ]);
     })
   )
@@ -215,7 +219,13 @@ common.tabs.content = function(ctrl){
 common.tabs.controller = function(basePath){
   this.tabs = m.prop([]);
   this.currentTab = function() {
-    var item = _.find(this.tabs(), function(tab) { return tab.href == m.route() });
+    var item = _.find(this.tabs(), function(tab) {
+      if(window.location.hash){
+        return tab.href === window.location.hash;
+      } else {
+        return tab.href == m.route() 
+      }
+    });
     if(item == undefined) {
       item = _.head(this.tabs());
     }
@@ -232,6 +242,8 @@ common.modal.controller = function(){
   this.show = function(){
     this.isVisible(true);
     this.height = helper.docHeight;
+    // console.log($("html, body"));
+    // $("html, body").animate({ scrollTop: "0px" });
   }
   this.close = function(){
     this.isVisible(false);
@@ -245,7 +257,8 @@ common.modal.controller = function(){
   }
   this.dialogConfig = function(elem){
     window.setTimeout(function(){
-      elem.style.top = "0px";
+      var scrollPos = $(window).scrollTop();
+      elem.style.top = scrollPos + "px";
     }, 0); 
   }
 }
