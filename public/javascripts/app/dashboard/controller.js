@@ -2,25 +2,40 @@ dashboard.controller = function(){
   var self = this;
   this.app = new app.controller();
 
+  this.requests = m.prop({});
+  this.projects = m.prop({});
+
   this.mostCommonDisasterType = m.prop(0);
   this.mostCommonProjectType = m.prop(0);
-  this.byDisasterType = m.prop([]);
-  this.byProjectType = m.prop([]);
-  this.byMonth = m.prop([]);
-  this.byLevel = m.prop([]);
-  this.byNamedDisaster = m.prop();
+
+  this.requests().byDisasterType = m.prop([]);
+  this.requests().byProjectType = m.prop([]);
+  this.requests().byMonth = m.prop([]);
+  this.requests().byLevel = m.prop([]);
+  this.requests().byNamedDisaster = m.prop();
+
+  this.projects().byMonth = m.prop([]);
 
   m.startComputation();
   bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
     self.mostCommonDisasterType(r.mostCommonDisasterType);
     self.mostCommonProjectType(r.mostCommonProjectType);
-    self.byLevel(r.byLevel);
-    self.byMonth(visualizations.padMonths(r.byMonth));
-    self.byDisasterType(r.byDisasterType);
-    self.byProjectType(r.byProjectType);
-    self.byNamedDisaster(r.byNamedDisaster);
+
+    self.requests().byLevel(r.byLevel);
+    self.requests().byMonth(visualizations.padMonths(r.byMonth));
+    self.requests().byDisasterType(r.byDisasterType);
+    self.requests().byProjectType(r.byProjectType);
+    self.requests().byNamedDisaster(r.byNamedDisaster);
     m.endComputation();
   });
+
+  bi.ajax(routes.controllers.Visualizations.getData("EPLC")).then(function (r){
+    console.log(r.data);
+  });
+
+  bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
+    console.log(r.data);
+  })
 
   this.projectHistory = visualizations.library['requestHistory'](self);
   this.disasterHistory = visualizations.library['disasterHistory'](self);
