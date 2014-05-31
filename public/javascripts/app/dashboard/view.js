@@ -7,7 +7,8 @@ dashboard.view = function(ctrl){
       .map(function(g){
         return m(".filter-group", [
           m("h4", [
-            g[0]().type()
+            g[0]().type(),
+            " Visualizations"
           ]),
           m("ul.filters", g.map(function(v){
             return m("li.filter", [
@@ -35,9 +36,6 @@ dashboard.view = function(ctrl){
       m("section.alt", [
         m(".row", [
           m(".columns.medium-3", [
-            m("h4", [
-              "Request Visualizations"
-            ]),
             listVis(),
             "" // wtf why does this fix the duplicaiton bug
           ]),
