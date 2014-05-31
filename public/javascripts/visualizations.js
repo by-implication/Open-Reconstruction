@@ -40,6 +40,59 @@ visualizations.padMonths = function padMonths(a){
 }
 
 visualizations.create(
+  'SARO Amount Distribution by Agency',
+  'saroAmountAgency',
+  'saro',
+  function(ctrl){
+    var sarosByAgency = _.chain(ctrl.saros())
+      .filter(function(s){
+        return s["agency"];
+      })
+      .groupBy(function(s){
+        return s["agency"];
+      })
+      .value();
+    var labels = _.keys(sarosByAgency);
+    var amountPerAgency = _.chain(sarosByAgency)
+      .values()
+      .map(function(g){
+        return g.reduce(function(acc, head){
+          return acc + head.amount;
+        }, 0)
+      })
+      .value()
+
+    return {
+      size: {
+        height: 300,
+        width: 400
+      },
+      data: {
+        columns: [
+          ["Amount per Agency"].concat(amountPerAgency)
+        ],
+        type: "bar"
+      },
+      axis: {
+        x: {
+          type: "categorized",
+          categories: labels,
+        },
+        y: {
+          tick: {
+            format: function(t){
+              // var format =  d3.format(",")
+              return "PHP " + helper.truncate(t, 2);
+            }
+          },
+        },
+        rotated: true
+      }
+    }
+  }
+)
+
+visualizations.create(
   'SARO Count Distribution by Agency',
   'saroCountAgency',
   'saro',
@@ -141,8 +194,7 @@ visualizations.create(
           show: true,
           tick: {
             format: function(t){
-              var format =  d3.format(",")
-              return "PHP " + format(t);
+              return "PHP " + helper.truncate(t, 2);
             }
           }
         }
@@ -191,8 +243,7 @@ visualizations.create(
           show: true,
           tick: {
             format: function(t){
-              var format =  d3.format(",")
-              return "PHP " + format(t);
+              return "PHP " + helper.truncate(t, 2);
             }
           }
         },
@@ -374,8 +425,7 @@ visualizations.create(
         y: {
           tick: {
             format: function(t){
-              var format =  d3.format(",")
-              return "PHP " + format(t);
+              return "PHP " + helper.truncate(t, 2);
             }
           },
         },
