@@ -38,19 +38,74 @@ visualizations.padMonths = function padMonths(a){
   return r;
 }
 
-// visualizations.create(
-//   'Project Count and Amount History',
-//   'projectHistory',
-//   'project',
-//   function(ctrl){
-    
-//     return {
-//       data: {
+visualizations.create(
+  'SARO Count and Amount History',
+  'saroHistory',
+  'saro',
+  function(ctrl){
+    var sarosByMonth = _.chain(ctrl.saros())
+      .filter(function(s){
+        return s["saro_date"];
+      })
+      .groupBy(function(s){
+        var date = new Date(s["saro_date"]);
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return months[date.getMonth()] + ", " + date.getFullYear();
+      })
+      .value()
+    var labels = _.keys(sarosByMonth);
+    var amountPerMonth = _.chain(sarosByMonth)
+      .values()
+      .map(function(g){
+        return g.reduce(function(acc, head){
+          return acc + head.amount;
+        }, 0)
+      })
+      .value();
+    var countPerMonth = _.chain(sarosByMonth)
+      .values()
+      .map(function(g){
+        return g.length;
+      })
+      .value();
 
-//       }
-//     }
-//   }
-// )
+    // console.log(labels, amountPerMonth);
+    return {
+      data: {
+        x: "x",
+        columns: [
+          ["x"].concat(labels),
+          ["Count per Month"].concat(countPerMonth),
+          ["Amount per Month"].concat(amountPerMonth)
+        ],
+        axes: {
+          "Count per Month": "y",
+          "Amount per Month": "y2"
+        },
+        types: {
+          "Count per Month": "bar"
+        }
+      },
+      axis: {
+        x: {
+          type: 'timeseries',
+          tick: {
+            format: '%b, %Y'
+          }
+        },
+        y2 : {
+          show: true,
+          tick: {
+            format: function(t){
+              var format =  d3.format(",")
+              return "PHP " + format(t);
+            }
+          }
+        }
+      }
+    }
+  }
+)
 
 visualizations.create(
   'Request Count and Amount History',

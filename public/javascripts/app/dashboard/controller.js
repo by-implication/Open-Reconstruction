@@ -4,6 +4,7 @@ dashboard.controller = function(){
 
   this.requests = m.prop({});
   this.projects = m.prop({});
+  this.saros = m.prop({});
 
   this.mostCommonDisasterType = m.prop(0);
   this.mostCommonProjectType = m.prop(0);
@@ -34,7 +35,19 @@ dashboard.controller = function(){
   });
 
   bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
-    console.log(r.data);
+    // console.log(r.data);
+    self.saros(r.data);
+    // var ctrl = self;
+    // var sarosByMonthYear = _.chain(ctrl.saros())
+    //   .filter(function(s){
+    //     return s["saro_date"];
+    //   })
+    //   .groupBy(function(s){
+    //     var date = new Date(s["saro_date"]);
+    //     return (date.getMonth() + 1) + ", " + date.getFullYear();
+    //   })
+    //   .value()
+    // console.log(sarosByMonthYear);
   })
 
   this.projectHistory = visualizations.library['requestHistory'](self);

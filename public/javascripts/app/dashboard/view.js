@@ -22,31 +22,36 @@ dashboard.view = function(ctrl){
                 return v(ctrl).type();
               })
               .map(function(g){
-                return m("ul.filters", g.map(function(v){
-                  return m("li.filter", [
-                    m("a", {href: "visualizations/"+v(ctrl).link(), config: m.route}, [
-                      v(ctrl).title()
+                return m("div", [
+                  m("h4", [
+                    g[0]().type()
+                  ]),
+                  m("ul.filters", g.map(function(v){
+                    return m("li.filter", [
+                      m("a", {href: "visualizations/"+v(ctrl).link(), config: m.route}, [
+                        v(ctrl).title()
+                      ])
                     ])
-                  ])
-                }))
+                  }))
+                ])
               })
-              .value(),
-            m("h4", [
-              "PMS Visualizations"
-            ]),
-            m("ul.filters", [
-              m("li", [
-                "Nothing here yet"
-              ]),
-            ]),
-            m("h4", [
-              "SARO Visualizations"
-            ]),
-            m("ul.filters", [
-              m("li", [
-                "Nothing here yet"
-              ]),
-            ]),
+              .value()
+            // m("h4", [
+            //   "PMS Visualizations"
+            // ]),
+            // m("ul.filters", [
+            //   m("li", [
+            //     "Nothing here yet"
+            //   ]),
+            // ]),
+            // m("h4", [
+            //   "SARO Visualizations"
+            // ]),
+            // m("ul.filters", [
+            //   m("li", [
+            //     "Nothing here yet"
+            //   ]),
+            // ]),
           ]),
           m(".columns.medium-9", [
             m("ul.medium-block-grid-2",
