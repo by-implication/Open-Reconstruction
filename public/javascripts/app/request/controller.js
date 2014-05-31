@@ -11,7 +11,7 @@ request.controller = function(){
     amount: m.prop()
   }
   var requestId = m.route.param('id');
-  this.requestTabs = new common.tabs.controller();
+  this.requestTabs = new common.stickyTabs.controller();
   this.requestTabs.tabs([
     {label: m.prop("Summary"), href: "#summary"},
     {label: m.prop("Assignments"), href: "#assignments"},
@@ -20,6 +20,7 @@ request.controller = function(){
     {label: m.prop("References"), href: "#references"},
     {label: m.prop("Activity"), href: "#activity"}
   ]);
+  this.requestTabs.currentSection("#summary");
 
   this.id = m.route.param("id");
 
@@ -454,6 +455,16 @@ request.controller = function(){
       poss = _.chain(idPosDict).map(function(v, k){
         return k;
       }).value();
+
+      var windowPos = $(window).scrollTop();
+      var closestPos = _.find(poss, function(p){
+        return p >= windowPos
+      });
+
+      if (self.requestTabs.currentSection() != idPosDict[closestPos]) {
+        self.requestTabs.currentSection(idPosDict[closestPos]);
+        m.redraw();
+      }
     }
     $(window).on("scroll", function(e){
       if (!scrollInit) {
@@ -461,6 +472,17 @@ request.controller = function(){
         scrollInit = true;
       } else {
         updateTabMenuPos()
+        if (isInit) {
+          var windowPos = $(window).scrollTop();
+          var closestPos = _.find(poss, function(p){
+            return p >= windowPos
+          });
+          if (self.requestTabs.currentSection() != idPosDict[closestPos]) {
+            self.requestTabs.currentSection(idPosDict[closestPos]);
+            m.redraw();
+            // console.log(self.requestTabs.currentSection());
+          }
+        };
         // if (isInit) {
         //   var windowPos = $(window).scrollTop();
         //   var closestPos = _.find(poss, function(p){
