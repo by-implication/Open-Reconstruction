@@ -35,7 +35,10 @@ object Application extends Controller {
   def populate() = Action { implicit request =>
     play.Logger.info("Populating database:")
     Req.createSampleRequests
-    play.Logger.info("* requests created")
+    play.Logger.info("* Requests created")
+    Project.createSampleProjects
+    play.Logger.info("* Projects created")
+    play.Logger.info("* Database population complete!")
     Redirect(routes.Application.index)
   }
 
