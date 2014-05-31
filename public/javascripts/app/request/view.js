@@ -466,16 +466,14 @@ request.view = function(ctrl){
                   ),
                   ctrl.app.currentUser() ? m("hr") : "",
                   ctrl.app.currentUser() ?
-                    m(".section", [
-                      m(".event", [
-                        m("form.details", {onsubmit: ctrl.submitComment}, [
-                          m("label", [
-                            "Comment",
-                            m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.comment)})
-                          ]),
-                          m("button", "Submit")
-                        ])
-                      ]),
+                    m(".event", [
+                      m("form.details", {onsubmit: ctrl.submitComment}, [
+                        m("label", [
+                          "Comment",
+                          m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.comment)})
+                        ]),
+                        m("button", "Submit")
+                      ])
                     ])
                   : ""
                 ])

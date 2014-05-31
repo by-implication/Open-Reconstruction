@@ -2,11 +2,12 @@ var visualizations = {
   library: {}
 };
 
-visualizations.create = function(title, id, chartSettingsCreator){
+visualizations.create = function(title, id, type, chartSettingsCreator){
   visualizations.library[id] = function(ctrl){
     var visCtrl = new visPanel.controller();
     visCtrl.title(title);
     visCtrl.link(id);
+    visCtrl.type(type);
     visCtrl.chartSettings = chartSettingsCreator(ctrl);
     return visCtrl;
   }
@@ -40,6 +41,7 @@ visualizations.padMonths = function padMonths(a){
 visualizations.create(
   'Request Count and Amount History',
   'requestHistory',
+  'request',
   function(ctrl){
     return function(){
     var labels = _.pluck(ctrl.byMonth(), 'yearMonth');
@@ -88,21 +90,33 @@ visualizations.create(
 )
 
 visualizations.create(
-  'Project Type Distribution',
+  'Request Type Distribution',
   'projectTypes',
+  'request',
   function(ctrl){
     return function(){
+      var data = _.chain(ctrl.byProjectType())
+        .sortBy(function(t){
+          return t.count * -1;
+        })
+        .value();
+      var counts = data.map(function(t){
+        return t.count;
+      });
+      var types = data.map(function(t){
+        return t.name;
+      });
       return {
         data: {
           columns: [
-            ["Number of Projects", 3, 15, 82, 1, 42, 23]
+            ["Number of Projects"].concat(counts)
           ],
           type: "bar",
         },
         axis: {
           x: {
             type: "categorized",
-            categories: ["Rivers", "Infrastructure", "Housing", "Roads", "Phi", "Mark"]
+            categories: types
           },
           rotated: true
         }
@@ -114,6 +128,7 @@ visualizations.create(
 visualizations.create(
   'Request History by Disaster Type', 
   'disasterHistory', 
+  'request',
   function(ctrl){
     return function(){
       var data = _.chain(ctrl.byDisasterType())
@@ -159,6 +174,7 @@ visualizations.create(
 visualizations.create(
   'Number of Requests per Unique Named Disaster',
   'topDisasters',
+  'request',
   function(ctrl){
     return function(){
       var data = _.chain(ctrl.byNamedDisaster())
@@ -205,8 +221,9 @@ visualizations.create(
 )
 
 visualizations.create(
-  'Project Amounts per Unique Named Disaster',
+  'Request Amounts per Unique Named Disaster',
   'topDisastersAmount',
+  'request',
   function(ctrl){
     return function(){
       var data = _.chain(ctrl.byNamedDisaster())
@@ -243,13 +260,15 @@ visualizations.create(
         axis: {
           x: {
             type: "categorized",
-            tick: {
-              rotate: 75
-            },
             categories: cats,
           },
           y: {
-            
+            tick: {
+              format: function(t){
+                var format =  d3.format(",")
+                return "PHP " + format(t);
+              }
+            },
           },
           rotated: true
         }

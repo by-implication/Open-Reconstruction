@@ -7,15 +7,12 @@ welcome.view = function(ctrl){
             m("h1", "Open Reconstruction"),
             m("p", [
               "Tracking post-disaster reconstruction spending. We need some copy up in here. Maybe a photo, too."
-            ]),
-            // m("a.button.micro", "Learn More"),
-            // m("a.button.micro", "See all requests"),
-            // m("a.button.micro", "Stats and Graphs")
+            ])
           ]),
-          m("div", {class: "columns medium-4 info"}, [
-            m("h2", "Info 1"),
-            m("h2", "Info 2")
-          ])
+          // m("div", {class: "columns medium-4 info"}, [
+          //   m("h2", "Info 1"),
+          //   m("h2", "Info 2")
+          // ])
         ])
       ]),
       m("section", [
@@ -28,11 +25,11 @@ welcome.view = function(ctrl){
           ])
         ]),
       ]),
-m("section.proposals", [
+    m("section.proposals", [
         m(".row", [
-          m(".columns.medium-12", [
-            m("h1", [m("small", "Project Proposals")]),
-          ]),
+          // m(".columns.medium-12", [
+          //   m("h1", [m("small", "Project Proposals")]),
+          // ]),
           m(".columns.medium-3", [
             m("i.fa.fa-file-text-o.fa-5x"),
             m(".val-group", [
@@ -91,10 +88,69 @@ m("section.proposals", [
           ])
         ])
       ]),
-      m("section.alt", [
-        m(".row", [
+      m("section.alt.agencies", [
+        m(".row.info", [
           m(".columns.medium-12", [
-            "content goes here. deferred to lower priority. see sketches for details"
+            m("h2",["One Stop Shop"]),
+            m("p", "Open Reconstruction streamlines the whole process from end to end, tracking a project throughout its lifecycle.")
+          ])
+        ]),
+        m(".row.info", [
+          m(".columns.medium-4", [
+            m("figure.small.one"),
+            m("h4", "Requests"),
+            m("p","Say good-bye to paper forms, endorsements, and documents, and hello to geotagged ACID transactions in a relational database.")
+          ]),
+          m(".columns.medium-4", [
+            m("figure.small.two"),
+            m("h4", "Approval"),
+            m("p","Why spam the rubber stamp when you can now spam the approve button? (Hey, it's faster, saves paper, and you still feel important! )")
+          ]),
+          m(".columns.medium-4", [
+            m("figure.small.three"),
+            m("h4", "Tracking"),
+            m("p","ermahgerd! Numbers are going up!!!! That means we've got some progress going on, right! We have CHARTS to prove it!")
+          ])
+        ]),
+      ]),
+      m("section.public", [
+        m(".row.info", [
+          m(".columns.medium-12", [
+            m("h2",["Transparency to the People"]),
+            m("p", [
+              "We have really cool graphs, charts, and lists that you can play with.",
+              m("br"),
+              "You can even get the raw data, if you want to dig deep and get your hands dirty. (coming soon)"]),
+            m("a.button.micro", "List of all requests"),
+            m("a.button.micro", "Stats, Graphs, and Visuals"),
+            m("a.button.micro", "Data dumps, CSVs, and APIs"),
+            m("figure.large")
+          ])
+        ]),
+        m(".row", [
+        ])
+      ]),
+      m("section.alt.etc", [
+        m(".row.info", [
+          m(".columns.medium-4", [
+            m("figure.small.one"),
+            m("h4", "About this site"),
+            m("p","Open Reconstruction is a project spearheaded by the World Bank and the DBM. It was built and designed by awesome people, By Implication."),
+            m("a.button.micro", "Learn more about this project")
+          ]),
+          m(".columns.medium-4", [
+            m("figure.small.one"),
+            m("h4", "Spread the word"),
+            m("p","Tweet us, Like Us, Follow Us! Tell your friends! Just like you, our sense of self-worth is determined by what other people think."),
+            m("a.button.micro", "Facebook Link"),
+            m("a.button.micro", "Twitter Link"),
+            m("a.button.micro", "That Other Thing No One Uses")
+          ]),
+          m(".columns.medium-4", [
+            m("figure.small.one"),
+            m("h4", "Open Source"),
+            m("p","This system proudly builds upon and contributes to several open-source projects, and is open source itself. Because the more times I say open, the better!"),
+            m("a.button.micro", "Link to GitHub project")
           ])
         ]),
       ]),
