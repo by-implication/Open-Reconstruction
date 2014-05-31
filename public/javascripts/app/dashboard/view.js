@@ -22,7 +22,7 @@ dashboard.view = function(ctrl){
       .value();
   }
   return app.template(ctrl.app, [
-    m("div#dashboard", [
+    m("div", [
       common.banner("Visualizations"),
       m("section", [
         m(".row",[
@@ -36,6 +36,7 @@ dashboard.view = function(ctrl){
       m("section.alt", [
         m(".row", [
           m(".columns.medium-3", [
+            "",
             listVis(),
             "" // wtf why does this fix the duplicaiton bug
           ]),
