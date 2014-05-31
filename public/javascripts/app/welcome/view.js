@@ -97,17 +97,23 @@ welcome.view = function(ctrl){
         ]),
         m(".row.info", [
           m(".columns.medium-4", [
-            m("figure.small.one"),
+            m("figure.small", [
+              m("img",{src:"/assets/images/landing/5.svg"})
+            ]),
             m("h4", "Requests"),
             m("p","Say good-bye to paper forms, endorsements, and documents, and hello to geotagged ACID transactions in a relational database.")
           ]),
           m(".columns.medium-4", [
-            m("figure.small.two"),
+            m("figure.small", [
+              m("img",{src:"/assets/images/landing/6.svg"}),
+            ]),
             m("h4", "Approval"),
             m("p","Why spam the rubber stamp when you can now spam the approve button? (Hey, it's faster, saves paper, and you still feel important! )")
           ]),
           m(".columns.medium-4", [
-            m("figure.small.three"),
+            m("figure.small", [
+              m("img",{src:"/assets/images/landing/7.svg"}),
+            ]),
             m("h4", "Tracking"),
             m("p","ermahgerd! Numbers are going up!!!! That means we've got some progress going on, right! We have CHARTS to prove it!")
           ])
@@ -133,13 +139,17 @@ welcome.view = function(ctrl){
       m("section.alt.etc", [
         m(".row.info", [
           m(".columns.medium-4", [
-            m("figure.small.one"),
+            m("figure.small", [
+              m("img",{src:"/assets/images/landing/8.svg"})
+            ]),
             m("h4", "About this site"),
             m("p","Open Reconstruction is a project spearheaded by the World Bank and the DBM. It was built and designed by awesome people, By Implication."),
             m("a.button.micro", "Learn more about this project")
           ]),
           m(".columns.medium-4", [
-            m("figure.small.one"),
+            m("figure.small", [
+              m("img",{src:"/assets/images/landing/9.svg"})
+            ]),
             m("h4", "Spread the word"),
             m("p","Tweet us, Like Us, Follow Us! Tell your friends! Just like you, our sense of self-worth is determined by what other people think."),
             m("a.button.micro", "Facebook Link"),
@@ -147,7 +157,9 @@ welcome.view = function(ctrl){
             m("a.button.micro", "That Other Thing No One Uses")
           ]),
           m(".columns.medium-4", [
-            m("figure.small.one"),
+            m("figure.small", [
+              m("img",{src:"/assets/images/landing/10.svg"})
+            ]),
             m("h4", "Open Source"),
             m("p","This system proudly builds upon and contributes to several open-source projects, and is open source itself. Because the more times I say open, the better!"),
             m("a.button.micro", "Link to GitHub project")
