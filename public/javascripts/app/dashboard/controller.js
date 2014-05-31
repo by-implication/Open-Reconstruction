@@ -14,6 +14,8 @@ dashboard.controller = function(){
   this.requests().byLevel = m.prop([]);
   this.requests().byNamedDisaster = m.prop();
 
+  this.projects().byMonth = m.prop([]);
+
   m.startComputation();
   bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
     self.mostCommonDisasterType(r.mostCommonDisasterType);
