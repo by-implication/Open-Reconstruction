@@ -48,8 +48,21 @@ object Req extends ReqGen {
   def createSampleRequests = DB.withConnection { implicit c =>
     SQL("""
       INSERT INTO reqs (req_description, project_type_id, req_scope, req_disaster_name, req_amount, author_id, req_location, req_disaster_date)
-      SELECT DISTINCT group_id, coalesce(project_type_id, (SELECT project_type_id FROM project_types WHERE project_type_name = 'Others')) as project_type_id, initcap(scope)::project_scope, disaster_name, 0 as amount, 1 as author_id, group_id as loc, NOW() FROM oparr_bohol
+      SELECT group_id,
+        CASE 
+          WHEN array_agg(DISTINCT project_type_id) = ARRAY[NULL]::INT[] THEN 
+            (SELECT project_type_id FROM project_types WHERE project_type_name = 'Others')
+          WHEN count(DISTINCT project_type) = 1 THEN (array_agg(project_type_id))[1]
+          ELSE (SELECT project_type_id from project_types WHERE project_type_name = 'Mixed')
+        END AS project_type_id,
+        CASE 
+          WHEN count(DISTINCT initcap(scope)) = 1 THEN (array_agg(initcap(scope)))[1]::project_scope
+          ELSE 'Others'
+         END as scope,
+        disaster_name, 0 as amount, 1 as author_id, group_id as loc, NOW() 
+      FROM oparr_bohol
       LEFT JOIN project_types on initcap(project_type_name) = initcap(project_type)
+      GROUP BY group_id, disaster_name
     """).execute()
   }
 
