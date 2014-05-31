@@ -40,8 +40,8 @@ visualizations.padMonths = function padMonths(a){
 }
 
 visualizations.create(
-  'SARO Distribution by Agency',
-  'saroAgency',
+  'SARO Count Distribution by Agency',
+  'saroCountAgency',
   'saro',
   function(ctrl){
     var sarosByAgency = _.chain(ctrl.saros())
@@ -63,6 +63,7 @@ visualizations.create(
     return {
       size: {
         height: 300,
+        width: 400
       },
       data: {
         columns: [
