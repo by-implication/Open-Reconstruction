@@ -31,7 +31,7 @@ welcome.view = function(ctrl){
           //   m("h1", [m("small", "Project Proposals")]),
           // ]),
           m(".columns.medium-3", [
-            m("i.fa.fa-file-text-o.fa-5x"),
+            m("img",{src:"/assets/images/landing/1.svg"}),
             m(".val-group", [
               m("h2", ctrl.byLevel()[0].count),
               m(".caption", "Proposals Submitted"),
@@ -42,7 +42,7 @@ welcome.view = function(ctrl){
             ]),
           ]),
           m(".columns.medium-3", [
-            m("i.fa.fa-search.fa-5x"),
+            m("img",{src:"/assets/images/landing/2.svg"}),
             m(".val-group", [
               m("h2", [ctrl.byLevel()[1].count+ " ",
                 m("span", "(n%)")
@@ -58,7 +58,7 @@ welcome.view = function(ctrl){
             ]),
           ]),
           m(".columns.medium-3", [
-            m("i.fa.fa-check-circle-o.fa-5x"),
+            m("img",{src:"/assets/images/landing/3.svg"}),
             m(".val-group", [
               m("h2", [ctrl.byLevel()[3].count+ " ",
                 m("span", "(n%)")
@@ -74,7 +74,7 @@ welcome.view = function(ctrl){
             ]),
           ]),
           m(".columns.medium-3", [
-            m("i.fa.fa-money.fa-5x"),
+            m("img",{src:"/assets/images/landing/4.svg"}),
             m(".val-group", [
               m("h2", [ctrl.byLevel()[4].count + " ",
                 m("span", "(" + helper.percent(ctrl.percentApproved()) + ")")
