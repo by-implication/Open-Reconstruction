@@ -5,6 +5,7 @@ visualization.controller = function(){
 
   this.requests = m.prop({});
   this.projects = m.prop({});
+  this.saros = m.prop({});
 
   this.mostCommonDisasterType = m.prop(0);
   this.mostCommonProjectType = m.prop(0);
@@ -29,6 +30,14 @@ visualization.controller = function(){
     self.requests().byNamedDisaster(r.byNamedDisaster);
     m.endComputation();
   });
+
+  bi.ajax(routes.controllers.Visualizations.getData("EPLC")).then(function (r){
+    console.log(r.data);
+  });
+
+  bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
+    self.saros(r.data);
+  })
 
   this.vis = _.extend({}, visualizations.library[this.id](self));
   this.vis.size().width = undefined;
