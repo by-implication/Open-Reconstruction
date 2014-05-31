@@ -40,7 +40,7 @@ visualization.controller = function(){
   })
 
   this.vis = _.extend({}, visualizations.library[this.id](self));
-  this.vis.size().width = undefined;
-  this.vis.size().height = 300;
+  // this.vis.size().width = undefined;
+  // this.vis.size().height = 300;
   this.vis.isFullView(true);
 }

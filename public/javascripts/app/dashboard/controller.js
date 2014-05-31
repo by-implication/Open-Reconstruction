@@ -36,6 +36,7 @@ dashboard.controller = function(){
 
   bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
     self.saros(r.data);
+    console.log(r.data);
   })
 
   this.projectHistory = visualizations.library['requestHistory'](self);

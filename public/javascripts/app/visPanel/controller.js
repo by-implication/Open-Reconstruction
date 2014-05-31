@@ -28,6 +28,17 @@ visPanel.controller = function(){
   this.config = function(elem, isInitialized){
     if(isInitialized) return;
     var chartSettings = self.chartSettings();
+
+    if (chartSettings.size){
+      self.size(chartSettings.size);
+    }
+
+    if (self.isFullView()){
+      self.size({
+        height: 300,
+        width: undefined
+      })
+    }
     var chart = c3.generate({
       data: chartSettings.data,
       axis: chartSettings.axis,

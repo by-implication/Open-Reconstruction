@@ -27,6 +27,7 @@ visualizations.nextYearMonth = function nextYearMonth(yearMonth){
 }
 
 visualizations.padMonths = function padMonths(a){
+  console.log(a);
   var r = [];
   for(var ym = a[0].yearMonth; a.length; ym = visualizations.nextYearMonth(ym)){
     var nextElem = {yearMonth: ym, amount: 0, count: 0};
@@ -37,6 +38,48 @@ visualizations.padMonths = function padMonths(a){
   }
   return r;
 }
+
+visualizations.create(
+  'SARO Distribution by Agency',
+  'saroAgency',
+  'saro',
+  function(ctrl){
+    var sarosByAgency = _.chain(ctrl.saros())
+      .filter(function(s){
+        return s["agency"];
+      })
+      .groupBy(function(s){
+        return s["agency"];
+      })
+      .value();
+    var labels = _.keys(sarosByAgency);
+    var countPerAgency = _.chain(sarosByAgency)
+      .values()
+      .map(function(g){
+        return g.length;
+      })
+      .value()
+
+    return {
+      size: {
+        height: 300,
+      },
+      data: {
+        columns: [
+          ["Count per Agency"].concat(countPerAgency)
+        ],
+        type: "bar"
+      },
+      axis: {
+        x: {
+          type: "categorized",
+          categories: labels,
+        },
+        rotated: true
+      }
+    }
+  }
+)
 
 visualizations.create(
   'SARO Count and Amount History',
