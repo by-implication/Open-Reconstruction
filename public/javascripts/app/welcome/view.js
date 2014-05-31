@@ -6,7 +6,7 @@ welcome.view = function(ctrl){
           m("div", {class: "columns medium-8"}, [
             m("h1", "Open Reconstruction"),
             m("p", [
-              "Tracking post-disaster reconstruction spending. We need some copy up in here. Maybe a photo, too."
+              "Tracking post-disaster reconstruction spending. Rebuilding a better Philippines, for all to see."
             ])
           ]),
           // m("div", {class: "columns medium-4 info"}, [
@@ -101,21 +101,21 @@ welcome.view = function(ctrl){
               m("img",{src:"/assets/images/landing/5.svg"})
             ]),
             m("h4", "Requests"),
-            m("p","Say good-bye to paper forms, endorsements, and documents, and hello to geotagged ACID transactions in a relational database.")
+            m("p","Physical forms, endorsements and documents have been replaced by an organized, efficient electronic database.")
           ]),
           m(".columns.medium-4", [
             m("figure.small", [
               m("img",{src:"/assets/images/landing/6.svg"}),
             ]),
             m("h4", "Approval"),
-            m("p","Why spam the rubber stamp when you can now spam the approve button? (Hey, it's faster, saves paper, and you still feel important! )")
+            m("p","Project approval now occurs digitally, without the need for physical mailing time or the risk of document loss.")
           ]),
           m(".columns.medium-4", [
             m("figure.small", [
               m("img",{src:"/assets/images/landing/7.svg"}),
             ]),
             m("h4", "Tracking"),
-            m("p","ermahgerd! Numbers are going up!!!! That means we've got some progress going on, right! We have CHARTS to prove it!")
+            m("p","Agencies and the public can keep track of requests and projects' overall progress.")
           ])
         ]),
       ]),
@@ -143,7 +143,7 @@ welcome.view = function(ctrl){
               m("img",{src:"/assets/images/landing/8.svg"})
             ]),
             m("h4", "About this site"),
-            m("p","Open Reconstruction is a project spearheaded by the World Bank and the DBM. It was built and designed by awesome people, By Implication."),
+            m("p","Open Reconstruction is a project spearheaded by the World Bank and the DBM, with the support of several agencies. It was built and designed by a team from By Implication."),
             m("a.button.micro", "Learn more about this project")
           ]),
           m(".columns.medium-4", [
@@ -151,17 +151,16 @@ welcome.view = function(ctrl){
               m("img",{src:"/assets/images/landing/9.svg"})
             ]),
             m("h4", "Spread the word"),
-            m("p","Tweet us, Like Us, Follow Us! Tell your friends! Just like you, our sense of self-worth is determined by what other people think."),
+            m("p","Tweet us, Like us, Follow us! Spread the word, and let us know what else you'd like to see! You can also comment on individual charts and projects, and embedding is coming soon."),
             m("a.button.micro", "Facebook Link"),
-            m("a.button.micro", "Twitter Link"),
-            m("a.button.micro", "That Other Thing No One Uses")
+            m("a.button.micro", "Twitter Link")
           ]),
           m(".columns.medium-4", [
             m("figure.small", [
               m("img",{src:"/assets/images/landing/10.svg"})
             ]),
             m("h4", "Open Source"),
-            m("p","This system proudly builds upon and contributes to several open-source projects, and is open source itself. Because the more times I say open, the better!"),
+            m("p","This system proudly builds upon and contributes to several open-source projects, and is open source itself. Check out the code, submit issues, or even contribute patches!"),
             m("a.button.micro", "Link to GitHub project")
           ])
         ]),
