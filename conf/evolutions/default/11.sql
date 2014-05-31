@@ -184,7 +184,21 @@ CREATE TABLE dpwh_eplc (
 
 COPY dpwh_eplc FROM '140531 EPLC - Consolidated bohol yolanda - 2013-2014 dpwh.csv' CSV ENCODING 'ISO_8859_9';;
 
+CREATE TABLE saro_bureau_g (
+    agency text,
+    saro_number text,
+    saro_date timestamp,
+    year integer,
+    amount decimal,
+    project_quantity integer,
+    remarks text
+);;
+
+COPY saro_bureau_g FROM '140531 Clean_SARO_BureauG.csv' CSV ENCODING 'ISO_8859_9';;
+
 # --- !Downs
+
+DROP TABLE IF EXISTS saro_bureau_g;;
 
 DROP TABLE IF EXISTS dpwh_eplc;;
 

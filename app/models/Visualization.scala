@@ -2,7 +2,7 @@ package recon.models
 
 import anorm._
 import anorm.SqlParser._
-import java.sql.Timestamp
+import java.sql.{Date, Timestamp}
 import play.api.db._
 import play.api.libs.json._
 import play.api.Play.current
@@ -12,14 +12,36 @@ object Visualization {
 
   def getData(v: String) = { v match {
     case "EPLC" => Some(Json.toJson(getEPLCData))
+    case "DBMBureauG" => Some(Json.toJson(getDBMBureauGData))
     case _ => None
   }}
 
+  def getDBMBureauGData = DB.withConnection { implicit c =>
+    SQL("SELECT * FROM saro_bureau_g").list(
+      get[Option[String]]("agency") ~
+      get[Option[String]]("saro_number") ~
+      get[Option[Timestamp]]("saro_date") ~
+      get[Option[Int]]("year") ~
+      get[Option[java.math.BigDecimal]]("amount") ~
+      get[Option[Int]]("project_quantity") ~
+      get[Option[String]]("remarks") map {
+        case agency~saro_number~date~year~amount~quantity~remarks => {
+          Json.obj(
+            "agency" -> agency,
+            "saro_number" -> saro_number,
+            "saro_date" -> date,
+            "year" -> year,
+            "amount" -> amount.map(v => BigDecimal(v)),
+            "project_quantity" -> quantity,
+            "remarks" -> remarks
+          )
+        }
+      }
+    )
+  }
 
   private def getEPLCData = DB.withConnection { implicit c =>
-    SQL("""
-      SELECT * FROM dpwh_eplc
-    """).list(
+    SQL("SELECT * FROM dpwh_eplc").list(
       get[Option[String]]("project_id") ~
       get[Option[String]]("project_description") ~
       get[Option[String]]("contract_id") ~
@@ -28,18 +50,18 @@ object Visualization {
       get[Option[java.math.BigDecimal]]("project_cost") ~
       get[Option[String]]("contract_start_date") ~
       get[Option[String]]("contract_end_date") ~
-      get[Option[Long]]("contract_duration") ~
-      get[Option[Long]]("gaa_id") ~
-      get[Option[Long]]("budget_year") ~
+      get[Option[Int]]("contract_duration") ~
+      get[Option[Int]]("gaa_id") ~
+      get[Option[Int]]("budget_year") ~
       get[Option[String]]("fs_type") ~
       get[Option[String]]("fs_tname") ~
       get[Option[String]]("fund_code") ~
       get[Option[String]]("inst_name") ~
       get[Option[String]]("inst_code") ~
       get[Option[String]]("loan_number") ~
-      get[Option[Long]]("loan_package") ~
-      get[Option[Long]]("loan_sub_package") ~
-      get[Option[Long]]("pms_inauguration") ~
+      get[Option[Int]]("loan_package") ~
+      get[Option[Int]]("loan_sub_package") ~
+      get[Option[Int]]("pms_inauguration") ~
       get[Option[java.math.BigDecimal]]("const_budget") ~
       get[Option[String]]("project_location") ~
       get[Option[String]]("scope") ~
@@ -56,16 +78,16 @@ object Visualization {
       get[Option[Timestamp]]("notice_to_proceed") ~
       get[Option[java.math.BigDecimal]]("project_abc") ~
       get[Option[java.math.BigDecimal]]("bid_price") ~
-      get[Option[Long]]("number_of_bidder") ~
-      get[Option[Long]]("actual_start_year") ~
-      get[Option[Long]]("actual_start_month") ~
+      get[Option[Int]]("number_of_bidder") ~
+      get[Option[Int]]("actual_start_year") ~
+      get[Option[Int]]("actual_start_month") ~
       get[Option[java.math.BigDecimal]]("actual_percentage_started") ~
-      get[Option[Long]]("actual_completion_year") ~
-      get[Option[Long]]("actual_completion_month") ~
+      get[Option[Int]]("actual_completion_year") ~
+      get[Option[Int]]("actual_completion_month") ~
       get[Option[java.math.BigDecimal]]("actual_percentage_completed") ~
       get[Option[java.math.BigDecimal]]("completed_amount") ~
       get[Option[String]]("implementation_mode") ~
-      get[Option[Long]]("irr_pk") ~
+      get[Option[Int]]("irr_pk") ~
       get[Option[String]]("irr_description") ~
       get[Option[String]]("activity_1") ~
       get[Option[Timestamp]]("activity_1_start_date") ~
@@ -158,7 +180,7 @@ object Visualization {
       get[Option[Timestamp]]("activity_30_start_date") ~
       get[Option[Timestamp]]("activity_30_end_date") ~
       get[Option[String]]("project_type") ~
-      get[Option[Long]]("months_of_completion") ~
+      get[Option[Int]]("months_of_completion") ~
       get[Option[String]]("disaster") ~
       get[Option[String]]("psgc") ~
       get[Option[String]]("SAA_number") ~
