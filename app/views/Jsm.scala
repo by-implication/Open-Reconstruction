@@ -40,7 +40,7 @@ object Jsm {
     val root = new File(base, src)
     val sources = listSources(root)
     sources.map { source =>
-      source.getPath.replaceFirst(base+"/", "")
+      source.getPath.replace("\\", "/").replaceFirst(base+"/", "")
     }
   }
 }
