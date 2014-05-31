@@ -1,6 +1,6 @@
 welcome.view = function(ctrl){
   return app.template(ctrl.app, [
-    m("div#view.welcome", [
+    m("div#welcome", [
       m("section.banner", [
         m("div", {class:"row"}, [
           m("div", {class: "columns medium-8"}, [
@@ -27,16 +27,13 @@ welcome.view = function(ctrl){
       ]),
     m("section.proposals", [
         m(".row", [
-          // m(".columns.medium-12", [
-          //   m("h1", [m("small", "Project Proposals")]),
-          // ]),
           m(".columns.medium-3", [
             m("img",{src:"/assets/images/landing/1.svg"}),
             m(".val-group", [
               m("h2", ctrl.byLevel()[0].count),
               m(".caption", "Proposals Submitted"),
             ]),
-            m(".val-group", [
+            m(".val-group#wut", [
               m("h2", helper.truncate(ctrl.byLevel()[0].amount)),
               m(".caption", "Total Cost (PHP)")
             ]),

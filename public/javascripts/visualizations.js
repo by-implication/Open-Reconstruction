@@ -27,6 +27,7 @@ visualizations.nextYearMonth = function nextYearMonth(yearMonth){
 }
 
 visualizations.padMonths = function padMonths(a){
+  console.log(a);
   var r = [];
   for(var ym = a[0].yearMonth; a.length; ym = visualizations.nextYearMonth(ym)){
     var nextElem = {yearMonth: ym, amount: 0, count: 0};
@@ -38,19 +39,169 @@ visualizations.padMonths = function padMonths(a){
   return r;
 }
 
-// visualizations.create(
-//   'Project Count and Amount History',
-//   'projectHistory',
-//   'project',
-//   function(ctrl){
-    
-//     return {
-//       data: {
+visualizations.create(
+  'SARO Amount Distribution by Agency',
+  'saroAmountAgency',
+  'saro',
+  function(ctrl){
+    var sarosByAgency = _.chain(ctrl.saros())
+      .filter(function(s){
+        return s["agency"];
+      })
+      .groupBy(function(s){
+        return s["agency"];
+      })
+      .value();
+    var labels = _.keys(sarosByAgency);
+    var amountPerAgency = _.chain(sarosByAgency)
+      .values()
+      .map(function(g){
+        return g.reduce(function(acc, head){
+          return acc + head.amount;
+        }, 0)
+      })
+      .value()
 
-//       }
-//     }
-//   }
-// )
+    return {
+      size: {
+        height: 300,
+        width: 400
+      },
+      data: {
+        columns: [
+          ["Amount per Agency"].concat(amountPerAgency)
+        ],
+        type: "bar"
+      },
+      axis: {
+        x: {
+          type: "categorized",
+          categories: labels,
+        },
+        y: {
+          tick: {
+            format: function(t){
+              // var format =  d3.format(",")
+              return "PHP " + helper.truncate(t, 2);
+            }
+          },
+        },
+        rotated: true
+      }
+    }
+  }
+)
+
+visualizations.create(
+  'SARO Count Distribution by Agency',
+  'saroCountAgency',
+  'saro',
+  function(ctrl){
+    var sarosByAgency = _.chain(ctrl.saros())
+      .filter(function(s){
+        return s["agency"];
+      })
+      .groupBy(function(s){
+        return s["agency"];
+      })
+      .value();
+    var labels = _.keys(sarosByAgency);
+    var countPerAgency = _.chain(sarosByAgency)
+      .values()
+      .map(function(g){
+        return g.length;
+      })
+      .value()
+
+    return {
+      size: {
+        height: 300,
+        width: 400
+      },
+      data: {
+        columns: [
+          ["Count per Agency"].concat(countPerAgency)
+        ],
+        type: "bar"
+      },
+      axis: {
+        x: {
+          type: "categorized",
+          categories: labels,
+        },
+        rotated: true
+      }
+    }
+  }
+)
+
+visualizations.create(
+  'SARO Count and Amount History',
+  'saroHistory',
+  'saro',
+  function(ctrl){
+    var sarosByMonth = _.chain(ctrl.saros())
+      .filter(function(s){
+        return s["saro_date"];
+      })
+      .groupBy(function(s){
+        var date = new Date(s["saro_date"]);
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return months[date.getMonth()] + ", " + date.getFullYear();
+      })
+      .value()
+    var labels = _.keys(sarosByMonth);
+    var amountPerMonth = _.chain(sarosByMonth)
+      .values()
+      .map(function(g){
+        return g.reduce(function(acc, head){
+          return acc + head.amount;
+        }, 0)
+      })
+      .value();
+    var countPerMonth = _.chain(sarosByMonth)
+      .values()
+      .map(function(g){
+        return g.length;
+      })
+      .value();
+
+    // console.log(labels, amountPerMonth);
+    return {
+      data: {
+        x: "x",
+        columns: [
+          ["x"].concat(labels),
+          ["Count per Month"].concat(countPerMonth),
+          ["Amount per Month"].concat(amountPerMonth)
+        ],
+        axes: {
+          "Count per Month": "y",
+          "Amount per Month": "y2"
+        },
+        types: {
+          "Count per Month": "bar"
+        }
+      },
+      axis: {
+        x: {
+          type: 'timeseries',
+          tick: {
+            format: '%b, %Y'
+          }
+        },
+        y2 : {
+          show: true,
+          tick: {
+            format: function(t){
+              return "PHP " + helper.truncate(t, 2);
+            }
+          }
+        }
+      }
+    }
+  }
+)
 
 visualizations.create(
   'Request Count and Amount History',
@@ -92,8 +243,7 @@ visualizations.create(
           show: true,
           tick: {
             format: function(t){
-              var format =  d3.format(",")
-              return "PHP " + format(t);
+              return "PHP " + helper.truncate(t, 2);
             }
           }
         },
@@ -275,8 +425,7 @@ visualizations.create(
         y: {
           tick: {
             format: function(t){
-              var format =  d3.format(",")
-              return "PHP " + format(t);
+              return "PHP " + helper.truncate(t, 2);
             }
           },
         },
