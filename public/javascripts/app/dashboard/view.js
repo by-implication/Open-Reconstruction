@@ -1,6 +1,27 @@
 dashboard.view = function(ctrl){
+  var listVis = function(){
+    return _.chain(visualizations.library)
+      .groupBy(function(v){
+        return v(ctrl).type();
+      })
+      .map(function(g){
+        return m(".filter-group", [
+          m("h4", [
+            g[0]().type()
+          ]),
+          m("ul.filters", g.map(function(v){
+            return m("li.filter", [
+              m("a", {href: "visualizations/"+v(ctrl).link(), config: m.route}, [
+                v(ctrl).title()
+              ])
+            ])
+          }))
+        ])
+      })
+      .value();
+  }
   return app.template(ctrl.app, [
-    m("div#view.dashboard", [
+    m("div#dashboard", [
       common.banner("Visualizations"),
       m("section", [
         m(".row",[
@@ -17,41 +38,8 @@ dashboard.view = function(ctrl){
             m("h4", [
               "Request Visualizations"
             ]),
-            _.chain(visualizations.library)
-              .groupBy(function(v){
-                return v(ctrl).type();
-              })
-              .map(function(g){
-                return m("div", [
-                  m("h4", [
-                    g[0]().type()
-                  ]),
-                  m("ul.filters", g.map(function(v){
-                    return m("li.filter", [
-                      m("a", {href: "visualizations/"+v(ctrl).link(), config: m.route}, [
-                        v(ctrl).title()
-                      ])
-                    ])
-                  }))
-                ])
-              })
-              .value()
-            // m("h4", [
-            //   "PMS Visualizations"
-            // ]),
-            // m("ul.filters", [
-            //   m("li", [
-            //     "Nothing here yet"
-            //   ]),
-            // ]),
-            // m("h4", [
-            //   "SARO Visualizations"
-            // ]),
-            // m("ul.filters", [
-            //   m("li", [
-            //     "Nothing here yet"
-            //   ]),
-            // ]),
+            listVis(),
+            "" // wtf why does this fix the duplicaiton bug
           ]),
           m(".columns.medium-9", [
             m("ul.medium-block-grid-2",
