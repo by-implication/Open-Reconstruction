@@ -1,7 +1,7 @@
 
 ////////////////////////////////////////////////////
 // routes
-
+m.route.mode = "pathname";
 m.route(document, window.location.pathname == "/" ? "/welcome" : window.location.pathname, {
   "/requests": requestListing,
   "/requests/:tab/:page/:projectTypeId": requestListing,
@@ -26,5 +26,3 @@ m.route(document, window.location.pathname == "/" ? "/welcome" : window.location
   "/gov-units/:id/edit": govUnitEdit,
   "/login": login
 });
-
-m.route.mode = "pathname";
