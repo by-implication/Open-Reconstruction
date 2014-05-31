@@ -42,50 +42,51 @@ visualizations.create(
   'Request Count and Amount History',
   'requestHistory',
   'request',
-  function(ctrl){
+  function(ctrl2){
     return function(){
-    var labels = _.pluck(ctrl.byMonth(), 'yearMonth');
-    var amountPerMonth = ctrl.byMonth().map(function (e){ return e.amount / 1; });
-    var countPerMonth = ctrl.byMonth().map(function (e){ return e.count; });
+      var ctrl = ctrl2.requests();
+      var labels = _.pluck(ctrl.byMonth(), 'yearMonth');
+      var amountPerMonth = ctrl.byMonth().map(function (e){ return e.amount / 1; });
+      var countPerMonth = ctrl.byMonth().map(function (e){ return e.count; });
 
-    return {
-      data: {
-        x: "x",
-        columns: [
-          ["x"].concat(labels),
-          ["Count per Month"].concat(countPerMonth),
-          ["Amount per Month"].concat(amountPerMonth)
-        ],
-        axes: {
-          "Count per Month": 'y',
-          "Amount per Month": 'y2'
+      return {
+        data: {
+          x: "x",
+          columns: [
+            ["x"].concat(labels),
+            ["Count per Month"].concat(countPerMonth),
+            ["Amount per Month"].concat(amountPerMonth)
+          ],
+          axes: {
+            "Count per Month": 'y',
+            "Amount per Month": 'y2'
+          },
+          types: {
+            "Count per Month": 'bar',
+          }
         },
-        types: {
-          "Count per Month": 'bar',
+        axis : {
+          x : {
+            type : 'timeseries',
+            tick: {
+              format: '%b, %Y',
+              culling: {
+                max: 3
+              }
+            }
+          },
+          y2 : {
+            show: true,
+            tick: {
+              format: function(t){
+                var format =  d3.format(",")
+                return "PHP " + format(t);
+              }
+            }
+          },
         }
-      },
-      axis : {
-        x : {
-          type : 'timeseries',
-          tick: {
-            format: '%b, %Y',
-            culling: {
-              max: 3
-            }
-          }
-        },
-        y2 : {
-          show: true,
-          tick: {
-            format: function(t){
-              var format =  d3.format(",")
-              return "PHP " + format(t);
-            }
-          }
-        },
       }
     }
-  }
   }
 )
 
@@ -93,8 +94,9 @@ visualizations.create(
   'Request Type Distribution',
   'projectTypes',
   'request',
-  function(ctrl){
+  function(ctrl2){
     return function(){
+      var ctrl = ctrl2.requests();
       var data = _.chain(ctrl.byProjectType())
         .sortBy(function(t){
           return t.count * -1;
@@ -129,8 +131,9 @@ visualizations.create(
   'Request History by Disaster Type', 
   'disasterHistory', 
   'request',
-  function(ctrl){
+  function(ctrl2){
     return function(){
+      var ctrl = ctrl2.requests();
       var data = _.chain(ctrl.byDisasterType())
         .groupBy(function(p){
           return p.disasterTypeId;
@@ -175,8 +178,9 @@ visualizations.create(
   'Number of Requests per Unique Named Disaster',
   'topDisasters',
   'request',
-  function(ctrl){
+  function(ctrl2){
     return function(){
+      var ctrl = ctrl2.requests();
       var data = _.chain(ctrl.byNamedDisaster())
         .sortBy(function(d){
           return d.count * -1;
@@ -224,8 +228,9 @@ visualizations.create(
   'Request Amounts per Unique Named Disaster',
   'topDisastersAmount',
   'request',
-  function(ctrl){
+  function(ctrl2){
     return function(){
+      var ctrl = ctrl2.requests();
       var data = _.chain(ctrl.byNamedDisaster())
         .sortBy(function(d){
           return d.amount * -1;
