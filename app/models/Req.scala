@@ -59,7 +59,13 @@ object Req extends ReqGen {
           WHEN count(DISTINCT initcap(scope)) = 1 THEN (array_agg(initcap(scope)))[1]::project_scope
           ELSE 'Others'
          END as scope,
-        disaster_name, 0 as amount, 1 as author_id, group_id as loc, NOW() 
+        disaster_name, 
+        SUM( CASE
+          WHEN oparr_bohol.amount = '-' THEN 0
+          ELSE oparr_bohol.amount::numeric(12,2)
+          END
+        ) as amount,
+        1 as author_id, group_id as loc, NOW() 
       FROM oparr_bohol
       LEFT JOIN project_types on initcap(project_type_name) = initcap(project_type)
       GROUP BY group_id, disaster_name
