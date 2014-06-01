@@ -43,14 +43,23 @@ visualizations.create(
   'projectCountHistory',
   'project',
   function(ctrl){
-    var projectsByMonth = _.chain(ctrl.projects())
+    var proto = 
+      ctrl.projects()
       .filter(function(p){
         return p["contract_start_date"];
       })
-      .groupBy(function(p){
-        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      .map(function(p){
+        var proj = p;
         var date = new Date(p["contract_start_date"]);
-        return months[date.getMonth()] + ", " + date.getFullYear();
+        var month = date.getMonth() + 1;
+        var paddedMonth = ("0" + month).slice (-2); 
+        proj.yearMonth = date.getFullYear() + "-" + paddedMonth;
+        return proj;
+      });
+
+    var projectsByMonth = _.chain(proto)
+      .groupBy(function(p){
+        return p.yearMonth;
       })
       .value();
     var labels = _.keys(projectsByMonth);

@@ -33,25 +33,20 @@ dashboard.controller = function(){
   bi.ajax(routes.controllers.Visualizations.getData("EPLC")).then(function (r){
     self.projects(r.data);
     // var ctrl = self;
-
-    // var projectsByMonth = _.chain(ctrl.projects())
+    // var proto = ctrl.projects()
     //   .filter(function(p){
     //     return p["contract_start_date"];
     //   })
-    //   .groupBy(function(p){
-    //     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    //   .map(function(p){
+    //     var proj = p;
     //     var date = new Date(p["contract_start_date"]);
-    //     return months[date.getMonth()] + ", " + date.getFullYear();
+    //     var month = date.getMonth() + 1;
+    //     var paddedMonth = ("0" + month).slice (-2); 
+    //     proj.yearMonth = date.getFullYear() + "-" + paddedMonth;
+    //     return proj;
     //   })
-    //   .value();
-    // var labels = _.keys(projectsByMonth);
-    // var countPerMonth = _.chain(projectsByMonth)
-    //   .values()
-    //   .map(function(g){
-    //     return g.length;
-    //   })
-    //   .value();
-    // console.log(labels, countPerMonth);
+    // console.log(visualizations.padMonths(_.take(proto, 10)));
+
   });
 
   bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
