@@ -57,9 +57,11 @@ welcome.view = function(ctrl){
               ])
             ]),
           ]),
-          m(".columns.medium-3", [
+          m("a.columns.medium-3", {
+            href:"/requests"
+          }, [
             m("i.fa.fa-paste.fa-4x"),
-            m("h2.title", "Proposals Submitted"),
+            m("h2.title", "Requested Projects"),
             m("table.val-group", [
               m("tr", [
                 m("td", [
@@ -67,8 +69,8 @@ welcome.view = function(ctrl){
                 ]),
                 m("td", [
                   m("h2", [
-                    ctrl.yolandaProposalsQuantity(),
-                    m("h6", "PHP " + helper.truncate(ctrl.yolandaProposalsAmount(), 2))
+                    ctrl.yolandaProjectsQuantity(),
+                    m("h6", "PHP " + helper.truncate(ctrl.yolandaProjectsAmount(), 2) + "")
                   ]),
                 ])
               ])
@@ -80,14 +82,16 @@ welcome.view = function(ctrl){
                 ]),
                 m("td", [
                   m("h2", [
-                    ctrl.boholProposalsQuantity(),
-                    m("h6", "PHP " + helper.truncate(ctrl.boholProposalsAmount(), 2) + "")
+                    ctrl.boholProjectsQuantity(),
+                    m("h6", "PHP " + helper.truncate(ctrl.boholProjectsAmount(), 2) + "")
                   ]),
                 ])
               ])
             ])
           ]),
-          m(".columns.medium-3", [
+          m("a.columns.medium-3", {
+            href:"/dashboard"
+          }, [
             m("i.fa.fa-money.fa-4x"),
             m("h2.title", "Budget Allocated"),
             m("table.val-group", [
@@ -119,7 +123,9 @@ welcome.view = function(ctrl){
               ])
             ]),
           ]),
-          m(".columns.medium-3", [
+          m("a.columns.medium-3", {
+            href:"/dashboard"
+          }, [
             m("i.fa.fa-wrench.fa-4x"),
             m("h2.title", "Ongoing Projects"),
             m("table.val-group", [
@@ -129,8 +135,8 @@ welcome.view = function(ctrl){
                 ]),
                 m("td", [
                   m("h2", [
-                    ctrl.yolandaProjectsQuantity(),
-                    m("h6", "PHP " + helper.truncate(ctrl.yolandaProjectsAmount(), 2) + "")
+                    ctrl.yolandaEPLCProjectsQuantity(),
+                    m("h6", "PHP " + helper.truncate(ctrl.yolandaEPLCProjectsAmount(), 2) + "")
                   ]),
                 ])
               ])
@@ -142,13 +148,26 @@ welcome.view = function(ctrl){
                 ]),
                 m("td", [
                   m("h2", [
-                    ctrl.boholProjectsQuantity(),
-                    m("h6", "PHP " + helper.truncate(ctrl.boholProjectsAmount(), 2) + "")
+                    ctrl.boholEPLCProjectsQuantity(),
+                    m("h6", "PHP " + helper.truncate(ctrl.boholEPLCProjectsAmount(), 2) + "")
                   ]),
                 ])
               ])
             ])
           ])
+        ]),
+        m(".row.tickets",[
+          m("span", "eTickets tracked in System"),
+          " — ",
+          m("strong", 
+            ctrl.yolandaProposalsQuantity() + ctrl.boholEPLCProjectsQuantity()
+          ),
+          " (total)  /  PHP ",
+          m("strong",
+            helper.truncate(( ctrl.yolandaProposalsAmount() + ctrl.boholProjectsAmount() ), 2) 
+          ),
+          " "
+
         ])
       ]),
 //    m("section.proposals", [

@@ -8,7 +8,7 @@ welcome.controller = function(){
   this.byMonth = m.prop([]);
   this.byLevel = m.prop([]);
 
-  // dry-ify plz
+  // DRY-ify plz
 
   this.yolandaProposalsAmount = m.prop(0);
   this.yolandaProposalsQuantity = m.prop(0);
@@ -22,6 +22,15 @@ welcome.controller = function(){
   this.boholSAROQuantity  = m.prop(0);
   this.boholProjectsAmount  = m.prop(0);
   this.boholProjectsQuantity  = m.prop(0);
+
+  // such one-off from kai
+
+  this.yolandaEPLCProjectsQuantity = m.prop(0);
+  this.yolandaEPLCProjectsAmount = m.prop(0);
+
+  this.boholEPLCProjectsQuantity = m.prop(0);
+  this.boholEPLCProjectsAmount = m.prop(0);
+
 
   this.percentApproved = function(){
     return self.byLevel()[4].count / self.byLevel()[0].count;
@@ -77,6 +86,15 @@ welcome.controller = function(){
     self.boholSAROQuantity(kai.data.bohol_saro_qty);
     self.boholProjectsAmount(kai.data.bohol_project_amt);
     self.boholProjectsQuantity(kai.data.bohol_project_qty);
+
+    // such one-off from Kai
+
+    self.yolandaEPLCProjectsQuantity(kai.data.yolanda_project_eplc_qty);
+    self.yolandaEPLCProjectsAmount(kai.data.yolanda_project_eplc_amt);
+
+    self.boholEPLCProjectsQuantity(kai.data.bohol_project_eplc_qty);
+    self.boholEPLCProjectsAmount(kai.data.bohol_project_eplc_amt);
+
   });
 
 }
