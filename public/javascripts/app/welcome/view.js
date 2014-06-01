@@ -43,11 +43,11 @@ welcome.view = function(ctrl){
             m("i.fa.fa-paste.fa-4x"),
             m("h2.title", "Proposals Submitted"),
             m(".val-group", [
-              m("h2", "12"),
+              m("h2", ctrl.yolandaProposals()),
               m(".caption", "Yolanda"),
             ]),
             m(".val-group", [
-              m("h2", "5"),
+              m("h2", ctrl.boholProposals()),
               m(".caption", "Bohol")
             ]),
           ]),
@@ -55,11 +55,11 @@ welcome.view = function(ctrl){
             m("i.fa.fa-money.fa-4x"),
             m("h2.title", "Budget Allocated"),
             m(".val-group", [
-              m("h2", "12"),
+              m("h2", ctrl.yolandaSARO()),
               m(".caption", "Yolanda"),
             ]),
             m(".val-group", [
-              m("h2", "n/a"),
+              m("h2", ctrl.boholSARO() + "*"),
               m(".caption", "Bohol")
             ]),
           ]),
@@ -67,11 +67,11 @@ welcome.view = function(ctrl){
             m("i.fa.fa-wrench.fa-4x"),
             m("h2.title", "Ongoing Projects"),
             m(".val-group", [
-              m("h2", "12"),
+              m("h2", ctrl.yolandaProjects()),
               m(".caption", "Yolanda"),
             ]),
             m(".val-group", [
-              m("h2", "12"),
+              m("h2", ctrl.boholProjects()),
               m(".caption", "Bohol")
             ]),
           ])
