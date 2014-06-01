@@ -52,11 +52,12 @@ dashboard.controller = function(){
       .map(function(p, k){
         return {
           yearMonth: k,
-          count: p.length
+          count: p.length,
+          amount: 0
         }
       })
       .value()
-    console.log(proto);
+    console.log(JSON.stringify(proto));
 
   });
 

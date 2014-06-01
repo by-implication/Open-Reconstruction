@@ -62,7 +62,12 @@ visualizations.create(
         return p.yearMonth;
       })
       .value();
-    var labels = _.keys(projectsByMonth);
+    var labels = _.chain(projectsByMonth)
+      .keys()
+      .map(function(l){
+        return new Date(l);
+      })
+      .value();
     var countPerMonth = _.chain(projectsByMonth)
       .values()
       .map(function(g){
@@ -202,7 +207,12 @@ visualizations.create(
         return months[date.getMonth()] + ", " + date.getFullYear();
       })
       .value()
-    var labels = _.keys(sarosByMonth);
+    var labels = _.chain(sarosByMonth)
+      .keys()
+      .map(function(s){
+        return new Date(s);
+      })
+      .value();
     var amountPerMonth = _.chain(sarosByMonth)
       .values()
       .map(function(g){
@@ -261,7 +271,12 @@ visualizations.create(
   'request',
   function(ctrl2){
     var ctrl = ctrl2.requests();
-    var labels = _.pluck(ctrl.byMonth(), 'yearMonth');
+    var labels = _.chain(ctrl.byMonth())
+      .pluck('yearMonth')
+      .map(function(l){
+        return new Date(l);
+      })
+      .value();
     var amountPerMonth = ctrl.byMonth().map(function (e){ return e.amount / 1; });
     var countPerMonth = ctrl.byMonth().map(function (e){ return e.count; });
 
@@ -358,7 +373,7 @@ visualizations.create(
       .value();
 
     var range = visualizations.padMonths(ctrl.byDisasterType()).map(function(d){
-      return d.yearMonth;
+      return new Date(d.yearMonth);
     });
 
     return {
