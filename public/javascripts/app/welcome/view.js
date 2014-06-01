@@ -31,11 +31,15 @@ welcome.view = function(ctrl){
             m("i.fa.fa-clock-o.fa-4x"),
             m("h2.title", "Time since Disaster"),
             m(".val-group", [
-              m("h2", "210 days"),
+              m("h2", [
+                "210 days"
+              ]),
               m(".caption", "Yolanda"),
             ]),
             m(".val-group#wut", [
-              m("h2", "229 days"),
+              m("h2", [
+                "229 days"
+              ]),
               m(".caption", "Bohol")
             ]),
           ]),
@@ -43,11 +47,15 @@ welcome.view = function(ctrl){
             m("i.fa.fa-paste.fa-4x"),
             m("h2.title", "Proposals Submitted"),
             m(".val-group", [
-              m("h2", ctrl.yolandaProposals()),
+              m("h2", [
+                ctrl.yolandaProposalsQuantity()
+              ]),
               m(".caption", "Yolanda"),
             ]),
             m(".val-group", [
-              m("h2", ctrl.boholProposals()),
+              m("h2", [
+                ctrl.boholProposalsQuantity()
+              ]),
               m(".caption", "Bohol")
             ]),
           ]),
@@ -55,11 +63,15 @@ welcome.view = function(ctrl){
             m("i.fa.fa-money.fa-4x"),
             m("h2.title", "Budget Allocated"),
             m(".val-group", [
-              m("h2", ctrl.yolandaSARO()),
+              m("h2", [
+                ctrl.yolandaSAROQuantity()
+              ]),
               m(".caption", "Yolanda"),
             ]),
             m(".val-group", [
-              m("h2", ctrl.boholSARO() + "*"),
+              m("h2", [ctrl.
+                boholSAROQuantity() + "*"
+              ]),
               m(".caption", "Bohol")
             ]),
           ]),
@@ -67,11 +79,15 @@ welcome.view = function(ctrl){
             m("i.fa.fa-wrench.fa-4x"),
             m("h2.title", "Ongoing Projects"),
             m(".val-group", [
-              m("h2", ctrl.yolandaProjects()),
+              m("h2", [
+                ctrl.yolandaProjectsQuantity()
+              ]),
               m(".caption", "Yolanda"),
             ]),
             m(".val-group", [
-              m("h2", ctrl.boholProjects()),
+              m("h2", [
+                ctrl.boholProjectsQuantity()
+              ]),
               m(".caption", "Bohol")
             ]),
           ])
