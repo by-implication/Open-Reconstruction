@@ -48,13 +48,15 @@ welcome.view = function(ctrl){
             m("h2.title", "Proposals Submitted"),
             m(".val-group", [
               m("h2", [
-                ctrl.yolandaProposalsQuantity()
+                ctrl.yolandaProposalsQuantity(),
+                m("h6", "(PHP " + helper.truncate(ctrl.yolandaProposalsAmount(), 2) + "illion)")
               ]),
               m(".caption", "Yolanda"),
             ]),
             m(".val-group", [
               m("h2", [
-                ctrl.boholProposalsQuantity()
+                ctrl.boholProposalsQuantity(),
+                m("h6", "(PHP " + helper.truncate(ctrl.boholProposalsAmount(), 2) + "illion)")
               ]),
               m(".caption", "Bohol")
             ]),
@@ -64,13 +66,15 @@ welcome.view = function(ctrl){
             m("h2.title", "Budget Allocated"),
             m(".val-group", [
               m("h2", [
-                ctrl.yolandaSAROQuantity()
+                ctrl.yolandaSAROQuantity(),
+                m("h6", "(PHP " + helper.truncate(ctrl.yolandaSAROAmount(), 2) + "illion)")
               ]),
               m(".caption", "Yolanda"),
             ]),
             m(".val-group", [
               m("h2", [ctrl.
-                boholSAROQuantity() + "*"
+                boholSAROQuantity() + "*",
+                m("h6", "(" + ctrl.boholSAROAmount() + ")")
               ]),
               m(".caption", "Bohol")
             ]),
@@ -80,13 +84,15 @@ welcome.view = function(ctrl){
             m("h2.title", "Ongoing Projects"),
             m(".val-group", [
               m("h2", [
-                ctrl.yolandaProjectsQuantity()
+                ctrl.yolandaProjectsQuantity(),
+                m("h6", "(PHP " + helper.truncate(ctrl.yolandaProjectsAmount(), 2) + "illion)")
               ]),
               m(".caption", "Yolanda"),
             ]),
             m(".val-group", [
               m("h2", [
-                ctrl.boholProjectsQuantity()
+                ctrl.boholProjectsQuantity(),
+                m("h6", "(PHP " + helper.truncate(ctrl.boholProjectsAmount(), 2) + "illion)")
               ]),
               m(".caption", "Bohol")
             ]),
