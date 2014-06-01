@@ -309,7 +309,10 @@ welcome.view = function(ctrl){
             ]),
             m("h4", "Open Source"),
             m("p","This system proudly builds upon and contributes to several open-source projects, and is open source itself. Check out the code, submit issues, or even contribute patches!"),
-            m("a.button.micro", "Link to GitHub project")
+            m("a.button.micro", {
+              href:"https://github.com/by-implication/Reconstruction-Watch"
+            }, "Fork us on GitHub")
+            // (twss)
           ])
         ]),
       ]),
