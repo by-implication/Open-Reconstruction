@@ -56,7 +56,6 @@ visualizations.create(
           var month = date.getMonth() + 1;
           var paddedMonth = ("0" + month).slice (-2); 
           proj.yearMonth = date.getFullYear() + "-" + paddedMonth;
-          proj.count = 1;
           return proj;
         })
         .groupBy(function(p){
@@ -79,7 +78,7 @@ visualizations.create(
       .map(function(g){
         return g.count;
       })
-      
+
     return {
       data: {
         x: "x",
@@ -202,36 +201,45 @@ visualizations.create(
   'saroHistory',
   'saro',
   function(ctrl){
-    var sarosByMonth = _.chain(ctrl.saros())
+    var sarosByMonth = visualizations.padMonths(_.chain(ctrl.saros())
       .filter(function(s){
         return s["saro_date"];
       })
-      .groupBy(function(s){
+      .map(function(s){
+        var saro = {};
         var date = new Date(s["saro_date"]);
-        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        return months[date.getMonth()] + ", " + date.getFullYear();
+        var month = date.getMonth() + 1;
+        var paddedMonth = ("0" + month).slice (-2); 
+        saro.yearMonth = date.getFullYear() + "-" + paddedMonth;
+        saro.amount = s.amount;
+        return saro;
+      })
+      .groupBy(function(s){
+        return s.yearMonth
+      })
+      .map(function(s, k){
+        return {
+          yearMonth: k,
+          count: s.length,
+          amount: s.reduce(function(acc, head){
+            return acc + head.amount;
+          }, 0)
+        }
       })
       .value()
-    var labels = _.chain(sarosByMonth)
-      .keys()
+    );
+    var labels = sarosByMonth
       .map(function(s){
-        return new Date(s);
-      })
-      .value();
-    var amountPerMonth = _.chain(sarosByMonth)
-      .values()
+        return new Date(s.yearMonth);
+      });
+    var amountPerMonth = sarosByMonth
       .map(function(g){
-        return g.reduce(function(acc, head){
-          return acc + head.amount;
-        }, 0)
-      })
-      .value();
-    var countPerMonth = _.chain(sarosByMonth)
-      .values()
+        return g.amount;
+      });
+    var countPerMonth = sarosByMonth
       .map(function(g){
-        return g.length;
-      })
-      .value();
+        return g.count;
+      });
 
     // console.log(labels, amountPerMonth);
     return {
