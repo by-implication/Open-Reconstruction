@@ -13,7 +13,7 @@ object Visualization {
   def getData(v: String) = { v match {
     case "EPLC" => Some(Json.toJson(getEPLCData))
     case "DBMBureauG" => Some(Json.toJson(getDBMBureauGData))
-    case "landingPageData" => Some(getLandingPageData)
+    case "landingPageData" => getLandingPageData
     case _ => None
   }}
 
@@ -26,7 +26,11 @@ object Visualization {
         bohol_projects.count as bohol_project_qty,
         bohol_projects.sum as bohol_project_amt,
         saro_yolanda.count as yolanda_saro_qty,
-        saro_yolanda.sum as yolanda_saro_amt
+        saro_yolanda.sum as yolanda_saro_amt,
+        yolanda_eplc.count as yolanda_project_eplc_qty,
+        yolanda_eplc.sum as yolanda_project_eplc_amt,
+        bohol_eplc.count as bohol_project_eplc_qty,
+        bohol_eplc.sum as bohol_project_eplc_amt
       FROM (SELECT count(*), sum(req_amount)
         FROM reqs
         WHERE lower(req_disaster_name) like '%yolanda%'
@@ -43,8 +47,14 @@ object Visualization {
         FROM projects
         LEFT JOIN reqs on projects.req_id = reqs.req_id
         WHERE lower(req_disaster_name) like '%bohol%') as bohol_projects,
-        (SELECT count(*), sum(amount) FROM saro_bureau_g) as saro_yolanda
-      """).single(
+        (SELECT count(*), sum(amount) FROM saro_bureau_g) as saro_yolanda,
+        (SELECT count(*), sum(project_abc)*1000 as sum
+        FROM dpwh_eplc
+        WHERE lower(disaster) like '%yolanda%') as yolanda_eplc,
+        (SELECT count(*), sum(project_abc)*1000 as sum
+        FROM dpwh_eplc
+        WHERE lower(disaster) like '%bohol%') as bohol_eplc
+      """).singleOpt(
       get[Long]("yolanda_req_qty") ~
       get[java.math.BigDecimal]("yolanda_req_amt") ~
       get[Long]("yolanda_project_qty") ~
@@ -54,12 +64,18 @@ object Visualization {
       get[Long]("bohol_project_qty") ~
       get[java.math.BigDecimal]("bohol_project_amt") ~
       get[Long]("yolanda_saro_qty") ~
-      get[java.math.BigDecimal]("yolanda_saro_amt") map {
+      get[java.math.BigDecimal]("yolanda_saro_amt") ~
+      get[Long]("yolanda_project_eplc_qty") ~
+      get[java.math.BigDecimal]("yolanda_project_eplc_amt") ~
+      get[Long]("bohol_project_eplc_qty") ~
+      get[java.math.BigDecimal]("bohol_project_eplc_amt") map {
         case yolanda_req_qty ~ yolanda_req_amt ~ 
           yolanda_project_qty ~ yolanda_project_amt ~ 
           bohol_req_qty ~ bohol_req_amt ~ 
           bohol_project_qty ~ bohol_project_amt ~ 
-          yolanda_saro_qty ~ yolanda_saro_amt => {
+          yolanda_saro_qty ~ yolanda_saro_amt ~
+          yolanda_project_eplc_qty ~ yolanda_project_eplc_amt ~ 
+          bohol_project_eplc_qty ~ bohol_project_eplc_amt => {
           Json.obj(
             "yolanda_req_qty" -> yolanda_req_qty,
             "yolanda_req_amt" -> BigDecimal(yolanda_req_amt),
@@ -70,7 +86,11 @@ object Visualization {
             "bohol_project_qty" -> bohol_project_qty,
             "bohol_project_amt" -> BigDecimal(bohol_project_amt),
             "yolanda_saro_qty" -> yolanda_saro_qty,
-            "yolanda_saro_amt" -> BigDecimal(yolanda_saro_amt)
+            "yolanda_saro_amt" -> BigDecimal(yolanda_saro_amt),
+            "yolanda_project_eplc_qty" -> yolanda_project_eplc_qty,
+            "yolanda_project_eplc_amt" -> BigDecimal(yolanda_project_eplc_amt),
+            "bohol_project_eplc_qty" -> bohol_project_eplc_qty,
+            "bohol_project_eplc_amt" -> BigDecimal(bohol_project_eplc_amt)
           )
         }
       }
