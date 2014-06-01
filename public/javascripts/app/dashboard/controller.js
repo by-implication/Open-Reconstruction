@@ -31,12 +31,31 @@ dashboard.controller = function(){
   });
 
   bi.ajax(routes.controllers.Visualizations.getData("EPLC")).then(function (r){
-    console.log(r.data);
+    self.projects(r.data);
+    // var ctrl = self;
+
+    // var projectsByMonth = _.chain(ctrl.projects())
+    //   .filter(function(p){
+    //     return p["contract_start_date"];
+    //   })
+    //   .groupBy(function(p){
+    //     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    //     var date = new Date(p["contract_start_date"]);
+    //     return months[date.getMonth()] + ", " + date.getFullYear();
+    //   })
+    //   .value();
+    // var labels = _.keys(projectsByMonth);
+    // var countPerMonth = _.chain(projectsByMonth)
+    //   .values()
+    //   .map(function(g){
+    //     return g.length;
+    //   })
+    //   .value();
+    // console.log(labels, countPerMonth);
   });
 
   bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
     self.saros(r.data);
-    console.log(r.data);
   })
 
   this.projectHistory = visualizations.library['requestHistory'](self);

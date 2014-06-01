@@ -27,7 +27,6 @@ visualizations.nextYearMonth = function nextYearMonth(yearMonth){
 }
 
 visualizations.padMonths = function padMonths(a){
-  console.log(a);
   var r = [];
   for(var ym = a[0].yearMonth; a.length; ym = visualizations.nextYearMonth(ym)){
     var nextElem = {yearMonth: ym, amount: 0, count: 0};
@@ -38,6 +37,50 @@ visualizations.padMonths = function padMonths(a){
   }
   return r;
 }
+
+visualizations.create(
+  'Project Count History',
+  'projectCountHistory',
+  'project',
+  function(ctrl){
+    var projectsByMonth = _.chain(ctrl.projects())
+      .filter(function(p){
+        return p["contract_start_date"];
+      })
+      .groupBy(function(p){
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var date = new Date(p["contract_start_date"]);
+        return months[date.getMonth()] + ", " + date.getFullYear();
+      })
+      .value();
+    var labels = _.keys(projectsByMonth);
+    var countPerMonth = _.chain(projectsByMonth)
+      .values()
+      .map(function(g){
+        return g.length;
+      })
+      .value();
+    console.log(labels, countPerMonth);
+    return {
+      data: {
+        x: "x",
+        columns: [
+          ["x"].concat(labels),
+          ["Count per Month"].concat(countPerMonth)
+        ],
+        type: "bar"
+      },
+      axis: {
+        x: {
+          type: 'timeseries',
+          tick: {
+            format: '%b, %Y'
+          }
+        }
+      }
+    }
+  }
+)
 
 visualizations.create(
   'SARO Amount Distribution by Agency',
