@@ -51,7 +51,7 @@ visualizations.create(
           return p["contract_start_date"];
         })
         .map(function(p){
-          var proj = {};
+          var proj = p;
           var date = new Date(p["contract_start_date"]);
           var month = date.getMonth() + 1;
           var paddedMonth = ("0" + month).slice (-2); 
@@ -65,34 +65,55 @@ visualizations.create(
           return {
             yearMonth: k,
             count: p.length,
-            amount: 0
+            amount: p.reduce(function(acc, head){
+              return acc + head.project_abc;
+            }, 0)
           }
         })
         .value()
-    )
+    );
     var labels = projectsByMonth
       .map(function(l){
         return new Date(l.yearMonth);
-      })
+      });
     var countPerMonth = projectsByMonth
       .map(function(g){
         return g.count;
-      })
+      });
+    var amountPerMonth = projectsByMonth
+      .map(function(g){
+        return g.amount * 1000;
+      });
 
     return {
       data: {
         x: "x",
         columns: [
           ["x"].concat(labels),
-          ["Count per Month"].concat(countPerMonth)
+          ["Count per Month"].concat(countPerMonth),
+          ["Amount per Month"].concat(amountPerMonth)
         ],
-        type: "bar",
+        axes: {
+          "Count per Month": "y",
+          "Amount per Month": "y2"
+        },
+        types: {
+          "Count per Month": "bar"
+        }
       },
       axis: {
         x: {
           type: 'timeseries',
           tick: {
             format: '%b, %Y'
+          }
+        },
+        y2: {
+          show: true,
+          tick: {
+            format: function(t){
+              return "PHP " + helper.truncate(t, 2);
+            }
           }
         }
       }

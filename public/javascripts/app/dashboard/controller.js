@@ -32,6 +32,7 @@ dashboard.controller = function(){
 
   bi.ajax(routes.controllers.Visualizations.getData("EPLC")).then(function (r){
     self.projects(r.data);
+    console.log(r.data);
   });
 
   bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
