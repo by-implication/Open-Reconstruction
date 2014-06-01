@@ -32,25 +32,6 @@ dashboard.controller = function(){
 
   bi.ajax(routes.controllers.Visualizations.getData("EPLC")).then(function (r){
     self.projects(r.data);
-    // console.log(r.data);
-
-    var ctrl = self;
-    var projectsByType = _.chain(ctrl.projects())
-      .filter(function(p){
-        return p["project_type"];
-      })
-      .groupBy(function(p){
-        return p["project_type"];
-      })
-      .value()
-    var labels = _.keys(projectsByType);
-    var counts = _.chain(projectsByType)
-      .values()
-      .map(function(p){
-        return p.length;
-      })
-      .value();
-    console.log(labels, counts);
   });
 
   bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
