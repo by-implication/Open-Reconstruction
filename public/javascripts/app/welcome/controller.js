@@ -8,6 +8,8 @@ welcome.controller = function(){
   this.byMonth = m.prop([]);
   this.byLevel = m.prop([]);
 
+  // dry-ify plz
+
   this.yolandaProposalsAmount = m.prop(0);
   this.yolandaProposalsQuantity = m.prop(0);
   this.yolandaSAROAmount  = m.prop(0);

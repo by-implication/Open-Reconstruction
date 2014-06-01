@@ -30,72 +30,122 @@ welcome.view = function(ctrl){
           m(".columns.medium-3", [
             m("i.fa.fa-clock-o.fa-4x"),
             m("h2.title", "Time since Disaster"),
-            m(".val-group", [
-              m("h2", [
-                "210 days"
-              ]),
-              m(".caption", "Yolanda"),
+            m("table.val-group", [
+              m("tr", [
+                m("td", [
+                  m(".caption", "Yolanda"),
+                ]),
+                m("td", [
+                  m("h2", [
+                    "210 ",
+                    m("span", "days")
+                  ]),
+                ])
+              ])
             ]),
-            m(".val-group#wut", [
-              m("h2", [
-                "229 days"
-              ]),
-              m(".caption", "Bohol")
+            m("table.val-group", [
+              m("tr", [
+                m("td", [
+                  m(".caption", "Bohol"),
+                ]),
+                m("td", [
+                  m("h2", [
+                    "229 ",
+                    m("span", "days")
+                  ]),
+                ])
+              ])
             ]),
           ]),
           m(".columns.medium-3", [
             m("i.fa.fa-paste.fa-4x"),
             m("h2.title", "Proposals Submitted"),
-            m(".val-group", [
-              m("h2", [
-                ctrl.yolandaProposalsQuantity(),
-                m("h6", "(PHP " + helper.truncate(ctrl.yolandaProposalsAmount(), 2) + "illion)")
-              ]),
-              m(".caption", "Yolanda"),
+            m("table.val-group", [
+              m("tr", [
+                m("td", [
+                  m(".caption", "Yolanda"),
+                ]),
+                m("td", [
+                  m("h2", [
+                    ctrl.yolandaProposalsQuantity(),
+                    m("h6", "PHP " + helper.truncate(ctrl.yolandaProposalsAmount(), 2))
+                  ]),
+                ])
+              ])
             ]),
-            m(".val-group", [
-              m("h2", [
-                ctrl.boholProposalsQuantity(),
-                m("h6", "(PHP " + helper.truncate(ctrl.boholProposalsAmount(), 2) + "illion)")
-              ]),
-              m(".caption", "Bohol")
-            ]),
+            m("table.val-group", [
+              m("tr", [
+                m("td", [
+                  m(".caption", "Bohol"),
+                ]),
+                m("td", [
+                  m("h2", [
+                    ctrl.boholProposalsQuantity(),
+                    m("h6", "PHP " + helper.truncate(ctrl.boholProposalsAmount(), 2) + "")
+                  ]),
+                ])
+              ])
+            ])
           ]),
           m(".columns.medium-3", [
             m("i.fa.fa-money.fa-4x"),
             m("h2.title", "Budget Allocated"),
-            m(".val-group", [
-              m("h2", [
-                ctrl.yolandaSAROQuantity(),
-                m("h6", "(PHP " + helper.truncate(ctrl.yolandaSAROAmount(), 2) + "illion)")
-              ]),
-              m(".caption", "Yolanda"),
+            m("table.val-group", [
+              m("tr", [
+                m("td", [
+                  m(".caption", "Yolanda"),
+                ]),
+                m("td", [
+                  m("h2", [
+                    ctrl.yolandaSAROQuantity(),
+                    m("h6", "PHP " + helper.truncate(ctrl.yolandaSAROAmount(), 2) )
+                  ]),
+                ])
+              ])
             ]),
-            m(".val-group", [
-              m("h2", [ctrl.
-                boholSAROQuantity() + "*",
-                m("h6", "(" + ctrl.boholSAROAmount() + ")")
-              ]),
-              m(".caption", "Bohol")
+            m("table.val-group", [
+              m("tr", [
+                m("td", [
+                  m(".caption", "Bohol"),
+                ]),
+                m("td", [
+                  m("h2", [ctrl.
+                    boholSAROQuantity() + "",
+                    m("h6", "(" + ctrl.boholSAROAmount() + ")")
+                  ]),
+                ])
+              ])
             ]),
           ]),
           m(".columns.medium-3", [
             m("i.fa.fa-wrench.fa-4x"),
             m("h2.title", "Ongoing Projects"),
-            m(".val-group", [
-              m("h2", [
-                ctrl.yolandaProjectsQuantity(),
-                m("h6", "(PHP " + helper.truncate(ctrl.yolandaProjectsAmount(), 2) + "illion)")
-              ]),
-              m(".caption", "Yolanda"),
+            m("table.val-group", [
+              m("tr", [
+                m("td", [
+                  m(".caption", "Yolanda"),
+                ]),
+                m("td", [
+                  m("h2", [
+                    ctrl.yolandaProjectsQuantity(),
+                    m("h6", "PHP " + helper.truncate(ctrl.yolandaProjectsAmount(), 2) + "")
+                  ]),
+                ])
+              ])
             ]),
-            m(".val-group", [
-              m("h2", [
-                ctrl.boholProjectsQuantity(),
-                m("h6", "(PHP " + helper.truncate(ctrl.boholProjectsAmount(), 2) + "illion)")
-              ]),
-              m(".caption", "Bohol")
-            ]),
+            m("table.val-group", [
+              m("tr", [
+                m("td", [
+                  m(".caption", "Bohol"),
+                ]),
+                m("td", [
+                  m("h2", [
+                    ctrl.boholProjectsQuantity(),
+                    m("h6", "PHP " + helper.truncate(ctrl.boholProjectsAmount(), 2) + "")
+                  ]),
+                ])
+              ])
+            ])
           ])
         ])
       ]),
