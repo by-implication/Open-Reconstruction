@@ -259,7 +259,23 @@ welcome.view = function(ctrl){
             m("h4", "Tracking"),
             m("p","Agencies and the public can keep track of requests and projects' overall progress.")
           ])
-        ]),
+        ])
+      ]),
+      m("section.alt",[
+        m(".row", [
+          m(".columns.medium-6", [
+            m(".call2act",[
+              m("h3", "Agencies"),
+              "You can check if your projects are already in the system, with our search and filtering. If they are not yet there, request access, and submit a new eTicket for it!"
+            ])
+          ]),
+          m(".columns.medium-6", [
+            m(".call2act", [
+              m("h3", "Public"),
+              "You can check for projects that are relevant to you, and check on their progress. You can also share entries on social media."
+            ])
+          ])
+        ])
       ]),
       m("section.public", [
         m(".row.info", [

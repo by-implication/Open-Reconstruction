@@ -31,6 +31,8 @@ welcome.controller = function(){
   this.boholEPLCProjectsQuantity = m.prop(0);
   this.boholEPLCProjectsAmount = m.prop(0);
 
+  // graph
+
   this.saros  = m.prop(0);
 
 
