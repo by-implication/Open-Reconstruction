@@ -573,6 +573,7 @@ nav
       border: 0
       margin-top: 15px
       margin-bottom: 0
+      background: none
       td
         padding: 0
         &:nth-child(1)
@@ -606,6 +607,11 @@ nav
         font-weight: 500
     h3
       margin-bottom: 0
+  // yes this is sad
+  a.columns
+    +transition( all 0.2s )
+    &:hover
+      background-color: #f4f4f4
   .tickets
     margin-top: 24px
     color: #444
