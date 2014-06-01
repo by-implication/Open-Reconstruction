@@ -8,12 +8,18 @@ welcome.controller = function(){
   this.byMonth = m.prop([]);
   this.byLevel = m.prop([]);
 
-  this.yolandaProposals = m.prop(0);
-  this.yolandaSARO  = m.prop(0);
-  this.yolandaProjects  = m.prop(0);
-  this.boholProposals = m.prop(0);
-  this.boholSARO  = m.prop(0);
-  this.boholProjects  = m.prop(0);
+  this.yolandaProposal.amount = m.prop(0);
+  this.yolandaProposal.quantity = m.prop(0);
+  this.yolandaSARO.amount  = m.prop(0);
+  this.yolandaSARO.quantity  = m.prop(0);
+  this.yolandaProject.amount  = m.prop(0);
+  this.yolandaProject.quantity  = m.prop(0);
+  this.boholProposals.amount = m.prop(0);
+  this.boholProposals.quantity = m.prop(0);
+  this.boholSARO.amount  = m.prop(0);
+  this.boholSARO.quantity  = m.prop(0);
+  this.boholProjects.amount  = m.prop(0);
+  this.boholProjects.quantity  = m.prop(0);
 
   this.percentApproved = function(){
     return self.byLevel()[4].count / self.byLevel()[0].count;
@@ -55,17 +61,18 @@ welcome.controller = function(){
 
   bi.ajax(routes.controllers.Visualizations.getData("landingPageData")).then(function (kai){
     // console.log(kai);
-    self.yolandaProposals(kai.data.yolanda_reqs);
-    self.yolandaSARO(kai.data.yolanda_amount);
-    self.yolandaProjects(kai.data.yolanda_projects);
-    self.boholProposals(kai.data.bohol_reqs);
-    self.boholSARO(kai.data.bohol_amount);
-    self.boholProjects(kai.data.bohol_projects);
+    self.yolandaProposal.amount(kai.data.yolanda_reqs);
+    self.yolandaProposal.quantity(kai.data.yolanda_reqs);
+    self.yolandaSARO.amount(kai.data.yolanda_amount);
+    self.yolandaSARO.quantity(kai.data.yolanda_amount);
+    self.yolandaProject.amount(kai.data.yolanda_projects);
+    self.yolandaProject.quantity(kai.data.yolanda_projects);
+    self.boholProposals.amount(kai.data.bohol_reqs);
+    self.boholProposals.quantity(kai.data.bohol_reqs);
+    self.boholSARO.amount(kai.data.bohol_amount);
+    self.boholSARO.quantity(kai.data.bohol_amount);
+    self.boholProjects.amount(kai.data.bohol_projects);
+    self.boholProjects.quantity(kai.data.bohol_projects);
   });
 
-
 }
-
-
-
-
