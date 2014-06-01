@@ -35,9 +35,9 @@ dashboard.view = function(ctrl){
       ]),
       m("section.alt", [
         m(".row", [
-          m(".columns.medium-3#wut", [ // #wut is a fix for duplication bug
-            listVis(),
-          ]),
+          m(".columns.medium-3",
+            listVis()
+          ),
           m(".columns.medium-9", [
             m("ul.medium-block-grid-2",
               _.chain(visualizations.library)
