@@ -53,17 +53,8 @@ welcome.controller = function(){
     // console.log(r.byDisasterType);
   });
 
-
-// bohol_amount: 15561332368.8
-// bohol_projects: 1626
-// bohol_reqs: 54
-// yolanda_amount: 38573788128.36
-// yolanda_projects: 5236
-// yolanda_reqs: 1402
-
-
   bi.ajax(routes.controllers.Visualizations.getData("landingPageData")).then(function (kai){
-    console.log(kai);
+    // console.log(kai);
     self.yolandaProposals(kai.data.yolanda_reqs);
     self.yolandaSARO(kai.data.yolanda_amount);
     self.yolandaProjects(kai.data.yolanda_projects);
