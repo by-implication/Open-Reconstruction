@@ -97,7 +97,8 @@ welcome.view = function(ctrl){
                 ]),
                 m("td", [
                   m("h2", [
-                    ctrl.yolandaSAROQuantity(),
+                    ctrl.yolandaSAROQuantity() + " ",
+                    m("span", "SAROs"),
                     m("h6", "PHP " + helper.truncate(ctrl.yolandaSAROAmount(), 2) )
                   ]),
                 ])
@@ -109,8 +110,9 @@ welcome.view = function(ctrl){
                   m(".caption", "Bohol"),
                 ]),
                 m("td", [
-                  m("h2", [ctrl.
-                    boholSAROQuantity() + "",
+                  m("h2", [
+                    // ctrl.boholSAROQuantity() + "",
+                    "no data",
                     m("h6", "(" + ctrl.boholSAROAmount() + ")")
                   ]),
                 ])

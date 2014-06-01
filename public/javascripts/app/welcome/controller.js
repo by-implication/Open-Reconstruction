@@ -63,6 +63,8 @@ welcome.controller = function(){
 
   bi.ajax(routes.controllers.Visualizations.getData("landingPageData")).then(function (kai){
     // console.log(kai);
+    // wow so WET
+
     self.yolandaProposalsAmount(kai.data.yolanda_req_amt);
     self.yolandaProposalsQuantity(kai.data.yolanda_req_qty);
     self.yolandaSAROAmount(kai.data.yolanda_saro_amt);
