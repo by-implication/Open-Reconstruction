@@ -15,12 +15,12 @@ dashboard.view = function(ctrl){
               m("a", {href: "visualizations/"+v(ctrl).link(), config: m.route}, [
                 v(ctrl).title()
               ])
-            ])
+            ]);
           }))
-        ])
+        ]);
       })
       .value();
-  }
+  };
   return app.template(ctrl.app, [
     m("div", [
       common.banner("Visualizations"),
@@ -54,5 +54,5 @@ dashboard.view = function(ctrl){
         ]),
       ]),
     ])
-  ])
-}
+  ]);
+};
