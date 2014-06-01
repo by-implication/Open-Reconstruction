@@ -49,14 +49,14 @@ welcome.view = function(ctrl){
             m(".val-group", [
               m("h2", [
                 ctrl.yolandaProposalsQuantity(),
-                m("h6", "(" + ctrl.yolandaProposalsAmount() + ")")
+                m("h6", "(PHP " + helper.truncate(ctrl.yolandaProposalsAmount(), 2) + "illion)")
               ]),
               m(".caption", "Yolanda"),
             ]),
             m(".val-group", [
               m("h2", [
                 ctrl.boholProposalsQuantity(),
-                m("h6", "(" + ctrl.boholProposalsAmount() + ")")
+                m("h6", "(PHP " + helper.truncate(ctrl.boholProposalsAmount(), 2) + "illion)")
               ]),
               m(".caption", "Bohol")
             ]),
@@ -67,7 +67,7 @@ welcome.view = function(ctrl){
             m(".val-group", [
               m("h2", [
                 ctrl.yolandaSAROQuantity(),
-                m("h6", "(" + ctrl.yolandaSAROAmount() + ")")
+                m("h6", "(PHP " + helper.truncate(ctrl.yolandaSAROAmount(), 2) + "illion)")
               ]),
               m(".caption", "Yolanda"),
             ]),
@@ -85,14 +85,14 @@ welcome.view = function(ctrl){
             m(".val-group", [
               m("h2", [
                 ctrl.yolandaProjectsQuantity(),
-                m("h6", "(" + ctrl.yolandaProjectsAmount() + ")")
+                m("h6", "(PHP " + helper.truncate(ctrl.yolandaProjectsAmount(), 2) + "illion)")
               ]),
               m(".caption", "Yolanda"),
             ]),
             m(".val-group", [
               m("h2", [
                 ctrl.boholProjectsQuantity(),
-                m("h6", "(" + ctrl.boholProjectsAmount() + ")")
+                m("h6", "(PHP " + helper.truncate(ctrl.boholProjectsAmount(), 2) + "illion)")
               ]),
               m(".caption", "Bohol")
             ]),
