@@ -44,43 +44,42 @@ visualizations.create(
   'projectCountHistory',
   'project',
   function(ctrl){
-    var proto = 
-      ctrl.projects()
-      .filter(function(p){
-        return p["contract_start_date"];
-      })
-      .map(function(p){
-        var proj = p;
-        var date = new Date(p["contract_start_date"]);
-        var month = date.getMonth() + 1;
-        var paddedMonth = ("0" + month).slice (-2); 
-        proj.yearMonth = date.getFullYear() + "-" + paddedMonth;
-        return proj;
-      });
 
-    var projectsByMonth = _.chain(proto)
-      .sortBy(function(p){
-        return new Date(p.yearMonth);
-      })
-      .groupBy(function(p){
-        return p.yearMonth;
-      })
-      .value();
-    var labels = _.chain(projectsByMonth)
-      .keys()
+    var projectsByMonth = visualizations.padMonths(
+      _.chain(ctrl.projects())
+        .filter(function(p){
+          return p["contract_start_date"];
+        })
+        .map(function(p){
+          var proj = {};
+          var date = new Date(p["contract_start_date"]);
+          var month = date.getMonth() + 1;
+          var paddedMonth = ("0" + month).slice (-2); 
+          proj.yearMonth = date.getFullYear() + "-" + paddedMonth;
+          proj.count = 1;
+          return proj;
+        })
+        .groupBy(function(p){
+          return p.yearMonth
+        })
+        .map(function(p, k){
+          return {
+            yearMonth: k,
+            count: p.length,
+            amount: 0
+          }
+        })
+        .value()
+    )
+    var labels = projectsByMonth
       .map(function(l){
-        return new Date(l);
+        return new Date(l.yearMonth);
       })
-      // .tail()
-      .value();
-    var countPerMonth = _.chain(projectsByMonth)
-      .values()
+    var countPerMonth = projectsByMonth
       .map(function(g){
-        return g.length;
+        return g.count;
       })
-      // .tail()
-      .value();
-
+      
     return {
       data: {
         x: "x",
