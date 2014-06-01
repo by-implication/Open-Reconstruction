@@ -32,7 +32,7 @@ visualization.controller = function(){
   });
 
   bi.ajax(routes.controllers.Visualizations.getData("EPLC")).then(function (r){
-    console.log(r.data);
+    self.projects(r.data);
   });
 
   bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){

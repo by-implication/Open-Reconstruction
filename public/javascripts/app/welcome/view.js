@@ -28,63 +28,115 @@ welcome.view = function(ctrl){
     m("section.proposals", [
         m(".row", [
           m(".columns.medium-3", [
-            m("img",{src:"/assets/images/landing/1.svg"}),
+            m("i.fa.fa-clock-o.fa-4x"),
+            m("h2.title", "Time since Disaster"),
             m(".val-group", [
-              m("h2", ctrl.byLevel()[0].count),
-              m(".caption", "Proposals Submitted"),
+              m("h2", "210 days"),
+              m(".caption", "Yolanda"),
             ]),
             m(".val-group#wut", [
-              m("h2", helper.truncate(ctrl.byLevel()[0].amount)),
-              m(".caption", "Total Cost (PHP)")
+              m("h2", "229 days"),
+              m(".caption", "Bohol")
             ]),
           ]),
           m(".columns.medium-3", [
-            m("img",{src:"/assets/images/landing/2.svg"}),
+            m("i.fa.fa-paste.fa-4x"),
+            m("h2.title", "Proposals Submitted"),
             m(".val-group", [
-              m("h2", [ctrl.byLevel()[1].count+ " ",
-                m("span", "(n%)")
-              ]),
-              m("span", "Proposals for Assessment"),
+              m("h2", ctrl.yolandaProposals()),
+              m(".caption", "Yolanda"),
             ]),
             m(".val-group", [
-              m("h2", helper.truncate(
-                parseFloat(ctrl.byLevel()[1].amount) +
-                parseFloat(ctrl.byLevel()[2].amount)
-              )),
-              m("span", "Cost of pending projects (PHP)")
+              m("h2", ctrl.boholProposals()),
+              m(".caption", "Bohol")
             ]),
           ]),
           m(".columns.medium-3", [
-            m("img",{src:"/assets/images/landing/3.svg"}),
+            m("i.fa.fa-money.fa-4x"),
+            m("h2.title", "Budget Allocated"),
             m(".val-group", [
-              m("h2", [ctrl.byLevel()[3].count+ " ",
-                m("span", "(n%)")
-              ]),
-              m("span", "Proposals for Approval"),
+              m("h2", ctrl.yolandaSARO()),
+              m(".caption", "Yolanda"),
             ]),
             m(".val-group", [
-              m("h2", helper.truncate(
-                parseFloat(ctrl.byLevel()[4].amount) +
-                parseFloat(ctrl.byLevel()[5].amount)
-              )),
-              m("span", "Total Approved Cost")
+              m("h2", ctrl.boholSARO() + "*"),
+              m(".caption", "Bohol")
             ]),
           ]),
           m(".columns.medium-3", [
-            m("img",{src:"/assets/images/landing/4.svg"}),
+            m("i.fa.fa-wrench.fa-4x"),
+            m("h2.title", "Ongoing Projects"),
             m(".val-group", [
-              m("h2", [ctrl.byLevel()[4].count + " ",
-                m("span", "(" + helper.percent(ctrl.percentApproved()) + ")")
-              ]),
-              m("span", "Projects for funding"),
+              m("h2", ctrl.yolandaProjects()),
+              m(".caption", "Yolanda"),
             ]),
             m(".val-group", [
-              m("h2", ctrl.byLevel()[5].amount),
-              m("span", "Amount for disbursal")
+              m("h2", ctrl.boholProjects()),
+              m(".caption", "Bohol")
             ]),
           ])
         ])
       ]),
+//    m("section.proposals", [
+//        m(".row", [
+//          m(".columns.medium-3", [
+//            m("img",{src:"/assets/images/landing/1.svg"}),
+//            m(".val-group", [
+//              m("h2", ctrl.byLevel()[0].count),
+//              m(".caption", "Proposals Submitted"),
+//            ]),
+//            m(".val-group#wut", [
+//              m("h2", helper.truncate(ctrl.byLevel()[0].amount)),
+//              m(".caption", "Total Cost (PHP)")
+//            ]),
+//          ]),
+//          m(".columns.medium-3", [
+//            m("img",{src:"/assets/images/landing/2.svg"}),
+//            m(".val-group", [
+//              m("h2", [ctrl.byLevel()[1].count+ " ",
+//                m("span", "(n%)")
+//              ]),
+//              m("span", "Proposals for Assessment"),
+//            ]),
+//            m(".val-group", [
+//              m("h2", helper.truncate(
+//                parseFloat(ctrl.byLevel()[1].amount) +
+//                parseFloat(ctrl.byLevel()[2].amount)
+//              )),
+//              m("span", "Cost of pending projects (PHP)")
+//            ]),
+//          ]),
+//          m(".columns.medium-3", [
+//            m("img",{src:"/assets/images/landing/3.svg"}),
+//            m(".val-group", [
+//              m("h2", [ctrl.byLevel()[3].count+ " ",
+//                m("span", "(n%)")
+//              ]),
+//              m("span", "Proposals for Approval"),
+//            ]),
+//            m(".val-group", [
+//              m("h2", helper.truncate(
+//                parseFloat(ctrl.byLevel()[4].amount) +
+//                parseFloat(ctrl.byLevel()[5].amount)
+//              )),
+//              m("span", "Total Approved Cost")
+//            ]),
+//          ]),
+//          m(".columns.medium-3", [
+//            m("img",{src:"/assets/images/landing/4.svg"}),
+//            m(".val-group", [
+//              m("h2", [ctrl.byLevel()[4].count + " ",
+//                m("span", "(" + helper.percent(ctrl.percentApproved()) + ")")
+//              ]),
+//              m("span", "Projects for funding"),
+//            ]),
+//            m(".val-group", [
+//              m("h2", ctrl.byLevel()[5].amount),
+//              m("span", "Amount for disbursal")
+//            ]),
+//          ])
+//        ])
+//     ]),
       m("section.alt.agencies", [
         m(".row.info", [
           m(".columns.medium-12", [
