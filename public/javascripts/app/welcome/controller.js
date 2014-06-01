@@ -8,18 +8,18 @@ welcome.controller = function(){
   this.byMonth = m.prop([]);
   this.byLevel = m.prop([]);
 
-  this.yolandaProposals.amount = m.prop(0);
-  this.yolandaProposals.quantity = m.prop(0);
-  this.yolandaSARO.amount  = m.prop(0);
-  this.yolandaSARO.quantity  = m.prop(0);
-  this.yolandaProjects.amount  = m.prop(0);
-  this.yolandaProjects.quantity  = m.prop(0);
-  this.boholProposals.amount = m.prop(0);
-  this.boholProposals.quantity = m.prop(0);
-  this.boholSARO.amount  = m.prop(0);
-  this.boholSARO.quantity  = m.prop(0);
-  this.boholProjects.amount  = m.prop(0);
-  this.boholProjects.quantity  = m.prop(0);
+  this.yolandaProposalsAmount = m.prop(0);
+  this.yolandaProposalsQuantity = m.prop(0);
+  this.yolandaSAROAmount  = m.prop(0);
+  this.yolandaSAROQuantity  = m.prop(0);
+  this.yolandaProjectsAmount  = m.prop(0);
+  this.yolandaProjectsQuantity  = m.prop(0);
+  this.boholProposalsAmount = m.prop(0);
+  this.boholProposalsQuantity = m.prop(0);
+  this.boholSAROAmount  = m.prop(0);
+  this.boholSAROQuantity  = m.prop(0);
+  this.boholProjectsAmount  = m.prop(0);
+  this.boholProjectsQuantity  = m.prop(0);
 
   this.percentApproved = function(){
     return self.byLevel()[4].count / self.byLevel()[0].count;
@@ -61,18 +61,18 @@ welcome.controller = function(){
 
   bi.ajax(routes.controllers.Visualizations.getData("landingPageData")).then(function (kai){
     // console.log(kai);
-    self.yolandaProposals.amount(kai.data.yolanda_reqs);
-    self.yolandaProposals.quantity(kai.data.yolanda_reqs);
-    self.yolandaSARO.amount(kai.data.yolanda_amount);
-    self.yolandaSARO.quantity(kai.data.yolanda_amount);
-    self.yolandaProjects.amount(kai.data.yolanda_projects);
-    self.yolandaProjects.quantity(kai.data.yolanda_projects);
-    self.boholProposals.amount(kai.data.bohol_reqs);
-    self.boholProposals.quantity(kai.data.bohol_reqs);
-    self.boholSARO.amount(kai.data.bohol_amount);
-    self.boholSARO.quantity(kai.data.bohol_amount);
-    self.boholProjects.amount(kai.data.bohol_projects);
-    self.boholProjects.quantity(kai.data.bohol_projects);
+    self.yolandaProposalsAmount(kai.data.yolanda_req_amt);
+    self.yolandaProposalsQuantity(kai.data.yolanda_req_qty);
+    self.yolandaSAROAmount(kai.data.yolanda_saro_amt);
+    self.yolandaSAROQuantity(kai.data.yolanda_saro_qty);
+    self.yolandaProjectsAmount(kai.data.yolanda_project_amt);
+    self.yolandaProjectsQuantity(kai.data.yolanda_project_qty);
+    self.boholProposalsAmount(kai.data.bohol_req_amt);
+    self.boholProposalsQuantity(kai.data.bohol_req_qty);
+    self.boholSAROAmount(kai.data.bohol_saro_amt);
+    self.boholSAROQuantity(kai.data.bohol_saro_qty);
+    self.boholProjectsAmount(kai.data.bohol_project_amt);
+    self.boholProjectsQuantity(kai.data.bohol_project_qty);
   });
 
 }
