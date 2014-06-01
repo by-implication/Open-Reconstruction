@@ -13,8 +13,52 @@ object Visualization {
   def getData(v: String) = { v match {
     case "EPLC" => Some(Json.toJson(getEPLCData))
     case "DBMBureauG" => Some(Json.toJson(getDBMBureauGData))
+    case "landingPageData" => Some(getLandingPageData)
     case _ => None
   }}
+
+  def getLandingPageData = DB.withConnection { implicit c =>
+    SQL("""
+        SELECT yolanda.count as yolanda_reqs, yolanda.sum as yolanda_amount,
+          bohol.count as bohol_reqs, bohol.sum as bohol_amount,
+          yolanda_projects.count as yolanda_projects,
+          bohol_projects.count as bohol_projects
+        FROM (SELECT count(*), sum(req_amount)
+          FROM reqs
+          WHERE lower(req_disaster_name) like '%yolanda%'
+          ) as yolanda,
+          (SELECT count(*), sum(req_amount)
+          FROM reqs
+          WHERE lower(req_disaster_name) like '%bohol%'
+          ) as bohol,
+          (SELECT count(*)
+          FROM projects
+          LEFT JOIN reqs on projects.req_id = reqs.req_id
+          WHERE lower(req_disaster_name) like '%yolanda%') as yolanda_projects,
+          (SELECT count(*)
+          FROM projects
+          LEFT JOIN reqs on projects.req_id = reqs.req_id
+          WHERE lower(req_disaster_name) like '%bohol%') as bohol_projects
+      """).single(
+      get[Long]("yolanda_reqs") ~
+      get[java.math.BigDecimal]("yolanda_amount") ~
+      get[Long]("bohol_reqs") ~
+      get[java.math.BigDecimal]("bohol_amount") ~
+      get[Long]("yolanda_projects") ~
+      get[Long]("bohol_projects") map {
+        case yolanda_reqs~yolanda_amount~bohol_reqs~bohol_amount~yolanda_projects~bohol_projects => {
+          Json.obj(
+            "yolanda_reqs" -> yolanda_reqs,
+            "yolanda_amount" -> BigDecimal(yolanda_amount),
+            "bohol_reqs" -> bohol_reqs,
+            "bohol_amount" -> BigDecimal(bohol_amount),
+            "yolanda_projects" -> yolanda_projects,
+            "bohol_projects" -> bohol_projects
+          )
+        }
+      }
+    )
+  }
 
   def getDBMBureauGData = DB.withConnection { implicit c =>
     SQL("SELECT * FROM saro_bureau_g").list(
