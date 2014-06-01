@@ -8,12 +8,12 @@ welcome.controller = function(){
   this.byMonth = m.prop([]);
   this.byLevel = m.prop([]);
 
-  this.yolandaProposal.amount = m.prop(0);
-  this.yolandaProposal.quantity = m.prop(0);
+  this.yolandaProposals.amount = m.prop(0);
+  this.yolandaProposals.quantity = m.prop(0);
   this.yolandaSARO.amount  = m.prop(0);
   this.yolandaSARO.quantity  = m.prop(0);
-  this.yolandaProject.amount  = m.prop(0);
-  this.yolandaProject.quantity  = m.prop(0);
+  this.yolandaProjects.amount  = m.prop(0);
+  this.yolandaProjects.quantity  = m.prop(0);
   this.boholProposals.amount = m.prop(0);
   this.boholProposals.quantity = m.prop(0);
   this.boholSARO.amount  = m.prop(0);
@@ -61,12 +61,12 @@ welcome.controller = function(){
 
   bi.ajax(routes.controllers.Visualizations.getData("landingPageData")).then(function (kai){
     // console.log(kai);
-    self.yolandaProposal.amount(kai.data.yolanda_reqs);
-    self.yolandaProposal.quantity(kai.data.yolanda_reqs);
+    self.yolandaProposals.amount(kai.data.yolanda_reqs);
+    self.yolandaProposals.quantity(kai.data.yolanda_reqs);
     self.yolandaSARO.amount(kai.data.yolanda_amount);
     self.yolandaSARO.quantity(kai.data.yolanda_amount);
-    self.yolandaProject.amount(kai.data.yolanda_projects);
-    self.yolandaProject.quantity(kai.data.yolanda_projects);
+    self.yolandaProjects.amount(kai.data.yolanda_projects);
+    self.yolandaProjects.quantity(kai.data.yolanda_projects);
     self.boholProposals.amount(kai.data.bohol_reqs);
     self.boholProposals.quantity(kai.data.bohol_reqs);
     self.boholSARO.amount(kai.data.bohol_amount);
