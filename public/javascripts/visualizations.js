@@ -40,7 +40,53 @@ visualizations.padMonths = function padMonths(a){
 }
 
 visualizations.create(
-  'Project Count History',
+  "Project Type Distribution",
+  "projectTypeDistribution",
+  "project",
+  function(ctrl){
+    var projectsByType = _.chain(ctrl.projects())
+      .filter(function(p){
+        return p["project_type"];
+      })
+      .groupBy(function(p){
+        return p["project_type"];
+      })
+      .map(function(p, key){
+        var obj = {};
+        obj.type = key;
+        obj.count = p.length;
+        return obj;
+      })
+      .sortBy(function(p){
+        return p.count * -1;
+      })
+      .value()
+    var labels = projectsByType.map(function(p){
+      return p.type;
+    });
+    var counts = projectsByType.map(function(p){
+      return p.count;
+    })
+    return {
+      data: {
+        columns: [
+          ["Count per Project Type"].concat(counts)
+        ],
+        type: "bar"
+      },
+      axis: {
+        x: {
+          type: "categorized",
+          categories: labels
+        },
+        rotated: true
+      }
+    }
+  }
+)
+
+visualizations.create(
+  'Project Count and Amount History',
   'projectCountHistory',
   'project',
   function(ctrl){
