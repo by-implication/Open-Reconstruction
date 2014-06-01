@@ -266,7 +266,13 @@ welcome.view = function(ctrl){
               m("img",{src:"/assets/images/landing/8.svg"})
             ]),
             m("h4", "About this site"),
-            m("p","Open Recon is spearheaded by the Open Data Task Force, and is a joint initiative by OPARR, DBM, and DPWH. The site was built and designed by a team from By Implication."),
+            m("p", [
+              "Open Recon is spearheaded by the ",
+              m("a", {href:"http://data.gov.ph"}, "Open Data Task Force"),
+              "and is a joint initiative by OPARR, DBM, and DPWH. The site was built and designed by a team from ",
+              m("a", {href:"http://byimplication.com"}, "By Implication"),
+              "."
+              ]),
             m("a.button.micro", "Learn more about this project")
           ]),
           m(".columns.medium-4", [
