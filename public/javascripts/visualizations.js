@@ -27,7 +27,6 @@ visualizations.nextYearMonth = function nextYearMonth(yearMonth){
 }
 
 visualizations.padMonths = function padMonths(a){
-  console.log(a);
   var r = [];
   for(var ym = a[0].yearMonth; a.length; ym = visualizations.nextYearMonth(ym)){
     var nextElem = {yearMonth: ym, amount: 0, count: 0};
@@ -38,6 +37,64 @@ visualizations.padMonths = function padMonths(a){
   }
   return r;
 }
+
+visualizations.create(
+  'Project Count History',
+  'projectCountHistory',
+  'project',
+  function(ctrl){
+    var proto = 
+      ctrl.projects()
+      .filter(function(p){
+        return p["contract_start_date"];
+      })
+      .map(function(p){
+        var proj = p;
+        var date = new Date(p["contract_start_date"]);
+        var month = date.getMonth() + 1;
+        var paddedMonth = ("0" + month).slice (-2); 
+        proj.yearMonth = date.getFullYear() + "-" + paddedMonth;
+        return proj;
+      });
+
+    var projectsByMonth = _.chain(proto)
+      .groupBy(function(p){
+        return p.yearMonth;
+      })
+      .value();
+    var labels = _.chain(projectsByMonth)
+      .keys()
+      .map(function(l){
+        return new Date(l);
+      })
+      .value();
+    var countPerMonth = _.chain(projectsByMonth)
+      .values()
+      .map(function(g){
+        return g.length;
+      })
+      .value();
+    // console.log(labels, countPerMonth);
+    return {
+      data: {
+        x: "x",
+        columns: [
+          ["x"].concat(labels),
+          ["Count per Month"].concat(countPerMonth)
+        ],
+        type: "bar"
+      },
+      axis: {
+        x: {
+          type: 'timeseries',
+          tick: {
+            format: '%b, %Y'
+          }
+        }
+      }
+    }
+  }
+)
 
 visualizations.create(
   'SARO Amount Distribution by Agency',
@@ -150,7 +207,12 @@ visualizations.create(
         return months[date.getMonth()] + ", " + date.getFullYear();
       })
       .value()
-    var labels = _.keys(sarosByMonth);
+    var labels = _.chain(sarosByMonth)
+      .keys()
+      .map(function(s){
+        return new Date(s);
+      })
+      .value();
     var amountPerMonth = _.chain(sarosByMonth)
       .values()
       .map(function(g){
@@ -209,7 +271,12 @@ visualizations.create(
   'request',
   function(ctrl2){
     var ctrl = ctrl2.requests();
-    var labels = _.pluck(ctrl.byMonth(), 'yearMonth');
+    var labels = _.chain(ctrl.byMonth())
+      .pluck('yearMonth')
+      .map(function(l){
+        return new Date(l);
+      })
+      .value();
     var amountPerMonth = ctrl.byMonth().map(function (e){ return e.amount / 1; });
     var countPerMonth = ctrl.byMonth().map(function (e){ return e.count; });
 
@@ -298,6 +365,7 @@ visualizations.create(
         return p.disasterTypeId;
       })
       .map(function(subData, key){
+        // console.log(visualizations.padMonths(subData));
         return [key].concat(visualizations.padMonths(subData).map(function(d){
           return d.count
         }));
@@ -305,7 +373,7 @@ visualizations.create(
       .value();
 
     var range = visualizations.padMonths(ctrl.byDisasterType()).map(function(d){
-      return d.yearMonth;
+      return new Date(d.yearMonth);
     });
 
     return {

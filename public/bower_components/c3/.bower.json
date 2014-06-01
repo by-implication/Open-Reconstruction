@@ -1,7 +1,7 @@
 {
   "name": "c3",
   "main": "c3.min.js",
-  "version": "0.1.42",
+  "version": "0.2.0",
   "homepage": "https://github.com/masayuki0812/c3",
   "authors": [
     "Masayuki Tanaka <masayuki0812@mac.com>"
@@ -22,14 +22,14 @@
   "dependencies": {
     "d3": "~3.4.4"
   },
-  "_release": "0.1.42",
+  "_release": "0.2.0",
   "_resolution": {
     "type": "version",
-    "tag": "0.1.42",
-    "commit": "11fff91eb152aa00c81c61760f7f236ce8d02ebe"
+    "tag": "0.2.0",
+    "commit": "b0b7710cf4bcff66c88a8ef6e9c3db59ca921613"
   },
   "_source": "git://github.com/masayuki0812/c3.git",
-  "_target": "~0.1.42",
+  "_target": "~0.2.0",
   "_originalSource": "c3",
   "_direct": true
 }

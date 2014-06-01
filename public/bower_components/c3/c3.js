@@ -4,7 +4,7 @@
     /*global define, module, exports, require */
 
     var c3 = {
-        version: "0.1.42"
+        version: "0.2.0"
     };
 
     var CLASS = {
@@ -48,6 +48,7 @@
         arcs: 'c3-arcs',
         area: 'c3-area',
         areas: 'c3-areas',
+        empty: 'c3-empty',
         text: 'c3-text',
         texts: 'c3-texts',
         gaugeValue: 'c3-gauge-value',
@@ -140,7 +141,7 @@
 
         var __data_x = getConfig(['data', 'x']),
             __data_xs = getConfig(['data', 'xs'], {}),
-            __data_x_format = getConfig(['data', 'x_format']),
+            __data_x_format = getConfig(['data', 'x_format'], '%Y-%m-%d'),
             __data_id_converter = getConfig(['data', 'id_converter'], function (id) { return id; }),
             __data_names = getConfig(['data', 'names'], {}),
             __data_classes = getConfig(['data', 'classes'], {}),
@@ -167,6 +168,9 @@
             __data_ondragstart = getConfig(['data', 'ondragstart'], function () {}),
             __data_ondragend = getConfig(['data', 'ondragend'], function () {});
 
+        // configuration for no plot-able data supplied.
+        var __data_empty_label_text = getConfig(['data', 'empty', 'label', 'text'], "");
+        
         // subchart
         var __subchart_show = getConfig(['subchart', 'show'], false),
             __subchart_size_height = getConfig(['subchart', 'size', 'height'], 60);
@@ -249,6 +253,7 @@
         // pie
         var __pie_label_show = getConfig(['pie', 'label', 'show'], true),
             __pie_label_format = getConfig(['pie', 'label', 'format']),
+            __pie_label_threshold = getConfig(['pie', 'label', 'threshold'], 0.05),
             __pie_expand = getConfig(['pie', 'expand'], true),
             __pie_onclick = getConfig(['pie', 'onclick'], function () {}),
             __pie_onmouseover = getConfig(['pie', 'onmouseover'], function () {}),
@@ -257,6 +262,7 @@
         // gauge
         var __gauge_label_show = getConfig(['gauge', 'label', 'show'], true),
             __gauge_label_format = getConfig(['gauge', 'label', 'format']),
+            __gauge_expand = getConfig(['gauge', 'expand'], true),
             __gauge_min = getConfig(['gauge', 'min'], 0),
             __gauge_max = getConfig(['gauge', 'max'], 100),
             __gauge_onclick = getConfig(['gauge', 'onclick'], function () {}),
@@ -268,6 +274,7 @@
         // donut
         var __donut_label_show = getConfig(['donut', 'label', 'show'], true),
             __donut_label_format = getConfig(['donut', 'label', 'format']),
+            __donut_label_threshold = getConfig(['donut', 'label', 'threshold'], 0.05),
             __donut_expand = getConfig(['donut', 'expand'], true),
             __donut_title = getConfig(['donut', 'title'], ""),
             __donut_onclick = getConfig(['donut', 'onclick'], function () {}),
@@ -280,9 +287,11 @@
         // tooltip - show when mouseover on each data
         var __tooltip_show = getConfig(['tooltip', 'show'], true),
             __tooltip_format_title = getConfig(['tooltip', 'format', 'title']),
+            __tooltip_format_name = getConfig(['tooltip', 'format', 'name']),
             __tooltip_format_value = getConfig(['tooltip', 'format', 'value']),
             __tooltip_contents = getConfig(['tooltip', 'contents'], function (d, defaultTitleFormat, defaultValueFormat, color) {
             var titleFormat = __tooltip_format_title ? __tooltip_format_title : defaultTitleFormat,
+                nameFormat = __tooltip_format_name ? __tooltip_format_name : function (name) { return name; },
                 valueFormat = __tooltip_format_value ? __tooltip_format_value : defaultValueFormat,
                 text, i, title, value, name, bgcolor;
             for (i = 0; i < d.length; i++) {
@@ -293,7 +302,7 @@
                     text = "<table class='" + CLASS.tooltip + "'>" + (title || title === 0 ? "<tr><th colspan='2'>" + title + "</th></tr>" : "");
                 }
 
-                name = d[i].name;
+                name = nameFormat(d[i].name);
                 value = valueFormat(d[i].value, d[i].ratio, d[i].id, d[i].index);
                 bgcolor = levelColor ? levelColor(d[i].value) : color(d[i].id);
 
@@ -319,8 +328,8 @@
             clipPathForYAxis = getClipPath(clipIdForYAxis);
 
         var isTimeSeries = (__axis_x_type === 'timeseries'),
-            isCategorized = (__axis_x_type === 'categorized'),
-            isCustomX = !isTimeSeries && (__data_x || notEmpty(__data_xs));
+            isCategorized = (__axis_x_type.indexOf('categor') >= 0),
+            isCustomX = function () { return !isTimeSeries && (__data_x || notEmpty(__data_xs)); };
 
         var dragStart = null, dragging = false, cancelClick = false, mouseover = false, transiting = false;
 
@@ -648,7 +657,7 @@
             return __legend_show ? isLegendRight ? legendItemWidth * (legendStep + 1) : currentWidth : 0;
         }
         function getLegendHeight() {
-            return __legend_show ? isLegendRight ? currentHeight : legendItemHeight * (legendStep + 1) : 0;
+            return __legend_show ? isLegendRight ? currentHeight : Math.max(20, legendItemHeight) * (legendStep + 1) : 0;
         }
 
         //-- Scales --//
@@ -759,7 +768,6 @@
                 if (isEmpty(__axis_x_tick_culling)) {
                     __axis_x_tick_culling = false;
                 }
-                axis.categories(__axis_x_categories);
             } else {
                 // TODO: move this to c3_axis
                 axis.tickOffset = function () {
@@ -1027,7 +1035,7 @@
                 y = c[1];
                 h = Math.sqrt(x * x + y * y);
                 // TODO: ratio should be an option?
-                ratio = (36 / radius > 0.375 ? 1.175 - 36 / radius : 0.8) * radius / h;
+                ratio = radius && h ? (36 / radius > 0.375 ? 1.175 - 36 / radius : 0.8) * radius / h : 0;
                 translate = "translate(" + (x * ratio) +  ',' + (y * ratio) +  ")";
             }
             return translate;
@@ -1045,10 +1053,11 @@
         }
         function textForArcLabel(d) {
             var updated, value, ratio, format;
-            if (! shouldShowArcLable()) { return ""; }
+            if (! shouldShowArcLabel()) { return ""; }
             updated = updateAngle(d);
             value = updated ? updated.value : null;
             ratio = getArcRatio(updated);
+            if (! meetsArcLabelThreshold(ratio)) { return ""; }
             format = getArcLabelFormat();
             return format ? format(value, ratio) : defaultArcValueFormat(value, ratio);
         }
@@ -1081,7 +1090,7 @@
             svg.selectAll('.' + CLASS.arc)
                 .style("opacity", 1);
         }
-        function shouldShowArcLable() {
+        function shouldShowArcLabel() {
             var shouldShow = true;
             if (hasDonutType(c3.data.targets)) {
                 shouldShow = __donut_label_show;
@@ -1090,6 +1099,10 @@
             }
             // when gauge, always true
             return shouldShow;
+        }
+        function meetsArcLabelThreshold(ratio) {
+            var threshold = hasDonutType(c3.data.targets) ? __donut_label_threshold : __pie_label_threshold;
+            return ratio >= threshold;
         }
         function getArcLabelFormat() {
             var format = __pie_label_format;
@@ -1286,16 +1299,16 @@
             }
             return [min, max];
         }
-        function updateXDomain(targets, withUpdateXDomain, withUpdateOrgXDomain) {
+        function updateXDomain(targets, withUpdateXDomain, withUpdateOrgXDomain, domain) {
             if (withUpdateOrgXDomain) {
-                x.domain(d3.extent(getXDomain(targets)));
+                x.domain(domain ? domain : d3.extent(getXDomain(targets)));
                 orgXDomain = x.domain();
                 if (__zoom_enabled) { zoom.scale(x).updateScaleExtent(); }
                 subX.domain(x.domain());
                 brush.scale(subX);
             }
             if (withUpdateXDomain) {
-                x.domain(brush.empty() ? orgXDomain : brush.extent());
+                x.domain(domain ? domain : brush.empty() ? orgXDomain : brush.extent());
                 if (__zoom_enabled) { zoom.scale(x).updateScaleExtent(); }
             }
         }
@@ -1359,6 +1372,9 @@
                 end = __axis_rotated ? ('end' in d ? x(isTimeSeries ? parseDate(d.end) : d.end) : height) : height;
             }
             return end < start ? 0 : end - start;
+        }
+        function isRegionOnX(d) {
+            return !d.axis || d.axis === 'x';
         }
 
         //-- Data --//
@@ -1435,13 +1451,50 @@
             if (isTimeSeries) {
                 x = rawX ? rawX instanceof Date ? rawX : parseDate(rawX) : parseDate(getXValue(id, index));
             }
-            else if (isCustomX && !isCategorized) {
+            else if (isCustomX() && !isCategorized) {
                 x = isValue(rawX) ? +rawX : getXValue(id, index);
             }
             else {
                 x = index;
             }
             return x;
+        }
+        function convertCsvToData(csv) {
+            var rows = d3.csv.parseRows(csv), d;
+            if (rows.length === 1) {
+                d = [{}];
+                rows[0].forEach(function (id) {
+                    d[0][id] = null;
+                });
+            } else {
+                d = d3.csv.parse(csv);
+            }
+            return d;
+        }
+        function convertJsonToData(json, keys) {
+            var new_rows = [], targetKeys, data;
+            if (keys) { // when keys specified, json would be an array that includes objects
+                targetKeys = keys.value;
+                if (keys.x) {
+                    targetKeys.push(keys.x);
+                    __data_x = keys.x;
+                }
+                new_rows.push(targetKeys);
+                json.forEach(function (o) {
+                    var new_row = [];
+                    targetKeys.forEach(function (key) {
+                        new_row.push(o[key]);
+                    });
+                    new_rows.push(new_row);
+                });
+                data = convertRowsToData(new_rows);
+            } else {
+                Object.keys(json).forEach(function (key) {
+                    new_rows.push([key].concat(json[key]));
+                });
+                data = convertColumnsToData(new_rows);
+            }
+            return data;
         }
         function convertRowsToData(rows) {
             var keys = rows[0], new_row = {}, new_rows = [], i, j;
@@ -1474,7 +1527,7 @@
             ids.forEach(function (id) {
                 var xKey = getXKey(id);
 
-                if (isCustomX || isTimeSeries) {
+                if (isCustomX() || isTimeSeries) {
                     // if included in input data
                     if (xs.indexOf(xKey) >= 0) {
                         c3.data.xs[id] = (appendXs && c3.data.xs[id] ? c3.data.xs[id] : []).concat(
@@ -1513,7 +1566,7 @@
                     values: data.map(function (d, i) {
                         var xKey = getXKey(id), rawX = d[xKey], x = generateTargetX(rawX, id, i);
                         // use x as categories if custom x and categorized
-                        if (isCustomX && isCategorized && index === 0 && rawX) {
+                        if (isCustomX() && isCategorized && index === 0 && rawX) {
                             if (i === 0) { __axis_x_categories = []; }
                             __axis_x_categories.push(rawX);
                         }
@@ -1696,7 +1749,7 @@
         function generateClass(prefix, targetId) {
             return " " + prefix + " " + prefix + getTargetSelectorSuffix(targetId);
         }
-        function classText(d) { return generateClass(CLASS.text, d.id); }
+        function classText(d) { return generateClass(CLASS.text, d.index); }
         function classTexts(d) { return generateClass(CLASS.texts, d.id); }
         function classShape(d) { return generateClass(CLASS.shape, d.index); }
         function classShapes(d) { return generateClass(CLASS.shapes, d.id); }
@@ -1985,8 +2038,11 @@
                 }
             } else {
                 gridData = scale.ticks(10);
+                if (gridData.length > tickNum) { // use only int
+                    gridData = gridData.filter(function (d) { return ("" + d).indexOf('.') < 0; });
+                }
             }
-            return gridData.slice(0, tickNum);
+            return gridData;
         }
 
         //-- Shape --//
@@ -2098,7 +2154,7 @@
         }
         function isLineType(d) {
             var id = (typeof d === 'string') ? d : d.id;
-            return !(id in __data_types) || ['line', 'spline', 'area', 'area-spline', 'step', 'area-step'].indexOf(__data_types[id]) >= 0;
+            return !__data_types[id] || ['line', 'spline', 'area', 'area-spline', 'step', 'area-step'].indexOf(__data_types[id]) >= 0;
         }
         function isStepType(d) {
             var id = (typeof d === 'string') ? d : d.id;
@@ -2157,7 +2213,7 @@
         }
 
         function shouldExpand(id) {
-            return (isDonutType(id) && __donut_expand) || (isPieType(id) && __pie_expand);
+            return (isDonutType(id) && __donut_expand) || (isGaugeType(id) && __gauge_expand) || (isPieType(id) && __pie_expand);
         }
 
         //-- Color --//
@@ -2207,7 +2263,7 @@
         function parseDate(date) {
             var parsedDate;
             try {
-                parsedDate = date instanceof Date || !__data_x_format ? new Date(date) : d3.time.format(__data_x_format).parse(date);
+                parsedDate = date instanceof Date ? new Date(date) : d3.time.format(__data_x_format).parse(date);
             } catch (e) {
                 window.console.error("Failed to parse x '" + date + "' to Date with format " + __data_x_format);
             }
@@ -2318,6 +2374,10 @@
             return isSplineType(d) ? "cardinal" : isStepType(d) ? "step-after" : "linear";
         }
 
+        function getEmptySelection() {
+            return d3.selectAll([]);
+        }
+
         //-- Selection --//
 
         function selectPoint(target, d, i) {
@@ -2420,15 +2480,18 @@
             area = __axis_rotated ? area.x0(value0).x1(value1).y(xx) : area.x(xx).y0(value0).y1(value1);
 
             return function (d) {
-                var data = filterRemoveNull(d.values), x0, y0;
+                var data = filterRemoveNull(d.values), x0 = 0, y0 = 0, path;
 
                 if (isAreaType(d)) {
-                    return area.interpolate(getInterpolate(d))(data);
+                    path = area.interpolate(getInterpolate(d))(data);
                 } else {
-                    x0 = x(data[0].x);
-                    y0 = getYScale(d.id)(data[0].value);
-                    return __axis_rotated ? "M " + y0 + " " + x0 : "M " + x0 + " " + y0;
+                    if (data[0]) {
+                        x0 = x(data[0].x);
+                        y0 = getYScale(d.id)(data[0].value);
+                    }
+                    path = __axis_rotated ? "M " + y0 + " " + x0 : "M " + x0 + " " + y0;
                 }
+                return path ? path : "M 0 0";
             };
         }
 
@@ -2445,20 +2508,21 @@
             if (!__line_connect_null) { line = line.defined(function (d) { return d.value != null; }); }
             return function (d) {
                 var data = __line_connect_null ? filterRemoveNull(d.values) : d.values,
-                    x = isSub ? x : subX, y = yScaleGetter(d.id), x0 = 0, y0 = 0;
+                    x = isSub ? x : subX, y = yScaleGetter(d.id), x0 = 0, y0 = 0, path;
                 if (isLineType(d)) {
                     if (__data_regions[d.id]) {
-                        return lineWithRegions(data, x, y, __data_regions[d.id]);
+                        path = lineWithRegions(data, x, y, __data_regions[d.id]);
                     } else {
-                        return line.interpolate(getInterpolate(d))(data);
+                        path = line.interpolate(getInterpolate(d))(data);
                     }
                 } else {
                     if (data[0]) {
                         x0 = x(data[0].x);
                         y0 = y(data[0].value);
                     }
-                    return __axis_rotated ? "M " + y0 + " " + x0 : "M " + x0 + " " + y0;
+                    path = __axis_rotated ? "M " + y0 + " " + x0 : "M " + x0 + " " + y0;
                 }
+                return path ? path : "M 0 0";
             };
         }
 
@@ -2805,6 +2869,12 @@
             updateLegend(mapToIds(c3.data.targets), {withTransform: false, withTransitionForTransform: false});
 
             /*-- Main Region --*/
+
+            // text when empty
+            main.append("text")
+                .attr("class", CLASS.text + ' ' + CLASS.empty)
+                .attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
+                .attr("dominant-baseline", "middle"); // vertical centering of text at y position in all browsers, except IE.
 
             // Grids
             grid = main.append('g')
@@ -3344,7 +3414,7 @@
         }
 
         function redraw(options, transitions) {
-            var xgrid, xgridAttr, xgridData, xgridLines, xgridLine, ygrid, ygridLines, ygridLine;
+            var xgrid, xgridAttr, xgridData, xgridLines, xgridLine, ygrid, ygridLines, ygridLine, flushXGrid;
             var mainLine, mainArea, mainCircle, mainBar, mainArc, mainRegion, mainText, contextLine,  contextArea, contextBar, eventRect, eventRectUpdate;
             var areaIndices = getShapeIndices(isAreaType), barIndices = getShapeIndices(isBarType), lineIndices = getShapeIndices(isLineType), maxDataCountTarget, tickOffset;
             var rectX, rectW;
@@ -3353,6 +3423,8 @@
             var drawArea, drawAreaOnSub, drawBar, drawBarOnSub, drawLine, drawLineOnSub, xForText, yForText;
             var duration, durationForExit, durationForAxis, waitForDraw = generateWait();
             var targetsToShow = filterTargetsToShow(c3.data.targets), tickValues, i, intervalForCulling;
+
+            xgrid = xgridLines = mainCircle = mainText = getEmptySelection();
 
             options = options || {};
             withY = getOption(options, "withY", true);
@@ -3405,6 +3477,9 @@
                     xAxis.tickValues(tickValues);
                     subXAxis.tickValues(tickValues);
                 }
+            } else {
+                xAxis.tickValues([]);
+                subXAxis.tickValues([]);
             }
 
             y.domain(getYDomain(targetsToShow, 'y'));
@@ -3465,11 +3540,17 @@
             // xgrid focus
             updateXgridFocus();
 
+            // Data empty label positioning and text.
+            main.select("text." + CLASS.text + '.' + CLASS.empty)
+                .attr("x", width / 2)
+                .attr("y", height / 2)
+                .text(__data_empty_label_text)
+              .transition()
+                .style('opacity', targetsToShow.length ? 0 : 1);
+
             // grid
             main.select('line.' + CLASS.xgridFocus).style("visibility", "hidden");
             if (__grid_x_show) {
-                xgridData = generateGridData(__grid_x_type, x);
-                tickOffset = isCategorized ? xAxis.tickOffset() : 0;
                 xgridAttr = __axis_rotated ? {
                     'x1': 0,
                     'x2': width,
@@ -3481,12 +3562,20 @@
                     'y1': margin.top,
                     'y2': height
                 };
-                xgrid = main.select('.' + CLASS.xgrids).selectAll('.' + CLASS.xgrid)
-                    .data(xgridData);
-                xgrid.enter().append('line').attr("class", CLASS.xgrid);
-                xgrid.attr(xgridAttr)
-                    .style("opacity", function () { return +d3.select(this).attr(__axis_rotated ? 'y1' : 'x1') === (__axis_rotated ? height : 0) ? 0 : 1; });
-                xgrid.exit().remove();
+                // this is used to flow
+                flushXGrid = function (withoutUpdate) {
+                    xgridData = generateGridData(__grid_x_type, x);
+                    tickOffset = isCategorized ? xAxis.tickOffset() : 0;
+                    xgrid = main.select('.' + CLASS.xgrids).selectAll('.' + CLASS.xgrid)
+                        .data(xgridData);
+                    xgrid.enter().append('line').attr("class", CLASS.xgrid);
+                    if (!withoutUpdate) {
+                        xgrid.attr(xgridAttr)
+                            .style("opacity", function () { return +d3.select(this).attr(__axis_rotated ? 'y1' : 'x1') === (__axis_rotated ? height : 0) ? 0 : 1; });
+                    }
+                    xgrid.exit().remove();
+                };
+                flushXGrid();
             }
             if (notEmpty(__grid_x_lines)) {
                 xgridLines = main.select('.' + CLASS.xgridLines).selectAll('.' + CLASS.xgridLine)
@@ -3503,19 +3592,7 @@
                     .attr('dy', -5)
                     .style("opacity", 0);
                 // udpate
-                xgridLines.select('line')
-                  .transition().duration(duration)
-                    .attr("x1", __axis_rotated ? 0 : xv)
-                    .attr("x2", __axis_rotated ? width : xv)
-                    .attr("y1", __axis_rotated ? xv : margin.top)
-                    .attr("y2", __axis_rotated ? xv : height)
-                    .style("opacity", 1);
-                xgridLines.select('text')
-                  .transition().duration(duration)
-                    .attr("x", __axis_rotated ? width : 0)
-                    .attr("y", xv)
-                    .text(function (d) { return d.text; })
-                    .style("opacity", 1);
+                // done in d3.transition() of the end of this function
                 // exit
                 xgridLines.exit().transition().duration(duration)
                     .style("opacity", 0)
@@ -3575,13 +3652,6 @@
                 .attr('class', classRegion)
               .append('rect')
                 .style("fill-opacity", 0);
-            mainRegion.selectAll('rect')
-              .transition().duration(duration)
-                .attr("x", regionX)
-                .attr("y", regionY)
-                .attr("width", regionWidth)
-                .attr("height", regionHeight)
-                .style("fill-opacity", function (d) { return isValue(d.opacity) ? d.opacity : 0.1; });
             mainRegion.exit().transition().duration(duration)
                 .style("opacity", 0)
                 .remove();
@@ -3634,8 +3704,6 @@
                 mainCircle
                     .style("opacity", initialOpacity);
                 mainCircle.exit().remove();
-            } else {
-                mainCircle = d3.selectAll([]);
             }
 
             if (hasDataLabel()) {
@@ -3649,12 +3717,7 @@
                     .style("fill-opacity", 0);
                 mainText
                     .text(function (d) { return formatByAxisId(d.id)(d.value, d.id); })
-                    .style("fill-opacity", initialOpacityForText)
-                  .transition().duration(duration)
-                    .attr('x', xForText)
-                    .attr('y', yForText)
-                    .style("fill", color)
-                    .style("fill-opacity", opacityForText);
+                    .style("fill-opacity", initialOpacityForText);
                 mainText.exit()
                   .transition().duration(durationForExit)
                     .style('fill-opacity', 0)
@@ -3862,7 +3925,7 @@
                             .selectAll('.' + CLASS.eventRect).remove();
                     }
 
-                    if ((isCustomX || isTimeSeries) && !isCategorized) {
+                    if ((isCustomX() || isTimeSeries) && !isCategorized) {
                         rectW = function (d) {
                             var prevX = getPrevX(d.index), nextX = getNextX(d.index), dx = c3.data.xs[d.id][d.index];
                             return (x(nextX ? nextX : dx) - x(prevX ? prevX : dx)) / 2;
@@ -3920,6 +3983,28 @@
                 waitForDraw.add(main.selectAll('.' + CLASS.selectedCircle).transition()
                     .attr("cx", __axis_rotated ? circleY : circleX)
                     .attr("cy", __axis_rotated ? circleX : circleY));
+                waitForDraw.add(mainText.transition()
+                    .attr('x', xForText)
+                    .attr('y', yForText)
+                    .style("fill", color)
+                    .style("fill-opacity", opacityForText));
+                waitForDraw.add(mainRegion.selectAll('rect').transition()
+                    .attr("x", regionX)
+                    .attr("y", regionY)
+                    .attr("width", regionWidth)
+                    .attr("height", regionHeight)
+                    .style("fill-opacity", function (d) { return isValue(d.opacity) ? d.opacity : 0.1; }));
+                waitForDraw.add(xgridLines.select('line').transition()
+                    .attr("x1", __axis_rotated ? 0 : xv)
+                    .attr("x2", __axis_rotated ? width : xv)
+                    .attr("y1", __axis_rotated ? xv : margin.top)
+                    .attr("y2", __axis_rotated ? xv : height)
+                    .style("opacity", 1));
+                waitForDraw.add(xgridLines.select('text').transition()
+                    .attr("x", __axis_rotated ? width : 0)
+                    .attr("y", xv)
+                    .text(function (d) { return d.text; })
+                    .style("opacity", 1));
             })
             .call(waitForDraw, options.flow ? function () { // only for flow
                 var translateX, scaleX = 1, transform,
@@ -3928,6 +4013,8 @@
                     flowStart = getValueOnIndex(c3.data.targets[0].values, flowIndex),
                     flowEnd = getValueOnIndex(c3.data.targets[0].values, flowIndex + flowLength),
                     orgDomain = x.domain(),
+                    durationForFlow = options.flow.duration || duration,
+                    onend = options.flow.onend || function () {},
                     wait = generateWait();
 
                 // remove head data after rendered
@@ -3937,34 +4024,66 @@
 
                 // update x domain to generate axis elements for flow
                 updateXDomain(targetsToShow, true, true);
+                // update elements related to x scale
+                if (flushXGrid) { flushXGrid(true); }
 
                 // generate transform to flow
-                translateX = x(flowStart.x) - x(flowEnd.x);
-                if (isTimeSeries) {
-                    translateX = translateX * 0.9; // TODO: fix 0.9, I don't know why 0.9..
-                    scaleX = (diffDomain(orgDomain) / diffDomain(x.domain()));
+                if (!options.flow.orgDataCount) { // if empty
+                    if (isTimeSeries || c3.data.targets[0].values.length !== 1) {
+                        flowStart = getValueOnIndex(c3.data.targets[0].values, 0);
+                        flowEnd = getValueOnIndex(c3.data.targets[0].values, c3.data.targets[0].values.length - 1);
+                        translateX = x(flowStart.x) - x(flowEnd.x);
+                    } else {
+                        translateX = x(-0.5) - x(0);
+                    }
+                } else if (options.flow.orgDataCount === 1 || flowStart.x === flowEnd.x) {
+                    translateX = x(orgDomain[0]) - x(flowEnd.x);
+                } else {
+                    // TODO: fix 0.9, I don't know why 0.9..
+                    translateX = (x(flowStart.x) - x(flowEnd.x)) * (isTimeSeries ? 0.9 : 1);
                 }
+                scaleX = (diffDomain(orgDomain) / diffDomain(x.domain()));
                 transform = 'translate(' + translateX + ',0) scale(' + scaleX + ',1)';
 
-                d3.transition().ease('linear').each(function () {
+                d3.transition().ease('linear').duration(durationForFlow).each(function () {
                     wait.add(axes.x.transition().call(xAxis));
                     wait.add(mainBar.transition().attr('transform', transform));
                     wait.add(mainLine.transition().attr('transform', transform));
                     wait.add(mainArea.transition().attr('transform', transform));
                     wait.add(mainCircle.transition().attr('transform', transform));
+                    wait.add(mainText.transition().attr('transform', transform));
+                    wait.add(mainRegion.filter(isRegionOnX).transition().attr('transform', transform));
+                    wait.add(xgrid.transition().attr('transform', transform));
+                    wait.add(xgridLines.transition().attr('transform', transform));
                 })
                 .call(wait, function () {
-                    var i, targets = [], eventRects = [];
+                    var i, shapes = [], texts = [], eventRects = [];
 
                     // remove flowed elements
-                    for (i = 0; i < flowLength; i++) {
-                        targets.push('.' + CLASS.shape + '-' + (flowIndex + i));
-                        eventRects.push('.' + CLASS.eventRect + '-' + (flowIndex + i));
+                    if (flowLength) {
+                        for (i = 0; i < flowLength; i++) {
+                            shapes.push('.' + CLASS.shape + '-' + (flowIndex + i));
+                            texts.push('.' + CLASS.text + '-' + (flowIndex + i));
+                            eventRects.push('.' + CLASS.eventRect + '-' + (flowIndex + i));
+                        }
+                        svg.selectAll('.' + CLASS.shapes).selectAll(shapes).remove();
+                        svg.selectAll('.' + CLASS.texts).selectAll(texts).remove();
+                        svg.selectAll('.' + CLASS.eventRects).selectAll(eventRects).remove();
+                        svg.select('.' + CLASS.xgrid).remove();
                     }
-                    svg.selectAll('.' + CLASS.shapes).selectAll(targets).remove();
-                    svg.selectAll('.' + CLASS.eventRects).selectAll(eventRects).remove();
 
-                    // draw again for removing flowed elements
+                    // draw again for removing flowed elements and reverting attr
+                    xgrid
+                        .attr('transform', null)
+                        .attr(xgridAttr);
+                    xgridLines
+                        .attr('transform', null);
+                    xgridLines.select('line')
+                        .attr("x1", __axis_rotated ? 0 : xv)
+                        .attr("x2", __axis_rotated ? width : xv);
+                    xgridLines.select('text')
+                        .attr("x", __axis_rotated ? width : 0)
+                        .attr("y", xv);
                     mainBar
                         .attr('transform', null)
                         .attr("d", drawBar);
@@ -3978,14 +4097,23 @@
                         .attr('transform', null)
                         .attr("cx", __axis_rotated ? circleY : circleX)
                         .attr("cy", __axis_rotated ? circleX : circleY);
+                    mainText
+                        .attr('transform', null)
+                        .attr('x', xForText)
+                        .attr('y', yForText);
+                    mainRegion
+                        .attr('transform', null);
+                    mainRegion.select('rect').filter(isRegionOnX)
+                        .attr("x", regionX)
+                        .attr("width", regionWidth);
                     eventRectUpdate
                         .attr("x", __axis_rotated ? 0 : rectX)
                         .attr("y", __axis_rotated ? rectX : 0)
                         .attr("width", __axis_rotated ? width : rectW)
                         .attr("height", __axis_rotated ? rectW : height);
 
-                        // callback here?
-
+                    // callback for end of flow
+                    onend();
                 });
             } : null);
 
@@ -4079,11 +4207,12 @@
             options.withUpdateXDomain = true;
             options.withUpdateOrgXDomain = true;
             options.withTransitionForExit = false;
+            // MEMO: this needs to be called before updateLegend and it means this ALWAYS needs to be called)
+            updateSizes();
             // MEMO: called in updateLegend in redraw if withLegend
             if (!(options.withLegend && __legend_show)) {
                 transitions = generateAxisTransitions(options.withTransitionForAxis ? __transition_duration : 0);
-                // Update sizes and scales
-                updateSizes();
+                // Update scales
                 updateScales();
                 updateSvgSize();
                 // Update g positions
@@ -4637,7 +4766,6 @@
             // update categories if exists
             if ('categories' in args && isCategorized) {
                 __axis_x_categories = args.categories;
-                xAxis.categories(__axis_x_categories);
             }
             // use cache if exists
             if ('cacheIds' in args && hasCaches(args.cacheIds)) {
@@ -4663,8 +4791,8 @@
         };
 
         c3.flow = function (args) {
-            var targets = convertDataToTargets(convertColumnsToData(args.columns), true),
-                notfoundIds = [], length, tail;
+            var targets = convertDataToTargets(convertColumnsToData(args.columns), true), notfoundIds = [],
+                orgDataCount = getMaxDataCount(), dataCount, domain, baseTarget, baseValue, length = 0, tail = 0, diff, to;
 
             // Update/Add data
             c3.data.targets.forEach(function (t) {
@@ -4673,10 +4801,12 @@
                     if (t.id === targets[i].id) {
                         found = true;
 
-                        tail = t.values[t.values.length - 1].index + 1;
+                        if (t.values[t.values.length - 1]) {
+                            tail = t.values[t.values.length - 1].index + 1;
+                        }
                         length = targets[i].values.length;
 
-                        for (j = 0; j < targets[i].values.length; j++) {
+                        for (j = 0; j < length; j++) {
                             targets[i].values[j].index = tail + j;
                             if (!isTimeSeries) {
                                 targets[i].values[j].x = tail + j;
@@ -4710,25 +4840,64 @@
             });
 
             // Generate null values for new target
-            targets.forEach(function (t) {
-                var i, missing = [];
-                for (i = c3.data.targets[0].values[0].index; i < tail; i++) {
-                    missing.push({
-                        id: t.id,
-                        index: i,
-                        x: isTimeSeries ? getOtherTargetX(i) : i,
-                        value: null
-                    });
-                }
-                t.values.forEach(function (v) {
-                    v.index += tail;
-                    if (!isTimeSeries) {
-                        v.x += tail;
+            if (c3.data.targets.length) {
+                targets.forEach(function (t) {
+                    var i, missing = [];
+                    for (i = c3.data.targets[0].values[0].index; i < tail; i++) {
+                        missing.push({
+                            id: t.id,
+                            index: i,
+                            x: isTimeSeries ? getOtherTargetX(i) : i,
+                            value: null
+                        });
                     }
+                    t.values.forEach(function (v) {
+                        v.index += tail;
+                        if (!isTimeSeries) {
+                            v.x += tail;
+                        }
+                    });
+                    t.values = missing.concat(t.values);
                 });
-                t.values = missing.concat(t.values);
-            });
+            }
             c3.data.targets = c3.data.targets.concat(targets); // add remained
+
+            // check data count becuase behavior needs to change when it's only one
+            dataCount = getMaxDataCount();
+            baseTarget = c3.data.targets[0];
+            baseValue = baseTarget.values[0];
+
+            // Update length to flow if needed
+            if (isDefined(args.to)) {
+                length = 0;
+                to = isTimeSeries ? parseDate(args.to) : args.to;
+                baseTarget.values.forEach(function (v) {
+                    if (v.x < to) { length++; }
+                });
+            } else if (isDefined(args.length)) {
+                length = args.length;
+            }
+
+            // If only one data, update the domain to flow from left edge of the chart
+            if (!orgDataCount) {
+                if (isTimeSeries) {
+                    if (baseTarget.values.length > 1) {
+                        diff = baseTarget.values[baseTarget.values.length - 1].x - baseValue.x;
+                    } else {
+                        diff = baseValue.x - getXDomain(c3.data.targets)[0];
+                    }
+                } else {
+                    diff = 1;
+                }
+                domain = [baseValue.x - diff, baseValue.x];
+                updateXDomain(null, true, true, domain);
+            } else if (orgDataCount === 1) {
+                if (isTimeSeries) {
+                    diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2;
+                    domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)];
+                    updateXDomain(null, true, true, domain);
+                }
+            }
 
             // Set targets
             updateTargets(c3.data.targets);
@@ -4736,10 +4905,14 @@
             // Redraw with new targets
             redraw({
                 flow: {
-                    index: c3.data.targets[0].values[0].index,
-                    length: length
+                    index: baseValue.index,
+                    length: length,
+                    duration: isValue(args.duration) ? args.duration : __transition_duration,
+                    onend: args.onend,
+                    orgDataCount: orgDataCount,
                 },
-                withLegend: true
+                withLegend: true,
+                withTransition: orgDataCount > 1,
             });
         };
 
@@ -4795,36 +4968,9 @@
             });
         };
 
-        c3.toLine = function (targetIds) {
-            transformTo(targetIds, 'line');
-        };
-
-        c3.toSpline = function (targetIds) {
-            transformTo(targetIds, 'spline');
-        };
-
-        c3.toBar = function (targetIds) {
-            transformTo(targetIds, 'bar');
-        };
-
-        c3.toScatter = function (targetIds) {
-            transformTo(targetIds, 'scatter');
-        };
-
-        c3.toArea = function (targetIds) {
-            transformTo(targetIds, 'area');
-        };
-
-        c3.toAreaSpline = function (targetIds) {
-            transformTo(targetIds, 'area-spline');
-        };
-
-        c3.toPie = function (targetIds) {
-            transformTo(targetIds, 'pie', {withTransform: true});
-        };
-
-        c3.toDonut = function (targetIds) {
-            transformTo(targetIds, 'donut', {withTransform: true});
+        c3.transform = function (type, targetIds) {
+            var options = ['pie', 'donut'].indexOf(type) >= 0 ? {withTransform: true} : null;
+            transformTo(targetIds, type, options);
         };
 
         c3.groups = function (groups) {
@@ -4927,6 +5073,8 @@
             return __data_colors;
         };
 
+        c3.color = color;
+
         c3.x = function (x) {
             if (arguments.length) {
                 updateTargetX(c3.data.targets, x);
@@ -4954,11 +5102,11 @@
         c3.axis.max = function (max) {
             if (arguments.length) {
                 if (typeof max === 'object') {
-                    if (isValue(max.x)) { __axis_x_max = +max.x; }
-                    if (isValue(max.y)) { __axis_y_max = +max.y; }
-                    if (isValue(max.y2)) { __axis_y2_max = +max.y2; }
+                    if (isValue(max.x)) { __axis_x_max = max.x; }
+                    if (isValue(max.y)) { __axis_y_max = max.y; }
+                    if (isValue(max.y2)) { __axis_y2_max = max.y2; }
                 } else {
-                    __axis_y_max = __axis_y2_max = +max;
+                    __axis_y_max = __axis_y2_max = max;
                 }
                 redraw({withUpdateOrgXDomain: true, withUpdateXDomain: true});
             }
@@ -4966,11 +5114,11 @@
         c3.axis.min = function (min) {
             if (arguments.length) {
                 if (typeof min === 'object') {
-                    if (isValue(min.x)) { __axis_x_min = +min.x; }
-                    if (isValue(min.y)) { __axis_y_min = +min.y; }
-                    if (isValue(min.y2)) { __axis_y2_min = +min.y2; }
+                    if (isValue(min.x)) { __axis_x_min = min.x; }
+                    if (isValue(min.y)) { __axis_y_min = min.y; }
+                    if (isValue(min.y2)) { __axis_y2_min = min.y2; }
                 } else {
-                    __axis_y_min = __axis_y2_min = +min;
+                    __axis_y_min = __axis_y2_min = min;
                 }
                 redraw({withUpdateOrgXDomain: true, withUpdateXDomain: true});
             }
@@ -4994,7 +5142,6 @@
         c3.resize = function (size) {
             __size_width = size ? size.width : null;
             __size_height = size ? size.height : null;
-            c3.flush(); // TODO: need to be called twice because of update of legend
             c3.flush();
         };
 
@@ -5011,29 +5158,33 @@
 
         /*-- Load data and init chart with defined functions --*/
 
-        if ('url' in config.data) {
-            d3.xhr(config.data.url, function (error, data) {
-                // TODO: other mine/type
-                var rows = d3.csv.parseRows(data.response), d;
-                if (rows.length === 1) {
-                    d = [{}];
-                    rows[0].forEach(function (id) {
-                        d[0][id] = null;
-                    });
+        function initWithUrl(args) {
+            var type = args.mimeType ? args.mimeType : 'csv';
+            d3.xhr(args.url, function (error, data) {
+                var d;
+                if (type === 'json') {
+                    d = convertJsonToData(JSON.parse(data.response), args.keys);
                 } else {
-                    d = d3.csv.parse(data.response);
+                    d = convertCsvToData(data.response);
                 }
                 init(d);
             });
         }
-        else if ('rows' in config.data) {
+
+        if (config.data.url) {
+            initWithUrl(config.data);
+        }
+        else if (config.data.json) {
+            init(convertJsonToData(config.data.json, config.data.keys));
+        }
+        else if (config.data.rows) {
             init(convertRowsToData(config.data.rows));
         }
-        else if ('columns' in config.data) {
+        else if (config.data.columns) {
             init(convertColumnsToData(config.data.columns));
         }
         else {
-            throw Error('url or rows or columns is required.');
+            throw Error('url or json or rows or columns is required.');
         }
 
         return c3;
@@ -5063,8 +5214,7 @@
     function c3_axis(d3, isCategory) {
         var scale = d3.scale.linear(), orient = "bottom", innerTickSize = 6, outerTickSize = 6, tickPadding = 3, tickValues = null, tickFormat, tickArguments;
 
-        var tickOffset = 0, tickCulling = true;
-        var categories = [], tickCentered;
+        var tickOffset = 0, tickCulling = true, tickCentered;
 
         function axisX(selection, x) {
             selection.attr("transform", function (d) {
@@ -5102,8 +5252,7 @@
             }
             return newScale;
         }
-        function textFormatted(i) {
-            var v = isCategory && i < categories.length ? categories[i] : i;
+        function textFormatted(v) {
             return tickFormat ? tickFormat(v) : v;
         }
         function axis(g) {
@@ -5238,11 +5387,6 @@
         axis.tickValues = function (x) {
             if (!arguments.length) { return tickValues; }
             tickValues = x;
-            return axis;
-        };
-        axis.categories = function (x) {
-            if (!arguments.length) { return categories; }
-            categories = x;
             return axis;
         };
         return axis;
