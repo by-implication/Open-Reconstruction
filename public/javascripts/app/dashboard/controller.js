@@ -32,20 +32,31 @@ dashboard.controller = function(){
 
   bi.ajax(routes.controllers.Visualizations.getData("EPLC")).then(function (r){
     self.projects(r.data);
-    // var ctrl = self;
-    // var proto = ctrl.projects()
-    //   .filter(function(p){
-    //     return p["contract_start_date"];
-    //   })
-    //   .map(function(p){
-    //     var proj = p;
-    //     var date = new Date(p["contract_start_date"]);
-    //     var month = date.getMonth() + 1;
-    //     var paddedMonth = ("0" + month).slice (-2); 
-    //     proj.yearMonth = date.getFullYear() + "-" + paddedMonth;
-    //     return proj;
-    //   })
-    // console.log(visualizations.padMonths(_.take(proto, 10)));
+    var ctrl = self;
+    var proto = _.chain(ctrl.projects())
+      .filter(function(p){
+        return p["contract_start_date"];
+      })
+      .map(function(p){
+        var proj = {};
+        var date = new Date(p["contract_start_date"]);
+        var month = date.getMonth() + 1;
+        var paddedMonth = ("0" + month).slice (-2); 
+        proj.yearMonth = date.getFullYear() + "-" + paddedMonth;
+        proj.count = 1;
+        return proj;
+      })
+      .groupBy(function(p){
+        return p.yearMonth
+      })
+      .map(function(p, k){
+        return {
+          yearMonth: k,
+          count: p.length
+        }
+      })
+      .value()
+    console.log(proto);
 
   });
 

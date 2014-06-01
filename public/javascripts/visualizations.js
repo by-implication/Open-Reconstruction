@@ -69,7 +69,7 @@ visualizations.create(
         return g.length;
       })
       .value();
-    console.log(labels, countPerMonth);
+    // console.log(labels, countPerMonth);
     return {
       data: {
         x: "x",
@@ -350,6 +350,7 @@ visualizations.create(
         return p.disasterTypeId;
       })
       .map(function(subData, key){
+        // console.log(visualizations.padMonths(subData));
         return [key].concat(visualizations.padMonths(subData).map(function(d){
           return d.count
         }));
