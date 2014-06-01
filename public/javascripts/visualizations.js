@@ -58,6 +58,9 @@ visualizations.create(
       });
 
     var projectsByMonth = _.chain(proto)
+      .sortBy(function(p){
+        return new Date(p.yearMonth);
+      })
       .groupBy(function(p){
         return p.yearMonth;
       })
@@ -67,14 +70,16 @@ visualizations.create(
       .map(function(l){
         return new Date(l);
       })
+      // .tail()
       .value();
     var countPerMonth = _.chain(projectsByMonth)
       .values()
       .map(function(g){
         return g.length;
       })
+      // .tail()
       .value();
-    // console.log(labels, countPerMonth);
+
     return {
       data: {
         x: "x",
@@ -82,7 +87,7 @@ visualizations.create(
           ["x"].concat(labels),
           ["Count per Month"].concat(countPerMonth)
         ],
-        type: "bar"
+        type: "bar",
       },
       axis: {
         x: {
