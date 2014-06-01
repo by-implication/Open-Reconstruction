@@ -57,7 +57,7 @@ dashboard.controller = function(){
         }
       })
       .value()
-    console.log(JSON.stringify(proto));
+    // console.log(JSON.stringify(proto));
 
   });
 
