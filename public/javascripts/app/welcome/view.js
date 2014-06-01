@@ -255,7 +255,8 @@ welcome.view = function(ctrl){
             m("a.button.micro", "Data dumps, CSVs, and APIs"),
             m("figure.large", [
               visPanel.view(ctrl.yolandaSaroVis)
-            ])
+            ]),
+            m("h3.graph-title", "SARO Releases, Value and Quantity, per month")
           ])
         ]),
         m(".row", [
