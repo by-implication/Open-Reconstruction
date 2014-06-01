@@ -253,7 +253,9 @@ welcome.view = function(ctrl){
             m("a.button.micro", "List of all requests"),
             m("a.button.micro", "Stats, Graphs, and Visuals"),
             m("a.button.micro", "Data dumps, CSVs, and APIs"),
-            m("figure.large")
+            m("figure.large", [
+              visPanel.view(ctrl.yolandaSaroVis)
+            ])
           ])
         ]),
         m(".row", [

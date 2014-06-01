@@ -23,6 +23,8 @@ welcome.controller = function(){
   this.boholProjectsAmount  = m.prop(0);
   this.boholProjectsQuantity  = m.prop(0);
 
+  this.saros  = m.prop(0);
+
   this.percentApproved = function(){
     return self.byLevel()[4].count / self.byLevel()[0].count;
   };
@@ -78,5 +80,11 @@ welcome.controller = function(){
     self.boholProjectsAmount(kai.data.bohol_project_amt);
     self.boholProjectsQuantity(kai.data.bohol_project_qty);
   });
+
+  this.yolandaSaroVis = _.extend({}, visualizations.library["saroHistory"](self));
+  this.yolandaSaroVis.isFullView(true);
+  bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
+    self.saros(r.data);
+  })
 
 }
