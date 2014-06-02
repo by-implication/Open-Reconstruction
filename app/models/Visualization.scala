@@ -12,7 +12,7 @@ object Visualization {
 
   def getData(v: String) = { v match {
     case "EPLC" => Some(Json.toJson(getEPLCData))
-    case "allEPLC" => Some(Json.toJson(allEPLCData))
+    case "allEPLC" => Some(Json.toJson(getAllEPLCData))
     case "DBMBureauG" => Some(Json.toJson(getDBMBureauGData))
     case "landingPageData" => getLandingPageData
     case _ => None
@@ -618,7 +618,7 @@ object Visualization {
       get[Option[Timestamp]]("activity_10_end_date") ~
       get[Option[String]]("activity_11") ~
       get[Option[Timestamp]]("activity_11_start_date") ~
-      get[Option[Timestamp]]("activity_11_end_date")
+      get[Option[Timestamp]]("activity_11_end_date") ~
       get[Option[String]]("project_type") ~
       get[Option[Int]]("months_of_completion") ~
       get[Option[String]]("disaster") map { case contract_start_date~
@@ -664,7 +664,7 @@ object Visualization {
         "contract_start_date" -> contract_start_date,
         "contract_end_date" -> contract_end_date,
         "contract_duration" -> contract_duration,
-        "project_abc" -> project_abc.map(v => BigDecimal(v))
+        "project_abc" -> project_abc.map(v => BigDecimal(v)),
         "activity_1" -> activity_1,
         "activity_1_start_date" -> activity_1_start_date,
         "activity_1_end_date" -> activity_1_end_date,
@@ -697,7 +697,7 @@ object Visualization {
         "activity_10_end_date" -> activity_10_end_date,
         "activity_11" -> activity_11,
         "activity_11_start_date" -> activity_11_start_date,
-        "activity_11_end_date" -> activity_11_end_date
+        "activity_11_end_date" -> activity_11_end_date,
         "project_type" -> project_type,
         "months_of_completion" -> months_of_completion,
         "disaster" -> disaster
