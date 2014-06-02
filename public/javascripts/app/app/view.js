@@ -35,7 +35,13 @@ app.template = function(a, b, c, d){
       m("link[href='/assets/bower_components/leaflet-draw/leaflet.draw.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/bower_components/c3/c3.css'][rel='stylesheet'][type='text/css']")
     ]),
-    m("body", attrs, modals.concat(app.navbar(ctrl), content))
+    m("body", attrs, modals.concat(app.navbar(ctrl), content, app.feedback(ctrl)))
+  ])
+}
+
+app.feedback = function(ctrl){
+  return m("#feedback-tab", [
+    "feedback"
   ])
 }
 
