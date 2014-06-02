@@ -10,6 +10,16 @@ import recon.support._
 
 object GovUnit extends GovUnitGen {
 
+  def findByName(name: String): Option[GovUnit] = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT * FROM gov_units
+      WHERE gov_unit_name = {name}
+      LIMIT 1
+    """).on(
+      'name -> name
+    ).singleOpt(simple)
+  }
+
   def listAgencies = DB.withConnection { implicit c =>
     SQL("""
       SELECT * FROM gov_units g

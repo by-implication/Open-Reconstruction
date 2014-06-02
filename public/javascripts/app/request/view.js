@@ -111,7 +111,7 @@ request.view = function(ctrl){
       // actual content
       m("section", [
         m(".row", [
-          common.tabs.menu(ctrl.requestTabs, {className: "vertical", config: ctrl.scrollHandler}),
+          common.stickyTabs.menu(ctrl.requestTabs, {className: "vertical", config: ctrl.scrollHandler}),
           m(".tabs-content.vertical", [
             m(".card", [
               m(".big.section#summary", [

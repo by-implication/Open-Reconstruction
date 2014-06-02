@@ -6,6 +6,7 @@
 
 GET     /                                         controllers.Application.index
 GET     /welcome                                  controllers.Application.welcome
+GET     /populate                                 controllers.Application.populate
 GET     /dashboard                                controllers.Application.dashboard
 GET     /dashboard/meta                           controllers.Application.dashboardMeta
 GET     /saro                                     controllers.Application.saro
@@ -63,6 +64,7 @@ POST    /requests/:id/comment                     controllers.Requests.comment(i
 POST    /requests/:id/edit/:f                     controllers.Requests.editField(id: Int, f: String)
 POST    /requests/:id/attach/:type                controllers.Attachments.add(id: Int, type: String)
 
+GET     /visualizations/data/:v                   controllers.Visualizations.getData(v: String)
 GET     /visualizations/:v                        controllers.Visualizations.view(v: String)
 
 GET     /attachments/:id/preview                  controllers.Attachments.preview(id: Int)

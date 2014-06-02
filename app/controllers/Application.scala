@@ -32,6 +32,16 @@ object Application extends Controller {
     Ok(Req.dashboardData)
   }
 
+  def populate() = Action { implicit request =>
+    play.Logger.info("Populating database:")
+    Req.createSampleRequests
+    play.Logger.info("* Requests created")
+    Project.createSampleProjects
+    play.Logger.info("* Projects created")
+    play.Logger.info("* Database population complete!")
+    Redirect(routes.Application.index)
+  }
+
   def jsRoutes = Action { implicit request =>
     import routes.javascript._
     Ok(Routes.javascriptRouter("routes")(
@@ -84,6 +94,7 @@ object Application extends Controller {
       Requests.viewReferences,
       Requests.viewMeta,
       Visualizations.view,
+      Visualizations.getData,
       GovUnits.edit,
       GovUnits.editMeta,
       GovUnits.update,

@@ -542,7 +542,7 @@ nav
         background-color: $accent
         color: white
 
-.welcome
+#welcome
   .banner
     padding: 0
     h1
@@ -563,17 +563,61 @@ nav
     i
       margin-right: 10px
       color: $orange
+  // TODO: clean this up. blame kai.
   .proposals
+    text-align: center
     padding-top: 0
+    h2.title
+      font-size: 18px
+    .val-group
+      border: 0
+      margin-top: 15px
+      margin-bottom: 0
+      background: none
+      td
+        padding: 0
+        &:nth-child(1)
+          padding-right: 8px
+          border-right: 1px solid $accent
+          width: 41%
+          height: 65px
+          // find a better way to do this ^
+        &:nth-child(2)
+          padding-left: 3px
+      h2
+        text-align: left
+        font-weight: bold
+        font-size: 28px
+        margin: 0
+      h6
+        margin-top: -4px
+    .caption
+      text-align: right
+      text-transform: uppercase
+      font-weight: bold
+      color: $accent
+      // float: left
+    img
+      height: 80px
     i
       color: $accent
     h2
       span
-        font-size: 50%
+        font-size: 60%
+        font-weight: 500
     h3
       margin-bottom: 0
-    .caption
-      margin-bottom: 10px
+  // yes this is sad
+  a.columns
+    +transition( all 0.2s )
+    &:hover
+      background-color: #f4f4f4
+  .tickets
+    margin-top: 24px
+    color: #444
+    font-weight: 300
+    span
+      color: $accent
   .row.info
     text-align: center
     h2, h4
@@ -582,18 +626,29 @@ nav
       // padding: 0.75rem 1.5rem
       margin-right: 2px
       // background: $white
-      // color: $accent 
+      // color: $accent
   figure
     display: inline-block
+    text-align: center
     width: 100%
     margin: 0
-    padding: 0
-    border: 1px solid $accent
+    padding: 0 0 10px 0
+    // border: 1px solid $accent
+    img
+      height: 100%
     &.small
-      height: 180px
+      height: 150px
     &.large
       height: 320px
-
+    .vis-panel
+      box-shadow: none
+  .graph-title
+    font-weight: 300
+    font-size: 20px
+  .call2act
+    background: $white
+    border: 1px solid #eee
+    padding: 30px
 
 
 .notice
@@ -663,3 +718,17 @@ footer
     text-align: center
     font-weight: 100
 
+
+a#feedback-tab
+  position: fixed
+  bottom: -3px
+  right: 20px
+  background-color: $red
+  color: white
+  padding: 8px 16px
+  opacity: 0.8
+  +transition( all 0.2s )
+  &:hover
+    bottom: 0
+    padding: 10px 20px
+    opacity: 1

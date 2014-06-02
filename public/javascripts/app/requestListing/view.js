@@ -1,29 +1,65 @@
 requestListing.view = function(ctrl){
   var pagination = function(){
+    var adjacentPages = 3;
+    var displayedPages = 1 + 2 * adjacentPages + 2 + 2;
+    var allowance = 1 + 2 + adjacentPages;
+
+    var pagesToDisplay = function() {
+      var pageCount = ctrl.maxPage();
+      var pageNum = ctrl.page;
+      var pages = [];
+      if(pageCount <= displayedPages) {
+        pages = _.range(0, pageCount);
+      }
+      else {
+        pages.push(0);
+        if(pageNum <= allowance) {
+          pages = pages.concat(_.range(1, displayedPages - 2));
+          pages.push("...");
+        }
+        else if(pageNum <= pageCount - allowance) {
+          pages.push("...");
+          pages = pages.concat(_.range(pageNum - adjacentPages, pageNum + adjacentPages + 1));
+          pages.push("...");
+        }
+        else {
+          pages.push("...");
+          pages = pages.concat(_.range(pageCount - displayedPages + 3, pageCount));
+        }
+        pages.push(pageCount);
+      }
+      return pages;
+    }
+
     return m("ul.pagination", [
       m("li.arrow",{className: ctrl.page === 0 ? "unavailable" : ""}, [
         m("a", {
-          href: routes.controllers.Requests.indexPage(ctrl.tab, 0, ctrl.projectTypeId).url, 
+          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page - 1, ctrl.projectTypeId).url,
           config: m.route
         }, [
           "«"
         ]),
       ]),
-      _.chain(_.range(0, ctrl.maxPage() + 1))
+      _.chain(pagesToDisplay())
         .map(function(page){
-          return m("li", {className: page === ctrl.page ? "current" : ""}, [
-            m("a", {
-              href: routes.controllers.Requests.indexPage(ctrl.tab, page, ctrl.projectTypeId).url, 
-              config: m.route
-            }, [
-              page + 1
+          if(page == "...") {
+            return m("li.unavailable", m("a", "..."));
+          }
+          else {
+            return m("li", {className: page === ctrl.page ? "current" : ""}, [
+              m("a", {
+                href: routes.controllers.Requests.indexPage(ctrl.tab, page, ctrl.projectTypeId).url,
+                config: m.route
+              }, [
+                page + 1
+              ])
             ])
-          ])
+          }
         })
         .value(),
       m("li.arrow",{className: ctrl.page === ctrl.maxPage() ? "unavailable" : ""}, [
         m("a", {
-          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.maxPage(), ctrl.projectTypeId).url, 
+          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page + 1, ctrl.projectTypeId).url,
           config: m.route
         },[
           "»"
@@ -40,8 +76,8 @@ requestListing.view = function(ctrl){
           m(".columns.medium-12", [
             ctrl.app.isAuthorized(process.permissions.CREATE_REQUESTS) ?
               m(
-                "a.button", 
-                {href: routes.controllers.Requests.create().url, config: m.route}, 
+                "a.button",
+                {href: routes.controllers.Requests.create().url, config: m.route},
                 "New Request"
               )
             : ""
@@ -64,7 +100,7 @@ requestListing.view = function(ctrl){
           m("h4", [
             "Filter by Project Type"
           ]),
-          m("ul.filters", 
+          m("ul.filters",
             _.chain(ctrl.projectFilters)
             .map(function (filter){
               return m("li.filter",{className: (ctrl.projectTypeId == filter.id) ? "active" : ""}, [
