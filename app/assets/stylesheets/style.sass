@@ -718,10 +718,17 @@ footer
     text-align: center
     font-weight: 100
 
-// #feedback-tab
-//   position: fixed
-//   bottom: 0px
-//   left: 10px
-//   background-color: $red
-//   color: white
-//   padding: 10px 20px
+
+a#feedback-tab
+  position: fixed
+  bottom: -4px
+  right: 12px
+  background-color: $red
+  color: white
+  padding: 8px 12px
+  opacity: 0.8
+  +transition( all 0.2s )
+  &:hover
+    bottom: 0
+    padding: 10px 20px
+    opacity: 1
