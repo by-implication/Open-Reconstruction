@@ -43,4 +43,12 @@ dashboard.controller = function(){
   this.projectTypes = visualizations.library['projectTypes'](self);
   this.topDisasters = visualizations.library['topDisasters'](self);
   this.topDisastersAmount = visualizations.library['topDisastersAmount'](self);
+
+  // this is to make sure charts are ok
+  // (ideally) we need a callback when rendering is finished
+
+  window.setTimeout(function(){
+    window.onresize();
+  },800);
+
 }
