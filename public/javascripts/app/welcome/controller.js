@@ -25,11 +25,11 @@ welcome.controller = function(){
 
   // such one-off from kai
 
-  this.yolandaEPLCProjectsQuantity = m.prop(0);
-  this.yolandaEPLCProjectsAmount = m.prop(0);
+  this.yolandaFundedProjectsQuantity = m.prop(0);
+  this.yolandaFundedProjectsAmount = m.prop(0);
 
-  this.boholEPLCProjectsQuantity = m.prop(0);
-  this.boholEPLCProjectsAmount = m.prop(0);
+  this.boholFundedProjectsQuantity = m.prop(0);
+  this.boholFundedProjectsAmount = m.prop(0);
 
   // graph
 
@@ -93,11 +93,11 @@ welcome.controller = function(){
 
     // such one-off from Kai
 
-    self.yolandaEPLCProjectsQuantity(kai.data.yolanda_project_eplc_qty);
-    self.yolandaEPLCProjectsAmount(kai.data.yolanda_project_eplc_amt);
+    self.yolandaFundedProjectsQuantity(kai.data.yolanda_project_funded_qty);
+    self.yolandaFundedProjectsAmount(kai.data.yolanda_project_funded_amt);
 
-    self.boholEPLCProjectsQuantity(kai.data.bohol_project_eplc_qty);
-    self.boholEPLCProjectsAmount(kai.data.bohol_project_eplc_amt);
+    self.boholFundedProjectsQuantity(kai.data.bohol_project_funded_qty);
+    self.boholFundedProjectsAmount(kai.data.bohol_project_funded_amt);
 
   });
 

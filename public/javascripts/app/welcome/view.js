@@ -143,8 +143,8 @@ welcome.view = function(ctrl){
                 ]),
                 m("td", [
                   m("h2", [
-                    ctrl.yolandaEPLCProjectsQuantity(),
-                    m("h6", "PHP " + helper.truncate(ctrl.yolandaEPLCProjectsAmount(), 2) + "")
+                    ctrl.yolandaFundedProjectsQuantity(),
+                    m("h6", "PHP " + helper.truncate(ctrl.yolandaFundedProjectsAmount(), 2) + "")
                   ]),
                 ])
               ])
@@ -156,8 +156,8 @@ welcome.view = function(ctrl){
                 ]),
                 m("td", [
                   m("h2", [
-                    ctrl.boholEPLCProjectsQuantity(),
-                    m("h6", "PHP " + helper.truncate(ctrl.boholEPLCProjectsAmount(), 2) + "")
+                    ctrl.boholFundedProjectsQuantity(),
+                    m("h6", "PHP " + helper.truncate(ctrl.boholFundedProjectsAmount(), 2) + "")
                   ]),
                 ])
               ])
