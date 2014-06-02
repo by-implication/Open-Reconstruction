@@ -1,10 +1,9 @@
 ../bower_components/mithril/mithril.js
 ../bower_components/underscore/underscore.js
-../bower_components/csv2json/csv2json.min.js
-../bower_components/leaflet/leaflet-src.js
+../bower_components/leaflet/leaflet.js
 ../bower_components/leaflet-draw/leaflet.draw.js
-../bower_components/dropzone/dropzone.js
+../bower_components/dropzone/dropzone.min.js
 ../bower_components/nprogress/nprogress.js
-../bower_components/d3/d3.js
-../bower_components/c3/c3.js
+../bower_components/d3/d3.min.js
+../bower_components/c3/c3.min.js
 ../bower_components/jquery/dist/jquery.min.js
