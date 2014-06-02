@@ -161,19 +161,19 @@ welcome.view = function(ctrl){
             ])
           ])
         ]),
-        m(".row.tickets",[
-          m("span", "eTickets tracked in System"),
-          " — ",
-          m("strong", 
-            ctrl.yolandaProposalsQuantity() + ctrl.boholEPLCProjectsQuantity()
-          ),
-          " (total)  /  PHP ",
-          m("strong",
-            helper.truncate(( ctrl.yolandaProposalsAmount() + ctrl.boholProjectsAmount() ), 2) 
-          ),
-          " "
+        // m(".row.tickets",[
+        //   m("span", "eTickets tracked in System"),
+        //   " — ",
+        //   m("strong", 
+        //     ctrl.yolandaProposalsQuantity() + ctrl.boholEPLCProjectsQuantity()
+        //   ),
+        //   " (total)  /  PHP ",
+        //   m("strong",
+        //     helper.truncate(( ctrl.yolandaProposalsAmount() + ctrl.boholProjectsAmount() ), 2) 
+        //   ),
+        //   " "
 
-        ])
+        // ])
       ]),
 //    m("section.proposals", [
 //        m(".row", [
