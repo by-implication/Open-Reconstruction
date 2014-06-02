@@ -58,7 +58,8 @@ welcome.view = function(ctrl){
             ]),
           ]),
           m("a.columns.medium-3", {
-            href:"/requests"
+            href:"/requests",
+            config:m.route
           }, [
             m("i.fa.fa-paste.fa-4x"),
             m("h2.title", "Requested Projects"),
@@ -90,7 +91,8 @@ welcome.view = function(ctrl){
             ])
           ]),
           m("a.columns.medium-3", {
-            href:"/dashboard"
+            href:"/dashboard",
+            config:m.route
           }, [
             m("i.fa.fa-money.fa-4x"),
             m("h2.title", "Budget Releases"),
@@ -124,7 +126,8 @@ welcome.view = function(ctrl){
             ]),
           ]),
           m("a.columns.medium-3", {
-            href:"/requests"
+            href:"/requests",
+            config:m.route
           }, [
             m("i.fa.fa-wrench.fa-4x"),
             m("h2.title", [
