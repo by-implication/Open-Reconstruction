@@ -10,7 +10,7 @@ libraryDependencies ++= Seq(
   cache
 )
 
-play.Project.playScalaSettings ++ SassPlugin.sassSettings ++ Seq(SassPlugin.sassOptions := Seq("--style", "compressed", "--sourcemap"))
+play.Project.playScalaSettings ++ SassPlugin.sassSettings ++ Seq(SassPlugin.sassOptions := Seq("--style", "compressed"))
 
 // don't run built-in javascript compiler
 javascriptEntryPoints <<= baseDirectory(base =>
