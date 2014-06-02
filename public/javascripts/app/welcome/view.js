@@ -266,7 +266,7 @@ welcome.view = function(ctrl){
       //     ])
       //   ])
       // ]),
-      m("section.alt",[
+      m("section.alt.for-everyone",[
         m(".row.info", [
           m(".columns.medium-12", [
             m("h2", [
