@@ -282,7 +282,7 @@ welcome.view = function(ctrl){
             ]),
           ]),
         ]),
-        m(".row", [
+        m(".row.details", [
           m(".columns.medium-6.large-gutters", [
             m("h3.ruled", "Agencies"),
             m(".row", [
@@ -334,9 +334,9 @@ welcome.view = function(ctrl){
             ]),
             m(".row", [
               m(".columns.medium-3", [
-                // m("figure.small", [
-                //   m("img",{src:"/assets/images/landing/7.svg"}),
-                // ]),
+                m("figure.small", [
+                  m("img",{src:"/assets/images/landing/9.svg"}),
+                ]),
               ]),
               m(".columns.medium-9", [
                 m("h4", "Sharing"),
@@ -345,9 +345,9 @@ welcome.view = function(ctrl){
             ]),
             m(".row", [
               m(".columns.medium-3", [
-                // m("figure.small", [
-                //   m("img",{src:"/assets/images/landing/7.svg"}),
-                // ]),
+                m("figure.small", [
+                  m("img",{src:"/assets/images/landing/5.svg"}),
+                ]),
               ]),
               m(".columns.medium-9", [
                 m("h4", "Interact"),
