@@ -49,6 +49,6 @@ dashboard.controller = function(){
 
   window.setTimeout(function(){
     window.onresize();
-  },800);
+  },1500);
 
 }
