@@ -12,6 +12,7 @@ object Visualization {
 
   def getData(v: String) = { v match {
     case "EPLC" => Some(Json.toJson(getEPLCData))
+    case "allEPLC" => Some(Json.toJson(getAllEPLCData))
     case "DBMBureauG" => Some(Json.toJson(getDBMBureauGData))
     case "landingPageData" => getLandingPageData
     case _ => None
@@ -121,7 +122,7 @@ object Visualization {
     )
   }
 
-  private def getEPLCData = DB.withConnection { implicit c =>
+  private def getAllEPLCData = DB.withConnection { implicit c =>
     SQL("SELECT * FROM dpwh_eplc").list(
       get[Option[String]]("project_id") ~
       get[Option[String]]("project_description") ~
@@ -575,6 +576,131 @@ object Visualization {
         "physical_actual" -> physical_actual.map(v => BigDecimal(v)),
         "physical_slippage" -> physical_slippage.map(v => BigDecimal(v)),
         "physical_performance_index" -> physical_performance_index.map(v => BigDecimal(v))
+      )
+    })
+  }
+
+  private def getEPLCData = DB.withConnection { implicit c =>
+    SQL("SELECT * FROM dpwh_eplc").list(
+      get[Option[String]]("contract_start_date") ~
+      get[Option[String]]("contract_end_date") ~
+      get[Option[Int]]("contract_duration") ~
+      get[Option[java.math.BigDecimal]]("project_abc") ~
+      get[Option[String]]("activity_1") ~
+      get[Option[Timestamp]]("activity_1_start_date") ~
+      get[Option[Timestamp]]("activity_1_end_date") ~
+      get[Option[String]]("activity_2") ~
+      get[Option[Timestamp]]("activity_2_start_date") ~
+      get[Option[Timestamp]]("activity_2_end_date") ~
+      get[Option[String]]("activity_3") ~
+      get[Option[Timestamp]]("activity_3_start_date") ~
+      get[Option[Timestamp]]("activity_3_end_date") ~
+      get[Option[String]]("activity_4") ~
+      get[Option[Timestamp]]("activity_4_start_date") ~
+      get[Option[Timestamp]]("activity_4_end_date") ~
+      get[Option[String]]("activity_5") ~
+      get[Option[Timestamp]]("activity_5_start_date") ~
+      get[Option[Timestamp]]("activity_5_end_date") ~
+      get[Option[String]]("activity_6") ~
+      get[Option[Timestamp]]("activity_6_start_date") ~
+      get[Option[Timestamp]]("activity_6_end_date") ~
+      get[Option[String]]("activity_7") ~
+      get[Option[Timestamp]]("activity_7_start_date") ~
+      get[Option[Timestamp]]("activity_7_end_date") ~
+      get[Option[String]]("activity_8") ~
+      get[Option[Timestamp]]("activity_8_start_date") ~
+      get[Option[Timestamp]]("activity_8_end_date") ~
+      get[Option[String]]("activity_9") ~
+      get[Option[Timestamp]]("activity_9_start_date") ~
+      get[Option[Timestamp]]("activity_9_end_date") ~
+      get[Option[String]]("activity_10") ~
+      get[Option[String]]("activity_10_start_date") ~
+      get[Option[Timestamp]]("activity_10_end_date") ~
+      get[Option[String]]("activity_11") ~
+      get[Option[Timestamp]]("activity_11_start_date") ~
+      get[Option[Timestamp]]("activity_11_end_date") ~
+      get[Option[String]]("project_type") ~
+      get[Option[Int]]("months_of_completion") ~
+      get[Option[String]]("disaster") map { case contract_start_date~
+      contract_end_date~
+      contract_duration~
+      project_abc~
+      activity_1~
+      activity_1_start_date~
+      activity_1_end_date~
+      activity_2~
+      activity_2_start_date~
+      activity_2_end_date~
+      activity_3~
+      activity_3_start_date~
+      activity_3_end_date~
+      activity_4~
+      activity_4_start_date~
+      activity_4_end_date~
+      activity_5~
+      activity_5_start_date~
+      activity_5_end_date~
+      activity_6~
+      activity_6_start_date~
+      activity_6_end_date~
+      activity_7~
+      activity_7_start_date~
+      activity_7_end_date~
+      activity_8~
+      activity_8_start_date~
+      activity_8_end_date~
+      activity_9~
+      activity_9_start_date~
+      activity_9_end_date~
+      activity_10~
+      activity_10_start_date~
+      activity_10_end_date~
+      activity_11~
+      activity_11_start_date~
+      activity_11_end_date~
+      project_type~
+      months_of_completion~
+      disaster => Json.obj(
+        "contract_start_date" -> contract_start_date,
+        "contract_end_date" -> contract_end_date,
+        "contract_duration" -> contract_duration,
+        "project_abc" -> project_abc.map(v => BigDecimal(v)),
+        "activity_1" -> activity_1,
+        "activity_1_start_date" -> activity_1_start_date,
+        "activity_1_end_date" -> activity_1_end_date,
+        "activity_2" -> activity_2,
+        "activity_2_start_date" -> activity_2_start_date,
+        "activity_2_end_date" -> activity_2_end_date,
+        "activity_3" -> activity_3,
+        "activity_3_start_date" -> activity_3_start_date,
+        "activity_3_end_date" -> activity_3_end_date,
+        "activity_4" -> activity_4,
+        "activity_4_start_date" -> activity_4_start_date,
+        "activity_4_end_date" -> activity_4_end_date,
+        "activity_5" -> activity_5,
+        "activity_5_start_date" -> activity_5_start_date,
+        "activity_5_end_date" -> activity_5_end_date,
+        "activity_6" -> activity_6,
+        "activity_6_start_date" -> activity_6_start_date,
+        "activity_6_end_date" -> activity_6_end_date,
+        "activity_7" -> activity_7,
+        "activity_7_start_date" -> activity_7_start_date,
+        "activity_7_end_date" -> activity_7_end_date,
+        "activity_8" -> activity_8,
+        "activity_8_start_date" -> activity_8_start_date,
+        "activity_8_end_date" -> activity_8_end_date,
+        "activity_9" -> activity_9,
+        "activity_9_start_date" -> activity_9_start_date,
+        "activity_9_end_date" -> activity_9_end_date,
+        "activity_10" -> activity_10,
+        "activity_10_start_date" -> activity_10_start_date,
+        "activity_10_end_date" -> activity_10_end_date,
+        "activity_11" -> activity_11,
+        "activity_11_start_date" -> activity_11_start_date,
+        "activity_11_end_date" -> activity_11_end_date,
+        "project_type" -> project_type,
+        "months_of_completion" -> months_of_completion,
+        "disaster" -> disaster
       )
     })
   }
