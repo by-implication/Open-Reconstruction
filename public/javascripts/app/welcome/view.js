@@ -335,7 +335,7 @@ welcome.view = function(ctrl){
               ]),
               m(".columns.medium-9", [
                 m("h4", "Sharing"),
-                m("p","Share!")
+                m("p", "Let people know about requests and projects that are important to you. Share your thoughts on Facebook and Twitter!")
               ]),
             ]),
             m(".row", [
@@ -346,7 +346,7 @@ welcome.view = function(ctrl){
               ]),
               m(".columns.medium-9", [
                 m("h4", "Interact"),
-                m("p","Leave comments!")
+                m("p", "Or if you'd prefer, you can simply leave comments and suggestions on the site itself.")
               ]),
             ]),
           ])

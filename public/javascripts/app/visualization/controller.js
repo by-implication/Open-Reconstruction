@@ -43,4 +43,7 @@ visualization.controller = function(){
   // this.vis.size().width = undefined;
   // this.vis.size().height = 300;
   this.vis.isFullView(true);
+  window.setTimeout(function(){
+    window.onresize();
+  },800);
 }
