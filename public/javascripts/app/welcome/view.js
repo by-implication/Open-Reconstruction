@@ -124,7 +124,7 @@ welcome.view = function(ctrl){
             ]),
           ]),
           m("a.columns.medium-3", {
-            href:"/dashboard"
+            href:"/requests"
           }, [
             m("i.fa.fa-wrench.fa-4x"),
             m("h2.title", [
