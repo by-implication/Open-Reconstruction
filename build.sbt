@@ -10,7 +10,7 @@ libraryDependencies ++= Seq(
   cache
 )
 
-play.Project.playScalaSettings ++ SassPlugin.sassSettings ++ Seq(SassPlugin.sassOptions := Seq("--style", "compressed", "--sourcemap"))
+play.Project.playScalaSettings ++ SassPlugin.sassSettings ++ Seq(SassPlugin.sassOptions := Seq("--style", "compressed"))
 
 // don't run built-in javascript compiler
 javascriptEntryPoints <<= baseDirectory(base =>
@@ -22,7 +22,8 @@ seq(jsSettings: _*)
 
 (includeFilter in (Compile, JsKeys.js)) := "main.jsm" || "lib.jsm"
 
-(JsKeys.compilationLevel in (Compile, JsKeys.js)) := CompilationLevel.WHITESPACE_ONLY
+(JsKeys.compilationLevel in (Compile, JsKeys.js)) := CompilationLevel.SIMPLE_OPTIMIZATIONS
+// or WHITESPACE_ONLY or ADVANCED_OPTIMIZATIONS
 
 (sourceDirectory in (Compile, JsKeys.js)) <<= (baseDirectory in Compile)(_ / "public" / "javascripts")
 

@@ -93,7 +93,7 @@ welcome.view = function(ctrl){
             href:"/dashboard"
           }, [
             m("i.fa.fa-money.fa-4x"),
-            m("h2.title", "Budget Allocated"),
+            m("h2.title", "Budget Releases"),
             m("table.val-group", [
               m("tr", [
                 m("td", [
@@ -127,7 +127,12 @@ welcome.view = function(ctrl){
             href:"/dashboard"
           }, [
             m("i.fa.fa-wrench.fa-4x"),
-            m("h2.title", "Ongoing Projects"),
+            m("h2.title", [
+              "Ongoing Projects ",
+              m("span", [
+                m("strong", "(DPWH)")
+              ])
+            ]),
             m("table.val-group", [
               m("tr", [
                 m("td", [
