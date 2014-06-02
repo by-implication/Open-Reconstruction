@@ -27,7 +27,13 @@ visualizations.nextYearMonth = function nextYearMonth(yearMonth){
 }
 
 visualizations.padMonths = function padMonths(a){
-  a = a.sort(function (a, b){ return a.yearMonth > b.yearMonth; });
+  a = a.sort(function (a, b){
+    if ( a.yearMonth < b.yearMonth )
+      return -1;
+    if ( a.yearMonth > b.yearMonth )
+      return 1;
+    return 0;
+  });
   var r = [];
   for(var ym = a[0].yearMonth; a.length; ym = visualizations.nextYearMonth(ym)){
     var nextElem = {yearMonth: ym, amount: 0, count: 0};
