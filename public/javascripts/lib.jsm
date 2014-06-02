@@ -5,5 +5,5 @@
 ../bower_components/dropzone/dropzone.min.js
 ../bower_components/nprogress/nprogress.js
 ../bower_components/d3/d3.min.js
-../bower_components/c3/c3.min.js
+../bower_components/c3/c3.js
 ../bower_components/jquery/dist/jquery.min.js
