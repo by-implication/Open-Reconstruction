@@ -40,11 +40,11 @@ object Visualization {
         FROM reqs
         WHERE lower(req_disaster_name) like '%bohol%'
         ) as bohol,
-        (SELECT count(*), sum(project_amount)
+        (SELECT count(*), coalesce(sum(project_amount),0) as sum
         FROM projects
         LEFT JOIN reqs on projects.req_id = reqs.req_id
         WHERE lower(req_disaster_name) like '%yolanda%') as yolanda_projects,
-        (SELECT count(*), sum(project_amount)
+        (SELECT count(*), coalesce(sum(project_amount),0) as sum
         FROM projects
         LEFT JOIN reqs on projects.req_id = reqs.req_id
         WHERE lower(req_disaster_name) like '%bohol%') as bohol_projects,
