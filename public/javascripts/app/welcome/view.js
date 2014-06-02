@@ -270,10 +270,12 @@ welcome.view = function(ctrl){
         m(".row.info", [
           m(".columns.medium-12", [
             m("h2", [
-              "Something for Everyone"
+              "One-Stop Shop"
             ]),
             m("p", [
-              "We've thought about how all sectors can use our system. See how."
+              "Open Reconstruction streamlines the whole process from end to end, tracking a project throughout its lifecycle.",
+              m("br"),
+              "All sectors can take advantage of the system. See how."
             ]),
           ]),
         ]),
