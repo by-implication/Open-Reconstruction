@@ -161,19 +161,19 @@ welcome.view = function(ctrl){
             ])
           ])
         ]),
-        m(".row.tickets",[
-          m("span", "eTickets tracked in System"),
-          " — ",
-          m("strong", 
-            ctrl.yolandaProposalsQuantity() + ctrl.boholEPLCProjectsQuantity()
-          ),
-          " (total)  /  PHP ",
-          m("strong",
-            helper.truncate(( ctrl.yolandaProposalsAmount() + ctrl.boholProjectsAmount() ), 2) 
-          ),
-          " "
+        // m(".row.tickets",[
+        //   m("span", "eTickets tracked in System"),
+        //   " — ",
+        //   m("strong", 
+        //     ctrl.yolandaProposalsQuantity() + ctrl.boholEPLCProjectsQuantity()
+        //   ),
+        //   " (total)  /  PHP ",
+        //   m("strong",
+        //     helper.truncate(( ctrl.yolandaProposalsAmount() + ctrl.boholProjectsAmount() ), 2) 
+        //   ),
+        //   " "
 
-        ])
+        // ])
       ]),
 //    m("section.proposals", [
 //        m(".row", [
@@ -235,52 +235,122 @@ welcome.view = function(ctrl){
 //          ])
 //        ])
 //     ]),
-      m("section.alt.agencies", [
+      // m("section.alt.agencies", [
+      //   m(".row.info", [
+      //     m(".columns.medium-12", [
+      //       m("h2",["One Stop Shop"]),
+      //       m("p", "Open Reconstruction streamlines the whole process from end to end, tracking a project throughout its lifecycle.")
+      //     ])
+      //   ]),
+      //   m(".row.info", [
+      //     m(".columns.medium-4", [
+      //       m("figure.small", [
+      //         m("img",{src:"/assets/images/landing/5.svg"})
+      //       ]),
+      //       m("h4", "Requests"),
+      //       m("p","Physical forms, endorsements and documents have been replaced by an organized, efficient electronic database.")
+      //     ]),
+      //     m(".columns.medium-4", [
+      //       m("figure.small", [
+      //         m("img",{src:"/assets/images/landing/6.svg"}),
+      //       ]),
+      //       m("h4", "Approval"),
+      //       m("p","Project approval now occurs digitally, without the need for physical mailing time or the risk of document loss.")
+      //     ]),
+      //     m(".columns.medium-4", [
+      //       m("figure.small", [
+      //         m("img",{src:"/assets/images/landing/7.svg"}),
+      //       ]),
+      //       m("h4", "Tracking"),
+      //       m("p","Agencies and the public can keep track of requests and projects' overall progress.")
+      //     ])
+      //   ])
+      // ]),
+      m("section.alt.for-everyone",[
         m(".row.info", [
           m(".columns.medium-12", [
-            m("h2",["One Stop Shop"]),
-            m("p", "Open Reconstruction streamlines the whole process from end to end, tracking a project throughout its lifecycle.")
+            m("h2", [
+              "Something for Everyone"
+            ]),
+            m("p", [
+              "We've thought about how all sectors can use our system. See how."
+            ]),
+          ]),
+        ]),
+        m(".row", [
+          m(".columns.medium-6.large-gutters", [
+            m("h3.ruled", "Agencies"),
+            m(".row", [
+              m(".columns.medium-3", [
+                m("figure.small", [
+                  m("img",{src:"/assets/images/landing/5.svg"})
+                ]),
+              ]),
+              m(".columns.medium-9", [
+                m("h4", "Request"),
+                m("p", "You can check if your projects are already in the system, with our search and filtering. If they are not yet there, request access, and submit a new eTicket for it!"),
+              ]),
+            ]),
+            m(".row", [
+              m(".columns.medium-3", [
+                m("figure.small", [
+                  m("img",{src:"/assets/images/landing/6.svg"}),
+                ]),
+              ]),
+              m(".columns.medium-9", [
+                m("h4", "Approval"),
+                m("p","Project approval now occurs digitally, without the need for physical mailing time or the risk of document loss.")
+              ]),
+            ]),
+            m(".row", [
+              m(".columns.medium-3", [
+                m("figure.small", [
+                  m("img",{src:"/assets/images/landing/7.svg"}),
+                ]),
+              ]),
+              m(".columns.medium-9", [
+                m("h4", "Tracking"),
+                m("p","Agencies and the public can keep track of requests and projects' overall progress.")
+              ]),
+            ]),
+          ]),
+          m(".columns.medium-6.large-gutters", [
+            m("h3.ruled", "Public"),
+            m(".row", [
+              m(".columns.medium-3", [
+                m("figure.small", [
+                  m("img",{src:"/assets/images/landing/7.svg"}),
+                ]),
+              ]),
+              m(".columns.medium-9", [
+                m("h4", "Tracking"),
+                m("p","Agencies and the public can keep track of requests and projects' overall progress.")
+              ]),
+            ]),
+            m(".row", [
+              m(".columns.medium-3", [
+                // m("figure.small", [
+                //   m("img",{src:"/assets/images/landing/7.svg"}),
+                // ]),
+              ]),
+              m(".columns.medium-9", [
+                m("h4", "Sharing"),
+                m("p","Share!")
+              ]),
+            ]),
+            m(".row", [
+              m(".columns.medium-3", [
+                // m("figure.small", [
+                //   m("img",{src:"/assets/images/landing/7.svg"}),
+                // ]),
+              ]),
+              m(".columns.medium-9", [
+                m("h4", "Interact"),
+                m("p","Leave comments!")
+              ]),
+            ]),
           ])
         ]),
-        m(".row.info", [
-          m(".columns.medium-4", [
-            m("figure.small", [
-              m("img",{src:"/assets/images/landing/5.svg"})
-            ]),
-            m("h4", "Requests"),
-            m("p","Physical forms, endorsements and documents have been replaced by an organized, efficient electronic database.")
-          ]),
-          m(".columns.medium-4", [
-            m("figure.small", [
-              m("img",{src:"/assets/images/landing/6.svg"}),
-            ]),
-            m("h4", "Approval"),
-            m("p","Project approval now occurs digitally, without the need for physical mailing time or the risk of document loss.")
-          ]),
-          m(".columns.medium-4", [
-            m("figure.small", [
-              m("img",{src:"/assets/images/landing/7.svg"}),
-            ]),
-            m("h4", "Tracking"),
-            m("p","Agencies and the public can keep track of requests and projects' overall progress.")
-          ])
-        ])
-      ]),
-      m("section.alt",[
-        m(".row", [
-          m(".columns.medium-6", [
-            m(".call2act",[
-              m("h3", "Agencies"),
-              "You can check if your projects are already in the system, with our search and filtering. If they are not yet there, request access, and submit a new eTicket for it!"
-            ])
-          ]),
-          m(".columns.medium-6", [
-            m(".call2act", [
-              m("h3", "Public"),
-              "You can check for projects that are relevant to you, and check on their progress. You can also share entries on social media."
-            ])
-          ])
-        ])
       ]),
       m("section.public", [
         m(".row.info", [
@@ -302,7 +372,7 @@ welcome.view = function(ctrl){
         m(".row", [
         ])
       ]),
-      m("section.alt.etc", [
+      m("section.etc.alt", [
         m(".row.info", [
           m(".columns.medium-4", [
             m("figure.small", [
