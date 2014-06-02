@@ -543,6 +543,12 @@ nav
         color: white
 
 #welcome
+  section
+    padding: 40px 0px
+  .for-everyone
+    figure.small
+      position: relative
+      top: -20px
   .banner
     padding: 0
     h1
@@ -642,6 +648,7 @@ nav
       height: 320px
     .vis-panel
       box-shadow: none
+      background-color: transparent
   .graph-title
     font-weight: 300
     font-size: 20px
@@ -718,6 +725,14 @@ footer
     text-align: center
     font-weight: 100
 
+.ruled
+  border-bottom: 3px solid #ccc
+  padding: 0px 6px 6px
+  margin-bottom: 20px
+
+.columns.large-gutters
+  padding: 0px 30px
+
 // #feedback-tab
 //   position: fixed
 //   bottom: 0px
@@ -725,3 +740,17 @@ footer
 //   background-color: $red
 //   color: white
 //   padding: 10px 20px
+
+a#feedback-tab
+  position: fixed
+  bottom: -3px
+  right: 20px
+  background-color: $red
+  color: white
+  padding: 8px 16px
+  opacity: 0.8
+  +transition( all 0.2s )
+  &:hover
+    bottom: 0
+    padding: 10px 20px
+    opacity: 1

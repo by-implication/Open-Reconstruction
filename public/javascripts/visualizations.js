@@ -530,9 +530,6 @@ visualizations.create(
           type : 'timeseries',
           tick: {
             format: '%b, %Y',
-            culling: {
-              max: 4
-            }
           }
         },
       }
