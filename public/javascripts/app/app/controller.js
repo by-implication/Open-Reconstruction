@@ -88,4 +88,7 @@ app.controller = function(){
   this.db.clear = function(){
     localStorage.clear();
   };
+
+  // this clears timeout of the loading notice (index.scala.html)
+  window.clearTimeout(show);
 }

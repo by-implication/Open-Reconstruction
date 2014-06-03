@@ -28,7 +28,7 @@ welcome.view = function(ctrl){
     m("section.proposals", [
         m(".row", [
           m(".columns.medium-3", [
-            m("i.fa.fa-clock-o.fa-4x"),
+              m("img", {src:"/assets/images/landing/1-Time Since.svg"}),
             m("h2.title", "Time since Disaster"),
             m("table.val-group", [
               m("tr", [
@@ -61,7 +61,7 @@ welcome.view = function(ctrl){
             href:"/requests",
             config:m.route
           }, [
-            m("i.fa.fa-paste.fa-4x"),
+            m("img", {src:"/assets/images/landing/2-Projects Requested.svg"}),
             m("h2.title", "Requested Projects"),
             m("table.val-group", [
               m("tr", [
@@ -94,7 +94,7 @@ welcome.view = function(ctrl){
             href:"/dashboard",
             config:m.route
           }, [
-            m("i.fa.fa-money.fa-4x"),
+            m("img", {src:"/assets/images/landing/3-Budget Releases.svg"}),
             m("h2.title", "Budget Releases"),
             m("table.val-group", [
               m("tr", [
@@ -129,7 +129,7 @@ welcome.view = function(ctrl){
             href:"/requests",
             config:m.route
           }, [
-            m("i.fa.fa-wrench.fa-4x"),
+            m("img", {src:"/assets/images/landing/4-Ongoing Projects.svg"}),
             m("h2.title", [
               "Ongoing Projects ",
               m("span", [
@@ -288,7 +288,7 @@ welcome.view = function(ctrl){
             m(".row", [
               m(".columns.medium-3", [
                 m("figure.small", [
-                  m("img",{src:"/assets/images/landing/5.svg"})
+                  m("img",{src:"/assets/images/landing/5-Request.svg"})
                 ]),
               ]),
               m(".columns.medium-9", [
@@ -299,7 +299,7 @@ welcome.view = function(ctrl){
             m(".row", [
               m(".columns.medium-3", [
                 m("figure.small", [
-                  m("img",{src:"/assets/images/landing/6.svg"}),
+                  m("img",{src:"/assets/images/landing/6-Approval.svg"}),
                 ]),
               ]),
               m(".columns.medium-9", [
@@ -310,7 +310,7 @@ welcome.view = function(ctrl){
             m(".row", [
               m(".columns.medium-3", [
                 m("figure.small", [
-                  m("img",{src:"/assets/images/landing/7.svg"}),
+                  m("img",{src:"/assets/images/landing/7-Tracking.svg"}),
                 ]),
               ]),
               m(".columns.medium-9", [
@@ -324,7 +324,7 @@ welcome.view = function(ctrl){
             m(".row", [
               m(".columns.medium-3", [
                 m("figure.small", [
-                  m("img",{src:"/assets/images/landing/7.svg"}),
+                  m("img",{src:"/assets/images/landing/7-Tracking.svg"}),
                 ]),
               ]),
               m(".columns.medium-9", [
@@ -335,7 +335,7 @@ welcome.view = function(ctrl){
             m(".row", [
               m(".columns.medium-3", [
                 m("figure.small", [
-                  m("img",{src:"/assets/images/landing/9.svg"}),
+                  m("img",{src:"/assets/images/landing/9-Sharing.svg"}),
                 ]),
               ]),
               m(".columns.medium-9", [
@@ -346,7 +346,7 @@ welcome.view = function(ctrl){
             m(".row", [
               m(".columns.medium-3", [
                 m("figure.small", [
-                  m("img",{src:"/assets/images/landing/5.svg"}),
+                  m("img",{src:"/assets/images/landing/8-Interact.svg"}),
                 ]),
               ]),
               m(".columns.medium-9", [
@@ -381,7 +381,7 @@ welcome.view = function(ctrl){
         m(".row.info", [
           m(".columns.medium-4", [
             m("figure.small", [
-              m("img",{src:"/assets/images/landing/8.svg"})
+              m("img",{src:"/assets/images/landing/10-About.svg"})
             ]),
             m("h4", "About this site"),
             m("p", [
@@ -395,7 +395,7 @@ welcome.view = function(ctrl){
           ]),
           m(".columns.medium-4", [
             m("figure.small", [
-              m("img",{src:"/assets/images/landing/9.svg"})
+              m("img",{src:"/assets/images/landing/11-Spread.svg"})
             ]),
             m("h4", "Spread the word"),
             m("p","Tweet us, Like us, Follow us! Spread the word, and let us know what else you'd like to see! You can also comment on individual charts and projects, and embedding is coming soon."),
@@ -404,7 +404,7 @@ welcome.view = function(ctrl){
           ]),
           m(".columns.medium-4", [
             m("figure.small", [
-              m("img",{src:"/assets/images/landing/10.svg"})
+              m("img",{src:"/assets/images/landing/12-Open Source.svg"})
             ]),
             m("h4", "Open Source"),
             m("p","This system proudly builds upon and contributes to several open-source projects, and is open source itself. Check out the code, submit issues, or even contribute patches!"),
