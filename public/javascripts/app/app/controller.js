@@ -1,6 +1,8 @@
 app.controller = function(){
   var self = this;
-  
+
+  $(window).off("scroll"); // todo: refactor
+
   var anon = {
     isSuperAdmin: false,
     isAdmin: false,
@@ -16,6 +18,9 @@ app.controller = function(){
   this.currentUser = m.prop(anon);
 
   bi.ajax(routes.controllers.Users.meta()).then(function (r){
+    if(r && m.route() == "/welcome"){
+      m.route("/requests");
+    }
     this.currentUser(r || anon);
   }.bind(this));
 
@@ -86,4 +91,7 @@ app.controller = function(){
   this.db.clear = function(){
     localStorage.clear();
   };
+
+  // this clears timeout of the loading notice (index.scala.html)
+  window.clearTimeout(show);
 }

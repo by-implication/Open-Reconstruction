@@ -1,162 +1,54 @@
 dashboard.controller = function(){
   var self = this;
   this.app = new app.controller();
-  this.requests = m.prop([]);
-  
+
+  this.requests = m.prop({});
+  this.projects = m.prop({});
+  this.saros = m.prop({});
+
+  this.mostCommonDisasterType = m.prop(0);
+  this.mostCommonProjectType = m.prop(0);
+
+  this.requests().byDisasterType = m.prop([]);
+  this.requests().byProjectType = m.prop([]);
+  this.requests().byMonth = m.prop([]);
+  this.requests().byLevel = m.prop([]);
+  this.requests().byNamedDisaster = m.prop();
+
+  this.projects().byMonth = m.prop([]);
+
+  m.startComputation();
   bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
-    self.requests(r);
+    self.mostCommonDisasterType(r.mostCommonDisasterType);
+    self.mostCommonProjectType(r.mostCommonProjectType);
+
+    self.requests().byLevel(r.byLevel);
+    self.requests().byMonth(visualizations.padMonths(r.byMonth));
+    self.requests().byDisasterType(r.byDisasterType);
+    self.requests().byProjectType(r.byProjectType);
+    self.requests().byNamedDisaster(r.byNamedDisaster);
+    m.endComputation();
   });
 
-  this.pendingProjects = function(){
-    return this.totalProjects() - this.approvedProjects().length;
-  }
+  bi.ajax(routes.controllers.Visualizations.getData("EPLC")).then(function (r){
+    self.projects(r.data);
+  });
 
-  this.approvedProjects = function(){
-    return this.requests().filter(function (r){
-      return r.level >= process.levelDict.indexOf("OP_SIGNOFF");
-    });
-  }
+  bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
+    self.saros(r.data);
+  })
 
-  this.totalProjects = function(){
-    return this.requests().length
-  }
+  this.projectHistory = visualizations.library['requestHistory'](self);
+  this.disasterHistory = visualizations.library['disasterHistory'](self);
+  this.projectTypes = visualizations.library['projectTypes'](self);
+  this.topDisasters = visualizations.library['topDisasters'](self);
+  this.topDisastersAmount = visualizations.library['topDisastersAmount'](self);
 
-  this.percentApproved = function(){
-    return this.approvedProjects().length / this.totalProjects();
-  }
+  // this is to make sure charts are ok
+  // (ideally) we need a callback when rendering is finished
 
-  this.amountApproved = function(){
-    return this.approvedProjects()
-      .map(function (r){ return r.amount; })
-      .reduce(function (a, b){ return a + b; }, 0);
-  }
+  window.setTimeout(function(){
+    window.onresize();
+  },1500);
 
-  this.totalProjectCost = function(){
-    return helper.truncate(
-      _.chain(this.requests())
-      .map(function(project){
-        return project.amount;
-      })
-      .compact()
-      .reduce(function(a, b){
-        return a + b;
-      }, 0)
-      .value()
-    );
-  }
-
-  this.mostCommonProjectType = function(){
-    return _.chain(this.requests())
-    .countBy(function(r){
-      return r.projectType;
-    })
-    .pairs()
-    .reject(function(p){
-      return p[0] == "OTHERS";
-    })
-    .max(function(r){
-      return r[1];
-    })
-    .value();
-  }
-
-  this.mostCommonDisasterType = function(){
-    return _.chain(this.requests())
-    .countBy(function(r){
-      return r.disasterType;
-    })
-    .pairs()
-    .reject(function(p){
-      return p[0] == "OTHERS";
-    })
-    .max(function(r){
-      return r[1];
-    })
-    .value();
-  }
-
-  this.chartInit = function(elem){
-    // elem.width = document.body.offsetWidth;
-    elem.width = 1280;
-    function entryToInt(entry) {
-      var date = new Date(entry.date);
-      return date.getFullYear() * 12 + date.getMonth();
-    }
-
-    function formatDate(val) {
-      var year = Math.floor(val / 12);
-      var month = val % 12;
-      return helper.monthArray[month] + ", " + year;
-    }
-
-    var labels = [];
-    var rawGroup = _.chain(self.requests()).groupBy(entryToInt)
-
-    var times = rawGroup.keys()
-      .map(function(key) {
-        return parseInt(key);
-      })
-      .compact()
-      .sort();
-
-    var first = times.head().value() || 0;
-    var last = (times.last().value() + 1) || 0;
-    var dateRangeObj = _.chain(first).range(last)
-
-    var countPerMonth = dateRangeObj
-      .map(function(dateYear){
-        var projects = rawGroup.value()[dateYear]
-        return projects ? projects.length : 0;
-      });
-
-    var amountPerMonth = dateRangeObj
-      .map(function(dateYear){
-        var projects = rawGroup.value()[dateYear]
-        var amount = 0;
-
-        if(projects){
-          amount = _.chain(projects)
-          .map(function(project){
-            return project.amount;
-          })
-          .compact()
-          .reduce(function(acc, next){
-            return acc + next;
-          }, 0)
-          .value();
-        }
-
-        return projects ? amount * 0.00000001 : 0;
-      });
-
-    var cpmValues = countPerMonth.value();
-    var apmValues = amountPerMonth.value();
-    var labels = dateRangeObj.map(formatDate).value();
-
-    var data = {
-      labels: labels,
-      datasets: [
-        {
-          fillColor : "#FF851B",
-          strokeColor : "#FF851B",
-          pointColor : "#FF851B",
-          pointStrokeColor : "white",
-          data: apmValues
-        },
-        {
-          fillColor : "rgba(0,0,0,0.3)",
-          strokeColor : "rgba(0,0,0,0.3)",
-          pointColor : "rgba(0,0,0,1)",
-          pointStrokeColor : "white",
-          data: cpmValues
-        }
-      ]
-    }
-
-    var ctx = elem.getContext("2d");
-    var myNewChart = new Chart(ctx).Line(data, {
-      bezierCurve: false
-    });
-    
-  }
 }

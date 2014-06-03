@@ -197,8 +197,12 @@ common.tabs.menu = function(ctrl, options){
           return "";
         }
       };
+      var options = { href: tab.href };
+      if(tab.href.charAt(0) != '#') {
+        options.config = m.route;
+      }
       return m("dd", {class: tabClass(tab)}, [
-        m("a", { href: tab.href, config: m.route }, tab.label())
+        m("a", options, tab.label())
       ]);
     })
   )
@@ -215,7 +219,13 @@ common.tabs.content = function(ctrl){
 common.tabs.controller = function(basePath){
   this.tabs = m.prop([]);
   this.currentTab = function() {
-    var item = _.find(this.tabs(), function(tab) { return tab.href == m.route() });
+    var item = _.find(this.tabs(), function(tab) {
+      if(window.location.hash){
+        return tab.href === window.location.hash;
+      } else {
+        return tab.href == m.route() 
+      }
+    });
     if(item == undefined) {
       item = _.head(this.tabs());
     }
@@ -226,12 +236,58 @@ common.tabs.controller = function(basePath){
   }
 }
 
+common.stickyTabs = {};
+
+common.stickyTabs.menu = function(ctrl, options){
+  return m("dl.tabs[data-tab]", options || {},
+    ctrl.tabs()
+    .filter(function (tab){
+      if(tab.when){
+        return tab.when()
+      } else {
+        return true
+      }
+    })
+    .map(function (tab, i){
+      var options = { href: tab.href };
+      // console.log(ctrl.currentSection(), tab.href);
+      return m("dd", {class: (ctrl.currentSection() === tab.href) ? "active" : ""}, [
+        m("a", options, tab.label())
+      ]);
+    })
+  )
+}
+
+common.stickyTabs.controller = function(){
+  this.tabs = m.prop([]);
+  this.currentTab = function() {
+    var item = _.find(this.tabs(), function(tab) {
+      if(window.location.hash){
+        return tab.href === window.location.hash;
+      } else {
+        return tab.href == m.route() 
+      }
+    });
+    if(item == undefined) {
+      item = _.head(this.tabs());
+    }
+    return item.identifier ? item.identifier : item.label();
+  }
+  this.currentSection = m.prop();
+  this.isActive = function(identifier){
+    console.log(this.currentSection(), identifier);
+    return this.currentSection() == identifier;
+  }.bind(this);
+}
+
 common.modal = {};
 common.modal.controller = function(){
   this.isVisible = m.prop(false);
   this.show = function(){
     this.isVisible(true);
     this.height = helper.docHeight;
+    // console.log($("html, body"));
+    // $("html, body").animate({ scrollTop: "0px" });
   }
   this.close = function(){
     this.isVisible(false);
@@ -245,7 +301,8 @@ common.modal.controller = function(){
   }
   this.dialogConfig = function(elem){
     window.setTimeout(function(){
-      elem.style.top = "0px";
+      var scrollPos = $(window).scrollTop();
+      elem.style.top = scrollPos + "px";
     }, 0); 
   }
 }

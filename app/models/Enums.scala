@@ -8,5 +8,6 @@ object ProjectScope extends Enum[ProjectScope] {
   val RECONSTRUCTION = new ProjectScope("Reconstruction")
   val REPAIR = new ProjectScope("Repair")
   val PREVENTION = new ProjectScope("Prevention")
-  val list = List(RECONSTRUCTION, REPAIR, PREVENTION)
+  val OTHERS = new ProjectScope("Others")
+  val list = List(RECONSTRUCTION, REPAIR, PREVENTION, OTHERS)
 }

@@ -74,6 +74,8 @@ object Application extends Controller with Secured {
   def index2(x: Int, y: Int) = index
 
   def dashboard = index
+  def welcome = index
+  def saro = index
   def admin = index
   def adminLgus = index
   def adminAgencies = index
@@ -86,7 +88,17 @@ object Application extends Controller with Secured {
   }
 
   def dashboardMeta() = Action {
-    Ok(Json.toJson(Req.listAll.map(_.dashboardJson)))
+    Ok(Req.dashboardData)
+  }
+
+  def populate() = Action { implicit request =>
+    play.Logger.info("Populating database:")
+    Req.createSampleRequests
+    play.Logger.info("* Requests created")
+    Project.createSampleProjects
+    play.Logger.info("* Projects created")
+    play.Logger.info("* Database population complete!")
+    Redirect(routes.Application.index)
   }
 
   def jsRoutes = Action { implicit request =>
@@ -96,6 +108,8 @@ object Application extends Controller with Secured {
       routes.javascript.Application.adminLgus,
       routes.javascript.Application.adminAgencies,
       routes.javascript.Application.dashboard,
+      routes.javascript.Application.saro,
+      routes.javascript.Application.welcome,
       routes.javascript.Application.dashboardMeta,
       routes.javascript.Application.process,
       Users.authenticate,
@@ -119,6 +133,8 @@ object Application extends Controller with Secured {
       Attachments.download,
       Attachments.thumb,
       Assets.at,
+      Projects.insert,
+      Requests.assignSaro,
       Requests.comment,
       Requests.create,
       Requests.createMeta,
@@ -134,7 +150,10 @@ object Application extends Controller with Secured {
       Requests.viewImages,
       Requests.viewDocuments,
       Requests.viewActivity,
+      Requests.viewReferences,
       Requests.viewMeta,
+      Visualizations.view,
+      Visualizations.getData,
       GovUnits.edit,
       GovUnits.editMeta,
       GovUnits.update,

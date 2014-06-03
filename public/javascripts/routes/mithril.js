@@ -1,17 +1,17 @@
 
 ////////////////////////////////////////////////////
 // routes
-
-m.route(document, window.location.pathname == "/" ? "/requests" : window.location.pathname, {
+m.route.mode = "pathname";
+m.route(document, window.location.pathname == "/" ? "/welcome" : window.location.pathname, {
   "/requests": requestListing,
   "/requests/:tab/:page/:projectTypeId": requestListing,
   "/requests/new": requestCreation,
   "/requests/:id": request,
-  "/requests/:id/assignments": request,
-  "/requests/:id/images": request,
-  "/requests/:id/documents": request,
-  "/requests/:id/activity": request,
+  "/requests/:id/:tab": request,
+  "/visualizations/:v": visualization,
   "/dashboard": dashboard,
+  "/saro": saro,
+  "/welcome": welcome,
   "/users/:id": user,
   "/admin": admin,
   "/admin/lgus": admin,
@@ -26,5 +26,3 @@ m.route(document, window.location.pathname == "/" ? "/requests" : window.locatio
   "/gov-units/:id/edit": govUnitEdit,
   "/login": login
 });
-
-m.route.mode = "pathname";
