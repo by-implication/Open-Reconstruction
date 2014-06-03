@@ -145,7 +145,11 @@ visualizations.create(
       axis: {
         x: {
           type: "categorized",
-          categories: labels
+          categories: labels,
+          label: {
+            text: "Project Types",
+            position: "outer-middle"
+          }
         },
         y: {
           label: {
