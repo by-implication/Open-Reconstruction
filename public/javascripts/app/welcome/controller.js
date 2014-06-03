@@ -74,7 +74,7 @@ welcome.controller = function(){
     // console.log(r.byDisasterType);
   });
 
-  bi.ajax(routes.controllers.Visualizations.getData("landingPageData")).then(function (kai){
+  bi.ajax(routes.controllers.Visualizations.getData("landing")).then(function (kai){
     // console.log(kai);
     // wow so WET
 

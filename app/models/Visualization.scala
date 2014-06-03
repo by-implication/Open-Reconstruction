@@ -13,11 +13,11 @@ object Visualization {
   def getData(v: String) = { v match {
     case "EPLC" => Some(Json.toJson(getEPLCData))
     case "DBMBureauG" => Some(Json.toJson(getDBMBureauGData))
-    case "landingPageData" => getLandingPageData
+    case "landing" => getLanding
     case _ => None
   }}
 
-  def getLandingPageData = DB.withConnection { implicit c =>
+  def getLanding = DB.withConnection { implicit c =>
     SQL("""
       SELECT yolanda.count as yolanda_req_qty, yolanda.sum as yolanda_req_amt,
         bohol.count as bohol_req_qty, bohol.sum as bohol_req_amt,
