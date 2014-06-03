@@ -83,15 +83,23 @@ visualizations.create(
       },
       axis: {
         x: {
+          label: {
+            text: "Project Activities",
+            position: "outer-middle"
+          },
           type: "categorized",
           categories: labels
         },
         y: {
-          tick: {
-            format: function(t){
-              return t + " days";
-            }
-          }
+          label: {
+            text: "Days",
+            position: "outer-center"
+          },
+          // tick: {
+          //   format: function(t){
+          //     return t + " days";
+          //   }
+          // }
         },
         rotated: true
       }
@@ -137,7 +145,17 @@ visualizations.create(
       axis: {
         x: {
           type: "categorized",
-          categories: labels
+          categories: labels,
+          label: {
+            text: "Project Types",
+            position: "outer-middle"
+          }
+        },
+        y: {
+          label: {
+            text: "Count",
+            position: "outer-center"
+          }
         },
         rotated: true
       }
@@ -208,18 +226,35 @@ visualizations.create(
         }
       },
       axis: {
+        y: {
+          label: {
+            text: "Quantity",
+            position: "outer-middle"
+          }
+        },
         x: {
           type: 'timeseries',
           tick: {
-            format: '%b, %Y'
+            format: '%b, %Y',
+            culling: {
+              max: 4
+            }
+          },
+          label: {
+            text: "Date",
+            position: "outer-center"
           }
         },
         y2: {
           show: true,
           tick: {
             format: function(t){
-              return "PHP " + helper.truncate(t, 2);
+              return helper.truncate(t, 2);
             }
+          },
+          label: {
+            text: "Amount in PHP",
+            position: "outer-middle"
           }
         }
       }

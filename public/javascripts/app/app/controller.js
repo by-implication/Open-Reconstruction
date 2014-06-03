@@ -18,6 +18,9 @@ app.controller = function(){
   this.currentUser = m.prop(anon);
 
   bi.ajax(routes.controllers.Users.meta()).then(function (r){
+    if(r && m.route() == "/welcome"){
+      m.route("/requests");
+    }
     this.currentUser(r || anon);
   }.bind(this));
 
