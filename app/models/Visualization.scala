@@ -80,22 +80,26 @@ object Visualization {
           yolanda_saro_qty ~ yolanda_saro_amt ~
           yolanda_project_funded_qty ~ yolanda_project_funded_amt ~ 
           bohol_project_funded_qty ~ bohol_project_funded_amt => {
-          Json.obj(
-            "yolanda_req_qty" -> yolanda_req_qty,
-            "yolanda_req_amt" -> BigDecimal(yolanda_req_amt),
-            "bohol_req_qty" -> bohol_req_qty,
-            "bohol_req_amt" -> BigDecimal(bohol_req_amt),
-            "yolanda_project_qty" -> yolanda_project_qty,
-            "yolanda_project_amt" -> BigDecimal(yolanda_project_amt),
-            "bohol_project_qty" -> bohol_project_qty,
-            "bohol_project_amt" -> BigDecimal(bohol_project_amt),
-            "yolanda_saro_qty" -> yolanda_saro_qty,
-            "yolanda_saro_amt" -> BigDecimal(yolanda_saro_amt),
-            "yolanda_project_funded_qty" -> yolanda_project_funded_qty,
-            "yolanda_project_funded_amt" -> BigDecimal(yolanda_project_funded_amt),
-            "bohol_project_funded_qty" -> bohol_project_funded_qty,
-            "bohol_project_funded_amt" -> BigDecimal(bohol_project_funded_amt)
+
+          def qtyAmt(qty: Long, amt: java.math.BigDecimal) = Json.obj(
+            "qty" -> qty,
+            "amt" -> BigDecimal(amt)
           )
+
+          Json.obj(
+            "yolanda" -> Json.obj(
+              "req" -> qtyAmt(yolanda_req_qty, yolanda_req_amt),
+              "saro" -> qtyAmt(yolanda_saro_qty, yolanda_saro_amt),
+              "projects" -> qtyAmt(yolanda_project_qty, yolanda_project_amt),
+              "fundedProjects" -> qtyAmt(yolanda_project_funded_qty, yolanda_project_funded_amt)
+            ),
+            "bohol" -> Json.obj(
+              "req" -> qtyAmt(bohol_req_qty, bohol_req_amt),
+              "projects" -> qtyAmt(bohol_project_qty, bohol_project_amt),
+              "fundedProjects" -> qtyAmt(bohol_project_funded_qty, bohol_project_funded_amt)
+            )
+          )
+
         }
       }
     )
