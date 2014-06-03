@@ -46,6 +46,9 @@ object Req extends ReqGen {
   }
 
   def createSampleRequests = DB.withConnection { implicit c =>
+
+    play.Logger.info("* Inferring requests from entries.")
+
     SQL("""
       INSERT INTO reqs (req_description, project_type_id, req_scope, req_disaster_name, req_amount, author_id, req_location, req_disaster_date)
       SELECT group_id,
@@ -70,6 +73,30 @@ object Req extends ReqGen {
       LEFT JOIN project_types on initcap(project_type_name) = initcap(project_type)
       GROUP BY group_id, disaster_name
     """).execute()
+    play.Logger.info("*   OPARR-Bohol requests created.")
+
+    SQL("""
+      INSERT INTO reqs (req_description, project_type_id, req_amount,
+        req_scope, author_id, req_location, disaster_type_id, 
+        req_disaster_date, req_disaster_name, req_remarks
+        )
+      SELECT project_description, 
+        1 as project_type_id,
+        coalesce(project_abc*1000, 0) as amount,
+        'Others'::project_scope as scope,
+        1 as author_id,
+        psgc, 
+        CASE 
+          WHEN lower(disaster) ilike '%earthquake%' THEN 1
+          WHEN lower(disaster) ilike '%typhoon%' THEN 2
+          ELSE 7
+          END as disaster_type,
+        now() as disaster_date,
+        disaster,
+        project_id
+      FROM dpwh_eplc
+    """).execute()
+    play.Logger.info("*   DPWH EPLC Requests created.")
   }
 
   private def byDisasterType = DB.withConnection { implicit c =>
