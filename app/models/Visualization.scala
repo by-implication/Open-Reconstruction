@@ -105,16 +105,14 @@ object Visualization {
   def getDBMBureauGData = DB.withConnection { implicit c =>
     SQL("SELECT * FROM saro_bureau_g").list(
       get[Option[String]]("agency") ~
-      get[Option[String]]("saro_number") ~
       get[Option[Timestamp]]("saro_date") ~
       get[Option[Int]]("year") ~
       get[Option[java.math.BigDecimal]]("amount") ~
       get[Option[Int]]("project_quantity") ~
       get[Option[String]]("remarks") map {
-        case agency~saro_number~date~year~amount~quantity~remarks => {
+        case agency~date~year~amount~quantity~remarks => {
           Json.obj(
             "agency" -> agency,
-            "saro_number" -> saro_number,
             "saro_date" -> date,
             "year" -> year,
             "amount" -> amount.map(v => BigDecimal(v)),
