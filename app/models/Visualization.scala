@@ -106,25 +106,55 @@ object Visualization {
   }
 
   def getDBMBureauGData = DB.withConnection { implicit c =>
-    SQL("SELECT * FROM saro_bureau_g").list(
-      get[Option[String]]("agency") ~
-      get[Option[Timestamp]]("saro_date") ~
-      get[Option[Int]]("year") ~
-      get[Option[java.math.BigDecimal]]("amount") ~
-      get[Option[Int]]("project_quantity") ~
-      get[Option[String]]("remarks") map {
-        case agency~date~year~amount~quantity~remarks => {
+
+    val byAgency = SQL("""
+      SELECT agency, COUNT(*), SUM(amount)
+      FROM saro_bureau_g
+      GROUP BY agency
+    """).list(
+      get[String]("agency") ~
+      get[Long]("count") ~
+      get[java.math.BigDecimal]("sum") map {
+        case agency~count~amount => {
           Json.obj(
             "agency" -> agency,
-            "saro_date" -> date,
-            "year" -> year,
-            "amount" -> amount.map(v => BigDecimal(v)),
-            "project_quantity" -> quantity,
-            "remarks" -> remarks
+            "count" -> count,
+            "amount" -> BigDecimal(amount)
           )
         }
       }
     )
+
+    val byMonth = SQL("""
+      SELECT
+        EXTRACT(YEAR FROM saro_date) AS year,
+        EXTRACT(MONTH FROM saro_date) AS month,
+        COUNT(*),
+        SUM(amount)
+      FROM saro_bureau_g
+      WHERE saro_date IS NOT NULL
+      GROUP BY EXTRACT(YEAR FROM saro_date), month
+      ORDER BY year, month
+    """).list(
+      get[Double]("year") ~
+      get[Double]("month") ~
+      get[Long]("count") ~
+      get[java.math.BigDecimal]("sum") map { case _year~_month~count~amount =>
+        val year = _year.toInt
+        val month = _month.toInt
+        Json.obj(
+          "yearMonth" -> (year + "-" + (if (month < 10) "0" + month else month)),
+          "count" -> count,
+          "amount" -> BigDecimal(amount)
+        )
+      }
+    )
+
+    Json.obj(
+      "byAgency" -> byAgency,
+      "byMonth" -> byMonth
+    )
+
   }
 
   private def getEPLCData = DB.withConnection { implicit c =>
