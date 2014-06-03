@@ -111,6 +111,7 @@ object Visualization {
       SELECT agency, COUNT(*), SUM(amount)
       FROM saro_bureau_g
       GROUP BY agency
+      ORDER BY agency
     """).list(
       get[String]("agency") ~
       get[Long]("count") ~

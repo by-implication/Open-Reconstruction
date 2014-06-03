@@ -267,23 +267,15 @@ visualizations.create(
   'saroAmountAgency',
   'saro',
   function(ctrl){
-    var sarosByAgency = _.chain(ctrl.saros())
-      .filter(function(s){
-        return s["agency"];
-      })
-      .groupBy(function(s){
-        return s["agency"];
-      })
-      .value();
-    var labels = _.keys(sarosByAgency);
-    var amountPerAgency = _.chain(sarosByAgency)
-      .values()
-      .map(function(g){
-        return g.reduce(function(acc, head){
-          return acc + head.amount;
-        }, 0)
-      })
-      .value()
+    var byAgency = ctrl.saros().byAgency.sort(function (a, b){
+      if ( a.amount > b.amount )
+        return -1;
+      if ( a.amount < b.amount )
+        return 1;
+      return 0;
+    })
+    var labels = byAgency.map(function (e){ return e.agency; });
+    var amountPerAgency = byAgency.map(function (e){ return e.amount; });
 
     return {
       size: {
@@ -320,21 +312,15 @@ visualizations.create(
   'saroCountAgency',
   'saro',
   function(ctrl){
-    var sarosByAgency = _.chain(ctrl.saros())
-      .filter(function(s){
-        return s["agency"];
-      })
-      .groupBy(function(s){
-        return s["agency"];
-      })
-      .value();
-    var labels = _.keys(sarosByAgency);
-    var countPerAgency = _.chain(sarosByAgency)
-      .values()
-      .map(function(g){
-        return g.length;
-      })
-      .value()
+    var byAgency = ctrl.saros().byAgency.sort(function (a, b){
+      if ( a.count > b.count )
+        return -1;
+      if ( a.count < b.count )
+        return 1;
+      return 0;
+    })
+    var labels = byAgency.map(function (e){ return e.agency; });
+    var countPerAgency = byAgency.map(function (e){ return e.count; });
 
     return {
       size: {
@@ -363,42 +349,18 @@ visualizations.create(
   'saroHistory',
   'saro',
   function(ctrl){
-    var sarosByMonth = visualizations.padMonths(_.chain(ctrl.saros())
-      .filter(function(s){
-        return s["saro_date"];
-      })
-      .map(function(s){
-        var saro = {};
-        var date = new Date(s["saro_date"]);
-        var month = date.getMonth() + 1;
-        var paddedMonth = ("0" + month).slice (-2); 
-        saro.yearMonth = date.getFullYear() + "-" + paddedMonth;
-        saro.amount = s.amount;
-        return saro;
-      })
-      .groupBy(function(s){
-        return s.yearMonth
-      })
-      .map(function(s, k){
-        return {
-          yearMonth: k,
-          count: s.length,
-          amount: s.reduce(function(acc, head){
-            return acc + head.amount;
-          }, 0)
-        }
-      })
-      .value()
-    );
-    var labels = sarosByMonth
+
+    var byMonth = visualizations.padMonths(ctrl.saros().byMonth)
+
+    var labels = byMonth
       .map(function(s){
         return new Date(s.yearMonth);
       });
-    var amountPerMonth = sarosByMonth
+    var amountPerMonth = byMonth
       .map(function(g){
         return g.amount;
       });
-    var countPerMonth = sarosByMonth
+    var countPerMonth = byMonth
       .map(function(g){
         return g.count;
       });
