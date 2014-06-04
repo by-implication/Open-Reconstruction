@@ -21,16 +21,16 @@ object Visualization {
     SQL("""
       SELECT yolanda.count as yolanda_req_qty, yolanda.sum as yolanda_req_amt,
         bohol.count as bohol_req_qty, bohol.sum as bohol_req_amt,
-        yolanda_projects.count as yolanda_project_qty,
-        yolanda_projects.sum as yolanda_project_amt,
-        bohol_projects.count as bohol_project_qty,
-        bohol_projects.sum as bohol_project_amt,
+        yolanda_projects_all.count as yolanda_project_qty,
+        yolanda_projects_all.sum as yolanda_project_amt,
+        bohol_projects_all.count as bohol_project_qty,
+        bohol_projects_all.sum as bohol_project_amt,
         saro_yolanda.count as yolanda_saro_qty,
         saro_yolanda.sum as yolanda_saro_amt,
-        yolanda_eplc.count as yolanda_project_eplc_qty,
-        yolanda_eplc.sum as yolanda_project_eplc_amt,
-        bohol_eplc.count as bohol_project_eplc_qty,
-        bohol_eplc.sum as bohol_project_eplc_amt
+        yolanda_projects_funded.count as yolanda_project_funded_qty,
+        yolanda_projects_funded.sum as yolanda_project_funded_amt,
+        bohol_projects_funded.count as bohol_project_funded_qty,
+        bohol_projects_funded.sum as bohol_project_funded_amt
       FROM (SELECT count(*), sum(req_amount)
         FROM reqs
         WHERE lower(req_disaster_name) like '%yolanda%'
@@ -42,18 +42,22 @@ object Visualization {
         (SELECT count(*), coalesce(sum(project_amount),0) as sum
         FROM projects
         LEFT JOIN reqs on projects.req_id = reqs.req_id
-        WHERE lower(req_disaster_name) like '%yolanda%') as yolanda_projects,
+        WHERE lower(req_disaster_name) like '%yolanda%') as yolanda_projects_all,
         (SELECT count(*), coalesce(sum(project_amount),0) as sum
         FROM projects
         LEFT JOIN reqs on projects.req_id = reqs.req_id
-        WHERE lower(req_disaster_name) like '%bohol%') as bohol_projects,
-        (SELECT count(*), sum(amount) FROM saro_bureau_g) as saro_yolanda,
-        (SELECT count(*), sum(project_abc)*1000 as sum
-        FROM dpwh_eplc
-        WHERE lower(disaster) like '%yolanda%') as yolanda_eplc,
-        (SELECT count(*), sum(project_abc)*1000 as sum
-        FROM dpwh_eplc
-        WHERE lower(disaster) like '%bohol%') as bohol_eplc
+        WHERE lower(req_disaster_name) like '%yolanda%'
+        AND project_funded) as yolanda_projects_funded,
+        (SELECT count(*), coalesce(sum(project_amount),0) as sum
+        FROM projects
+        LEFT JOIN reqs on projects.req_id = reqs.req_id
+        WHERE lower(req_disaster_name) like '%bohol%') as bohol_projects_all,
+        (SELECT count(*), coalesce(sum(project_amount),0) as sum
+        FROM projects
+        LEFT JOIN reqs on projects.req_id = reqs.req_id
+        WHERE lower(req_disaster_name) like '%bohol%'
+        AND project_funded) as bohol_projects_funded,
+        (SELECT count(*), sum(amount) FROM saro_bureau_g) as saro_yolanda
       """).singleOpt(
       get[Long]("yolanda_req_qty") ~
       get[java.math.BigDecimal]("yolanda_req_amt") ~
@@ -65,17 +69,17 @@ object Visualization {
       get[java.math.BigDecimal]("bohol_project_amt") ~
       get[Long]("yolanda_saro_qty") ~
       get[java.math.BigDecimal]("yolanda_saro_amt") ~
-      get[Long]("yolanda_project_eplc_qty") ~
-      get[java.math.BigDecimal]("yolanda_project_eplc_amt") ~
-      get[Long]("bohol_project_eplc_qty") ~
-      get[java.math.BigDecimal]("bohol_project_eplc_amt") map {
+      get[Long]("yolanda_project_funded_qty") ~
+      get[java.math.BigDecimal]("yolanda_project_funded_amt") ~
+      get[Long]("bohol_project_funded_qty") ~
+      get[java.math.BigDecimal]("bohol_project_funded_amt") map {
         case yolanda_req_qty ~ yolanda_req_amt ~ 
           yolanda_project_qty ~ yolanda_project_amt ~ 
           bohol_req_qty ~ bohol_req_amt ~ 
           bohol_project_qty ~ bohol_project_amt ~ 
           yolanda_saro_qty ~ yolanda_saro_amt ~
-          yolanda_project_eplc_qty ~ yolanda_project_eplc_amt ~ 
-          bohol_project_eplc_qty ~ bohol_project_eplc_amt => {
+          yolanda_project_funded_qty ~ yolanda_project_funded_amt ~ 
+          bohol_project_funded_qty ~ bohol_project_funded_amt => {
           Json.obj(
             "yolanda_req_qty" -> yolanda_req_qty,
             "yolanda_req_amt" -> BigDecimal(yolanda_req_amt),
@@ -87,10 +91,10 @@ object Visualization {
             "bohol_project_amt" -> BigDecimal(bohol_project_amt),
             "yolanda_saro_qty" -> yolanda_saro_qty,
             "yolanda_saro_amt" -> BigDecimal(yolanda_saro_amt),
-            "yolanda_project_eplc_qty" -> yolanda_project_eplc_qty,
-            "yolanda_project_eplc_amt" -> BigDecimal(yolanda_project_eplc_amt),
-            "bohol_project_eplc_qty" -> bohol_project_eplc_qty,
-            "bohol_project_eplc_amt" -> BigDecimal(bohol_project_eplc_amt)
+            "yolanda_project_funded_qty" -> yolanda_project_funded_qty,
+            "yolanda_project_funded_amt" -> BigDecimal(yolanda_project_funded_amt),
+            "bohol_project_funded_qty" -> bohol_project_funded_qty,
+            "bohol_project_funded_amt" -> BigDecimal(bohol_project_funded_amt)
           )
         }
       }

@@ -20,7 +20,11 @@ welcome.view = function(ctrl){
           m(".columns.medium-12", [
             m(".notice", [
               m("i.fa.fa-exclamation-triangle"),
-              "Note: This system is very new, and not all legacy data has been imported. Please check back for updates!"
+              "Note: This system is very new, and not all legacy data has been imported. Please check back for updates, and let us ",
+              m("a", {target:"potato", href:"https://docs.google.com/forms/d/1GUdE6Si1QnnMtVJ8ig8rwECo9DK9BloOXiGVVnj_efw/viewform"},
+                "know what you think"
+              ),
+              "!"
             ])
           ])
         ]),
@@ -28,16 +32,16 @@ welcome.view = function(ctrl){
     m("section.proposals", [
         m(".row", [
           m(".columns.medium-3", [
-              m("img", {src:"/assets/images/landing/1-Time Since.svg"}),
+              m("img", {src:"/assets/images/landing/1-time since.svg"}),
             m("h2.title", "Time since Disaster"),
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Yolanda"),
+                  m(".caption", "Typhoon Yolanda"),
                 ]),
                 m("td", [
                   m("h2", [
-                    "210 ",
+                    ctrl.daysSinceYolanda + " ",
                     m("span", "days")
                   ]),
                 ])
@@ -46,11 +50,11 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Bohol"),
+                  m(".caption", "Bohol Earthquake"),
                 ]),
                 m("td", [
                   m("h2", [
-                    "229 ",
+                    ctrl.daysSinceBohol + " ",
                     m("span", "days")
                   ]),
                 ])
@@ -61,12 +65,12 @@ welcome.view = function(ctrl){
             href:"/requests",
             config:m.route
           }, [
-            m("img", {src:"/assets/images/landing/2-Projects Requested.svg"}),
+            m("img", {src:"/assets/images/landing/2-projects requested.svg"}),
             m("h2.title", "Requested Projects"),
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Yolanda"),
+                  m(".caption", "TY"),
                 ]),
                 m("td", [
                   m("h2", [
@@ -79,7 +83,7 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Bohol"),
+                  m(".caption", "BE"),
                 ]),
                 m("td", [
                   m("h2", [
@@ -91,15 +95,15 @@ welcome.view = function(ctrl){
             ])
           ]),
           m("a.columns.medium-3", {
-            href:"/dashboard",
+            href: routes.controllers.Application.dashboard().url,
             config:m.route
           }, [
-            m("img", {src:"/assets/images/landing/3-Budget Releases.svg"}),
+            m("img", {src:"/assets/images/landing/3-budget releases.svg"}),
             m("h2.title", "Budget Releases"),
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Yolanda"),
+                  m(".caption", "TY"),
                 ]),
                 m("td", [
                   m("h2", [
@@ -113,7 +117,7 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Bohol"),
+                  m(".caption", "BE"),
                 ]),
                 m("td", [
                   m("h2", [
@@ -129,7 +133,7 @@ welcome.view = function(ctrl){
             href:"/requests",
             config:m.route
           }, [
-            m("img", {src:"/assets/images/landing/4-Ongoing Projects.svg"}),
+            m("img", {src:"/assets/images/landing/4-ongoing projects.svg"}),
             m("h2.title", [
               "Ongoing Projects ",
               m("span", [
@@ -139,12 +143,12 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Yolanda"),
+                  m(".caption", "TY"),
                 ]),
                 m("td", [
                   m("h2", [
-                    ctrl.yolandaEPLCProjectsQuantity(),
-                    m("h6", "PHP " + helper.truncate(ctrl.yolandaEPLCProjectsAmount(), 2) + "")
+                    ctrl.yolandaFundedProjectsQuantity(),
+                    m("h6", "PHP " + helper.truncate(ctrl.yolandaFundedProjectsAmount(), 2) + "")
                   ]),
                 ])
               ])
@@ -152,12 +156,12 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Bohol"),
+                  m(".caption", "BE"),
                 ]),
                 m("td", [
                   m("h2", [
-                    ctrl.boholEPLCProjectsQuantity(),
-                    m("h6", "PHP " + helper.truncate(ctrl.boholEPLCProjectsAmount(), 2) + "")
+                    ctrl.boholFundedProjectsQuantity(),
+                    m("h6", "PHP " + helper.truncate(ctrl.boholFundedProjectsAmount(), 2) + "")
                   ]),
                 ])
               ])
@@ -288,7 +292,7 @@ welcome.view = function(ctrl){
             m(".row", [
               m(".columns.medium-3", [
                 m("figure.small", [
-                  m("img",{src:"/assets/images/landing/5-Request.svg"})
+                  m("img",{src:"/assets/images/landing/5-request.svg"})
                 ]),
               ]),
               m(".columns.medium-9", [
@@ -299,7 +303,7 @@ welcome.view = function(ctrl){
             m(".row", [
               m(".columns.medium-3", [
                 m("figure.small", [
-                  m("img",{src:"/assets/images/landing/6-Approval.svg"}),
+                  m("img",{src:"/assets/images/landing/6-approval.svg"}),
                 ]),
               ]),
               m(".columns.medium-9", [
@@ -310,7 +314,7 @@ welcome.view = function(ctrl){
             m(".row", [
               m(".columns.medium-3", [
                 m("figure.small", [
-                  m("img",{src:"/assets/images/landing/7-Tracking.svg"}),
+                  m("img",{src:"/assets/images/landing/7-tracking.svg"}),
                 ]),
               ]),
               m(".columns.medium-9", [
@@ -324,7 +328,7 @@ welcome.view = function(ctrl){
             m(".row", [
               m(".columns.medium-3", [
                 m("figure.small", [
-                  m("img",{src:"/assets/images/landing/7-Tracking.svg"}),
+                  m("img",{src:"/assets/images/landing/7-tracking.svg"}),
                 ]),
               ]),
               m(".columns.medium-9", [
@@ -335,7 +339,7 @@ welcome.view = function(ctrl){
             m(".row", [
               m(".columns.medium-3", [
                 m("figure.small", [
-                  m("img",{src:"/assets/images/landing/9-Sharing.svg"}),
+                  m("img",{src:"/assets/images/landing/9-sharing.svg"}),
                 ]),
               ]),
               m(".columns.medium-9", [
@@ -346,7 +350,7 @@ welcome.view = function(ctrl){
             m(".row", [
               m(".columns.medium-3", [
                 m("figure.small", [
-                  m("img",{src:"/assets/images/landing/8-Interact.svg"}),
+                  m("img",{src:"/assets/images/landing/8-interact.svg"}),
                 ]),
               ]),
               m(".columns.medium-9", [
@@ -381,7 +385,7 @@ welcome.view = function(ctrl){
         m(".row.info", [
           m(".columns.medium-4", [
             m("figure.small", [
-              m("img",{src:"/assets/images/landing/10-About.svg"})
+              m("img",{src:"/assets/images/landing/10-about.svg"})
             ]),
             m("h4", "About this site"),
             m("p", [
@@ -395,7 +399,7 @@ welcome.view = function(ctrl){
           ]),
           m(".columns.medium-4", [
             m("figure.small", [
-              m("img",{src:"/assets/images/landing/11-Spread.svg"})
+              m("img",{src:"/assets/images/landing/11-spread.svg"})
             ]),
             m("h4", "Spread the word"),
             m("p","Tweet us, Like us, Follow us! Spread the word, and let us know what else you'd like to see! You can also comment on individual charts and projects, and embedding is coming soon."),
@@ -404,7 +408,7 @@ welcome.view = function(ctrl){
           ]),
           m(".columns.medium-4", [
             m("figure.small", [
-              m("img",{src:"/assets/images/landing/12-Open Source.svg"})
+              m("img",{src:"/assets/images/landing/12-open source.svg"})
             ]),
             m("h4", "Open Source"),
             m("p","This system proudly builds upon and contributes to several open-source projects, and is open source itself. Check out the code, submit issues, or even contribute patches!"),

@@ -25,15 +25,20 @@ welcome.controller = function(){
 
   // such one-off from kai
 
-  this.yolandaEPLCProjectsQuantity = m.prop(0);
-  this.yolandaEPLCProjectsAmount = m.prop(0);
+  this.yolandaFundedProjectsQuantity = m.prop(0);
+  this.yolandaFundedProjectsAmount = m.prop(0);
 
-  this.boholEPLCProjectsQuantity = m.prop(0);
-  this.boholEPLCProjectsAmount = m.prop(0);
+  this.boholFundedProjectsQuantity = m.prop(0);
+  this.boholFundedProjectsAmount = m.prop(0);
 
   // graph
 
   this.saros  = m.prop(0);
+
+  // countdowns (or countups)
+
+  this.daysSinceYolanda = m.prop(0);
+  this.daysSinceBohol = m.prop(0);
 
 
   this.percentApproved = function(){
@@ -93,11 +98,11 @@ welcome.controller = function(){
 
     // such one-off from Kai
 
-    self.yolandaEPLCProjectsQuantity(kai.data.yolanda_project_eplc_qty);
-    self.yolandaEPLCProjectsAmount(kai.data.yolanda_project_eplc_amt);
+    self.yolandaFundedProjectsQuantity(kai.data.yolanda_project_funded_qty);
+    self.yolandaFundedProjectsAmount(kai.data.yolanda_project_funded_amt);
 
-    self.boholEPLCProjectsQuantity(kai.data.bohol_project_eplc_qty);
-    self.boholEPLCProjectsAmount(kai.data.bohol_project_eplc_amt);
+    self.boholFundedProjectsQuantity(kai.data.bohol_project_funded_qty);
+    self.boholFundedProjectsAmount(kai.data.bohol_project_funded_amt);
 
   });
 
@@ -106,6 +111,17 @@ welcome.controller = function(){
   bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
     self.saros(r.data);
   })
+
+  // countdown (countup?) timer
+
+  var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+  var yolandaDate = new Date(2013,10,3); // this is november
+  var boholDate = new Date(2013,9,15); // this is october
+  var todayDate = new Date();
+
+  self.daysSinceYolanda = Math.round(Math.abs((todayDate.getTime() - yolandaDate.getTime())/(oneDay)));
+  self.daysSinceBohol = Math.round(Math.abs((todayDate.getTime() - boholDate.getTime())/(oneDay)));
+
 
   // this is to make sure charts are ok
   // (ideally)  we need a callback when rendering is finished

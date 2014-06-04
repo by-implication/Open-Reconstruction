@@ -15,3 +15,4 @@ login/module.jsm
 app/module.jsm
 visPanel/module.jsm
 visualization/module.jsm
+select2/module.jsm
