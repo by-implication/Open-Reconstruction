@@ -49,29 +49,15 @@ visualizations.create(
   "projectResidenceTime",
   "project",
   function(ctrl){
-    var one_day=1000*60*60*24;
-    var proto = _.chain(ctrl.projects())
-      .map(function(p){
-        return p.activities.map(function(a){
-          return {
-            name: a.name,
-            dur: (a.end_date - a.start_date)/one_day
-          };
-        });
-      })
-      .flatten()
-      .groupBy("name")
-      .map(function(arr, k){
-        return {
-          name: k,
-          ave_dur: arr.reduce(function(acc, head){
-            return acc + head.dur;
-          }, 0) / arr.length
-        }
-      })
-      .value()
-    var durTimes = _.pluck(proto, "ave_dur");
-    var labels = _.pluck(proto, "name");
+
+    var oneDay = 1000*60*60*24;
+    var aveDur = ctrl.eplc().aveDur;
+    var labels = [];
+    var durTimes = [];
+    for(var name in aveDur){
+      labels.push(name);
+      durTimes.push(aveDur[name] / oneDay);
+    }
 
     return {
       data: {
@@ -111,29 +97,11 @@ visualizations.create(
   "projectTypeDistribution",
   "project",
   function(ctrl){
-    var projectsByType = _.chain(ctrl.projects())
-      .filter(function(p){
-        return p["project_type"];
-      })
-      .groupBy(function(p){
-        return p["project_type"];
-      })
-      .map(function(p, key){
-        var obj = {};
-        obj.type = key;
-        obj.count = p.length;
-        return obj;
-      })
-      .sortBy(function(p){
-        return p.count * -1;
-      })
-      .value()
-    var labels = projectsByType.map(function(p){
-      return p.type;
-    });
-    var counts = projectsByType.map(function(p){
-      return p.count;
-    })
+
+    var byType = ctrl.eplc().byType;
+    var labels = byType.map(function (e){ return e.n; });
+    var counts = byType.map(function (e){ return e.c; });
+
     return {
       data: {
         columns: [
@@ -168,45 +136,10 @@ visualizations.create(
   'project',
   function(ctrl){
 
-    var projectsByMonth = visualizations.padMonths(
-      _.chain(ctrl.projects())
-        .filter(function(p){
-          return p["contract_start_date"];
-        })
-        .map(function(p){
-          var proj = p;
-          var date = new Date(p["contract_start_date"]);
-          var month = date.getMonth() + 1;
-          var paddedMonth = ("0" + month).slice (-2); 
-          proj.yearMonth = date.getFullYear() + "-" + paddedMonth;
-          return proj;
-        })
-        .groupBy(function(p){
-          return p.yearMonth
-        })
-        .map(function(p, k){
-          return {
-            yearMonth: k,
-            count: p.length,
-            amount: p.reduce(function(acc, head){
-              return acc + head.project_abc;
-            }, 0)
-          }
-        })
-        .value()
-    );
-    var labels = projectsByMonth
-      .map(function(l){
-        return new Date(l.yearMonth);
-      });
-    var countPerMonth = projectsByMonth
-      .map(function(g){
-        return g.count;
-      });
-    var amountPerMonth = projectsByMonth
-      .map(function(g){
-        return g.amount * 1000;
-      });
+    var byMonth = visualizations.padMonths(ctrl.eplc().byMonth);
+    var labels = byMonth.map(function (e){ return new Date(e.yearMonth); });
+    var countPerMonth = byMonth.map(function (e){ return e.count; });
+    var amountPerMonth = byMonth.map(function (e){ return e.amount * 1000; });
 
     return {
       data: {

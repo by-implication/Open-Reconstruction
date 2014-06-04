@@ -11,7 +11,7 @@ import recon.support._
 object Visualization {
 
   def getData(v: String) = { v match {
-    case "EPLC" => Some(Json.toJson(getEPLCData))
+    case "EPLC" => Some(getEPLCData)
     case "DBMBureauG" => Some(Json.toJson(getDBMBureauGData))
     case "landing" => getLanding
     case _ => None
@@ -159,9 +159,10 @@ object Visualization {
   }
 
   private def getEPLCData = DB.withConnection { implicit c =>
-    SQL("SELECT * FROM dpwh_eplc").list(
-      get[Option[String]]("contract_start_date") ~
-      get[Option[String]]("contract_end_date") ~
+
+    val list = SQL("SELECT * FROM dpwh_eplc").list(
+      get[Option[Timestamp]]("contract_start_date") ~
+      get[Option[Timestamp]]("contract_end_date") ~
       get[Option[Int]]("contract_duration") ~
       get[Option[java.math.BigDecimal]]("project_abc") ~
       get[Option[String]]("activity_1") ~
@@ -192,7 +193,7 @@ object Visualization {
       get[Option[Timestamp]]("activity_9_start_date") ~
       get[Option[Timestamp]]("activity_9_end_date") ~
       get[Option[String]]("activity_10") ~
-      get[Option[String]]("activity_10_start_date") ~
+      get[Option[Timestamp]]("activity_10_start_date") ~
       get[Option[Timestamp]]("activity_10_end_date") ~
       get[Option[String]]("activity_11") ~
       get[Option[Timestamp]]("activity_11_start_date") ~
@@ -203,86 +204,100 @@ object Visualization {
       contract_end_date~
       contract_duration~
       project_abc~
-      activity_1~
-      activity_1_start_date~
-      activity_1_end_date~
-      activity_2~
-      activity_2_start_date~
-      activity_2_end_date~
-      activity_3~
-      activity_3_start_date~
-      activity_3_end_date~
-      activity_4~
-      activity_4_start_date~
-      activity_4_end_date~
-      activity_5~
-      activity_5_start_date~
-      activity_5_end_date~
-      activity_6~
-      activity_6_start_date~
-      activity_6_end_date~
-      activity_7~
-      activity_7_start_date~
-      activity_7_end_date~
-      activity_8~
-      activity_8_start_date~
-      activity_8_end_date~
-      activity_9~
-      activity_9_start_date~
-      activity_9_end_date~
-      activity_10~
-      activity_10_start_date~
-      activity_10_end_date~
-      activity_11~
-      activity_11_start_date~
-      activity_11_end_date~
+      a1~
+      a1start~
+      a1end~
+      a2~
+      a2start~
+      a2end~
+      a3~
+      a3start~
+      a3end~
+      a4~
+      a4start~
+      a4end~
+      a5~
+      a5start~
+      a5end~
+      a6~
+      a6start~
+      a6end~
+      a7~
+      a7start~
+      a7end~
+      a8~
+      a8start~
+      a8end~
+      a9~
+      a9start~
+      a9end~
+      a10~
+      a10start~
+      a10end~
+      a11~
+      a11start~
+      a11end~
       project_type~
       months_of_completion~
-      disaster => Json.obj(
-        "contract_start_date" -> contract_start_date,
-        "contract_end_date" -> contract_end_date,
-        "contract_duration" -> contract_duration,
-        "project_abc" -> project_abc.map(v => BigDecimal(v)),
-        "activities" -> Json.arr(
-          Json.obj("name" -> activity_1,
-          "start_date" -> activity_1_start_date,
-          "end_date" -> activity_1_end_date),
-          Json.obj("name" -> activity_2,
-          "start_date" -> activity_2_start_date,
-          "end_date" -> activity_2_end_date),
-          Json.obj("name" -> activity_3,
-          "start_date" -> activity_3_start_date,
-          "end_date" -> activity_3_end_date),
-          Json.obj("name" -> activity_4,
-          "start_date" -> activity_4_start_date,
-          "end_date" -> activity_4_end_date),
-          Json.obj("name" -> activity_5,
-          "start_date" -> activity_5_start_date,
-          "end_date" -> activity_5_end_date),
-          Json.obj("name" -> activity_6,
-          "start_date" -> activity_6_start_date,
-          "end_date" -> activity_6_end_date),
-          Json.obj("name" -> activity_7,
-          "start_date" -> activity_7_start_date,
-          "end_date" -> activity_7_end_date),
-          Json.obj("name" -> activity_8,
-          "start_date" -> activity_8_start_date,
-          "end_date" -> activity_8_end_date),
-          Json.obj("name" -> activity_9,
-          "start_date" -> activity_9_start_date,
-          "end_date" -> activity_9_end_date),
-          Json.obj("name" -> activity_10,
-          "start_date" -> activity_10_start_date,
-          "end_date" -> activity_10_end_date),
-          Json.obj("name" -> activity_11,
-          "start_date" -> activity_11_start_date,
-          "end_date" -> activity_11_end_date)
-        ),
-        "project_type" -> project_type,
-        "months_of_completion" -> months_of_completion,
-        "disaster" -> disaster
-      )
+      disaster => {
+
+        def actOpt(name: Option[String], start: Option[Timestamp], end: Option[Timestamp]) = {
+          for {
+            name <- name
+            start <- start
+            end <- end
+          } yield { (name, end.getTime - start.getTime) }
+        }
+
+        (List(
+            actOpt(a1, a1start, a1end),
+            actOpt(a2, a2start, a2end),
+            actOpt(a3, a3start, a3end),
+            actOpt(a4, a4start, a4end),
+            actOpt(a5, a5start, a5end),
+            actOpt(a6, a6start, a6end),
+            actOpt(a7, a7start, a7end),
+            actOpt(a8, a8start, a8end),
+            actOpt(a9, a9start, a9end),
+            actOpt(a10, a10start, a10end),
+            actOpt(a11, a11start, a11end)
+        ).flatten, project_type, for {
+          contract_start_date <- contract_start_date
+          project_abc <- project_abc
+        } yield { (contract_start_date, BigDecimal(project_abc)) })
+
+      }
     })
+
+    val averageDurations = list.map(_._1).flatten.groupBy(_._1).map { case (name, list) =>
+      name -> (list.map(_._2).sum / list.size)
+    }
+
+    val byType = list.map(_._2).flatten.groupBy(x => x).map { case (name, list) =>
+      name -> list.size
+    }.toList.sortBy(_._2).reverse
+
+    def extractYearMonth(t: Timestamp): String = {
+      (t.getYear + 1900) + "-" + "%02d".format(t.getMonth + 1)
+    }
+
+    val byMonth = list.map(_._3).flatten.groupBy(x => extractYearMonth(x._1)).map { case (ym, list) =>
+      (ym, list.size, list.map(_._2).sum)
+    }
+
+    Json.obj(
+      "aveDur" -> averageDurations,
+      "byType" -> byType.map { case (name, count) => Json.obj(
+        "n" -> name,
+        "c" -> count
+      )},
+      "byMonth" -> byMonth.map { case (ym, count, amount) => Json.obj(
+        "yearMonth" -> ym,
+        "count" -> count,
+        "amount" -> amount
+      )}
+    )
+
   }
 
 }
