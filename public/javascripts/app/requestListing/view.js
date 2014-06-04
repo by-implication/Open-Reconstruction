@@ -97,12 +97,13 @@ requestListing.view = function(ctrl){
           pagination(),
         ]),
         m(".columns.medium-3", [
-          select2.view({data: ctrl.blahData, value: ctrl.currentBlah.id, onchange: ctrl.changeBlah}),
-          // m("select#lol", ctrl.blahData.map(function(d){
-          //   return m("option", [
-          //     d.name
-          //   ])
-          // })),
+          m("h4", [
+            "Filter by Location"
+          ]),
+          m("label", [
+            "Region",
+            select2.view({data: ctrl.blahData, value: ctrl.currentBlah.id, onchange: ctrl.changeBlah}),
+          ]),
           m("h4", [
             "Filter by Project Type"
           ]),
