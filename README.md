@@ -33,7 +33,7 @@ The following tools should be accessible on your system's PATH:
 
 OR was developed on Mac and Windows machines, but we recommend using a Mac or Linux environment. (Linux especially for production.) If you are on Linux, all of these should be easily installed via your distro's [package manager](http://en.wikipedia.org/wiki/Package_management_system), like `apt-get`, `yum`, or `pacman`. On Mac, we suggest using [Postgres.app](http://postgresapp.com/), and [Homebrew](http://brew.sh/) (`brew`) for everything else.
 
-The client-side (in-browser) requirements are already included in the project, and dependencies are managed by [Bower](http://bower.io/). In case you are curious, we use the following libraries:
+The client-side (in-browser) requirements are already included in the project, and dependencies are managed by [Bower](http://bower.io). In case you are curious, we use the following libraries:
 
 * Mithril
 * Leaflet
@@ -64,7 +64,7 @@ We would like to thank the following people for their amazing support:
 
 * Leo Horie — for Mithril, the backbone of our webapp
 
-If you like what you see, hit us up on Twitter, like us on Facebook, or visit our website. If you want to build the next big amazing thing together, let us know.
+If you like what you see, hit us up on [Twitter](http://twitter.com/_phi), like us on [Facebook](http://facebook.com/byimplication), or visit our [website](http://byimplication.com). If you want to build the next big amazing thing together, let us know.
 
 You might also be interested in these other things we've made:
 
@@ -72,4 +72,4 @@ You might also be interested in these other things we've made:
 * [Budget Badger](http://budgetbadger.ph) — track government spending, find projects near you. (GitHub)
 * [Storylark](http://storylark.ph) — the best in local indie comics. Storylark compels you to visit.
 
-By Implication and its ~~minions~~ employees are not affliated with the government, are is an independent entity. I mean, in case you were wondering.
+By Implication and its ~~minions~~ employees are not affliated with the government, and is an independent entity. I mean, in case you were wondering.
