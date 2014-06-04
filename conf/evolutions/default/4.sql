@@ -29,7 +29,6 @@ INSERT INTO users VALUES
     (DEFAULT, 'op_test', 'OP Test', crypt('getsupport', gen_salt('bf')), 3, true),
     (DEFAULT, 'dpwh_test', 'DPWH Test', crypt('getsupport', gen_salt('bf')), 4, true),
     (DEFAULT, 'dbm_test', 'DBM Test', crypt('getsupport', gen_salt('bf')), 5, true),
-
     (DEFAULT, 'brgyoza', 'Brenda Repolyo Gyoza', crypt('password', gen_salt('bf')), 1, true),
     (DEFAULT, 'ocdeguzman', 'Oscar Clamidio De Guzman', crypt('password', gen_salt('bf')), 2, true),
     (DEFAULT, 'bsaquinoiii', 'Benigno S. Aquino III', crypt('password', gen_salt('bf')), 3, true),

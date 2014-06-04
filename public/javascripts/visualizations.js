@@ -11,7 +11,6 @@ visualizations.create = function(title, id, type, chartSettingsCreator){
     visCtrl.chartSettings = chartSettingsCreator.bind(this, ctrl);
     return visCtrl;
   }
-
 }
 
 visualizations.nextYearMonth = function nextYearMonth(yearMonth){
@@ -35,9 +34,9 @@ visualizations.padMonths = function padMonths(a){
     return 0;
   });
   var r = [];
-  for(var ym = a[0].yearMonth; a.length; ym = visualizations.nextYearMonth(ym)){
+  for(var ym = a[0] && a[0].yearMonth; a.length; ym = visualizations.nextYearMonth(ym)){
     var nextElem = {yearMonth: ym, amount: 0, count: 0};
-    if(a[0].yearMonth == ym){
+    while(a[0] && a[0].yearMonth == ym){
       nextElem = a.shift();
     }
     r.push(nextElem);
@@ -540,7 +539,6 @@ visualizations.create(
         return p.disasterTypeId;
       })
       .map(function(subData, key){
-        // console.log(visualizations.padMonths(subData));
         return [key].concat(visualizations.padMonths(subData).map(function(d){
           return d.count
         }));
