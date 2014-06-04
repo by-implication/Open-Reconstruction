@@ -45,67 +45,70 @@ visualizations.padMonths = function padMonths(a){
   return r;
 }
 
-visualizations.create(
-  "Average Residence Time Per Project Stage",
-  "projectResidenceTime",
-  "project",
-  function(ctrl){
-    var one_day=1000*60*60*24;
-    var proto = _.chain(ctrl.projects())
-      .map(function(p){
-        return p.activities.map(function(a){
-          return {
-            name: a.name,
-            dur: (a.end_date - a.start_date)/one_day
-          };
-        });
-      })
-      .flatten()
-      .groupBy("name")
-      .map(function(arr, k){
-        return {
-          name: k,
-          ave_dur: arr.reduce(function(acc, head){
-            return acc + head.dur;
-          }, 0) / arr.length
-        }
-      })
-      .value()
-    var durTimes = _.pluck(proto, "ave_dur");
-    var labels = _.pluck(proto, "name");
+// visualizations.create(
+//   "Average Residence Time Per Project Stage",
+//   "projectResidenceTime",
+//   "project",
+//   function(ctrl){
+//     var one_day=1000*60*60*24;
+//     var proto = _.chain(ctrl.projects())
+//       .map(function(p){
+//         return p.activities.map(function(a){
+//           return {
+//             name: a.name,
+//             dur: (a.end_date - a.start_date)/one_day
+//           };
+//         });
+//       })
+//       .flatten()
+//       .groupBy("name")
+//       .map(function(arr, k){
+//         return {
+//           name: k,
+//           ave_dur: arr.reduce(function(acc, head){
+//             return acc + head.dur;
+//           }, 0) / arr.length
+//         }
+//       })
+//       .value()
+//     var durTimes = _.pluck(proto, "ave_dur");
+//     var labels = _.pluck(proto, "name");
 
-    return {
-      data: {
-        columns: [
-          ["Average Residence Time per Project Activity"].concat(durTimes)
-        ],
-        type: "bar"
-      },
-      axis: {
-        x: {
-          label: {
-            text: "Project Activities",
-            position: "outer-middle"
-          },
-          type: "categorized",
-          categories: labels
-        },
-        y: {
-          label: {
-            text: "Days",
-            position: "outer-center"
-          },
-          // tick: {
-          //   format: function(t){
-          //     return t + " days";
-          //   }
-          // }
-        },
-        rotated: true
-      }
-    }
-  }
-)
+//     return {
+//       data: {
+//         columns: [
+//           ["Average Residence Time per Project Activity"].concat(durTimes)
+//         ],
+//         type: "bar"
+//       },
+//       axis: {
+//         x: {
+//           // label: {
+//           //   text: "Project Activities",
+//           //   position: "outer-middle"
+//           // },
+//           type: "categorized",
+//           categories: labels,
+//           // tick: {
+//           //   rotate: 90
+//           // },
+//         },
+//         y: {
+//           // label: {
+//           //   text: "Days",
+//           //   position: "outer-center"
+//           // },
+//           // tick: {
+//           //   format: function(t){
+//           //     return t + " days";
+//           //   }
+//           // }
+//         },
+//         rotated: true
+//       }
+//     }
+//   }
+// )
 
 visualizations.create(
   "Project Type Distribution",
@@ -153,7 +156,7 @@ visualizations.create(
         },
         y: {
           label: {
-            text: "Count",
+            text: "Number of Projects",
             position: "outer-center"
           }
         },
@@ -228,7 +231,7 @@ visualizations.create(
       axis: {
         y: {
           label: {
-            text: "Quantity",
+            text: "Number of Projects",
             position: "outer-middle"
           }
         },
@@ -255,6 +258,9 @@ visualizations.create(
           label: {
             text: "Amount in PHP",
             position: "outer-middle"
+          },
+          padding: {
+            bottom: 0
           }
         }
       }
@@ -274,16 +280,18 @@ visualizations.create(
       .groupBy(function(s){
         return s["agency"];
       })
-      .value();
-    var labels = _.keys(sarosByAgency);
-    var amountPerAgency = _.chain(sarosByAgency)
-      .values()
-      .map(function(g){
-        return g.reduce(function(acc, head){
-          return acc + head.amount;
-        }, 0)
+      .map(function(val, key){
+        return {
+          agency: key,
+          amount: val.reduce(function(acc, head){
+            return acc + head.amount;
+          }, 0)
+        };
       })
-      .value()
+      .sortBy(function(a){return a.amount * -1})
+      .value();
+    var labels = _.pluck(sarosByAgency, "agency");
+    var amountPerAgency = _.pluck(sarosByAgency, "amount");
 
     return {
       size: {
@@ -300,14 +308,22 @@ visualizations.create(
         x: {
           type: "categorized",
           categories: labels,
+          label: {
+            text: "Agency",
+            position: "outer-middle"
+          }
         },
         y: {
           tick: {
             format: function(t){
               // var format =  d3.format(",")
-              return "PHP " + helper.truncate(t, 2);
+              return helper.truncate(t, 2);
             }
           },
+          label: {
+            text: "Amount in PHP",
+            position: "outer-center"
+          }
         },
         rotated: true
       }
@@ -327,14 +343,16 @@ visualizations.create(
       .groupBy(function(s){
         return s["agency"];
       })
-      .value();
-    var labels = _.keys(sarosByAgency);
-    var countPerAgency = _.chain(sarosByAgency)
-      .values()
-      .map(function(g){
-        return g.length;
+      .map(function(val, key){
+        return {
+          agency: key,
+          count: val.length
+        };
       })
-      .value()
+      .sortBy(function(a){return a.count * -1})
+      .value();
+    var labels = _.pluck(sarosByAgency, "agency");
+    var countPerAgency = _.pluck(sarosByAgency, "count");
 
     return {
       size: {
@@ -351,6 +369,16 @@ visualizations.create(
         x: {
           type: "categorized",
           categories: labels,
+          label: {
+            text: "Number of SARO assigned",
+            position: "outer-middle"
+          }
+        },
+        y: {
+          label: {
+            text: "Agency",
+            position: "outer-center"
+          }
         },
         rotated: true
       }
@@ -418,22 +446,42 @@ visualizations.create(
         },
         types: {
           "Count per Month": "bar"
-        }
+        },
       },
       axis: {
         x: {
           type: 'timeseries',
           tick: {
-            format: '%b, %Y'
+            format: '%b, %Y',
+            culling: {
+              max: 4
+            }
+          },
+          label: {
+            text: "Date",
+            position: "outer-center"
+          }
+        },
+        y: {
+          label: {
+            text: "Quantity",
+            position: "outer-middle"
           }
         },
         y2 : {
           show: true,
           tick: {
             format: function(t){
-              return "PHP " + helper.truncate(t, 2);
+              return helper.truncate(t, 2);
             }
-          }
+          },
+          padding: {
+            bottom: 0
+          },
+          label: {
+            text: "Amount in PHP",
+            position: "outer-middle"
+          },
         }
       }
     }
@@ -473,20 +521,37 @@ visualizations.create(
       },
       axis : {
         x : {
+          label: {
+            text: "Date",
+            position: "outer-center"
+          },
           type : 'timeseries',
           tick: {
             format: '%b, %Y',
             culling: {
-              max: 3
+              max: 4
             }
           }
         },
+        y: {
+          label: {
+            text: "Number of Requests",
+            position: "outer-middle"
+          }
+        },
         y2 : {
+          label: {
+            text: "Amount in PHP",
+            position: "outer-middle"
+          },
           show: true,
           tick: {
             format: function(t){
               return "PHP " + helper.truncate(t, 2);
             }
+          },
+          padding: {
+            bottom: 0
           }
         },
       }
@@ -512,16 +577,29 @@ visualizations.create(
       return t.name;
     });
     return {
+      size: {
+        height: 400
+      },
       data: {
         columns: [
-          ["Number of Projects"].concat(counts)
+          ["Number of Requests"].concat(counts)
         ],
         type: "bar",
       },
       axis: {
         x: {
           type: "categorized",
-          categories: types
+          categories: types,
+          label: {
+            text: "Request Types",
+            position: "outer-middle"
+          }
+        },
+        y: {
+          label: {
+            text: "Number of Requests",
+            position: "outer-center"
+          }
         },
         rotated: true
       }
@@ -561,10 +639,23 @@ visualizations.create(
         ]
       },
       axis: {
+        y: {
+          label: {
+            text: "Number of Requests",
+            position: "outer-middle"
+          }
+        },
         x : {
           type : 'timeseries',
+          label: {
+            text: "Date",
+            position: "outer-center"
+          },
           tick: {
             format: '%b, %Y',
+            culling: {
+              max: 4
+            }
           }
         },
       }
@@ -612,10 +703,20 @@ visualizations.create(
       axis: {
         x: {
           type: "categorized",
-          categories: cats
+          categories: cats,
+          label: {
+            text: "Disaster",
+            position: "outer-middle"
+          }
         },
-        rotated: true
-      }
+        y: {
+          label: {
+            text: "Count",
+            position: "outer-center"
+          }
+        },
+        rotated: true,
+      },
     }
   }
 )
@@ -661,11 +762,19 @@ visualizations.create(
         x: {
           type: "categorized",
           categories: cats,
+          label: {
+            text: "Disaster",
+            position: "outer-middle"
+          }
         },
         y: {
+          label: {
+            text: "Amount in PHP",
+            position: "outer-center"
+          },
           tick: {
             format: function(t){
-              return "PHP " + helper.truncate(t, 2);
+              return helper.truncate(t, 2);
             }
           },
         },

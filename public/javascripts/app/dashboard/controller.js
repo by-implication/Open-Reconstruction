@@ -37,13 +37,7 @@ dashboard.controller = function(){
   bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
     self.saros(r.data);
   })
-
-  this.projectHistory = visualizations.library['requestHistory'](self);
-  this.disasterHistory = visualizations.library['disasterHistory'](self);
-  this.projectTypes = visualizations.library['projectTypes'](self);
-  this.topDisasters = visualizations.library['topDisasters'](self);
-  this.topDisastersAmount = visualizations.library['topDisastersAmount'](self);
-
+  
   // this is to make sure charts are ok
   // (ideally) we need a callback when rendering is finished
 
