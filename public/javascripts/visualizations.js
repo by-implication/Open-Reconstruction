@@ -44,67 +44,67 @@ visualizations.padMonths = function padMonths(a){
   return r;
 }
 
-visualizations.create(
-  "Average Residence Time Per Project Stage",
-  "projectResidenceTime",
-  "project",
-  function(ctrl){
-    var one_day=1000*60*60*24;
-    var proto = _.chain(ctrl.projects())
-      .map(function(p){
-        return p.activities.map(function(a){
-          return {
-            name: a.name,
-            dur: (a.end_date - a.start_date)/one_day
-          };
-        });
-      })
-      .flatten()
-      .groupBy("name")
-      .map(function(arr, k){
-        return {
-          name: k,
-          ave_dur: arr.reduce(function(acc, head){
-            return acc + head.dur;
-          }, 0) / arr.length
-        }
-      })
-      .value()
-    var durTimes = _.pluck(proto, "ave_dur");
-    var labels = _.pluck(proto, "name");
+// visualizations.create(
+//   "Average Residence Time Per Project Stage",
+//   "projectResidenceTime",
+//   "project",
+//   function(ctrl){
+//     var one_day=1000*60*60*24;
+//     var proto = _.chain(ctrl.projects())
+//       .map(function(p){
+//         return p.activities.map(function(a){
+//           return {
+//             name: a.name,
+//             dur: (a.end_date - a.start_date)/one_day
+//           };
+//         });
+//       })
+//       .flatten()
+//       .groupBy("name")
+//       .map(function(arr, k){
+//         return {
+//           name: k,
+//           ave_dur: arr.reduce(function(acc, head){
+//             return acc + head.dur;
+//           }, 0) / arr.length
+//         }
+//       })
+//       .value()
+//     var durTimes = _.pluck(proto, "ave_dur");
+//     var labels = _.pluck(proto, "name");
 
-    return {
-      data: {
-        columns: [
-          ["Average Residence Time per Project Activity"].concat(durTimes)
-        ],
-        type: "bar"
-      },
-      axis: {
-        x: {
-          label: {
-            text: "Project Activities",
-            position: "outer-middle"
-          },
-          type: "categorized",
-          categories: labels
-        },
-        y: {
-          label: {
-            text: "Days",
-            position: "outer-center"
-          },
-          // tick: {
-          //   format: function(t){
-          //     return t + " days";
-          //   }
-          // }
-        },
-        rotated: true
-      }
-    }
-  }
-)
+//     return {
+//       data: {
+//         columns: [
+//           ["Average Residence Time per Project Activity"].concat(durTimes)
+//         ],
+//         type: "bar"
+//       },
+//       axis: {
+//         x: {
+//           label: {
+//             text: "Project Activities",
+//             position: "outer-middle"
+//           },
+//           type: "categorized",
+//           categories: labels
+//         },
+//         y: {
+//           label: {
+//             text: "Days",
+//             position: "outer-center"
+//           },
+//           // tick: {
+//           //   format: function(t){
+//           //     return t + " days";
+//           //   }
+//           // }
+//         },
+//         rotated: true
+//       }
+//     }
+//   }
+// )
 
 visualizations.create(
   "Project Type Distribution",
@@ -635,14 +635,14 @@ visualizations.create(
     });
     var cats = data.map(function(d){
       if (d.name) {
-        if (d.name.length > 12) {
-          return _.chain(d.name)
-            .take(12)
-            .reduce(function(a, b){
-              return a + b;
-            })
-            .value();
-        };
+        // if (d.name.length > 12) {
+        //   return _.chain(d.name)
+        //     .take(12)
+        //     .reduce(function(a, b){
+        //       return a + b;
+        //     })
+        //     .value();
+        // };
         return d.name;
       } else {
         return "unnamed";
