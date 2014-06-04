@@ -30,11 +30,12 @@ app.template = function(a, b, c, d){
       m("link[href='/assets/bower_components/nprogress/nprogress.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/stylesheets/style.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/stylesheets/fonts.css'][rel='stylesheet'][type='text/css']"),
-      m("link[href='/assets/stylesheets/select2-foundation5.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/bower_components/font-awesome/css/font-awesome.min.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/bower_components/leaflet/leaflet.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/bower_components/leaflet-draw/leaflet.draw.css'][rel='stylesheet'][type='text/css']"),
-      m("link[href='/assets/bower_components/c3/c3.css'][rel='stylesheet'][type='text/css']")
+      m("link[href='/assets/bower_components/c3/c3.css'][rel='stylesheet'][type='text/css']"),
+      // m("link[href='/assets/bower_components/select2/select2.css'][rel='stylesheet'][type='text/css']"),
+      m("link[href='/assets/stylesheets/select2-foundation5.css'][rel='stylesheet'][type='text/css']")
     ]),
     m("body", attrs, modals.concat(app.navbar(ctrl), content, app.feedback(ctrl)))
   ])

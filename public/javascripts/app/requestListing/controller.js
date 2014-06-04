@@ -16,6 +16,17 @@ requestListing.controller = function(){
   this.page = parseInt(m.route.param("page")) || 0;
   this.projectTypeId = m.route.param("projectTypeId") || 0;
   this.counts = {};
+  this.blahData = [
+    {name: "lol", id: 1},
+    {name: "lol2", id: 2},
+    {name: "wut", id: 3}
+  ];
+
+  this.currentBlah = this.blahData[1];
+
+  this.changeBlah = function(id) {
+      console.log(id)
+  };
 
   var tabs = [
     {
