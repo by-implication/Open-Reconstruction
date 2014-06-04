@@ -7,3 +7,4 @@
 ../bower_components/d3/d3.min.js
 ../bower_components/c3/c3.js
 ../bower_components/jquery/dist/jquery.min.js
+../bower_components/select2/select2.min.js
