@@ -3,8 +3,8 @@ dashboard.controller = function(){
   this.app = new app.controller();
 
   this.requests = m.prop({});
-  this.projects = m.prop({});
-  this.saros = m.prop({});
+  this.projects = m.prop([]);
+  this.saros = m.prop([]);
 
   this.mostCommonDisasterType = m.prop(0);
   this.mostCommonProjectType = m.prop(0);
@@ -15,9 +15,6 @@ dashboard.controller = function(){
   this.requests().byLevel = m.prop([]);
   this.requests().byNamedDisaster = m.prop();
 
-  this.projects().byMonth = m.prop([]);
-
-  m.startComputation();
   bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
     self.mostCommonDisasterType(r.mostCommonDisasterType);
     self.mostCommonProjectType(r.mostCommonProjectType);
@@ -27,7 +24,6 @@ dashboard.controller = function(){
     self.requests().byDisasterType(r.byDisasterType);
     self.requests().byProjectType(r.byProjectType);
     self.requests().byNamedDisaster(r.byNamedDisaster);
-    m.endComputation();
   });
 
   bi.ajax(routes.controllers.Visualizations.getData("EPLC")).then(function (r){

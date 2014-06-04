@@ -95,7 +95,7 @@ welcome.view = function(ctrl){
             ])
           ]),
           m("a.columns.medium-3", {
-            href:"/dashboard",
+            href: routes.controllers.Application.dashboard().url,
             config:m.route
           }, [
             m("img", {src:"/assets/images/landing/3-budget releases.svg"}),
@@ -147,8 +147,8 @@ welcome.view = function(ctrl){
                 ]),
                 m("td", [
                   m("h2", [
-                    ctrl.yolandaEPLCProjectsQuantity(),
-                    m("h6", "PHP " + helper.truncate(ctrl.yolandaEPLCProjectsAmount(), 2) + "")
+                    ctrl.yolandaFundedProjectsQuantity(),
+                    m("h6", "PHP " + helper.truncate(ctrl.yolandaFundedProjectsAmount(), 2) + "")
                   ]),
                 ])
               ])
@@ -160,8 +160,8 @@ welcome.view = function(ctrl){
                 ]),
                 m("td", [
                   m("h2", [
-                    ctrl.boholEPLCProjectsQuantity(),
-                    m("h6", "PHP " + helper.truncate(ctrl.boholEPLCProjectsAmount(), 2) + "")
+                    ctrl.boholFundedProjectsQuantity(),
+                    m("h6", "PHP " + helper.truncate(ctrl.boholFundedProjectsAmount(), 2) + "")
                   ]),
                 ])
               ])
