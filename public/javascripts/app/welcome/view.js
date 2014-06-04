@@ -91,7 +91,7 @@ welcome.view = function(ctrl){
             ])
           ]),
           m("a.columns.medium-3", {
-            href:"/dashboard",
+            href: routes.controllers.Application.dashboard().url,
             config:m.route
           }, [
             m("img", {src:"/assets/images/landing/3-Budget Releases.svg"}),
