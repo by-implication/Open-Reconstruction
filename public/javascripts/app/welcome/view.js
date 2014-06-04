@@ -41,7 +41,7 @@ welcome.view = function(ctrl){
                 ]),
                 m("td", [
                   m("h2", [
-                    "210 ",
+                    "212 ",
                     m("span", "days")
                   ]),
                 ])
@@ -54,7 +54,7 @@ welcome.view = function(ctrl){
                 ]),
                 m("td", [
                   m("h2", [
-                    "229 ",
+                    "231 ",
                     m("span", "days")
                   ]),
                 ])
