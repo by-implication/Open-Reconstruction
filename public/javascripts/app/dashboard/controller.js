@@ -3,7 +3,7 @@ dashboard.controller = function(){
   this.app = new app.controller();
 
   this.requests = m.prop({});
-  this.projects = m.prop([]);
+  this.eplc = m.prop({});
   this.saros = m.prop([]);
 
   this.mostCommonDisasterType = m.prop(0);
@@ -27,7 +27,7 @@ dashboard.controller = function(){
   });
 
   bi.ajax(routes.controllers.Visualizations.getData("EPLC")).then(function (r){
-    self.projects(r.data);
+    self.eplc(r.data);
   });
 
   bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
