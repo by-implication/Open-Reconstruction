@@ -20,7 +20,11 @@ welcome.view = function(ctrl){
           m(".columns.medium-12", [
             m(".notice", [
               m("i.fa.fa-exclamation-triangle"),
-              "Note: This system is very new, and not all legacy data has been imported. Please check back for updates!"
+              "Note: This system is very new, and not all legacy data has been imported. Please check back for updates, and let us ",
+              m("a", {target:"potato", href:"https://docs.google.com/forms/d/1GUdE6Si1QnnMtVJ8ig8rwECo9DK9BloOXiGVVnj_efw/viewform"},
+                "know what you think"
+              ),
+              "."
             ])
           ])
         ]),
