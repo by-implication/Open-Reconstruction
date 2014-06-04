@@ -98,6 +98,13 @@ requestListing.view = function(ctrl){
         ]),
         m(".columns.medium-3", [
           m("h4", [
+            "Filter by Location"
+          ]),
+          m("label", [
+            "Region",
+            select2.view({data: ctrl.blahData, value: ctrl.currentBlah.id, onchange: ctrl.changeBlah}),
+          ]),
+          m("h4", [
             "Filter by Project Type"
           ]),
           m("ul.filters",
