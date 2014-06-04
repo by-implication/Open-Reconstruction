@@ -536,7 +536,7 @@ visualizations.create(
     var ctrl = ctrl2.requests();
     var data = _.chain(ctrl.byDisasterType())
       .groupBy(function(p){
-        return p.disasterTypeId;
+        return p.disasterType;
       })
       .map(function(subData, key){
         return [key].concat(visualizations.padMonths(subData).map(function(d){

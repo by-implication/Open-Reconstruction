@@ -104,21 +104,21 @@ object Req extends ReqGen {
       SELECT
         EXTRACT(YEAR FROM req_date) AS year,
         EXTRACT(MONTH FROM req_date) AS month,
-        disaster_type_id,
+        disaster_type_name,
         COUNT(req_id)
-      FROM reqs
-      GROUP BY disaster_type_id, year, month
-      ORDER BY disaster_type_id, year, month
+      FROM reqs NATURAL JOIN disaster_types
+      GROUP BY disaster_type_name, year, month
+      ORDER BY disaster_type_name, year, month
     """).list(
       get[Double]("year") ~
       get[Double]("month") ~
-      get[Int]("disaster_type_id") ~
-      get[Long]("count") map { case _year~_month~disasterTypeId~count =>
+      get[String]("disaster_type_name") ~
+      get[Long]("count") map { case _year~_month~disasterType~count =>
         val year = _year.toInt
         val month = _month.toInt
         Json.obj(
           "yearMonth" -> (year + "-" + (if (month < 10) "0" + month else month)),
-          "disasterTypeId" -> disasterTypeId,
+          "disasterType" -> disasterType,
           "count" -> count
         )
       }
