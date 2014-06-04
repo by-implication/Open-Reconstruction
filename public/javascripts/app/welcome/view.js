@@ -24,7 +24,7 @@ welcome.view = function(ctrl){
               m("a", {target:"potato", href:"https://docs.google.com/forms/d/1GUdE6Si1QnnMtVJ8ig8rwECo9DK9BloOXiGVVnj_efw/viewform"},
                 "know what you think"
               ),
-              "."
+              "!"
             ])
           ])
         ]),
@@ -37,7 +37,7 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Yolanda"),
+                  m(".caption", "Typhoon Yolanda"),
                 ]),
                 m("td", [
                   m("h2", [
@@ -50,7 +50,7 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Bohol"),
+                  m(".caption", "Bohol Earthquake"),
                 ]),
                 m("td", [
                   m("h2", [
@@ -70,7 +70,7 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Yolanda"),
+                  m(".caption", "TY"),
                 ]),
                 m("td", [
                   m("h2", [
@@ -83,7 +83,7 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Bohol"),
+                  m(".caption", "BE"),
                 ]),
                 m("td", [
                   m("h2", [
@@ -103,7 +103,7 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Yolanda"),
+                  m(".caption", "TY"),
                 ]),
                 m("td", [
                   m("h2", [
@@ -117,7 +117,7 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Bohol"),
+                  m(".caption", "BE"),
                 ]),
                 m("td", [
                   m("h2", [
@@ -143,7 +143,7 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Yolanda"),
+                  m(".caption", "TY"),
                 ]),
                 m("td", [
                   m("h2", [
@@ -156,7 +156,7 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Bohol"),
+                  m(".caption", "BE"),
                 ]),
                 m("td", [
                   m("h2", [
