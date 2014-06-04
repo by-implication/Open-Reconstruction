@@ -30,6 +30,7 @@ app.template = function(a, b, c, d){
       m("link[href='/assets/bower_components/nprogress/nprogress.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/stylesheets/style.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/stylesheets/fonts.css'][rel='stylesheet'][type='text/css']"),
+      m("link[href='/assets/stylesheets/select2-foundation5'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/bower_components/font-awesome/css/font-awesome.min.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/bower_components/leaflet/leaflet.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/bower_components/leaflet-draw/leaflet.draw.css'][rel='stylesheet'][type='text/css']"),

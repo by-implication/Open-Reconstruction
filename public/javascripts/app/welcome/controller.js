@@ -29,6 +29,11 @@ welcome.controller = function(){
 
   this.saros  = m.prop(0);
 
+  // countdowns (or countups)
+
+  this.daysSinceYolanda = m.prop(0);
+  this.daysSinceBohol = m.prop(0);
+
 
   this.percentApproved = function(){
     return self.byLevel()[4].count / self.byLevel()[0].count;
@@ -77,6 +82,17 @@ welcome.controller = function(){
   bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
     self.saros(r.data);
   })
+
+  // countdown (countup?) timer
+
+  var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+  var yolandaDate = new Date(2013,10,3); // this is november
+  var boholDate = new Date(2013,9,15); // this is october
+  var todayDate = new Date();
+
+  self.daysSinceYolanda = Math.round(Math.abs((todayDate.getTime() - yolandaDate.getTime())/(oneDay)));
+  self.daysSinceBohol = Math.round(Math.abs((todayDate.getTime() - boholDate.getTime())/(oneDay)));
+
 
   // this is to make sure charts are ok
   // (ideally)  we need a callback when rendering is finished
