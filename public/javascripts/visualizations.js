@@ -366,13 +366,13 @@ visualizations.create(
           type: "categorized",
           categories: labels,
           label: {
-            text: "Number of SARO assigned",
+            text: "Agency",
             position: "outer-middle"
           }
         },
         y: {
           label: {
-            text: "Agency",
+            text: "Number of SAROs assigned",
             position: "outer-center"
           }
         },
