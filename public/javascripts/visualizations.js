@@ -675,14 +675,6 @@ visualizations.create(
     });
     var cats = data.map(function(d){
       if (d.name) {
-        if (d.name.length > 12) {
-          return _.chain(d.name)
-            .take(12)
-            .reduce(function(a, b){
-              return a + b;
-            })
-            .value();
-        };
         return d.name;
       } else {
         return "unnamed";
@@ -733,14 +725,6 @@ visualizations.create(
     });
     var cats = data.map(function(d){
       if (d.name) {
-        // if (d.name.length > 12) {
-        //   return _.chain(d.name)
-        //     .take(12)
-        //     .reduce(function(a, b){
-        //       return a + b;
-        //     })
-        //     .value();
-        // };
         return d.name;
       } else {
         return "unnamed";
