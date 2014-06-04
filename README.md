@@ -50,15 +50,15 @@ The client-side (in-browser) requirements are already included in the project, a
 
 The system was primarily designed and developed by the following, [By Implication](http://byimplication.com):
 
-* Pepe Bawagan ([@syk0saje](http://twitter.com/syk0saje)) — back-end architecture
-* Levi Tan Ong ([@levi_io](http://twitter.com/levi_io)) — front-end development, visualizations, user experience
-* Albert Dizon — database schema, data architecture
-* Philip Cheang ([@_phi](http://twitter.com/_phi)) — front-end design, user experience, admin / operations
+* Pepe Bawagan ([@syk0saje](http://twitter.com/syk0saje))
+* Levi Tan Ong ([@levi_io](http://twitter.com/levi_io))
+* Albert Dizon
+* Philip Cheang ([@_phi](http://twitter.com/_phi))
 
 We would like to thank the following people for their amazing support:
 
 * Stella Balgos — for talking to people and making data happen
-* Thomas Dy — edge-case magician, bug slayer, and overall nice guy
+* Thomas Dy ([@pleasantprog](http://twitter.com/pleasantprog)) — edge-case magician, bug slayer, and overall nice guy
 * Marion Banaria — pretty icons, logo, and identity
 * Kenneth Yu — because nobody likes writing contracts
 
