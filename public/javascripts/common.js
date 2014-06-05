@@ -298,7 +298,6 @@ common.stickyTabs.config = function(ctrl){
         ctrl.idPosDict = _.chain(ctrl.tabs())
           .map(function(t){
             var item = t.href;
-            console.log($(item).position().top, $(item).height());
             return [$(item).position().top + $(item).height(), item];
           })
           .object()
@@ -307,9 +306,7 @@ common.stickyTabs.config = function(ctrl){
 
       var poss = _.keys(ctrl.idPosDict);
       var windowPos = $(window).scrollTop();
-      var closestPos = _.find(poss, function(p){
-        return p >= windowPos
-      });
+      var closestPos = _.find(poss, function(p){ return p >= windowPos });
       if (!isInit){
         $(window).on("scroll", function(e){
           var windowPos = $(window).scrollTop();
@@ -317,7 +314,6 @@ common.stickyTabs.config = function(ctrl){
             return p >= windowPos
           });
           var hash = ctrl.idPosDict[closestPos];
-          // console.log(location.hash, hash);
           if ((location.hash != hash)){
             m.startComputation();
             common.stickyTabs.locHandler(hash);
