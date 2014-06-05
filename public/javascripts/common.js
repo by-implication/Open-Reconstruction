@@ -373,7 +373,7 @@ common.sticky.config = function(ctrl){
       // } else {
       // }
       adjustLayout();
-    })
+    });
     // }
     // updateTabMenuPos();
   }
