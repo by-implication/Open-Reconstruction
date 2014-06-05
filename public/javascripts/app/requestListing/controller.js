@@ -16,17 +16,29 @@ requestListing.controller = function(){
   this.page = parseInt(m.route.param("page")) || 0;
   this.projectTypeId = m.route.param("projectTypeId") || 0;
   this.counts = {};
-  this.blahData = [
-    {name: "lol", id: 1},
-    {name: "lol2", id: 2},
-    {name: "wut", id: 3}
+
+  this.locFilter = [
+    {
+      label: "Region",
+      data: [],
+      value: m.prop()
+    },
+    {
+      label: "Province",
+      data: [],
+      value: m.prop()
+    },
+    {
+      label: "City / Municipality",
+      data: [],
+      value: m.prop()
+    },
+    {
+      label: "Barangay",
+      data: [],
+      value: m.prop()
+    }
   ];
-
-  this.currentBlah = this.blahData[1];
-
-  this.changeBlah = function(id) {
-      console.log(id)
-  };
 
   var tabs = [
     {
