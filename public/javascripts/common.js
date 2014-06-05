@@ -250,8 +250,7 @@ common.stickyTabs.menu = function(ctrl, options){
     })
     .map(function (tab, i){
       var options = { href: tab.href };
-      // console.log(ctrl.currentSection(), tab.href);
-      return m("dd", {class: (ctrl.currentSection() === tab.href) ? "active" : ""}, [
+      return m("dd", {class: (location.hash === tab.href) ? "active" : ""}, [
         m("a", options, tab.label())
       ]);
     })
@@ -294,17 +293,6 @@ common.stickyTabs.locHandler = function(hash){
 
 common.stickyTabs.config = function(ctrl){
   ctrl.scrollInit = false;
-  var handler = function(hash){
-    if(history.pushState) { 
-      history.pushState({}, "", hash);
-    } else { 
-      scrollV = document.body.scrollTop;
-      scrollH = document.body.scrollLeft;
-      location.hash = hash;
-      document.body.scrollTop = scrollV;
-      document.body.scrollLeft = scrollH;
-    }
-  }
   return function(elem, isInit){
     var idPosDict;
     var poss;
@@ -315,7 +303,7 @@ common.stickyTabs.config = function(ctrl){
       idPosDict = _.chain(ctrl.tabs())
         .map(function(t){
           var item = t.href;
-          return [$(item).position().top, item];
+          return [$(item).position().top + $(item).height(), item];
         })
         .object()
         .value();
@@ -356,7 +344,9 @@ common.stickyTabs.config = function(ctrl){
           });
           var hash = idPosDict[closestPos];
           if ((location.hash != hash)/* && (Math.abs(windowPos - closestPos) <= 30)*/){
+            m.startComputation();
             common.stickyTabs.locHandler(hash);
+            m.endComputation();
           }
           // window.location.hash = hash;
         };
