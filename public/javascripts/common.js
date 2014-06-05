@@ -249,7 +249,9 @@ common.stickyTabs.menu = function(ctrl, options){
       }
     })
     .map(function (tab, i){
-      var options = { href: tab.href };
+      var options = { href: tab.href, onclick: function(){
+        m.redraw();
+      } };
       return m("dd", {class: (location.hash === tab.href) ? "active" : ""}, [
         m("a", options, tab.label())
       ]);
