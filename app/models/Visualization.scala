@@ -3,6 +3,7 @@ package recon.models
 import anorm._
 import anorm.SqlParser._
 import java.sql.{Date, Timestamp}
+import java.util.Calendar
 import play.api.db._
 import play.api.libs.json._
 import play.api.Play.current
@@ -278,7 +279,9 @@ object Visualization {
     }.toList.sortBy(_._2).reverse
 
     def extractYearMonth(t: Timestamp): String = {
-      (t.getYear + 1900) + "-" + "%02d".format(t.getMonth + 1)
+      val c = Calendar.getInstance()
+      c.setTimeInMillis(t.getTime)
+      (c.get(Calendar.YEAR)) + "-" + "%02d".format(c.get(Calendar.MONTH) + 1)
     }
 
     val byMonth = list.map(_._3).flatten.groupBy(x => extractYearMonth(x._1)).map { case (ym, list) =>
