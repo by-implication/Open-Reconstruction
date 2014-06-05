@@ -418,13 +418,6 @@ welcome.view = function(ctrl){
             // (twss)
           ])
         ]),
-      ]),
-      m("footer", [
-        m(".row", [
-          m(".columns.medium-12",
-            "This is where the obligatory standard gov.ph footer goes. We need to know what goes in here."
-          )
-        ])
       ])
     ])
   ]);
