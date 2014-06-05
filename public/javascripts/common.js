@@ -294,16 +294,18 @@ common.stickyTabs.locHandler = function(hash){
 common.stickyTabs.config = function(ctrl){
   return function(elem, isInit){
     setTimeout(function(){
-      var idPosDict = _.chain(ctrl.tabs())
-        .map(function(t){
-          var item = t.href;
-          return [$(item).position().top, item];
-        })
-        .object()
-        .value();
+      if (!ctrl.idPosDict) {
+        ctrl.idPosDict = _.chain(ctrl.tabs())
+          .map(function(t){
+            var item = t.href;
+            console.log($(item).position().top, $(item).height());
+            return [$(item).position().top + $(item).height(), item];
+          })
+          .object()
+          .value();
+      }
 
-      var poss = _.keys(idPosDict);
-
+      var poss = _.keys(ctrl.idPosDict);
       var windowPos = $(window).scrollTop();
       var closestPos = _.find(poss, function(p){
         return p >= windowPos
@@ -314,7 +316,7 @@ common.stickyTabs.config = function(ctrl){
           var closestPos = _.find(poss, function(p){
             return p >= windowPos
           });
-          var hash = idPosDict[closestPos];
+          var hash = ctrl.idPosDict[closestPos];
           // console.log(location.hash, hash);
           if ((location.hash != hash)){
             m.startComputation();
@@ -323,7 +325,7 @@ common.stickyTabs.config = function(ctrl){
           }
         })
       }
-    }, 10)
+    }, 100)
     
     common.sticky.config(ctrl)(elem, isInit);
   }
