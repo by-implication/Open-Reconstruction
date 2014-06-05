@@ -26,7 +26,7 @@ CREATE TABLE lgus (
 
 CREATE TABLE users (
     user_id serial PRIMARY KEY,
-    user_handle text NOT NULL,
+    user_handle text NOT NULL UNIQUE,
     user_name text NOT NULL,
     user_password text NOT NULL,
     gov_unit_id int NOT NULL REFERENCES gov_units,
