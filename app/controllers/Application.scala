@@ -49,6 +49,7 @@ object Application extends Controller {
       routes.javascript.Application.adminLgus,
       routes.javascript.Application.adminAgencies,
       routes.javascript.Application.dashboard,
+      routes.javascript.Application.index,
       routes.javascript.Application.saro,
       routes.javascript.Application.welcome,
       routes.javascript.Application.dashboardMeta,
