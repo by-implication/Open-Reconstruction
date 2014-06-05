@@ -39,15 +39,25 @@ dashboard.view = function(ctrl){
             listVis()
           ),
           m(".columns.medium-9", [
-            m("ul.medium-block-grid-2",
-              _.chain(visualizations.library)
-                .map(function(v){
-                  return m("li", [
-                    visPanel.view(v(ctrl))
-                  ]);
-                })
-                .value()
-            ),
+            _.chain(visualizations.library)
+              .groupBy(function(v){
+                return v(ctrl).type();
+              })
+              .map(function(g){
+                return m(".section", {id: g[0]().type() + "-visualizations"}, [
+                  m("hr"),
+                  m("h2", [
+                    g[0]().type(),
+                    " Visualizations"
+                  ]),
+                  m("ul.medium-block-grid-2", g.map(function(v){
+                    return m("li", [
+                      visPanel.view(v(ctrl))
+                    ])
+                  }))
+                ])
+              })
+              .value()
           ]),
         ]),
       ]),
