@@ -1,8 +1,8 @@
-
 ////////////////////////////////////////////////////
 // routes
 m.route.mode = "pathname";
-m.route(document, window.location.pathname == "/" ? "/welcome" : window.location.pathname, {
+m.route(document, window.location.pathname, {
+  "/": welcome,
   "/requests": requestListing,
   "/requests/:tab/:page/:projectTypeId": requestListing,
   "/requests/new": requestCreation,

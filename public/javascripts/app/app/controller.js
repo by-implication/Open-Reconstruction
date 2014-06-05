@@ -18,10 +18,17 @@ app.controller = function(){
   this.currentUser = m.prop(anon);
 
   bi.ajax(routes.controllers.Users.meta()).then(function (r){
-    if(r && m.route() == "/welcome"){
-      m.route("/requests");
-    }
+    
     this.currentUser(r || anon);
+
+    if(m.route() == routes.controllers.Application.index().url){
+      if(this.currentUser().govUnit.id){
+        m.route(routes.controllers.Requests.index().url);
+      } else {
+        m.route(routes.controllers.Application.welcome().url);
+      }
+    }
+
   }.bind(this));
 
   this.isAuthorized = function(permission){

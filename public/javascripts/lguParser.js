@@ -36,7 +36,7 @@ function traverse(list, level, parent){
         var id;
         if(parent){
             id = lguId++;
-            dump.push({id: id, name: e.name, level: level, parent: parent});
+            dump.push({id: id, name: e.name, level: level, parent: parent, code: e.code});
         } else {
             id = regions.indexOf(e.name);
         }
@@ -81,7 +81,8 @@ bi.ajax(routes.controllers.Assets.at("data/lgu-structure-1.js")).then(function (
                     lgu.level,
                     lgu.level > 1 ? lgu.parent + 60 : '',
                     lgu.level > 1 ? '' : lgu.parent,
-                    ''
+                    '',
+                    lgu.code
                 ].join(",");
             }).join("\n");
 
