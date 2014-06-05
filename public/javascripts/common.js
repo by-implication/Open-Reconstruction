@@ -280,14 +280,98 @@ common.stickyTabs.controller = function(){
   }.bind(this);
 }
 
+common.stickyTabs.config = function(ctrl){
+  ctrl.scrollInit = false;
+  return function(elem, isInit){
+    var idPosDict;
+    var poss;
+
+    if (isInit) {
+      common.sticky.config(ctrl)(elem, isInit);
+
+      //refactor this
+      idPosDict = _.chain(ctrl.tabs())
+        .map(function(t){
+          var item = t.href;
+          return [$(item).position().top + $(item).height() - 20, item];
+        })
+        .object()
+        .value();
+
+      poss = _.chain(idPosDict).map(function(v, k){
+        return k;
+      }).value();
+
+      var windowPos = $(window).scrollTop();
+      var closestPos = _.find(poss, function(p){
+        return p >= windowPos
+      });
+
+      if (ctrl.currentSection() != idPosDict[closestPos]) {
+        ctrl.currentSection(idPosDict[closestPos]);
+        m.redraw();
+      }
+    }
+    $(window).on("scroll", function(e){
+      if (!ctrl.scrollInit) {
+        m.redraw();
+        ctrl.scrollInit = true;
+      } else {
+        common.sticky.config(ctrl)(elem, isInit);
+        if (isInit) {
+          var windowPos = $(window).scrollTop();
+          var closestPos = _.find(poss, function(p){
+            return p >= windowPos
+          });
+          if (ctrl.currentSection() != idPosDict[closestPos]) {
+            ctrl.currentSection(idPosDict[closestPos]);
+            m.redraw();
+          }
+        };
+        // if (isInit) {
+        //   var windowPos = $(window).scrollTop();
+        //   var closestPos = _.find(poss, function(p){
+        //     return p >= windowPos
+        //   });
+        //   var hash = idPosDict[closestPos];
+        //   window.location.hash = hash;
+        // };
+      }
+    })
+  }
+}
+
+common.sticky = {};
+common.sticky.config = function(ctrl){
+  return function(elem, isInit){
+    // var updateTabMenuPos = function(){
+      var boundary = function(elem){
+        var posType = $(elem).css("position");
+        var offset = 0;
+        if (posType === "relative") {
+          offset = parseInt($(elem).css("top"));
+        }
+        return $(elem).position().top - offset;
+      }
+      if ($(window).scrollTop() > boundary(elem)) {
+        $(".tabs.vertical").css({
+          position: "relative",
+          top: ($(window).scrollTop()) - boundary(elem)
+        })
+      } else {
+        $(".tabs.vertical").removeAttr("style");
+      }
+    // }
+    // updateTabMenuPos();
+  }
+}
+
 common.modal = {};
 common.modal.controller = function(){
   this.isVisible = m.prop(false);
   this.show = function(){
     this.isVisible(true);
     this.height = helper.docHeight;
-    // console.log($("html, body"));
-    // $("html, body").animate({ scrollTop: "0px" });
   }
   this.close = function(){
     this.isVisible(false);
