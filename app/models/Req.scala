@@ -68,7 +68,12 @@ object Req extends ReqGen {
           ELSE oparr_bohol.amount::numeric(12,2)
           END
         ) as amount,
-        1 as author_id, group_id as loc, NOW() 
+        1 as author_id, group_id as loc,
+        CASE 
+          WHEN lower(disaster_name) ilike '%bohol%' THEN '2013-10-15'::date
+          WHEN lower(disaster_name) ilike '%yolanda%' THEN '2013-11-8'::date
+          ELSE now()
+          END as disaster_date
       FROM oparr_bohol
       LEFT JOIN project_types on initcap(project_type_name) = initcap(project_type)
       GROUP BY group_id, disaster_name
@@ -78,7 +83,7 @@ object Req extends ReqGen {
     SQL("""
       INSERT INTO reqs (req_description, project_type_id, req_amount,
         req_scope, author_id, req_location, disaster_type_id, 
-        req_disaster_date, req_disaster_name, req_remarks
+        req_disaster_date, req_date, req_disaster_name, req_remarks
         )
       SELECT project_description, 
         1 as project_type_id,
@@ -91,7 +96,12 @@ object Req extends ReqGen {
           WHEN lower(disaster) ilike '%typhoon%' THEN 2
           ELSE 7
           END as disaster_type,
-        now() as disaster_date,
+        CASE 
+          WHEN lower(disaster) ilike '%bohol%' THEN '2013-10-15'::date
+          WHEN lower(disaster) ilike '%yolanda%' THEN '2013-11-8'::date
+          ELSE now()
+          END as disaster_date,
+        activity_1_start_date as req_date,
         disaster,
         project_id
       FROM dpwh_eplc
