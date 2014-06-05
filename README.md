@@ -62,14 +62,12 @@ We would like to thank the following people for their amazing support:
 * Marion Banaria — pretty icons, logo, and identity
 * Kenneth Yu — because nobody likes writing contracts
 
-* Leo Horie — for Mithril, the backbone of our webapp
-
-If you like what you see, hit us up on [Twitter](http://twitter.com/_phi), like us on [Facebook](http://facebook.com/byimplication), or visit our [website](http://byimplication.com). If you want to build the next big amazing thing together, let us know.
+If you like what you see, hit us up on [Twitter](http://twitter.com/byimplication), like us on [Facebook](http://facebook.com/byimplication), or visit our [website](http://byimplication.com). If you want to build the next big amazing thing together, let us know.
 
 You might also be interested in these other things we've made:
 
 * [Sakay.ph](http://sakay.ph) — commute directions for bus, jeep, and train in Metro Manila. ([GitHub](https://github.com/sakayph))
-* [Budget Badger](http://budgetbadger.ph) — track government spending, find projects near you. (GitHub)
+* [Budget Badger](http://budgetbadger.ph) — track government spending, find projects near you. ([GitHub](https://github.com/by-implication/Badger))
 * [Storylark](http://storylark.ph) — the best in local indie comics. Storylark compels you to visit.
 
 By Implication and its ~~minions~~ employees are not affliated with the government, and is an independent entity. I mean, in case you were wondering.
