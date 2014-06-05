@@ -287,7 +287,6 @@ common.stickyTabs.config = function(ctrl){
     var poss;
 
     if (isInit) {
-      common.sticky.config(ctrl)(elem, isInit);
 
       //refactor this
       idPosDict = _.chain(ctrl.tabs())
@@ -312,12 +311,13 @@ common.stickyTabs.config = function(ctrl){
         m.redraw();
       }
     }
+    // common.sticky.config(ctrl)(elem, isInit);
     $(window).on("scroll", function(e){
       if (!ctrl.scrollInit) {
         m.redraw();
         ctrl.scrollInit = true;
       } else {
-        common.sticky.config(ctrl)(elem, isInit);
+      //   // common.sticky.config(ctrl)(elem, isInit);
         if (isInit) {
           var windowPos = $(window).scrollTop();
           var closestPos = _.find(poss, function(p){
@@ -328,39 +328,54 @@ common.stickyTabs.config = function(ctrl){
             m.redraw();
           }
         };
-        // if (isInit) {
-        //   var windowPos = $(window).scrollTop();
-        //   var closestPos = _.find(poss, function(p){
-        //     return p >= windowPos
-        //   });
-        //   var hash = idPosDict[closestPos];
-        //   window.location.hash = hash;
-        // };
+      //   // if (isInit) {
+      //   //   var windowPos = $(window).scrollTop();
+      //   //   var closestPos = _.find(poss, function(p){
+      //   //     return p >= windowPos
+      //   //   });
+      //   //   var hash = idPosDict[closestPos];
+      //   //   window.location.hash = hash;
+      //   // };
       }
     })
+    common.sticky.config(ctrl)(elem, isInit);
   }
 }
 
 common.sticky = {};
 common.sticky.config = function(ctrl){
+  // ctrl.isScrolled = false;
   return function(elem, isInit){
     // var updateTabMenuPos = function(){
-      var boundary = function(elem){
-        var posType = $(elem).css("position");
-        var offset = 0;
-        if (posType === "relative") {
-          offset = parseInt($(elem).css("top"));
-        }
-        return $(elem).position().top - offset;
+    var boundary = function(elem){
+      var posType = $(elem).css("position");
+      var offset = 0;
+      if (posType === "relative") {
+        offset = parseInt($(elem).css("top")) || 0;
       }
+      return $(elem).position().top - offset;
+    }
+    var adjustLayout = function(){
       if ($(window).scrollTop() > boundary(elem)) {
-        $(".tabs.vertical").css({
+        $(elem).css({
           position: "relative",
           top: ($(window).scrollTop()) - boundary(elem)
         })
       } else {
-        $(".tabs.vertical").removeAttr("style");
+        $(elem).removeAttr("style");
       }
+    }
+    // if (isInit) {
+    //   adjustLayout();
+    // }
+    $(window).on("scroll", function(e){
+      // if (!ctrl.isScrolled) {
+      //   m.redraw();
+      //   ctrl.isScrolled = true;
+      // } else {
+      // }
+        adjustLayout();
+    })
     // }
     // updateTabMenuPos();
   }
