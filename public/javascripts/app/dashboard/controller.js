@@ -32,7 +32,7 @@ dashboard.controller = function(){
     .keys()
     .map(function(t){
       return {
-        label: m.prop(t),
+        label: m.prop(t + " visualizations"),
         href: "#" + t + "-visualizations"
       }
     })
