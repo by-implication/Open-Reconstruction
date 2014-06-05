@@ -20,7 +20,8 @@ CREATE TABLE lgus (
     lgu_level int NOT NULL,
     parent_lgu_id int REFERENCES lgus(lgu_id),
     parent_region_id int,
-    lgu_municipality_class int
+    lgu_municipality_class int,
+    lgu_psgc text
 );;
 
 CREATE TABLE users (
