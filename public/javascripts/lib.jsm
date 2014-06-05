@@ -1,3 +1,7 @@
+# these are for IE 9 and 10
+../bower_components/WeakMap/WeakMap.js
+../bower_components/MutationObserver/MutationObserver.js
+# usual things follow
 ../bower_components/mithril/mithril.js
 ../bower_components/underscore/underscore.js
 ../bower_components/leaflet/leaflet.js

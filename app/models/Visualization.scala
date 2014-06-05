@@ -11,14 +11,13 @@ import recon.support._
 object Visualization {
 
   def getData(v: String) = { v match {
-    case "EPLC" => Some(Json.toJson(getEPLCData))
-    case "allEPLC" => Some(Json.toJson(getAllEPLCData))
+    case "EPLC" => Some(getEPLCData)
     case "DBMBureauG" => Some(Json.toJson(getDBMBureauGData))
-    case "landingPageData" => getLandingPageData
+    case "landing" => getLanding
     case _ => None
   }}
 
-  def getLandingPageData = DB.withConnection { implicit c =>
+  def getLanding = DB.withConnection { implicit c =>
     SQL("""
       SELECT yolanda.count as yolanda_req_qty, yolanda.sum as yolanda_req_amt,
         bohol.count as bohol_req_qty, bohol.sum as bohol_req_amt,
@@ -81,511 +80,89 @@ object Visualization {
           yolanda_saro_qty ~ yolanda_saro_amt ~
           yolanda_project_funded_qty ~ yolanda_project_funded_amt ~ 
           bohol_project_funded_qty ~ bohol_project_funded_amt => {
-          Json.obj(
-            "yolanda_req_qty" -> yolanda_req_qty,
-            "yolanda_req_amt" -> BigDecimal(yolanda_req_amt),
-            "bohol_req_qty" -> bohol_req_qty,
-            "bohol_req_amt" -> BigDecimal(bohol_req_amt),
-            "yolanda_project_qty" -> yolanda_project_qty,
-            "yolanda_project_amt" -> BigDecimal(yolanda_project_amt),
-            "bohol_project_qty" -> bohol_project_qty,
-            "bohol_project_amt" -> BigDecimal(bohol_project_amt),
-            "yolanda_saro_qty" -> yolanda_saro_qty,
-            "yolanda_saro_amt" -> BigDecimal(yolanda_saro_amt),
-            "yolanda_project_funded_qty" -> yolanda_project_funded_qty,
-            "yolanda_project_funded_amt" -> BigDecimal(yolanda_project_funded_amt),
-            "bohol_project_funded_qty" -> bohol_project_funded_qty,
-            "bohol_project_funded_amt" -> BigDecimal(bohol_project_funded_amt)
+
+          def qtyAmt(qty: Long, amt: java.math.BigDecimal) = Json.obj(
+            "qty" -> qty,
+            "amt" -> BigDecimal(amt)
           )
+
+          Json.obj(
+            "yolanda" -> Json.obj(
+              "req" -> qtyAmt(yolanda_req_qty, yolanda_req_amt),
+              "saro" -> qtyAmt(yolanda_saro_qty, yolanda_saro_amt),
+              "projects" -> qtyAmt(yolanda_project_qty, yolanda_project_amt),
+              "fundedProjects" -> qtyAmt(yolanda_project_funded_qty, yolanda_project_funded_amt)
+            ),
+            "bohol" -> Json.obj(
+              "req" -> qtyAmt(bohol_req_qty, bohol_req_amt),
+              "projects" -> qtyAmt(bohol_project_qty, bohol_project_amt),
+              "fundedProjects" -> qtyAmt(bohol_project_funded_qty, bohol_project_funded_amt)
+            )
+          )
+
         }
       }
     )
   }
 
   def getDBMBureauGData = DB.withConnection { implicit c =>
-    SQL("SELECT * FROM saro_bureau_g").list(
-      get[Option[String]]("agency") ~
-      get[Option[Timestamp]]("saro_date") ~
-      get[Option[Int]]("year") ~
-      get[Option[java.math.BigDecimal]]("amount") ~
-      get[Option[Int]]("project_quantity") ~
-      get[Option[String]]("remarks") map {
-        case agency~date~year~amount~quantity~remarks => {
+
+    val byAgency = SQL("""
+      SELECT agency, COUNT(*), SUM(amount)
+      FROM saro_bureau_g
+      GROUP BY agency
+      ORDER BY agency
+    """).list(
+      get[String]("agency") ~
+      get[Long]("count") ~
+      get[java.math.BigDecimal]("sum") map {
+        case agency~count~amount => {
           Json.obj(
             "agency" -> agency,
-            "saro_date" -> date,
-            "year" -> year,
-            "amount" -> amount.map(v => BigDecimal(v)),
-            "project_quantity" -> quantity,
-            "remarks" -> remarks
+            "count" -> count,
+            "amount" -> BigDecimal(amount)
           )
         }
       }
     )
-  }
 
-  private def getAllEPLCData = DB.withConnection { implicit c =>
-    SQL("SELECT * FROM dpwh_eplc").list(
-      get[Option[String]]("project_id") ~
-      get[Option[String]]("project_description") ~
-      get[Option[String]]("contract_id") ~
-      get[Option[String]]("contract_desc") ~
-      get[Option[java.math.BigDecimal]]("contract_cost") ~
-      get[Option[java.math.BigDecimal]]("project_cost") ~
-      get[Option[String]]("contract_start_date") ~
-      get[Option[String]]("contract_end_date") ~
-      get[Option[Int]]("contract_duration") ~
-      get[Option[Int]]("gaa_id") ~
-      get[Option[Int]]("budget_year") ~
-      get[Option[String]]("fs_type") ~
-      get[Option[String]]("fs_tname") ~
-      get[Option[String]]("fund_code") ~
-      get[Option[String]]("inst_name") ~
-      get[Option[String]]("inst_code") ~
-      get[Option[String]]("loan_number") ~
-      get[Option[Int]]("loan_package") ~
-      get[Option[Int]]("loan_sub_package") ~
-      get[Option[Int]]("pms_inauguration") ~
-      get[Option[java.math.BigDecimal]]("const_budget") ~
-      get[Option[String]]("project_location") ~
-      get[Option[String]]("scope") ~
-      get[Option[String]]("physical_type_tag") ~
-      get[Option[java.math.BigDecimal]]("physical") ~
-      get[Option[String]]("unit_desc") ~
-      get[Option[String]]("office_id") ~
-      get[Option[String]]("region") ~
-      get[Option[String]]("implementing_office") ~
-      get[Option[String]]("project_engineer") ~
-      get[Option[String]]("project_contractor") ~
-      get[Option[String]]("project_proponent") ~
-      get[Option[String]]("project_consultant") ~
-      get[Option[Timestamp]]("notice_to_proceed") ~
-      get[Option[java.math.BigDecimal]]("project_abc") ~
-      get[Option[java.math.BigDecimal]]("bid_price") ~
-      get[Option[Int]]("number_of_bidder") ~
-      get[Option[Int]]("actual_start_year") ~
-      get[Option[Int]]("actual_start_month") ~
-      get[Option[java.math.BigDecimal]]("actual_percentage_started") ~
-      get[Option[Int]]("actual_completion_year") ~
-      get[Option[Int]]("actual_completion_month") ~
-      get[Option[java.math.BigDecimal]]("actual_percentage_completed") ~
-      get[Option[java.math.BigDecimal]]("completed_amount") ~
-      get[Option[String]]("implementation_mode") ~
-      get[Option[Int]]("irr_pk") ~
-      get[Option[String]]("irr_description") ~
-      get[Option[String]]("activity_1") ~
-      get[Option[Timestamp]]("activity_1_start_date") ~
-      get[Option[Timestamp]]("activity_1_end_date") ~
-      get[Option[String]]("activity_2") ~
-      get[Option[Timestamp]]("activity_2_start_date") ~
-      get[Option[Timestamp]]("activity_2_end_date") ~
-      get[Option[String]]("activity_3") ~
-      get[Option[Timestamp]]("activity_3_start_date") ~
-      get[Option[Timestamp]]("activity_3_end_date") ~
-      get[Option[String]]("activity_4") ~
-      get[Option[Timestamp]]("activity_4_start_date") ~
-      get[Option[Timestamp]]("activity_4_end_date") ~
-      get[Option[String]]("activity_5") ~
-      get[Option[Timestamp]]("activity_5_start_date") ~
-      get[Option[Timestamp]]("activity_5_end_date") ~
-      get[Option[String]]("activity_6") ~
-      get[Option[Timestamp]]("activity_6_start_date") ~
-      get[Option[Timestamp]]("activity_6_end_date") ~
-      get[Option[String]]("activity_7") ~
-      get[Option[Timestamp]]("activity_7_start_date") ~
-      get[Option[Timestamp]]("activity_7_end_date") ~
-      get[Option[String]]("activity_8") ~
-      get[Option[Timestamp]]("activity_8_start_date") ~
-      get[Option[Timestamp]]("activity_8_end_date") ~
-      get[Option[String]]("activity_9") ~
-      get[Option[Timestamp]]("activity_9_start_date") ~
-      get[Option[Timestamp]]("activity_9_end_date") ~
-      get[Option[String]]("activity_10") ~
-      get[Option[String]]("activity_10_start_date") ~
-      get[Option[Timestamp]]("activity_10_end_date") ~
-      get[Option[String]]("activity_11") ~
-      get[Option[Timestamp]]("activity_11_start_date") ~
-      get[Option[Timestamp]]("activity_11_end_date") ~
-      get[Option[String]]("activity_12") ~
-      get[Option[Timestamp]]("activity_12_start_date") ~
-      get[Option[Timestamp]]("activity_12_end_date") ~
-      get[Option[String]]("activity_13") ~
-      get[Option[Timestamp]]("activity_13_start_date") ~
-      get[Option[Timestamp]]("activity_13_end_date") ~
-      get[Option[String]]("activity_14") ~
-      get[Option[Timestamp]]("activity_14_start_date") ~
-      get[Option[Timestamp]]("activity_14_end_date") ~
-      get[Option[String]]("activity_15") ~
-      get[Option[Timestamp]]("activity_15_start_date") ~
-      get[Option[Timestamp]]("activity_15_end_date") ~
-      get[Option[String]]("activity_16") ~
-      get[Option[Timestamp]]("activity_16_start_date") ~
-      get[Option[Timestamp]]("activity_16_end_date") ~
-      get[Option[String]]("activity_17") ~
-      get[Option[Timestamp]]("activity_17_start_date") ~
-      get[Option[Timestamp]]("activity_17_end_date") ~
-      get[Option[String]]("activity_18") ~
-      get[Option[Timestamp]]("activity_18_start_date") ~
-      get[Option[Timestamp]]("activity_18_end_date") ~
-      get[Option[String]]("activity_19") ~
-      get[Option[Timestamp]]("activity_19_start_date") ~
-      get[Option[Timestamp]]("activity_19_end_date") ~
-      get[Option[String]]("activity_20") ~
-      get[Option[Timestamp]]("activity_20_start_date") ~
-      get[Option[Timestamp]]("activity_20_end_date") ~
-      get[Option[String]]("activity_21") ~
-      get[Option[Timestamp]]("activity_21_start_date") ~
-      get[Option[Timestamp]]("activity_21_end_date") ~
-      get[Option[String]]("activity_22") ~
-      get[Option[Timestamp]]("activity_22_start_date") ~
-      get[Option[Timestamp]]("activity_22_end_date") ~
-      get[Option[String]]("activity_23") ~
-      get[Option[Timestamp]]("activity_23_start_date") ~
-      get[Option[Timestamp]]("activity_23_end_date") ~
-      get[Option[String]]("activity_24") ~
-      get[Option[Timestamp]]("activity_24_start_date") ~
-      get[Option[Timestamp]]("activity_24_end_date") ~
-      get[Option[String]]("activity_25") ~
-      get[Option[Timestamp]]("activity_25_start_date") ~
-      get[Option[Timestamp]]("activity_25_end_date") ~
-      get[Option[String]]("activity_26") ~
-      get[Option[Timestamp]]("activity_26_start_date") ~
-      get[Option[Timestamp]]("activity_26_end_date") ~
-      get[Option[String]]("activity_27") ~
-      get[Option[Timestamp]]("activity_27_start_date") ~
-      get[Option[Timestamp]]("activity_27_end_date") ~
-      get[Option[String]]("activity_28") ~
-      get[Option[Timestamp]]("activity_28_start_date") ~
-      get[Option[Timestamp]]("activity_28_end_date") ~
-      get[Option[String]]("activity_29") ~
-      get[Option[Timestamp]]("activity_29_start_date") ~
-      get[Option[Timestamp]]("activity_29_end_date") ~
-      get[Option[String]]("activity_30") ~
-      get[Option[Timestamp]]("activity_30_start_date") ~
-      get[Option[Timestamp]]("activity_30_end_date") ~
-      get[Option[String]]("project_type") ~
-      get[Option[Int]]("months_of_completion") ~
-      get[Option[String]]("disaster") ~
-      get[Option[String]]("psgc") ~
-      get[Option[String]]("SAA_number") ~
-      get[Option[String]]("saro_abm_number") ~
-      get[Option[java.math.BigDecimal]]("financial_allotment") ~
-      get[Option[java.math.BigDecimal]]("financial_obligation") ~
-      get[Option[java.math.BigDecimal]]("financial_disbursement") ~
-      get[Option[java.math.BigDecimal]]("physical_planned") ~
-      get[Option[java.math.BigDecimal]]("physical_revised") ~
-      get[Option[java.math.BigDecimal]]("physical_actual") ~
-      get[Option[java.math.BigDecimal]]("physical_slippage") ~
-      get[Option[java.math.BigDecimal]]("physical_performance_index") map { case project_id~
-      project_description~
-      contract_id~
-      contract_desc~
-      contract_cost~
-      project_cost~
-      contract_start_date~
-      contract_end_date~
-      contract_duration~
-      gaa_id~
-      budget_year~
-      fs_type~
-      fs_tname~
-      fund_code~
-      inst_name~
-      inst_code~
-      loan_number~
-      loan_package~
-      loan_sub_package~
-      pms_inauguration~
-      const_budget~
-      project_location~
-      scope~
-      physical_type_tag~
-      physical~
-      unit_desc~
-      office_id~
-      region~
-      implementing_office~
-      project_engineer~
-      project_contractor~
-      project_proponent~
-      project_consultant~
-      notice_to_proceed~
-      project_abc~
-      bid_price~
-      number_of_bidder~
-      actual_start_year~
-      actual_start_month~
-      actual_percentage_started~
-      actual_completion_year~
-      actual_completion_month~
-      actual_percentage_completed~
-      completed_amount~
-      implementation_mode~
-      irr_pk~
-      irr_description~
-      activity_1~
-      activity_1_start_date~
-      activity_1_end_date~
-      activity_2~
-      activity_2_start_date~
-      activity_2_end_date~
-      activity_3~
-      activity_3_start_date~
-      activity_3_end_date~
-      activity_4~
-      activity_4_start_date~
-      activity_4_end_date~
-      activity_5~
-      activity_5_start_date~
-      activity_5_end_date~
-      activity_6~
-      activity_6_start_date~
-      activity_6_end_date~
-      activity_7~
-      activity_7_start_date~
-      activity_7_end_date~
-      activity_8~
-      activity_8_start_date~
-      activity_8_end_date~
-      activity_9~
-      activity_9_start_date~
-      activity_9_end_date~
-      activity_10~
-      activity_10_start_date~
-      activity_10_end_date~
-      activity_11~
-      activity_11_start_date~
-      activity_11_end_date~
-      activity_12~
-      activity_12_start_date~
-      activity_12_end_date~
-      activity_13~
-      activity_13_start_date~
-      activity_13_end_date~
-      activity_14~
-      activity_14_start_date~
-      activity_14_end_date~
-      activity_15~
-      activity_15_start_date~
-      activity_15_end_date~
-      activity_16~
-      activity_16_start_date~
-      activity_16_end_date~
-      activity_17~
-      activity_17_start_date~
-      activity_17_end_date~
-      activity_18~
-      activity_18_start_date~
-      activity_18_end_date~
-      activity_19~
-      activity_19_start_date~
-      activity_19_end_date~
-      activity_20~
-      activity_20_start_date~
-      activity_20_end_date~
-      activity_21~
-      activity_21_start_date~
-      activity_21_end_date~
-      activity_22~
-      activity_22_start_date~
-      activity_22_end_date~
-      activity_23~
-      activity_23_start_date~
-      activity_23_end_date~
-      activity_24~
-      activity_24_start_date~
-      activity_24_end_date~
-      activity_25~
-      activity_25_start_date~
-      activity_25_end_date~
-      activity_26~
-      activity_26_start_date~
-      activity_26_end_date~
-      activity_27~
-      activity_27_start_date~
-      activity_27_end_date~
-      activity_28~
-      activity_28_start_date~
-      activity_28_end_date~
-      activity_29~
-      activity_29_start_date~
-      activity_29_end_date~
-      activity_30~
-      activity_30_start_date~
-      activity_30_end_date~
-      project_type~
-      months_of_completion~
-      disaster~
-      psgc~
-      saa_number~
-      saro_abm_number~
-      financial_allotment~
-      financial_obligation~
-      financial_disbursement~
-      physical_planned~
-      physical_revised~
-      physical_actual~
-      physical_slippage~
-      physical_performance_index => Json.obj(
-        "project_id" -> project_id,
-        "project_description" -> project_description,
-        "contract_id" -> contract_id,
-        "contract_desc" -> contract_desc,
-        "contract_cost" -> contract_cost.map(v => BigDecimal(v)),
-        "project_cost" -> project_cost.map(v => BigDecimal(v)),
-        "contract_start_date" -> contract_start_date,
-        "contract_end_date" -> contract_end_date,
-        "contract_duration" -> contract_duration,
-        "gaa_id" -> gaa_id,
-        "budget_year" -> budget_year,
-        "fs_type" -> fs_type,
-        "fs_tname" -> fs_tname,
-        "fund_code" -> fund_code,
-        "inst_name" -> inst_name,
-        "inst_code" -> inst_code,
-        "loan_number" -> loan_number,
-        "loan_package" -> loan_package,
-        "loan_sub_package" -> loan_sub_package,
-        "pms_inauguration" -> pms_inauguration,
-        "const_budget" -> const_budget.map(v => BigDecimal(v)),
-        "project_location" -> project_location,
-        "scope" -> scope,
-        "physical_type_tag" -> physical_type_tag,
-        "physical" -> physical.map(v => BigDecimal(v)),
-        "unit_desc" -> unit_desc,
-        "office_id" -> office_id,
-        "region" -> region,
-        "implementing_office" -> implementing_office,
-        "project_engineer" -> project_engineer,
-        "project_contractor" -> project_contractor,
-        "project_proponent" -> project_proponent,
-        "project_consultant" -> project_consultant,
-        "notice_to_proceed" -> notice_to_proceed,
-        "project_abc" -> project_abc.map(v => BigDecimal(v)),
-        "bid_price" -> bid_price.map(v => BigDecimal(v)),
-        "number_of_bidder" -> number_of_bidder,
-        "actual_start_year" -> actual_start_year,
-        "actual_start_month" -> actual_start_month,
-        "actual_percentage_started" -> actual_percentage_started.map(v => BigDecimal(v)),
-        "actual_completion_year" -> actual_completion_year,
-        "actual_completion_month" -> actual_completion_month,
-        "actual_percentage_completed" -> actual_percentage_completed.map(v => BigDecimal(v)),
-        "completed_amount" -> completed_amount.map(v => BigDecimal(v)),
-        "implementation_mode" -> implementation_mode,
-        "irr_pk" -> irr_pk,
-        "irr_description" -> irr_description,
-        "activity_1" -> activity_1,
-        "activity_1_start_date" -> activity_1_start_date,
-        "activity_1_end_date" -> activity_1_end_date,
-        "activity_2" -> activity_2,
-        "activity_2_start_date" -> activity_2_start_date,
-        "activity_2_end_date" -> activity_2_end_date,
-        "activity_3" -> activity_3,
-        "activity_3_start_date" -> activity_3_start_date,
-        "activity_3_end_date" -> activity_3_end_date,
-        "activity_4" -> activity_4,
-        "activity_4_start_date" -> activity_4_start_date,
-        "activity_4_end_date" -> activity_4_end_date,
-        "activity_5" -> activity_5,
-        "activity_5_start_date" -> activity_5_start_date,
-        "activity_5_end_date" -> activity_5_end_date,
-        "activity_6" -> activity_6,
-        "activity_6_start_date" -> activity_6_start_date,
-        "activity_6_end_date" -> activity_6_end_date,
-        "activity_7" -> activity_7,
-        "activity_7_start_date" -> activity_7_start_date,
-        "activity_7_end_date" -> activity_7_end_date,
-        "activity_8" -> activity_8,
-        "activity_8_start_date" -> activity_8_start_date,
-        "activity_8_end_date" -> activity_8_end_date,
-        "activity_9" -> activity_9,
-        "activity_9_start_date" -> activity_9_start_date,
-        "activity_9_end_date" -> activity_9_end_date,
-        "activity_10" -> activity_10,
-        "activity_10_start_date" -> activity_10_start_date,
-        "activity_10_end_date" -> activity_10_end_date,
-        "activity_11" -> activity_11,
-        "activity_11_start_date" -> activity_11_start_date,
-        "activity_11_end_date" -> activity_11_end_date,
-        "activity_12" -> activity_12,
-        "activity_12_start_date" -> activity_12_start_date,
-        "activity_12_end_date" -> activity_12_end_date,
-        "activity_13" -> activity_13,
-        "activity_13_start_date" -> activity_13_start_date,
-        "activity_13_end_date" -> activity_13_end_date,
-        "activity_14" -> activity_14,
-        "activity_14_start_date" -> activity_14_start_date,
-        "activity_14_end_date" -> activity_14_end_date,
-        "activity_15" -> activity_15,
-        "activity_15_start_date" -> activity_15_start_date,
-        "activity_15_end_date" -> activity_15_end_date,
-        "activity_16" -> activity_16,
-        "activity_16_start_date" -> activity_16_start_date,
-        "activity_16_end_date" -> activity_16_end_date,
-        "activity_17" -> activity_17,
-        "activity_17_start_date" -> activity_17_start_date,
-        "activity_17_end_date" -> activity_17_end_date,
-        "activity_18" -> activity_18,
-        "activity_18_start_date" -> activity_18_start_date,
-        "activity_18_end_date" -> activity_18_end_date,
-        "activity_19" -> activity_19,
-        "activity_19_start_date" -> activity_19_start_date,
-        "activity_19_end_date" -> activity_19_end_date,
-        "activity_20" -> activity_20,
-        "activity_20_start_date" -> activity_20_start_date,
-        "activity_20_end_date" -> activity_20_end_date,
-        "activity_21" -> activity_21,
-        "activity_21_start_date" -> activity_21_start_date,
-        "activity_21_end_date" -> activity_21_end_date,
-        "activity_22" -> activity_22,
-        "activity_22_start_date" -> activity_22_start_date,
-        "activity_22_end_date" -> activity_22_end_date,
-        "activity_23" -> activity_23,
-        "activity_23_start_date" -> activity_23_start_date,
-        "activity_23_end_date" -> activity_23_end_date,
-        "activity_24" -> activity_24,
-        "activity_24_start_date" -> activity_24_start_date,
-        "activity_24_end_date" -> activity_24_end_date,
-        "activity_25" -> activity_25,
-        "activity_25_start_date" -> activity_25_start_date,
-        "activity_25_end_date" -> activity_25_end_date,
-        "activity_26" -> activity_26,
-        "activity_26_start_date" -> activity_26_start_date,
-        "activity_26_end_date" -> activity_26_end_date,
-        "activity_27" -> activity_27,
-        "activity_27_start_date" -> activity_27_start_date,
-        "activity_27_end_date" -> activity_27_end_date,
-        "activity_28" -> activity_28,
-        "activity_28_start_date" -> activity_28_start_date,
-        "activity_28_end_date" -> activity_28_end_date,
-        "activity_29" -> activity_29,
-        "activity_29_start_date" -> activity_29_start_date,
-        "activity_29_end_date" -> activity_29_end_date,
-        "activity_30" -> activity_30,
-        "activity_30_start_date" -> activity_30_start_date,
-        "activity_30_end_date" -> activity_30_end_date,
-        "project_type" -> project_type,
-        "months_of_completion" -> months_of_completion,
-        "disaster" -> disaster,
-        "psgc" -> psgc,
-        "SAA_number" -> saa_number,
-        "saro_abm_number" -> saro_abm_number,
-        "financial_allotment" -> financial_allotment.map(v => BigDecimal(v)),
-        "financial_obligation" -> financial_obligation.map(v => BigDecimal(v)),
-        "financial_disbursement" -> financial_disbursement.map(v => BigDecimal(v)),
-        "physical_planned" -> physical_planned.map(v => BigDecimal(v)),
-        "physical_revised" -> physical_revised.map(v => BigDecimal(v)),
-        "physical_actual" -> physical_actual.map(v => BigDecimal(v)),
-        "physical_slippage" -> physical_slippage.map(v => BigDecimal(v)),
-        "physical_performance_index" -> physical_performance_index.map(v => BigDecimal(v))
-      )
-    })
+    val byMonth = SQL("""
+      SELECT
+        EXTRACT(YEAR FROM saro_date) AS year,
+        EXTRACT(MONTH FROM saro_date) AS month,
+        COUNT(*),
+        SUM(amount)
+      FROM saro_bureau_g
+      WHERE saro_date IS NOT NULL
+      GROUP BY EXTRACT(YEAR FROM saro_date), month
+      ORDER BY year, month
+    """).list(
+      get[Double]("year") ~
+      get[Double]("month") ~
+      get[Long]("count") ~
+      get[java.math.BigDecimal]("sum") map { case _year~_month~count~amount =>
+        val year = _year.toInt
+        val month = _month.toInt
+        Json.obj(
+          "yearMonth" -> (year + "-" + (if (month < 10) "0" + month else month)),
+          "count" -> count,
+          "amount" -> BigDecimal(amount)
+        )
+      }
+    )
+
+    Json.obj(
+      "byAgency" -> byAgency,
+      "byMonth" -> byMonth
+    )
+
   }
 
   private def getEPLCData = DB.withConnection { implicit c =>
-    SQL("SELECT * FROM dpwh_eplc").list(
-      get[Option[String]]("contract_start_date") ~
-      get[Option[String]]("contract_end_date") ~
+
+    val list = SQL("SELECT * FROM dpwh_eplc").list(
+      get[Option[Timestamp]]("contract_start_date") ~
+      get[Option[Timestamp]]("contract_end_date") ~
       get[Option[Int]]("contract_duration") ~
       get[Option[java.math.BigDecimal]]("project_abc") ~
       get[Option[String]]("activity_1") ~
@@ -616,7 +193,7 @@ object Visualization {
       get[Option[Timestamp]]("activity_9_start_date") ~
       get[Option[Timestamp]]("activity_9_end_date") ~
       get[Option[String]]("activity_10") ~
-      get[Option[String]]("activity_10_start_date") ~
+      get[Option[Timestamp]]("activity_10_start_date") ~
       get[Option[Timestamp]]("activity_10_end_date") ~
       get[Option[String]]("activity_11") ~
       get[Option[Timestamp]]("activity_11_start_date") ~
@@ -627,86 +204,100 @@ object Visualization {
       contract_end_date~
       contract_duration~
       project_abc~
-      activity_1~
-      activity_1_start_date~
-      activity_1_end_date~
-      activity_2~
-      activity_2_start_date~
-      activity_2_end_date~
-      activity_3~
-      activity_3_start_date~
-      activity_3_end_date~
-      activity_4~
-      activity_4_start_date~
-      activity_4_end_date~
-      activity_5~
-      activity_5_start_date~
-      activity_5_end_date~
-      activity_6~
-      activity_6_start_date~
-      activity_6_end_date~
-      activity_7~
-      activity_7_start_date~
-      activity_7_end_date~
-      activity_8~
-      activity_8_start_date~
-      activity_8_end_date~
-      activity_9~
-      activity_9_start_date~
-      activity_9_end_date~
-      activity_10~
-      activity_10_start_date~
-      activity_10_end_date~
-      activity_11~
-      activity_11_start_date~
-      activity_11_end_date~
+      a1~
+      a1start~
+      a1end~
+      a2~
+      a2start~
+      a2end~
+      a3~
+      a3start~
+      a3end~
+      a4~
+      a4start~
+      a4end~
+      a5~
+      a5start~
+      a5end~
+      a6~
+      a6start~
+      a6end~
+      a7~
+      a7start~
+      a7end~
+      a8~
+      a8start~
+      a8end~
+      a9~
+      a9start~
+      a9end~
+      a10~
+      a10start~
+      a10end~
+      a11~
+      a11start~
+      a11end~
       project_type~
       months_of_completion~
-      disaster => Json.obj(
-        "contract_start_date" -> contract_start_date,
-        "contract_end_date" -> contract_end_date,
-        "contract_duration" -> contract_duration,
-        "project_abc" -> project_abc.map(v => BigDecimal(v)),
-        "activities" -> Json.arr(
-          Json.obj("name" -> activity_1,
-          "start_date" -> activity_1_start_date,
-          "end_date" -> activity_1_end_date),
-          Json.obj("name" -> activity_2,
-          "start_date" -> activity_2_start_date,
-          "end_date" -> activity_2_end_date),
-          Json.obj("name" -> activity_3,
-          "start_date" -> activity_3_start_date,
-          "end_date" -> activity_3_end_date),
-          Json.obj("name" -> activity_4,
-          "start_date" -> activity_4_start_date,
-          "end_date" -> activity_4_end_date),
-          Json.obj("name" -> activity_5,
-          "start_date" -> activity_5_start_date,
-          "end_date" -> activity_5_end_date),
-          Json.obj("name" -> activity_6,
-          "start_date" -> activity_6_start_date,
-          "end_date" -> activity_6_end_date),
-          Json.obj("name" -> activity_7,
-          "start_date" -> activity_7_start_date,
-          "end_date" -> activity_7_end_date),
-          Json.obj("name" -> activity_8,
-          "start_date" -> activity_8_start_date,
-          "end_date" -> activity_8_end_date),
-          Json.obj("name" -> activity_9,
-          "start_date" -> activity_9_start_date,
-          "end_date" -> activity_9_end_date),
-          Json.obj("name" -> activity_10,
-          "start_date" -> activity_10_start_date,
-          "end_date" -> activity_10_end_date),
-          Json.obj("name" -> activity_11,
-          "start_date" -> activity_11_start_date,
-          "end_date" -> activity_11_end_date)
-        ),
-        "project_type" -> project_type,
-        "months_of_completion" -> months_of_completion,
-        "disaster" -> disaster
-      )
+      disaster => {
+
+        def actOpt(name: Option[String], start: Option[Timestamp], end: Option[Timestamp]) = {
+          for {
+            name <- name
+            start <- start
+            end <- end
+          } yield { (name, end.getTime - start.getTime) }
+        }
+
+        (List(
+            actOpt(a1, a1start, a1end),
+            actOpt(a2, a2start, a2end),
+            actOpt(a3, a3start, a3end),
+            actOpt(a4, a4start, a4end),
+            actOpt(a5, a5start, a5end),
+            actOpt(a6, a6start, a6end),
+            actOpt(a7, a7start, a7end),
+            actOpt(a8, a8start, a8end),
+            actOpt(a9, a9start, a9end),
+            actOpt(a10, a10start, a10end),
+            actOpt(a11, a11start, a11end)
+        ).flatten, project_type, for {
+          contract_start_date <- contract_start_date
+          project_abc <- project_abc
+        } yield { (contract_start_date, BigDecimal(project_abc)) })
+
+      }
     })
+
+    val averageDurations = list.map(_._1).flatten.groupBy(_._1).map { case (name, list) =>
+      name -> (list.map(_._2).sum / list.size)
+    }
+
+    val byType = list.map(_._2).flatten.groupBy(x => x).map { case (name, list) =>
+      name -> list.size
+    }.toList.sortBy(_._2).reverse
+
+    def extractYearMonth(t: Timestamp): String = {
+      (t.getYear + 1900) + "-" + "%02d".format(t.getMonth + 1)
+    }
+
+    val byMonth = list.map(_._3).flatten.groupBy(x => extractYearMonth(x._1)).map { case (ym, list) =>
+      (ym, list.size, list.map(_._2).sum)
+    }
+
+    Json.obj(
+      "aveDur" -> averageDurations,
+      "byType" -> byType.map { case (name, count) => Json.obj(
+        "n" -> name,
+        "c" -> count
+      )},
+      "byMonth" -> byMonth.map { case (ym, count, amount) => Json.obj(
+        "yearMonth" -> ym,
+        "count" -> count,
+        "amount" -> amount
+      )}
+    )
+
   }
 
 }

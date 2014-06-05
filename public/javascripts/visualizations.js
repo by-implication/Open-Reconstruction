@@ -49,29 +49,15 @@ visualizations.create(
   "projectResidenceTime",
   "project",
   function(ctrl){
-    var one_day=1000*60*60*24;
-    var proto = _.chain(ctrl.projects())
-      .map(function(p){
-        return p.activities.map(function(a){
-          return {
-            name: a.name,
-            dur: (a.end_date - a.start_date)/one_day
-          };
-        });
-      })
-      .flatten()
-      .groupBy("name")
-      .map(function(arr, k){
-        return {
-          name: k,
-          ave_dur: arr.reduce(function(acc, head){
-            return acc + head.dur;
-          }, 0) / arr.length
-        }
-      })
-      .value()
-    var durTimes = _.pluck(proto, "ave_dur");
-    var labels = _.pluck(proto, "name");
+
+    var oneDay = 1000*60*60*24;
+    var aveDur = ctrl.eplc().aveDur;
+    var labels = [];
+    var durTimes = [];
+    for(var name in aveDur){
+      labels.push(name);
+      durTimes.push(aveDur[name] / oneDay);
+    }
 
     return {
       data: {
@@ -111,29 +97,11 @@ visualizations.create(
   "projectTypeDistribution",
   "project",
   function(ctrl){
-    var projectsByType = _.chain(ctrl.projects())
-      .filter(function(p){
-        return p["project_type"];
-      })
-      .groupBy(function(p){
-        return p["project_type"];
-      })
-      .map(function(p, key){
-        var obj = {};
-        obj.type = key;
-        obj.count = p.length;
-        return obj;
-      })
-      .sortBy(function(p){
-        return p.count * -1;
-      })
-      .value()
-    var labels = projectsByType.map(function(p){
-      return p.type;
-    });
-    var counts = projectsByType.map(function(p){
-      return p.count;
-    })
+
+    var byType = ctrl.eplc().byType;
+    var labels = byType.map(function (e){ return e.n; });
+    var counts = byType.map(function (e){ return e.c; });
+
     return {
       data: {
         columns: [
@@ -152,7 +120,7 @@ visualizations.create(
         },
         y: {
           label: {
-            text: "Count",
+            text: "Number of Projects",
             position: "outer-center"
           }
         },
@@ -168,45 +136,10 @@ visualizations.create(
   'project',
   function(ctrl){
 
-    var projectsByMonth = visualizations.padMonths(
-      _.chain(ctrl.projects())
-        .filter(function(p){
-          return p["contract_start_date"];
-        })
-        .map(function(p){
-          var proj = p;
-          var date = new Date(p["contract_start_date"]);
-          var month = date.getMonth() + 1;
-          var paddedMonth = ("0" + month).slice (-2); 
-          proj.yearMonth = date.getFullYear() + "-" + paddedMonth;
-          return proj;
-        })
-        .groupBy(function(p){
-          return p.yearMonth
-        })
-        .map(function(p, k){
-          return {
-            yearMonth: k,
-            count: p.length,
-            amount: p.reduce(function(acc, head){
-              return acc + head.project_abc;
-            }, 0)
-          }
-        })
-        .value()
-    );
-    var labels = projectsByMonth
-      .map(function(l){
-        return new Date(l.yearMonth);
-      });
-    var countPerMonth = projectsByMonth
-      .map(function(g){
-        return g.count;
-      });
-    var amountPerMonth = projectsByMonth
-      .map(function(g){
-        return g.amount * 1000;
-      });
+    var byMonth = visualizations.padMonths(ctrl.eplc().byMonth);
+    var labels = byMonth.map(function (e){ return new Date(e.yearMonth); });
+    var countPerMonth = byMonth.map(function (e){ return e.count; });
+    var amountPerMonth = byMonth.map(function (e){ return e.amount * 1000; });
 
     return {
       data: {
@@ -227,7 +160,7 @@ visualizations.create(
       axis: {
         y: {
           label: {
-            text: "Quantity",
+            text: "Number of Projects",
             position: "outer-middle"
           }
         },
@@ -254,6 +187,9 @@ visualizations.create(
           label: {
             text: "Amount in PHP",
             position: "outer-middle"
+          },
+          padding: {
+            bottom: 0
           }
         }
       }
@@ -266,23 +202,15 @@ visualizations.create(
   'saroAmountAgency',
   'saro',
   function(ctrl){
-    var sarosByAgency = _.chain(ctrl.saros())
-      .filter(function(s){
-        return s["agency"];
-      })
-      .groupBy(function(s){
-        return s["agency"];
-      })
-      .value();
-    var labels = _.keys(sarosByAgency);
-    var amountPerAgency = _.chain(sarosByAgency)
-      .values()
-      .map(function(g){
-        return g.reduce(function(acc, head){
-          return acc + head.amount;
-        }, 0)
-      })
-      .value()
+    var byAgency = ctrl.saros().byAgency.sort(function (a, b){
+      if ( a.amount > b.amount )
+        return -1;
+      if ( a.amount < b.amount )
+        return 1;
+      return 0;
+    })
+    var labels = byAgency.map(function (e){ return e.agency; });
+    var amountPerAgency = byAgency.map(function (e){ return e.amount; });
 
     return {
       size: {
@@ -299,14 +227,22 @@ visualizations.create(
         x: {
           type: "categorized",
           categories: labels,
+          label: {
+            text: "Agency",
+            position: "outer-middle"
+          }
         },
         y: {
           tick: {
             format: function(t){
               // var format =  d3.format(",")
-              return "PHP " + helper.truncate(t, 2);
+              return helper.truncate(t, 2);
             }
           },
+          label: {
+            text: "Amount in PHP",
+            position: "outer-center"
+          }
         },
         rotated: true
       }
@@ -319,21 +255,15 @@ visualizations.create(
   'saroCountAgency',
   'saro',
   function(ctrl){
-    var sarosByAgency = _.chain(ctrl.saros())
-      .filter(function(s){
-        return s["agency"];
-      })
-      .groupBy(function(s){
-        return s["agency"];
-      })
-      .value();
-    var labels = _.keys(sarosByAgency);
-    var countPerAgency = _.chain(sarosByAgency)
-      .values()
-      .map(function(g){
-        return g.length;
-      })
-      .value()
+    var byAgency = ctrl.saros().byAgency.sort(function (a, b){
+      if ( a.count > b.count )
+        return -1;
+      if ( a.count < b.count )
+        return 1;
+      return 0;
+    })
+    var labels = byAgency.map(function (e){ return e.agency; });
+    var countPerAgency = byAgency.map(function (e){ return e.count; });
 
     return {
       size: {
@@ -350,6 +280,16 @@ visualizations.create(
         x: {
           type: "categorized",
           categories: labels,
+          label: {
+            text: "Agency",
+            position: "outer-middle"
+          }
+        },
+        y: {
+          label: {
+            text: "Number of SAROs assigned",
+            position: "outer-center"
+          }
         },
         rotated: true
       }
@@ -362,42 +302,18 @@ visualizations.create(
   'saroHistory',
   'saro',
   function(ctrl){
-    var sarosByMonth = visualizations.padMonths(_.chain(ctrl.saros())
-      .filter(function(s){
-        return s["saro_date"];
-      })
-      .map(function(s){
-        var saro = {};
-        var date = new Date(s["saro_date"]);
-        var month = date.getMonth() + 1;
-        var paddedMonth = ("0" + month).slice (-2); 
-        saro.yearMonth = date.getFullYear() + "-" + paddedMonth;
-        saro.amount = s.amount;
-        return saro;
-      })
-      .groupBy(function(s){
-        return s.yearMonth
-      })
-      .map(function(s, k){
-        return {
-          yearMonth: k,
-          count: s.length,
-          amount: s.reduce(function(acc, head){
-            return acc + head.amount;
-          }, 0)
-        }
-      })
-      .value()
-    );
-    var labels = sarosByMonth
+
+    var byMonth = visualizations.padMonths(ctrl.saros().byMonth)
+
+    var labels = byMonth
       .map(function(s){
         return new Date(s.yearMonth);
       });
-    var amountPerMonth = sarosByMonth
+    var amountPerMonth = byMonth
       .map(function(g){
         return g.amount;
       });
-    var countPerMonth = sarosByMonth
+    var countPerMonth = byMonth
       .map(function(g){
         return g.count;
       });
@@ -417,22 +333,42 @@ visualizations.create(
         },
         types: {
           "Count per Month": "bar"
-        }
+        },
       },
       axis: {
         x: {
           type: 'timeseries',
           tick: {
-            format: '%b, %Y'
+            format: '%b, %Y',
+            culling: {
+              max: 4
+            }
+          },
+          label: {
+            text: "Date",
+            position: "outer-center"
+          }
+        },
+        y: {
+          label: {
+            text: "Quantity",
+            position: "outer-middle"
           }
         },
         y2 : {
           show: true,
           tick: {
             format: function(t){
-              return "PHP " + helper.truncate(t, 2);
+              return helper.truncate(t, 2);
             }
-          }
+          },
+          padding: {
+            bottom: 0
+          },
+          label: {
+            text: "Amount in PHP",
+            position: "outer-middle"
+          },
         }
       }
     }
@@ -472,20 +408,37 @@ visualizations.create(
       },
       axis : {
         x : {
+          label: {
+            text: "Date",
+            position: "outer-center"
+          },
           type : 'timeseries',
           tick: {
             format: '%b, %Y',
             culling: {
-              max: 3
+              max: 4
             }
           }
         },
+        y: {
+          label: {
+            text: "Number of Requests",
+            position: "outer-middle"
+          }
+        },
         y2 : {
+          label: {
+            text: "Amount in PHP",
+            position: "outer-middle"
+          },
           show: true,
           tick: {
             format: function(t){
               return "PHP " + helper.truncate(t, 2);
             }
+          },
+          padding: {
+            bottom: 0
           }
         },
       }
@@ -511,16 +464,29 @@ visualizations.create(
       return t.name;
     });
     return {
+      size: {
+        height: 400
+      },
       data: {
         columns: [
-          ["Number of Projects"].concat(counts)
+          ["Number of Requests"].concat(counts)
         ],
         type: "bar",
       },
       axis: {
         x: {
           type: "categorized",
-          categories: types
+          categories: types,
+          label: {
+            text: "Request Types",
+            position: "outer-middle"
+          }
+        },
+        y: {
+          label: {
+            text: "Number of Requests",
+            position: "outer-center"
+          }
         },
         rotated: true
       }
@@ -559,10 +525,23 @@ visualizations.create(
         ]
       },
       axis: {
+        y: {
+          label: {
+            text: "Number of Requests",
+            position: "outer-middle"
+          }
+        },
         x : {
           type : 'timeseries',
+          label: {
+            text: "Date",
+            position: "outer-center"
+          },
           tick: {
             format: '%b, %Y',
+            culling: {
+              max: 4
+            }
           }
         },
       }
@@ -587,14 +566,6 @@ visualizations.create(
     });
     var cats = data.map(function(d){
       if (d.name) {
-        if (d.name.length > 12) {
-          return _.chain(d.name)
-            .take(12)
-            .reduce(function(a, b){
-              return a + b;
-            })
-            .value();
-        };
         return d.name;
       } else {
         return "unnamed";
@@ -610,10 +581,20 @@ visualizations.create(
       axis: {
         x: {
           type: "categorized",
-          categories: cats
+          categories: cats,
+          label: {
+            text: "Disaster",
+            position: "outer-middle"
+          }
         },
-        rotated: true
-      }
+        y: {
+          label: {
+            text: "Count",
+            position: "outer-center"
+          }
+        },
+        rotated: true,
+      },
     }
   }
 )
@@ -635,14 +616,6 @@ visualizations.create(
     });
     var cats = data.map(function(d){
       if (d.name) {
-        if (d.name.length > 12) {
-          return _.chain(d.name)
-            .take(12)
-            .reduce(function(a, b){
-              return a + b;
-            })
-            .value();
-        };
         return d.name;
       } else {
         return "unnamed";
@@ -659,11 +632,19 @@ visualizations.create(
         x: {
           type: "categorized",
           categories: cats,
+          label: {
+            text: "Disaster",
+            position: "outer-middle"
+          }
         },
         y: {
+          label: {
+            text: "Amount in PHP",
+            position: "outer-center"
+          },
           tick: {
             format: function(t){
-              return "PHP " + helper.truncate(t, 2);
+              return helper.truncate(t, 2);
             }
           },
         },

@@ -25,7 +25,7 @@ object Jsm {
     Source.fromFile(src).getLines()
       .map(_.trim)
       .filterNot(_.isEmpty)
-      .filterNot(_.startsWith("\\#"))
+      .filterNot(_.startsWith("#"))
       .map(new File(src.getParentFile(), _))
       .toSeq
       .flatMap {

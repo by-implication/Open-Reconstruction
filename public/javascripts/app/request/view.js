@@ -143,7 +143,7 @@ request.view = function(ctrl){
                       m("p", [
                         "Amount",
                         ctrl.degs.amount.view(
-                          function(){ return m("h4", [helper.commaize(ctrl.request().amount)]) },
+                          function(){ return m("h4", ["PHP " + helper.commaize(ctrl.request().amount)]) },
                           function(){
                             return m("div", [
                               m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),

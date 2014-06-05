@@ -24,7 +24,7 @@ welcome.view = function(ctrl){
               m("a", {target:"potato", href:"https://docs.google.com/forms/d/1GUdE6Si1QnnMtVJ8ig8rwECo9DK9BloOXiGVVnj_efw/viewform"},
                 "know what you think"
               ),
-              "."
+              "!"
             ])
           ])
         ]),
@@ -37,7 +37,7 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Yolanda"),
+                  m(".caption", "Typhoon Yolanda"),
                 ]),
                 m("td", [
                   m("h2", [
@@ -50,7 +50,7 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Bohol"),
+                  m(".caption", "Bohol Earthquake"),
                 ]),
                 m("td", [
                   m("h2", [
@@ -70,12 +70,12 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Yolanda"),
+                  m(".caption", "TY"),
                 ]),
                 m("td", [
                   m("h2", [
-                    ctrl.yolandaProjectsQuantity(),
-                    m("h6", "PHP " + helper.truncate(ctrl.yolandaProjectsAmount(), 2) + "")
+                    ctrl.vizData().yolanda.projects.qty,
+                    m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.projects.amt, 2) + "")
                   ]),
                 ])
               ])
@@ -83,12 +83,12 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Bohol"),
+                  m(".caption", "BE"),
                 ]),
                 m("td", [
                   m("h2", [
-                    ctrl.boholProjectsQuantity(),
-                    m("h6", "PHP " + helper.truncate(ctrl.boholProjectsAmount(), 2) + "")
+                    ctrl.vizData().bohol.projects.qty,
+                    m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.projects.amt, 2) + "")
                   ]),
                 ])
               ])
@@ -103,13 +103,13 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Yolanda"),
+                  m(".caption", "TY"),
                 ]),
                 m("td", [
                   m("h2", [
-                    ctrl.yolandaSAROQuantity() + " ",
+                    ctrl.vizData().yolanda.saro.qty + " ",
                     m("span", "SAROs"),
-                    m("h6", "PHP " + helper.truncate(ctrl.yolandaSAROAmount(), 2) )
+                    m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.saro.amt, 2) )
                   ]),
                 ])
               ])
@@ -117,13 +117,13 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Bohol"),
+                  m(".caption", "BE"),
                 ]),
                 m("td", [
                   m("h2", [
-                    // ctrl.boholSAROQuantity() + "",
+                    // ctrl.vizData().bohol.saro.qty + "",
                     "no data",
-                    m("h6", "(" + ctrl.boholSAROAmount() + ")")
+                    m("h6", "(no data)")
                   ]),
                 ])
               ])
@@ -143,12 +143,12 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Yolanda"),
+                  m(".caption", "TY"),
                 ]),
                 m("td", [
                   m("h2", [
-                    ctrl.yolandaFundedProjectsQuantity(),
-                    m("h6", "PHP " + helper.truncate(ctrl.yolandaFundedProjectsAmount(), 2) + "")
+                    ctrl.vizData().yolanda.fundedProjects.qty,
+                    m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.fundedProjects.amt, 2) + "")
                   ]),
                 ])
               ])
@@ -156,12 +156,12 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "Bohol"),
+                  m(".caption", "BE"),
                 ]),
                 m("td", [
                   m("h2", [
-                    ctrl.boholFundedProjectsQuantity(),
-                    m("h6", "PHP " + helper.truncate(ctrl.boholFundedProjectsAmount(), 2) + "")
+                    ctrl.vizData().bohol.fundedProjects.qty,
+                    m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.fundedProjects.amt, 2) + "")
                   ]),
                 ])
               ])
@@ -172,11 +172,11 @@ welcome.view = function(ctrl){
         //   m("span", "eTickets tracked in System"),
         //   " — ",
         //   m("strong", 
-        //     ctrl.yolandaProposalsQuantity() + ctrl.boholEPLCProjectsQuantity()
+        //     ctrl.vizData().yolanda.Proposals.qty + ctrl.vizData().bohol.EPLCProjects.qty
         //   ),
         //   " (total)  /  PHP ",
         //   m("strong",
-        //     helper.truncate(( ctrl.yolandaProposalsAmount() + ctrl.boholProjectsAmount() ), 2) 
+        //     helper.truncate(( ctrl.vizData().yolanda.Proposals.amt + ctrl.vizData().bohol.projects.amt ), 2) 
         //   ),
         //   " "
 

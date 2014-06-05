@@ -3,7 +3,7 @@ dashboard.controller = function(){
   this.app = new app.controller();
 
   this.requests = m.prop({});
-  this.projects = m.prop([]);
+  this.eplc = m.prop({});
   this.saros = m.prop([]);
 
   this.mostCommonDisasterType = m.prop(0);
@@ -27,19 +27,13 @@ dashboard.controller = function(){
   });
 
   bi.ajax(routes.controllers.Visualizations.getData("EPLC")).then(function (r){
-    self.projects(r.data);
+    self.eplc(r.data);
   });
 
   bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
     self.saros(r.data);
   })
-
-  this.projectHistory = visualizations.library['requestHistory'](self);
-  this.disasterHistory = visualizations.library['disasterHistory'](self);
-  this.projectTypes = visualizations.library['projectTypes'](self);
-  this.topDisasters = visualizations.library['topDisasters'](self);
-  this.topDisastersAmount = visualizations.library['topDisastersAmount'](self);
-
+  
   // this is to make sure charts are ok
   // (ideally) we need a callback when rendering is finished
 
