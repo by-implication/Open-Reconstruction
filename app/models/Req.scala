@@ -41,11 +41,11 @@ object Req extends ReqGen {
           UPDATE reqs SET author_id = {userId} WHERE req_location = {loc}
         """).on('userId -> u.id, 'loc -> loc).executeUpdate()
 
-        loc + " -> " + u.id
+        None
 
-      }.getOrElse("Failed to create user for" + lguId)
+      }.getOrElse(Some("Failed to create user for" + lguId))
 
-    }).mkString("\n")
+    }).flatten.mkString("\n")
   }
 
   private def byProjectType = DB.withConnection { implicit c =>
