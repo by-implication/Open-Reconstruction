@@ -19,7 +19,6 @@ dashboard.view = function(ctrl){
       })
       .value()
     )
-  }
   return app.template(ctrl.app, [
     m("div", [
       common.banner("Visualizations"),
