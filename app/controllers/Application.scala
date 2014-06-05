@@ -38,6 +38,9 @@ object Application extends Controller {
     play.Logger.info("* Requests created")
     Project.createSampleProjects
     play.Logger.info("* Projects created")
+    play.Logger.info("  Processing PSGC migrations")
+    play.Logger.info(Req.assignByPsgc)
+    play.Logger.info("* PSGC processed")
     play.Logger.info("* Database population complete!")
     Redirect(routes.Application.index)
   }
