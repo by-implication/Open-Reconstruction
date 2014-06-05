@@ -14,11 +14,14 @@ CREATE TABLE oparr_bohol (
     amount text,
     disaster_name text,
     implementing_agency text,
+    psgc text,
+    latitude decimal,
+    longitude decimal,
     scope_type text,
     source text
 );;
 
-COPY oparr_bohol FROM '140530 oparr_bohol.csv' CSV ENCODING 'ISO_8859_9';;
+COPY oparr_bohol FROM 'oparr_bohol.csv' CSV ENCODING 'ISO_8859_9';;
 
 INSERT INTO project_types VALUES
   (DEFAULT, 'Mixed'),
