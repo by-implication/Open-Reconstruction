@@ -272,7 +272,7 @@ common.stickyTabs.controller = function(){
     }
     return item.identifier ? item.identifier : item.label();
   }
-  this.currentSection = m.prop();
+  // this.currentSection = m.prop();
   this.isActive = function(identifier){
     console.log(this.currentSection(), identifier);
     return this.currentSection() == identifier;
@@ -292,66 +292,39 @@ common.stickyTabs.locHandler = function(hash){
 }
 
 common.stickyTabs.config = function(ctrl){
-  ctrl.scrollInit = false;
   return function(elem, isInit){
-    var idPosDict;
-    var poss;
-
-    if (isInit) {
-
-      //refactor this
-      idPosDict = _.chain(ctrl.tabs())
+    setTimeout(function(){
+      var idPosDict = _.chain(ctrl.tabs())
         .map(function(t){
           var item = t.href;
-          return [$(item).position().top + $(item).height(), item];
+          return [$(item).position().top, item];
         })
         .object()
         .value();
 
-      poss = _.chain(idPosDict).map(function(v, k){
-        return k;
-      }).value();
+      var poss = _.keys(idPosDict);
 
       var windowPos = $(window).scrollTop();
       var closestPos = _.find(poss, function(p){
         return p >= windowPos
       });
-
-      if (ctrl.currentSection() != idPosDict[closestPos]) {
-        ctrl.currentSection(idPosDict[closestPos]);
-        m.redraw();
-      }
-    }
-    $(window).on("scroll", function(e){
-      if (!ctrl.scrollInit) {
-        m.redraw();
-        ctrl.scrollInit = true;
-      } else {
-        // if (isInit) {
-        //   var windowPos = $(window).scrollTop();
-        //   var closestPos = _.find(poss, function(p){
-        //     return p >= windowPos
-        //   });
-        //   if (ctrl.currentSection() != idPosDict[closestPos]) {
-        //     ctrl.currentSection(idPosDict[closestPos]);
-        //     m.redraw();
-        //   }
-        // };
-        if (isInit) {
+      if (!isInit){
+        $(window).on("scroll", function(e){
           var windowPos = $(window).scrollTop();
           var closestPos = _.find(poss, function(p){
             return p >= windowPos
           });
           var hash = idPosDict[closestPos];
-          if ((location.hash != hash)/* && (Math.abs(windowPos - closestPos) <= 30)*/){
+          // console.log(location.hash, hash);
+          if ((location.hash != hash)){
             m.startComputation();
             common.stickyTabs.locHandler(hash);
             m.endComputation();
           }
-          // window.location.hash = hash;
-        };
+        })
       }
-    })
+    }, 10)
+    
     common.sticky.config(ctrl)(elem, isInit);
   }
 }
@@ -379,19 +352,12 @@ common.sticky.config = function(ctrl){
         $(elem).removeAttr("style");
       }
     }
-    // if (isInit) {
-    //   adjustLayout();
-    // }
-    $(window).on("scroll", function(e){
-      // if (!ctrl.isScrolled) {
-      //   m.redraw();
-      //   ctrl.isScrolled = true;
-      // } else {
-      // }
-      adjustLayout();
-    });
-    // }
-    // updateTabMenuPos();
+
+    if(!isInit){
+      $(window).on("scroll", function(e){
+        adjustLayout();
+      });
+    }
   }
 }
 

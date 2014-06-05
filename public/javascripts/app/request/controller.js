@@ -20,7 +20,7 @@ request.controller = function(){
     {label: m.prop("References"), href: "#references"},
     {label: m.prop("Activity"), href: "#activity"}
   ]);
-  this.requestTabs.currentSection("#summary");
+  // this.requestTabs.currentSection("#summary");
 
   this.id = m.route.param("id");
 
