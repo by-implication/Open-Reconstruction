@@ -20,9 +20,9 @@ dashboard.view = function(ctrl){
                 return v(ctrl).type();
               })
               .map(function(g, key){
-                return m(".section", {id: key + "-visualizations"}, [
+                return [m(".section", {id: key + "-visualizations"}, [
                   // (i > 0) ? m("hr") : "",
-                  m("h2", [
+                  m("h2.section-title", [
                     key, 
                     " Visualizations"
                   ]),
@@ -30,8 +30,10 @@ dashboard.view = function(ctrl){
                     return m("li", [
                       visPanel.view(v(ctrl))
                     ])
-                  }))
-                ])
+                  })),
+                ]),
+                m("hr")
+              ]
               })
               .value()
           ),
