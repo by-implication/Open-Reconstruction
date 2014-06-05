@@ -1,26 +1,4 @@
 dashboard.view = function(ctrl){
-  var listVis = function(){
-    return _.chain(visualizations.library)
-      .groupBy(function(v){
-        return v(ctrl).type();
-      })
-      .map(function(g){
-        return m(".filter-group", [
-          m("h4", [
-            g[0]().type(),
-            " Visualizations"
-          ]),
-          m("ul.filters", g.map(function(v){
-            return m("li.filter", [
-              m("a", {href: "visualizations/"+v(ctrl).link(), config: m.route}, [
-                v(ctrl).title()
-              ])
-            ]);
-          }))
-        ]);
-      })
-      .value();
-  };
   return app.template(ctrl.app, [
     m("div", [
       common.banner("Visualizations"),
@@ -35,22 +13,32 @@ dashboard.view = function(ctrl){
       ]),
       m("section.alt", [
         m(".row", [
-          m(".columns.medium-3",
-            listVis()
+          common.stickyTabs.menu(ctrl.projectVisTabs, {className: "vertical", config: ctrl.scrollHandler}),
+          m(".tabs-content.vertical",
+            _.chain(visualizations.library)
+              .groupBy(function(v){
+                return v(ctrl).type();
+              })
+              .map(function(g, key){
+                return [m(".section", {id: key + "-visualizations"}, [
+                  // (i > 0) ? m("hr") : "",
+                  m("h2.section-title", [
+                    key, 
+                    " Visualizations"
+                  ]),
+                  m("ul.medium-block-grid-2", g.map(function(v){
+                    return m("li", [
+                      visPanel.view(v(ctrl))
+                    ])
+                  })),
+                ]),
+                m("hr")
+              ]
+              })
+              .value()
           ),
-          m(".columns.medium-9", [
-            m("ul.medium-block-grid-2",
-              _.chain(visualizations.library)
-                .map(function(v){
-                  return m("li", [
-                    visPanel.view(v(ctrl))
-                  ]);
-                })
-                .value()
-            ),
-          ]),
         ]),
-      ]),
+      ])
     ])
   ]);
-};
+}

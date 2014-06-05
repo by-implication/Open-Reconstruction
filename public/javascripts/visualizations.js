@@ -44,53 +44,53 @@ visualizations.padMonths = function padMonths(a){
   return r;
 }
 
-visualizations.create(
-  "Average Residence Time Per Project Stage",
-  "projectResidenceTime",
-  "project",
-  function(ctrl){
+// visualizations.create(
+//   "Average Residence Time Per Project Stage",
+//   "projectResidenceTime",
+//   "project",
+//   function(ctrl){
 
-    var oneDay = 1000*60*60*24;
-    var aveDur = ctrl.eplc().aveDur;
-    var labels = [];
-    var durTimes = [];
-    for(var name in aveDur){
-      labels.push(name);
-      durTimes.push(aveDur[name] / oneDay);
-    }
+//     var oneDay = 1000*60*60*24;
+//     var aveDur = ctrl.eplc().aveDur;
+//     var labels = [];
+//     var durTimes = [];
+//     for(var name in aveDur){
+//       labels.push(name);
+//       durTimes.push(aveDur[name] / oneDay);
+//     }
 
-    return {
-      data: {
-        columns: [
-          ["Average Residence Time per Project Activity"].concat(durTimes)
-        ],
-        type: "bar"
-      },
-      axis: {
-        x: {
-          label: {
-            text: "Project Activities",
-            position: "outer-middle"
-          },
-          type: "categorized",
-          categories: labels
-        },
-        y: {
-          label: {
-            text: "Days",
-            position: "outer-center"
-          },
-          // tick: {
-          //   format: function(t){
-          //     return t + " days";
-          //   }
-          // }
-        },
-        rotated: true
-      }
-    }
-  }
-)
+//     return {
+//       data: {
+//         columns: [
+//           ["Average Residence Time per Project Activity"].concat(durTimes)
+//         ],
+//         type: "bar"
+//       },
+//       axis: {
+//         x: {
+//           label: {
+//             text: "Project Activities",
+//             position: "outer-middle"
+//           },
+//           type: "categorized",
+//           categories: labels
+//         },
+//         y: {
+//           label: {
+//             text: "Days",
+//             position: "outer-center"
+//           },
+//           // tick: {
+//           //   format: function(t){
+//           //     return t + " days";
+//           //   }
+//           // }
+//         },
+//         rotated: true
+//       }
+//     }
+//   }
+// )
 
 visualizations.create(
   "Project Type Distribution",

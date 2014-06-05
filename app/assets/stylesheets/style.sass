@@ -620,6 +620,10 @@ nav
       margin-bottom: 0
   // yes this is sad
   a.columns
+    padding-top: 12px
+    padding-bottom: 12px
+    margin-top: -12px
+    margin-bottom: -12px
     +transition( all 0.2s )
     &:hover
       background-color: #f4f4f4
@@ -752,3 +756,11 @@ a#feedback-tab
     bottom: 0
     padding: 10px 20px
     opacity: 1
+
+.tabs-content
+  .section
+    // padding: 20px 0px
+    h2.section-title
+      text-transform: capitalize
+      margin: 20px 0px
+
