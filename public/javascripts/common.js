@@ -311,13 +311,11 @@ common.stickyTabs.config = function(ctrl){
         m.redraw();
       }
     }
-    // common.sticky.config(ctrl)(elem, isInit);
     $(window).on("scroll", function(e){
       if (!ctrl.scrollInit) {
         m.redraw();
         ctrl.scrollInit = true;
       } else {
-      //   // common.sticky.config(ctrl)(elem, isInit);
         if (isInit) {
           var windowPos = $(window).scrollTop();
           var closestPos = _.find(poss, function(p){
@@ -365,16 +363,16 @@ common.sticky.config = function(ctrl){
         $(elem).removeAttr("style");
       }
     }
-    // if (isInit) {
-    //   adjustLayout();
-    // }
+    if (isInit) {
+      adjustLayout();
+    }
     $(window).on("scroll", function(e){
       // if (!ctrl.isScrolled) {
       //   m.redraw();
       //   ctrl.isScrolled = true;
       // } else {
       // }
-        adjustLayout();
+      adjustLayout();
     })
     // }
     // updateTabMenuPos();
