@@ -10,6 +10,44 @@ import recon.support._
 
 object Req extends ReqGen {
 
+  def assignByPsgc = DB.withConnection { implicit c =>
+    SQL("SELECT DISTINCT req_location FROM reqs WHERE isnumeric(req_location)")
+    .list(get[String]("req_location") map { loc =>
+
+      val List(_region, province, city) = padLeft(loc, 6, "0").grouped(2).toList
+      val region = _region.toInt
+
+      val lguId = SQL("""
+        SELECT lgu_id FROM lgus
+        WHERE lgu_psgc = {city}
+        AND parent_lgu_id = ANY(
+          SELECT lgu_id FROM lgus
+          WHERE lgu_psgc = {province}
+          AND parent_region_id = {region}
+      )""").on(
+        'region -> region,
+        'province -> province,
+        'city -> city
+      ).single(get[Int]("lgu_id"))
+
+      User(
+        name = "Legacy Data",
+        handle = "legacy" + lguId,
+        password = "legacy" + lguId + "getsupport",
+        govUnitId = lguId
+      ).create().map { u =>
+
+        SQL("""
+          UPDATE reqs SET author_id = {userId} WHERE req_location = {loc}
+        """).on('userId -> u.id, 'loc -> loc).executeUpdate()
+
+        loc + " -> " + u.id
+
+      }.getOrElse("Failed to create user for" + lguId)
+
+    }).mkString("\n")
+  }
+
   private def byProjectType = DB.withConnection { implicit c =>
     SQL("""
       SELECT project_type_name, COUNT(*), SUM(req_amount)
