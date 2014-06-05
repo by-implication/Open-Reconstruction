@@ -57,85 +57,34 @@ dashboard.controller = function(){
   bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
     self.saros(r.data);
   })
+
+
+  // such WET. needs DRY
+
   var scrollInit = false;
+  var tabControlPos;
 
-  this.scrollHandler = function(elem, isInit){
-    var boundary = function(elem){
-      var posType = $(elem).css("position");
-      var offset = 0;
-      if (posType === "relative") {
-        offset = parseInt($(elem).css("top"));
-      }
-      return $(elem).position().top - offset;
-    }
-    var updateTabMenuPos = function(){
-      if ($(window).scrollTop() > boundary(elem)) {
-        $(".tabs.vertical").css({
+  $(window).on("scroll",function(e){
+    var marginTop = 30;
+    console.log(scrollInit);
+    if (scrollInit === false) { 
+      tabControlPos = $(".columns.ref").position();
+      // console.log("first")
+    } else {
+      // console.log("succeeding")
+      if ( $(window).scrollTop() > tabControlPos.top + marginTop ) {
+        $(".columns.ref").css({
           position: "relative",
-          top: ($(window).scrollTop()) - boundary(elem)
+          top: ($(window).scrollTop()) - tabControlPos.top + marginTop
         })
       } else {
-        $(".tabs.vertical").removeAttr("style");
+        $(".columns.ref").removeAttr("style");
       }
+
     }
-    
-    var idPosDict;
-    var poss;
+    scrollInit = true;
+  })
 
-    if (isInit) {
-      updateTabMenuPos();
-      idPosDict = _.chain(self.projectVisTabs.tabs())
-        .map(function(t){
-          return t.href;
-        })
-        .map(function(i){
-          return [$(i).position().top + $(i).height() - 20, i];
-        })
-        .object()
-        .value();
-      poss = _.chain(idPosDict).map(function(v, k){
-        return k;
-      }).value();
-
-      var windowPos = $(window).scrollTop();
-      var closestPos = _.find(poss, function(p){
-        return p >= windowPos
-      });
-
-      if (self.projectVisTabs.currentSection() != idPosDict[closestPos]) {
-        self.projectVisTabs.currentSection(idPosDict[closestPos]);
-        m.redraw();
-      }
-    }
-    $(window).on("scroll", function(e){
-      if (!scrollInit) {
-        m.redraw();
-        scrollInit = true;
-      } else {
-        updateTabMenuPos()
-        if (isInit) {
-          var windowPos = $(window).scrollTop();
-          var closestPos = _.find(poss, function(p){
-            return p >= windowPos
-          });
-          if (self.projectVisTabs.currentSection() != idPosDict[closestPos]) {
-            self.projectVisTabs.currentSection(idPosDict[closestPos]);
-            m.redraw();
-            // console.log(self.projectVisTabs.currentSection());
-          }
-        };
-        // if (isInit) {
-        //   var windowPos = $(window).scrollTop();
-        //   var closestPos = _.find(poss, function(p){
-        //     return p >= windowPos
-        //   });
-        //   var hash = idPosDict[closestPos];
-        //   window.location.hash = hash;
-        // };
-      }
-    })
-  }
-  
   // this is to make sure charts are ok
   // (ideally) we need a callback when rendering is finished
 

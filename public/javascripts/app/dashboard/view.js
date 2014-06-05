@@ -1,4 +1,26 @@
 dashboard.view = function(ctrl){
+  var listVis = function(){
+    return _.chain(visualizations.library)
+      .groupBy(function(v){
+        return v(ctrl).type();
+      })
+      .map(function(g){
+        return m(".filter-group", [
+          m("h4", [
+            g[0]().type(),
+            " Visualizations"
+          ]),
+          m("ul.filters", g.map(function(v){
+            return m("li.filter", [
+              m("a", {href: "visualizations/"+v(ctrl).link(), config: m.route}, [
+                v(ctrl).title()
+              ])
+            ]);
+          }))
+        ]);
+      })
+      .value();
+  };
   return app.template(ctrl.app, [
     m("div", [
       common.banner("Visualizations"),
@@ -13,8 +35,10 @@ dashboard.view = function(ctrl){
       ]),
       m("section.alt", [
         m(".row", [
-          common.stickyTabs.menu(ctrl.projectVisTabs, {className: "vertical", config: ctrl.scrollHandler}),
-          m(".tabs-content.vertical",
+          m(".columns.medium-3.ref",
+            listVis()         
+          ),
+          m(".columns.medium-9",
             _.chain(visualizations.library)
               .groupBy(function(v){
                 return v(ctrl).type();
