@@ -52,13 +52,21 @@ app.navbar = function(ctrl){
   return m("nav.top-bar[data-topbar]", [
     m("ul.title-area", [
       m("li.name", [
-        m("h1", [
-          m("a", {href: routes.controllers.Application.welcome().url, config: m.route}, "Open Reconstruction")
+        m(".govph",[
+          m("a", {href: "http://gov.ph"}, "GOVPH")
         ])
-      ])
+      ]),
+      m("li.divider")
     ]),
     m("section.top-bar-section", [
       m("ul.left", [
+        m("li.divider"),
+        m("li.name", [
+          m("h1", [
+            m("a", {href: routes.controllers.Application.welcome().url, config: m.route}, "Open Reconstruction")
+          ])
+        ]),
+        m("li.divider"),
         m("li", [
           m("a", {
             href: routes.controllers.Application.welcome().url,
