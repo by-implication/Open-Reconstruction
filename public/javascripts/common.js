@@ -249,9 +249,13 @@ common.stickyTabs.menu = function(ctrl, options){
       }
     })
     .map(function (tab, i){
-      var options = { href: tab.href, onclick: function(){
-        m.redraw();
-      } };
+      var options = { 
+        href: tab.href, 
+        onclick: function(e){
+          e.preventDefault();
+          $("html, body").animate({scrollTop: $(tab.href).position().top + "px"});
+        }
+      };
       return m("dd", {class: (location.hash === tab.href) ? "active" : ""}, [
         m("a", options, tab.label())
       ]);
@@ -261,24 +265,24 @@ common.stickyTabs.menu = function(ctrl, options){
 
 common.stickyTabs.controller = function(){
   this.tabs = m.prop([]);
-  this.currentTab = function() {
-    var item = _.find(this.tabs(), function(tab) {
-      if(window.location.hash){
-        return tab.href === window.location.hash;
-      } else {
-        return tab.href == m.route() 
-      }
-    });
-    if(item == undefined) {
-      item = _.head(this.tabs());
-    }
-    return item.identifier ? item.identifier : item.label();
-  }
+  // this.currentTab = function() {
+  //   var item = _.find(this.tabs(), function(tab) {
+  //     if(window.location.hash){
+  //       return tab.href === window.location.hash;
+  //     } else {
+  //       return tab.href == m.route() 
+  //     }
+  //   });
+  //   if(item == undefined) {
+  //     item = _.head(this.tabs());
+  //   }
+  //   return item.identifier ? item.identifier : item.label();
+  // }
   // this.currentSection = m.prop();
-  this.isActive = function(identifier){
-    console.log(this.currentSection(), identifier);
-    return this.currentSection() == identifier;
-  }.bind(this);
+  // this.isActive = function(identifier){
+  //   console.log(this.currentSection(), identifier);
+  //   return this.currentSection() == identifier;
+  // }.bind(this);
 }
 
 common.stickyTabs.locHandler = function(hash){
@@ -321,7 +325,8 @@ common.stickyTabs.config = function(ctrl){
             common.stickyTabs.locHandler(hash);
             m.endComputation();
           }
-        })
+        });
+        console.log(location.hash);
       }
     }, 100)
     
