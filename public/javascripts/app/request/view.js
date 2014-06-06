@@ -528,7 +528,10 @@ request.approval = function(ctrl){
                 ctrl.app.isSuperAdmin() ?
                   [
                     "Please ",
-                    m("a", {href: "#assignments"}, [
+                    m("a", {href: "#assignments", onclick: function(e){
+                      e.preventDefault();
+                      $("html, body").animate({scrollTop: $("#assignments").position().top + "px"})
+                    }}, [
                       "assign an agency"
                     ]),
                     " to assess this request."

@@ -281,33 +281,36 @@ common.stickyTabs.locHandler = function(hash){
 
 common.stickyTabs.config = function(ctrl){
   return function(elem, isInit){
-    if (!ctrl.idPosDict) {
-      ctrl.idPosDict = _.chain(ctrl.tabs())
-        .map(function(t){
-          var item = t.href;
-          return [$(item).position().top + $(item).height(), item];
-        })
-        .object()
-        .value();
-    }
+    setTimeout(function(){
+      if (!isInit){
+        idPosDict = _.chain(ctrl.tabs())
+          .map(function(t){
+            var item = t.href;
+            // console.log($(item).position().top, $(item).height());
+            return [$(item).position().top + $(item).height(), item];
+          })
+          .object()
+          .value();
 
-    var poss = _.keys(ctrl.idPosDict);
-    var windowPos = $(window).scrollTop();
-    var closestPos = _.find(poss, function(p){ return p >= windowPos });
-    if (!isInit){
-      $(window).on("scroll", function(e){
+        var poss = _.keys(idPosDict);
         var windowPos = $(window).scrollTop();
-        var closestPos = _.find(poss, function(p){
-          return p >= windowPos
+        var closestPos = _.find(poss, function(p){ return p >= windowPos });
+
+        $(window).on("scroll", function(e){
+          var windowPos = $(window).scrollTop();
+          var closestPos = _.find(poss, function(p){
+            return p >= windowPos
+          });
+          var hash = idPosDict[closestPos];
+          if ((location.hash != hash)){
+            // console.log(hash);
+            m.startComputation();
+            common.stickyTabs.locHandler(hash);
+            m.endComputation();
+          }
         });
-        var hash = ctrl.idPosDict[closestPos];
-        if ((location.hash != hash)){
-          m.startComputation();
-          common.stickyTabs.locHandler(hash);
-          m.endComputation();
-        }
-      });
-    }
+      }
+    }, 100)
     common.sticky.config(ctrl)(elem, isInit);
   }
 }
