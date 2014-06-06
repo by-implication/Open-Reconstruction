@@ -106,7 +106,7 @@ object Req extends ReqGen {
           ELSE oparr_bohol.amount::numeric(12,2)
           END
         ) as amount,
-        1 as author_id, group_id as loc,
+        1 as author_id, psgc as loc,
         CASE 
           WHEN lower(disaster_name) ilike '%bohol%' THEN '2013-10-15'::date
           WHEN lower(disaster_name) ilike '%yolanda%' THEN '2013-11-8'::date
@@ -114,7 +114,7 @@ object Req extends ReqGen {
           END as disaster_date
       FROM oparr_bohol
       LEFT JOIN project_types on initcap(project_type_name) = initcap(project_type)
-      GROUP BY group_id, disaster_name
+      GROUP BY group_id, disaster_name, oparr_bohol.psgc
     """).execute()
     play.Logger.info("*   OPARR-Bohol requests created.")
 
