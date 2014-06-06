@@ -606,10 +606,6 @@ request.approval = function(ctrl){
                 m("i.fa.fa-fw.fa-check"),
                 "Sign off"
               ]),
-              m("button", {onclick: ctrl.saroModal.show.bind(ctrl.saroModal)}, [
-                m("i.fa.fa-fw.fa-check"),
-                "Assign SARO"
-              ]),
               m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
                 m("i.fa.fa-fw.fa-times"),
                 "Reject"
