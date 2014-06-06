@@ -4,7 +4,7 @@ m.route.mode = "pathname";
 m.route(document, window.location.pathname, {
   "/": welcome,
   "/requests": requestListing,
-  "/requests/:tab/:page/:projectTypeId": requestListing,
+  "/requests/:tab/:page/:projectTypeId/:locFilters": requestListing,
   "/requests/new": requestCreation,
   "/requests/:id": request,
   "/requests/:id/:tab": request,

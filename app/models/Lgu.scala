@@ -30,6 +30,10 @@ object Lgu extends LguGen {
     17 -> "REGION IV-B (MIMAROPA)"
   )
 
+    def regionsJson = Json.toJson(REGIONS.toSeq.map {
+      case (id, name) => Json.obj("id" -> id, "name" -> name)
+    })
+
   def getChildren(level: Int, id: Int): Seq[JsObject] = DB.withConnection { implicit c =>
     SQL("""
       SELECT * FROM lgus LEFT join gov_units ON lgu_id = gov_unit_id

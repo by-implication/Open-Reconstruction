@@ -174,9 +174,9 @@ object Requests extends Controller with Secured {
 
   def index = Application.index
 
-  def indexPage(tab: String, page: Int, projectTypeId: Int) = Application.index
+  def indexPage(tab: String, page: Int, projectTypeId: Int, locFilters: String) = Application.index
 
-  def indexMeta(tab: String, page: Int, projectTypeId: Int) = UserAction(){ implicit user => implicit request =>
+  def indexMeta(tab: String, page: Int, projectTypeId: Int, locFilters: String) = UserAction(){ implicit user => implicit request =>
 
     val limit = 20
     val offset = page * limit
@@ -189,10 +189,17 @@ object Requests extends Controller with Secured {
       case _ => None
     }
 
+    def getLocFilters(locFilters: String) = {
+      Json.arr(
+        Lgu.regionsJson
+      )
+    }
+
     reqListOption.map { reqList =>
       Ok(Json.obj(
         "list" -> reqList.map(_.indexJson),
         "filters" -> ProjectType.jsonList,
+        "locFilters" -> getLocFilters(locFilters),
         "counts" -> Json.obj(
           "all" -> Req.indexCount("all", projectTypeIdOption),
           "approval" -> Req.indexCount("approval", projectTypeIdOption),

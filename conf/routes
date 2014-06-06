@@ -40,8 +40,8 @@ GET     /users/:id                                controllers.Users.view(id: Int
 GET     /users/:id/meta                           controllers.Users.viewMeta(id: Int)
 
 GET			/requests																	controllers.Requests.index
-GET     /requests/:t/:p/:pid                      controllers.Requests.indexPage(t: String, p: Int, pid: Int)
-GET     /requests/:t/:p/:pid/meta                 controllers.Requests.indexMeta(t: String, p: Int, pid: Int)
+GET     /requests/:t/:p/:pid                      controllers.Requests.indexPage(t: String, p: Int, pid: Int, locFilters: String)
+GET     /requests/:t/:p/:pid/meta                 controllers.Requests.indexMeta(t: String, p: Int, pid: Int, locFilters: String)
 
 
 GET     /requests/new                             controllers.Requests.create

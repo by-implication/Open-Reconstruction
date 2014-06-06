@@ -15,30 +15,28 @@ requestListing.controller = function(){
   this.tab = m.route.param("tab") || "all";
   this.page = parseInt(m.route.param("page")) || 0;
   this.projectTypeId = m.route.param("projectTypeId") || 0;
+  this.queryLocFilters = m.route.param("locFilters") || "0-0-0-0";
   this.counts = {};
 
-  this.locFilter = [
-    {
-      label: "Region",
-      data: [],
-      value: m.prop()
-    },
-    {
-      label: "Province",
-      data: [],
-      value: m.prop()
-    },
-    {
-      label: "City / Municipality",
-      data: [],
-      value: m.prop()
-    },
-    {
-      label: "Barangay",
-      data: [],
-      value: m.prop()
-    }
-  ];
+  function DefLocFilter(label){
+    this.label = label;
+    this.data = [];
+    this.value = m.prop(0);
+    this.onchange = function(v){
+      this.value(v);
+      var locFilterQueryParam = self.locFilters.map(function (f){
+        return f.value();
+      }).join("-");
+      var targetRoute = routes.controllers.Requests.indexPage(
+        self.tab, self.page, self.projectTypeId, locFilterQueryParam
+      ).url;
+      m.route(targetRoute);
+     }
+  };
+
+  this.locFilters = ["Region", "Province", "City / Municipality", "Barangay"].map(function (label){
+    return new DefLocFilter(label);
+  });
 
   var tabs = [
     {
@@ -109,7 +107,7 @@ requestListing.controller = function(){
     return Math.floor(count / 20);
   };
 
-  bi.ajax(routes.controllers.Requests.indexMeta(this.tab, this.page, this.projectTypeId)).then(function (r){
+  bi.ajax(routes.controllers.Requests.indexMeta(this.tab, this.page, this.projectTypeId, this.queryLocFilters)).then(function (r){
 
     if(m.route() == routes.controllers.Requests.index().url){
 
@@ -121,13 +119,13 @@ requestListing.controller = function(){
       }
 
       if(this.app.isSuperAdmin()){
-        goTo(routes.controllers.Requests.indexPage("assessor", this.page, this.projectTypeId));
+        goTo(routes.controllers.Requests.indexPage("assessor", this.page, this.projectTypeId, this.queryLocFilters));
       } else if(_.contains(this.app.currentUser().permissions, 5)){
-        goTo(routes.controllers.Requests.indexPage("signoff", this.page, this.projectTypeId));
+        goTo(routes.controllers.Requests.indexPage("signoff", this.page, this.projectTypeId, this.queryLocFilters));
       } else if(_.contains(this.app.currentUser().permissions, 1)){
-        goTo(routes.controllers.Requests.indexPage("mine", this.page, this.projectTypeId));
+        goTo(routes.controllers.Requests.indexPage("mine", this.page, this.projectTypeId, this.queryLocFilters));
       } else {
-        goTo(routes.controllers.Requests.indexPage("all", this.page, this.projectTypeId));
+        goTo(routes.controllers.Requests.indexPage("all", this.page, this.projectTypeId, this.queryLocFilters));
       }
 
     }
@@ -135,6 +133,11 @@ requestListing.controller = function(){
     this.requestList = r.list;
     this.counts = r.counts;
     this.projectFilters = this.projectFilters.concat(r.filters);
+    for(var i in r.locFilters){
+      this.locFilters[i].data = [{id: 0, name: 'All'}].concat(r.locFilters[i].sort(function (a, b){
+        return a.id - b.id;
+      }));
+    }
 
   }.bind(this));
 

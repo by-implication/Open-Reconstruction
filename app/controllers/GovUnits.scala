@@ -52,9 +52,7 @@ object GovUnits extends Controller with Secured {
 
   def listLgus = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
-      "regions" -> Json.toJson(Lgu.REGIONS.toSeq.map {
-        case (id, name) => Json.obj("id" -> id, "name" -> name)
-      })
+      "regions" -> Lgu.regionsJson
     ))
   }
 

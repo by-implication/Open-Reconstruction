@@ -100,10 +100,10 @@ requestListing.view = function(ctrl){
           m("h4", [
             "Filter by Location"
           ]),
-          ctrl.locFilter.map(function (f){
+          ctrl.locFilters.map(function (f){
             return m("label", [
               f.label,
-              select2.view({data: f.data, value: f.value(), onchange: m.withAttr("value", f.value)})
+              select2.view({data: f.data, value: f.value(), onchange: f.onchange.bind(f)})
             ])
           }),
           m("h4", [
