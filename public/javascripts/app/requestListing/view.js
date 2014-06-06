@@ -100,10 +100,12 @@ requestListing.view = function(ctrl){
           m("h4", [
             "Filter by Location"
           ]),
-          m("label", [
-            "Region",
-            select2.view({data: ctrl.blahData, value: ctrl.currentBlah.id, onchange: ctrl.changeBlah}),
-          ]),
+          ctrl.locFilter.map(function (f){
+            return m("label", [
+              f.label,
+              select2.view({data: f.data, value: f.value(), onchange: m.withAttr("value", f.value)})
+            ])
+          }),
           m("h4", [
             "Filter by Project Type"
           ]),

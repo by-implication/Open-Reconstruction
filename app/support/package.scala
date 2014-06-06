@@ -6,6 +6,8 @@ import play.api.mvc._
 
 package object support {
 
+	def padLeft(s: String, len: Int, pad: String) = (pad * (len - s.length)) + s
+
 	implicit def rowToTimestamp: Column[Timestamp] = {
 	  Column[Timestamp](transformer = { (value, meta) =>
 	    val MetaDataItem(qualified,nullable,clazz) = meta

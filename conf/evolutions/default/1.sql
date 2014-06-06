@@ -20,12 +20,13 @@ CREATE TABLE lgus (
     lgu_level int NOT NULL,
     parent_lgu_id int REFERENCES lgus(lgu_id),
     parent_region_id int,
-    lgu_municipality_class int
+    lgu_municipality_class int,
+    lgu_psgc text
 );;
 
 CREATE TABLE users (
     user_id serial PRIMARY KEY,
-    user_handle text NOT NULL,
+    user_handle text NOT NULL UNIQUE,
     user_name text NOT NULL,
     user_password text NOT NULL,
     gov_unit_id int NOT NULL REFERENCES gov_units,

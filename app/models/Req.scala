@@ -10,6 +10,44 @@ import recon.support._
 
 object Req extends ReqGen {
 
+  def assignByPsgc = DB.withConnection { implicit c =>
+    SQL("SELECT DISTINCT req_location FROM reqs WHERE isnumeric(req_location)")
+    .list(get[String]("req_location") map { loc =>
+
+      val List(_region, province, city) = padLeft(loc, 6, "0").grouped(2).toList
+      val region = _region.toInt
+
+      val lguId = SQL("""
+        SELECT lgu_id FROM lgus
+        WHERE lgu_psgc = {city}
+        AND parent_lgu_id = ANY(
+          SELECT lgu_id FROM lgus
+          WHERE lgu_psgc = {province}
+          AND parent_region_id = {region}
+      )""").on(
+        'region -> region,
+        'province -> province,
+        'city -> city
+      ).single(get[Int]("lgu_id"))
+
+      User(
+        name = "Legacy Data",
+        handle = "legacy" + lguId,
+        password = "legacy" + lguId + "getsupport",
+        govUnitId = lguId
+      ).create().map { u =>
+
+        SQL("""
+          UPDATE reqs SET author_id = {userId} WHERE req_location = {loc}
+        """).on('userId -> u.id, 'loc -> loc).executeUpdate()
+
+        None
+
+      }.getOrElse(Some("Failed to create user for" + lguId))
+
+    }).flatten.mkString("\n")
+  }
+
   private def byProjectType = DB.withConnection { implicit c =>
     SQL("""
       SELECT project_type_name, COUNT(*), SUM(req_amount)
@@ -68,7 +106,7 @@ object Req extends ReqGen {
           ELSE oparr_bohol.amount::numeric(12,2)
           END
         ) as amount,
-        1 as author_id, group_id as loc,
+        1 as author_id, psgc as loc,
         CASE 
           WHEN lower(disaster_name) ilike '%bohol%' THEN '2013-10-15'::date
           WHEN lower(disaster_name) ilike '%yolanda%' THEN '2013-11-8'::date
@@ -76,7 +114,7 @@ object Req extends ReqGen {
           END as disaster_date
       FROM oparr_bohol
       LEFT JOIN project_types on initcap(project_type_name) = initcap(project_type)
-      GROUP BY group_id, disaster_name
+      GROUP BY group_id, disaster_name, oparr_bohol.psgc
     """).execute()
     play.Logger.info("*   OPARR-Bohol requests created.")
 
