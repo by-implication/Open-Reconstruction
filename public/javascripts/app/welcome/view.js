@@ -2,17 +2,13 @@ welcome.view = function(ctrl){
   return app.template(ctrl.app, [
     m("div#welcome", [
       m("section.banner", [
-        m("div", {class:"row"}, [
-          m("div", {class: "columns medium-8"}, [
+        m(".row", [
+          m(".columns.medium-8", [
             m("h1", "Open Reconstruction"),
             m("p", [
               "Tracking post-disaster reconstruction spending. Rebuilding a better Philippines, for all to see."
             ])
           ]),
-          // m("div", {class: "columns medium-4 info"}, [
-          //   m("h2", "Info 1"),
-          //   m("h2", "Info 2")
-          // ])
         ])
       ]),
       m("section", [
@@ -29,7 +25,7 @@ welcome.view = function(ctrl){
           ])
         ]),
       ]),
-    m("section.proposals", [
+      m("section.proposals", [
         m(".row", [
           m(".columns.medium-3", [
               m("img", {src:"/assets/images/landing/1-time since.svg"}),

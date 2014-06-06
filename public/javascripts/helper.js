@@ -178,9 +178,43 @@ m.cookie = function(){
 }
 
 m.stringify = function(mObj){
-  var element = document.createElement('div');
-  m.render(element, mObj);
-  return element.innerHTML;
+  var children = function(mObj){
+    if(mObj.children){
+      // not undefined. has shit inside.
+
+      if(mObj.children.constructor == Array && mObj.children.length){
+        // has nested m(). recurse.
+
+        return mObj.children
+          .map(function(c){
+            return m.stringify(c);
+          })
+          .reduce(function(a, b){
+            return a + b
+          }, "");
+      } else if (mObj.children.constructor == String){
+        // has a text node. just print string.
+        return mObj.children;
+      }
+    } else {
+      // nothing inside. terminal.
+      return "";
+    }
+  }
+  
+  var attrs = _.chain(mObj.attrs)
+    .map(function(val, key){
+      if(key === "className"){
+        key = "class"
+      }
+      return key + "='" + val + "'";
+    })
+    .reduce(function(a, b){
+      return a + b
+    }, "")
+    .value();
+  
+  return "<" + mObj.tag + " " + attrs + ">" + children(mObj) + "</" + mObj.tag + ">";
 }
 
 helper.docHeight = function(){

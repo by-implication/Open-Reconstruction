@@ -69,8 +69,6 @@ welcome.controller = function(){
     self.byLevel(r.byLevel);
     self.byMonth(padMonths(r.byMonth));
     self.byDisasterType(r.byDisasterType);
-    // console.log('Disaster Types by Month:');
-    // console.log(r.byDisasterType);
   });
 
   bi.ajax(routes.controllers.Visualizations.getData("landing")).then(function (r){
@@ -96,9 +94,4 @@ welcome.controller = function(){
 
   // this is to make sure charts are ok
   // (ideally)  we need a callback when rendering is finished
-
-  window.setTimeout(function(){
-    window.onresize();
-  },1500);
-
 }
