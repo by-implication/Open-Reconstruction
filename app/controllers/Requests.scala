@@ -190,9 +190,24 @@ object Requests extends Controller with Secured {
     }
 
     def getLocFilters(locFilters: String) = {
+
+      val List(region, province, city, barangay) = locFilters.split("-").map(_.toInt).toList
+
+      def toJson(t: (GovUnit, Lgu)) = {
+        val govUnit = t._1
+        Json.obj(
+          "id" -> govUnit.id.get,
+          "name" -> govUnit.name
+        )
+      }
+
       Json.arr(
-        Lgu.regionsJson
+        Lgu.regionsJson,
+        Lgu.getChildren(0, region).map(toJson),
+        Lgu.getChildren(1, province).map(toJson),
+        Lgu.getChildren(2, city).map(toJson)
       )
+
     }
 
     reqListOption.map { reqList =>

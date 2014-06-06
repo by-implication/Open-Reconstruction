@@ -57,7 +57,19 @@ object GovUnits extends Controller with Secured {
   }
 
   def getChildren(level: Int, id: Int) = UserAction(){ implicit user => implicit request =>
-    Ok(Json.toJson(Lgu.getChildren(level, id)))
+
+    def toJson(t: (GovUnit, Lgu)) = {
+      t match {
+        case (govUnit, lgu) => govUnit.toJson ++ Json.obj(
+          "parentRegion" -> lgu.parentRegionId,
+          "parentLGU" -> lgu.parentLguId,
+          "level" -> lgu.level
+        )
+      }
+    }
+
+    Ok(Json.toJson(Lgu.getChildren(level, id).map(toJson)))
+
   }
 
   lazy val LGUroleId = {

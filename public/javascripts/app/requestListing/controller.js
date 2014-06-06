@@ -15,27 +15,30 @@ requestListing.controller = function(){
   this.tab = m.route.param("tab") || "all";
   this.page = parseInt(m.route.param("page")) || 0;
   this.projectTypeId = m.route.param("projectTypeId") || 0;
-  this.queryLocFilters = m.route.param("locFilters") || "0-0-0-0";
+  this._queryLocFilters = m.route.param("locFilters") || "0-0-0-0";
+  this.queryLocFilters = this._queryLocFilters.split("-");
   this.counts = {};
 
-  function DefLocFilter(label){
+  function DefLocFilter(label, value){
     this.label = label;
     this.data = [];
-    this.value = m.prop(0);
+    this.value = m.prop(value);
     this.onchange = function(v){
       this.value(v);
-      var locFilterQueryParam = self.locFilters.map(function (f){
+      var index = self.locFilters.indexOf(this);
+      var locFilterQueryParam = self.locFilters.map(function (f, i){
+        if(i > index) return 0;
         return f.value();
       }).join("-");
       var targetRoute = routes.controllers.Requests.indexPage(
         self.tab, self.page, self.projectTypeId, locFilterQueryParam
       ).url;
       m.route(targetRoute);
-     }
+    }
   };
 
-  this.locFilters = ["Region", "Province", "City / Municipality", "Barangay"].map(function (label){
-    return new DefLocFilter(label);
+  this.locFilters = ["Region", "Province", "City / Municipality", "Barangay"].map(function (label, index){
+    return new DefLocFilter(label, self.queryLocFilters[index]);
   });
 
   var tabs = [
@@ -107,7 +110,7 @@ requestListing.controller = function(){
     return Math.floor(count / 20);
   };
 
-  bi.ajax(routes.controllers.Requests.indexMeta(this.tab, this.page, this.projectTypeId, this.queryLocFilters)).then(function (r){
+  bi.ajax(routes.controllers.Requests.indexMeta(this.tab, this.page, this.projectTypeId, this._queryLocFilters)).then(function (r){
 
     if(m.route() == routes.controllers.Requests.index().url){
 
@@ -119,13 +122,13 @@ requestListing.controller = function(){
       }
 
       if(this.app.isSuperAdmin()){
-        goTo(routes.controllers.Requests.indexPage("assessor", this.page, this.projectTypeId, this.queryLocFilters));
+        goTo(routes.controllers.Requests.indexPage("assessor", this.page, this.projectTypeId, this._queryLocFilters));
       } else if(_.contains(this.app.currentUser().permissions, 5)){
-        goTo(routes.controllers.Requests.indexPage("signoff", this.page, this.projectTypeId, this.queryLocFilters));
+        goTo(routes.controllers.Requests.indexPage("signoff", this.page, this.projectTypeId, this._queryLocFilters));
       } else if(_.contains(this.app.currentUser().permissions, 1)){
-        goTo(routes.controllers.Requests.indexPage("mine", this.page, this.projectTypeId, this.queryLocFilters));
+        goTo(routes.controllers.Requests.indexPage("mine", this.page, this.projectTypeId, this._queryLocFilters));
       } else {
-        goTo(routes.controllers.Requests.indexPage("all", this.page, this.projectTypeId, this.queryLocFilters));
+        goTo(routes.controllers.Requests.indexPage("all", this.page, this.projectTypeId, this._queryLocFilters));
       }
 
     }
