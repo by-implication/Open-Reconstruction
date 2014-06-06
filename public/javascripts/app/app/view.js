@@ -37,7 +37,7 @@ app.template = function(a, b, c, d){
       // m("link[href='/assets/bower_components/select2/select2.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/stylesheets/select2-foundation5.css'][rel='stylesheet'][type='text/css']")
     ]),
-    m("body", attrs, modals.concat(app.navbar(ctrl), content, app.feedback(ctrl)))
+    m("body", attrs, modals.concat(app.navbar(ctrl), content, app.footer(ctrl), app.feedback(ctrl)))
   ])
 }
 
@@ -47,18 +47,30 @@ app.feedback = function(ctrl){
   ])
 }
 
+app.footer = function(ctrl){
+  return [m("footer", ["\n",m(".row", ["\n",m(".large-4.medium-4.columns", ["\n",m(".row", ["\n",m(".large-5.columns", [m("img[src='http://www.gov.ph/wp-content/themes/govph4/faith-assets/img/govph-seal-mono-footer.png']")]),"\n",m(".large-7.columns", ["\n",m("h4", "Republic of the Philippines"),"\n",m("p", "All content is in the public domain unless otherwise stated."),"\n",m("p", "Privacy Policy"),"\n"]),"\n"]),"\n"]),"\n",m(".large-6.medium-6.columns", ["\n",m(".row", ["\n",m(".large-5.medium-5.columns", ["\n",m("h4", "About GOVPH"),"\n",m("p", "Learn more about the Philippine government, its structure, how government works and the people behind it. "),"\n",m("ul", ["\n",m("li", "Official Gazette"),"\n",m("li", "Open Data Portal"),"\n",m("li", "Send us your feedback"),"\n"]),"\n"]),"\n",m(".large-4.medium-4.columns", ["\n",m("h4", "Government Links"),"\n",m("ul", ["\n",m("li", "Office of the President"),"\n",m("li", "Office of the Vice President"),"\n",m("li", "Senate of the Philippines"),"\n",m("li", "House of Representatives"),"\n",m("li", "Supreme Court"),"\n",m("li", "Court of Appeals"),"\n",m("li", "Sandiganbayan"),"\n"]),"\n"]),"\n"]),"\n"]),"\n"]),"\n"])]
+}
+
 app.navbar = function(ctrl){
 
   return m("nav.top-bar[data-topbar]", [
     m("ul.title-area", [
       m("li.name", [
-        m("h1", [
-          m("a", {href: routes.controllers.Application.welcome().url, config: m.route}, "Open Reconstruction")
+        m(".govph",[
+          m("a", {href: "http://gov.ph"}, "GOVPH")
         ])
-      ])
+      ]),
+      m("li.divider")
     ]),
     m("section.top-bar-section", [
       m("ul.left", [
+        m("li.divider"),
+        m("li.name", [
+          m("h1", [
+            m("a", {href: routes.controllers.Application.welcome().url, config: m.route}, "Open Reconstruction")
+          ])
+        ]),
+        m("li.divider"),
         m("li", [
           m("a", {
             href: routes.controllers.Application.welcome().url,

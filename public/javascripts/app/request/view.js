@@ -111,7 +111,7 @@ request.view = function(ctrl){
       // actual content
       m("section", [
         m(".row", [
-          common.stickyTabs.menu(ctrl.requestTabs, {className: "vertical", config: ctrl.scrollHandler}),
+          common.stickyTabs.menu(ctrl.requestTabs, {className: "vertical", config: common.stickyTabs.config(ctrl.requestTabs)}),
           m(".tabs-content.vertical", [
             m(".card", [
               m(".big.section#summary", [
@@ -136,10 +136,10 @@ request.view = function(ctrl){
                   ]),
                   m(".row", [
                     m(".columns.medium-6", [
-                      m("p", [
-                        "Processing Time",
-                        m("h4#stagnation-" + ctrl.id + ".value"), // actual content c/o recursive update function in controller
-                      ]),
+                      // m("p", [
+                      //   "Processing Time",
+                      //   m("h4#stagnation-" + ctrl.id + ".value"), // actual content c/o recursive update function in controller
+                      // ]),
                       m("p", [
                         "Amount",
                         ctrl.degs.amount.view(
