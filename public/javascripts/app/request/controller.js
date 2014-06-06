@@ -180,10 +180,8 @@ request.controller = function(){
       return; 
     } else {
       this.coords(new L.LatLng(split[0], split[1]));
-      // window.setTimeout(function(){
-        if(map) map.setView(this.coords(), 8);
-        L.marker(this.coords()).addTo(map);
-      // }.bind(this), 200) // I'M SO SORRY
+      if(map) map.setView(this.coords(), 8);
+      L.marker(this.coords()).addTo(map);
     }
   }.bind(this)
 
@@ -258,7 +256,7 @@ request.controller = function(){
           element.innerHTML = common.stagnation(this)
         }
         if(m.route().startsWith(routes.controllers.Requests.view(requestId).url)){
-          setTimeout(update.bind(this), 40);
+          update.bind(this);
         }
       }.bind(this)();
     }
@@ -321,6 +319,7 @@ request.controller = function(){
 
   this.initMap = function(elem, isInit){
     if(!isInit){
+      console.log("wut");
       map = L.map(elem, {scrollWheelZoom: false}).setView([11.3333, 123.0167], 5);
       var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
       var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
