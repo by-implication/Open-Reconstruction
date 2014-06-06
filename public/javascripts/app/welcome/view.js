@@ -25,7 +25,7 @@ welcome.view = function(ctrl){
           ])
         ]),
       ]),
-    m("section.proposals", [
+      m("section.proposals", [
         m(".row", [
           m(".columns.medium-3", [
               m("img", {src:"/assets/images/landing/1-time since.svg"}),

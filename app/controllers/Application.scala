@@ -34,7 +34,7 @@ object Application extends Controller {
 
   def populate() = Action { implicit request =>
     play.Logger.info("Populating database:")
-    if (Project.listAll().length > 0){
+    if (Req.listAll().length > 100){
       play.Logger.info("* Aborted: Database already populated!")
     } else {
       Req.createSampleRequests
