@@ -191,11 +191,11 @@ request.controller = function(){
 
   this.curUserCanUpload = function(){
     // if requester, you can only upload if the assessor hasn't approved it
-    return (this.currentUserIsAuthor() && this.request().level === 0) ||
+    return (this.currentUserIsAuthor() && this.request().level < 2) ||
     // if assesor, can only upload if you haven't approved it
-    (this.currentUserBelongsToAssessingAgency() && this.request().level === 0) ||
+    (this.currentUserBelongsToAssessingAgency() && this.request().level === 1) ||
     // if OCD, can only upload if you haven't approved it
-    (this.app.isSuperAdmin() && this.request().level <= 1)
+    (this.app.isSuperAdmin() && this.request().level < 3)
   }
 
   this.currentUserBelongsToAssessingAgency = function(){
