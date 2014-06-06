@@ -33,29 +33,29 @@ object Visualization {
         bohol_projects_funded.sum as bohol_project_funded_amt
       FROM (SELECT count(*), sum(req_amount)
         FROM reqs
-        WHERE lower(req_disaster_name) like '%yolanda%'
+        WHERE req_disaster_name ILIKE '%yolanda%'
         ) as yolanda,
         (SELECT count(*), sum(req_amount)
         FROM reqs
-        WHERE lower(req_disaster_name) like '%bohol%'
+        WHERE req_disaster_name ILIKE '%bohol%'
         ) as bohol,
         (SELECT count(*), coalesce(sum(project_amount),0) as sum
         FROM projects
         LEFT JOIN reqs on projects.req_id = reqs.req_id
-        WHERE lower(req_disaster_name) like '%yolanda%') as yolanda_projects_all,
+        WHERE req_disaster_name ILIKE '%yolanda%') as yolanda_projects_all,
         (SELECT count(*), coalesce(sum(project_amount),0) as sum
         FROM projects
         LEFT JOIN reqs on projects.req_id = reqs.req_id
-        WHERE lower(req_disaster_name) like '%yolanda%'
+        WHERE req_disaster_name ILIKE '%yolanda%'
         AND project_funded) as yolanda_projects_funded,
         (SELECT count(*), coalesce(sum(project_amount),0) as sum
         FROM projects
         LEFT JOIN reqs on projects.req_id = reqs.req_id
-        WHERE lower(req_disaster_name) like '%bohol%') as bohol_projects_all,
+        WHERE req_disaster_name ILIKE '%bohol%') as bohol_projects_all,
         (SELECT count(*), coalesce(sum(project_amount),0) as sum
         FROM projects
         LEFT JOIN reqs on projects.req_id = reqs.req_id
-        WHERE lower(req_disaster_name) like '%bohol%'
+        WHERE req_disaster_name ILIKE '%bohol%'
         AND project_funded) as bohol_projects_funded,
         (SELECT count(*), sum(amount) FROM saro_bureau_g) as saro_yolanda
       """).singleOpt(
