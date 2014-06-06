@@ -34,11 +34,18 @@ object Application extends Controller {
 
   def populate() = Action { implicit request =>
     play.Logger.info("Populating database:")
-    Req.createSampleRequests
-    play.Logger.info("* Requests created")
-    Project.createSampleProjects
-    play.Logger.info("* Projects created")
-    play.Logger.info("* Database population complete!")
+    if (Project.listAll().length > 0){
+      play.Logger.info("* Aborted: Database already populated!")
+    } else {
+      Req.createSampleRequests
+      play.Logger.info("* Requests created")
+      Project.createSampleProjects
+      play.Logger.info("* Projects created")
+      play.Logger.info("  Processing PSGC migrations")
+      play.Logger.info(Req.assignByPsgc)
+      play.Logger.info("* PSGC processed")
+      play.Logger.info("* Database population complete!")
+    }
     Redirect(routes.Application.index)
   }
 

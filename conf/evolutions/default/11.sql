@@ -1,5 +1,7 @@
 # --- !Ups
 
+SET datestyle = "ISO, MDY";;
+
 CREATE TABLE oparr_bohol (
     group_id text,
     project_id text,
@@ -12,11 +14,14 @@ CREATE TABLE oparr_bohol (
     amount text,
     disaster_name text,
     implementing_agency text,
+    psgc text,
+    latitude decimal,
+    longitude decimal,
     scope_type text,
     source text
 );;
 
-COPY oparr_bohol FROM '140530 oparr_bohol.csv' CSV ENCODING 'ISO_8859_9';;
+COPY oparr_bohol FROM 'oparr_bohol.csv' CSV ENCODING 'ISO_8859_9';;
 
 INSERT INTO project_types VALUES
   (DEFAULT, 'Mixed'),
@@ -201,6 +206,9 @@ COPY saro_bureau_g FROM '140531 Clean_SARO_BureauG.csv' CSV ENCODING 'ISO_8859_9
 DROP TABLE IF EXISTS saro_bureau_g;;
 
 DROP TABLE IF EXISTS dpwh_eplc;;
+
+DELETE FROM reqs WHERE project_type_id IN
+    (SELECT project_type_id FROM project_types WHERE project_type_name = any('{Mixed, Health Facility, Power Restoration, Port, Public Tourism Facility}'));;
 
 DELETE FROM project_types
     WHERE project_type_name = any('{Mixed, Health Facility, Power Restoration, Port, Public Tourism Facility}');;

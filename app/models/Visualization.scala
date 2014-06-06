@@ -3,10 +3,12 @@ package recon.models
 import anorm._
 import anorm.SqlParser._
 import java.sql.{Date, Timestamp}
+import java.util.Calendar
 import play.api.db._
 import play.api.libs.json._
 import play.api.Play.current
 import recon.support._
+import scala.language.existentials
 
 object Visualization {
 
@@ -18,85 +20,76 @@ object Visualization {
   }}
 
   def getLanding = DB.withConnection { implicit c =>
+
+    def disasterProjects(disaster: String): Seq[(Long, BigDecimal)] = {
+      SQL("""
+        SELECT project_funded, count(*), coalesce(sum(project_amount),0) as sum
+        FROM projects LEFT JOIN reqs on projects.req_id = reqs.req_id
+        WHERE req_disaster_name ILIKE '%""" + disaster + """%'
+        GROUP BY project_funded ORDER BY project_funded ASC
+      """).list(
+        get[Long]("count") ~
+        get[java.math.BigDecimal]("sum") map {
+          case count~sum => (count, BigDecimal(sum))
+        }
+      )
+    }
+
     SQL("""
       SELECT yolanda.count as yolanda_req_qty, yolanda.sum as yolanda_req_amt,
         bohol.count as bohol_req_qty, bohol.sum as bohol_req_amt,
-        yolanda_projects_all.count as yolanda_project_qty,
-        yolanda_projects_all.sum as yolanda_project_amt,
-        bohol_projects_all.count as bohol_project_qty,
-        bohol_projects_all.sum as bohol_project_amt,
         saro_yolanda.count as yolanda_saro_qty,
-        saro_yolanda.sum as yolanda_saro_amt,
-        yolanda_projects_funded.count as yolanda_project_funded_qty,
-        yolanda_projects_funded.sum as yolanda_project_funded_amt,
-        bohol_projects_funded.count as bohol_project_funded_qty,
-        bohol_projects_funded.sum as bohol_project_funded_amt
-      FROM (SELECT count(*), sum(req_amount)
+        saro_yolanda.sum as yolanda_saro_amt
+      FROM (
+        SELECT count(*), sum(req_amount)
         FROM reqs
         WHERE req_disaster_name ILIKE '%yolanda%'
-        ) as yolanda,
-        (SELECT count(*), sum(req_amount)
+      ) as yolanda,
+      (
+        SELECT count(*), sum(req_amount)
         FROM reqs
         WHERE req_disaster_name ILIKE '%bohol%'
-        ) as bohol,
-        (SELECT count(*), coalesce(sum(project_amount),0) as sum
-        FROM projects
-        LEFT JOIN reqs on projects.req_id = reqs.req_id
-        WHERE req_disaster_name ILIKE '%yolanda%') as yolanda_projects_all,
-        (SELECT count(*), coalesce(sum(project_amount),0) as sum
-        FROM projects
-        LEFT JOIN reqs on projects.req_id = reqs.req_id
-        WHERE req_disaster_name ILIKE '%yolanda%'
-        AND project_funded) as yolanda_projects_funded,
-        (SELECT count(*), coalesce(sum(project_amount),0) as sum
-        FROM projects
-        LEFT JOIN reqs on projects.req_id = reqs.req_id
-        WHERE req_disaster_name ILIKE '%bohol%') as bohol_projects_all,
-        (SELECT count(*), coalesce(sum(project_amount),0) as sum
-        FROM projects
-        LEFT JOIN reqs on projects.req_id = reqs.req_id
-        WHERE req_disaster_name ILIKE '%bohol%'
-        AND project_funded) as bohol_projects_funded,
-        (SELECT count(*), sum(amount) FROM saro_bureau_g) as saro_yolanda
-      """).singleOpt(
+      ) as bohol,
+      (
+        SELECT count(*), sum(amount) FROM saro_bureau_g
+      ) as saro_yolanda
+    """).singleOpt(
       get[Long]("yolanda_req_qty") ~
       get[java.math.BigDecimal]("yolanda_req_amt") ~
-      get[Long]("yolanda_project_qty") ~
-      get[java.math.BigDecimal]("yolanda_project_amt") ~
       get[Long]("bohol_req_qty") ~
       get[java.math.BigDecimal]("bohol_req_amt") ~
-      get[Long]("bohol_project_qty") ~
-      get[java.math.BigDecimal]("bohol_project_amt") ~
       get[Long]("yolanda_saro_qty") ~
-      get[java.math.BigDecimal]("yolanda_saro_amt") ~
-      get[Long]("yolanda_project_funded_qty") ~
-      get[java.math.BigDecimal]("yolanda_project_funded_amt") ~
-      get[Long]("bohol_project_funded_qty") ~
-      get[java.math.BigDecimal]("bohol_project_funded_amt") map {
-        case yolanda_req_qty ~ yolanda_req_amt ~ 
-          yolanda_project_qty ~ yolanda_project_amt ~ 
-          bohol_req_qty ~ bohol_req_amt ~ 
-          bohol_project_qty ~ bohol_project_amt ~ 
-          yolanda_saro_qty ~ yolanda_saro_amt ~
-          yolanda_project_funded_qty ~ yolanda_project_funded_amt ~ 
-          bohol_project_funded_qty ~ bohol_project_funded_amt => {
+      get[java.math.BigDecimal]("yolanda_saro_amt") map {
 
-          def qtyAmt(qty: Long, amt: java.math.BigDecimal) = Json.obj(
+        case yolanda_req_qty ~ yolanda_req_amt ~
+          bohol_req_qty ~ bohol_req_amt ~
+          yolanda_saro_qty ~ yolanda_saro_amt => {
+
+          val List(bohol_unfunded, bohol_funded) = disasterProjects("bohol")
+          val List(yolanda_unfunded, yolanda_funded) = disasterProjects("yolanda")
+
+          def qtyAmt(qty: Long, amt: BigDecimal) = Json.obj(
             "qty" -> qty,
-            "amt" -> BigDecimal(amt)
+            "amt" -> amt
           )
 
           Json.obj(
             "yolanda" -> Json.obj(
               "req" -> qtyAmt(yolanda_req_qty, yolanda_req_amt),
               "saro" -> qtyAmt(yolanda_saro_qty, yolanda_saro_amt),
-              "projects" -> qtyAmt(yolanda_project_qty, yolanda_project_amt),
-              "fundedProjects" -> qtyAmt(yolanda_project_funded_qty, yolanda_project_funded_amt)
+              "projects" -> qtyAmt(
+                yolanda_unfunded._1 + yolanda_funded._1,
+                yolanda_unfunded._2 + yolanda_funded._2
+              ),
+              "fundedProjects" -> (qtyAmt _ tupled yolanda_funded)
             ),
             "bohol" -> Json.obj(
               "req" -> qtyAmt(bohol_req_qty, bohol_req_amt),
-              "projects" -> qtyAmt(bohol_project_qty, bohol_project_amt),
-              "fundedProjects" -> qtyAmt(bohol_project_funded_qty, bohol_project_funded_amt)
+              "projects" -> qtyAmt(
+                bohol_unfunded._1 + bohol_funded._1,
+                bohol_unfunded._2 + bohol_funded._2
+              ),
+              "fundedProjects" -> (qtyAmt _ tupled bohol_funded)
             )
           )
 
@@ -278,7 +271,9 @@ object Visualization {
     }.toList.sortBy(_._2).reverse
 
     def extractYearMonth(t: Timestamp): String = {
-      (t.getYear + 1900) + "-" + "%02d".format(t.getMonth + 1)
+      val c = Calendar.getInstance()
+      c.setTimeInMillis(t.getTime)
+      (c.get(Calendar.YEAR)) + "-" + "%02d".format(c.get(Calendar.MONTH) + 1)
     }
 
     val byMonth = list.map(_._3).flatten.groupBy(x => extractYearMonth(x._1)).map { case (ym, list) =>
