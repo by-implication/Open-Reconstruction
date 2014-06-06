@@ -185,8 +185,6 @@ request.controller = function(){
     }
   }.bind(this)
 
-  this.dropzone = null;
-
   this.curUserCanUpload = function(){
     // if requester, you can only upload if the assessor hasn't approved it
     return (this.currentUserIsAuthor() && this.request().level === 0) ||
@@ -319,7 +317,6 @@ request.controller = function(){
 
   this.initMap = function(elem, isInit){
     if(!isInit){
-      console.log("wut");
       map = L.map(elem, {scrollWheelZoom: false}).setView([11.3333, 123.0167], 5);
       var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
       var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
@@ -371,7 +368,7 @@ request.controller = function(){
   this.initImageDropzone = function(elem, isInit){
     if(!isInit){
 
-      this.dropzone = new Dropzone(elem, {
+      var dz = new Dropzone(elem, {
         url: routes.controllers.Attachments.add(this.id, "img").url,
         previewTemplate: m.stringify(dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop photos here, or click to browse.",
@@ -382,7 +379,7 @@ request.controller = function(){
         acceptedFiles: "image/*"
       })
 
-      this.dropzone.on("success", function (_, r){
+      dz.on("success", function (_, r){
         this.attachments().imgs.push(r.attachment);
         this.history().unshift(r.event);
         m.redraw();
@@ -394,7 +391,7 @@ request.controller = function(){
   this.initDocDropzone = function(elem, isInit){
     if(!isInit){
 
-      this.dropzone = new Dropzone(elem, {
+      var dz = new Dropzone(elem, {
         url: routes.controllers.Attachments.add(this.id, "doc").url,
         previewTemplate: m.stringify(dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop documents here, or click to browse. We recommend pdfs and doc files.",
@@ -402,7 +399,7 @@ request.controller = function(){
         autoDiscover: false
       });
 
-      this.dropzone.on("success", function (_, r){
+      dz.on("success", function (_, r){
         this.attachments().docs.push(r.attachment);
         this.history().unshift(r.event);
         m.redraw();
