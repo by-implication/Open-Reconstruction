@@ -265,24 +265,6 @@ common.stickyTabs.menu = function(ctrl, options){
 
 common.stickyTabs.controller = function(){
   this.tabs = m.prop([]);
-  // this.currentTab = function() {
-  //   var item = _.find(this.tabs(), function(tab) {
-  //     if(window.location.hash){
-  //       return tab.href === window.location.hash;
-  //     } else {
-  //       return tab.href == m.route() 
-  //     }
-  //   });
-  //   if(item == undefined) {
-  //     item = _.head(this.tabs());
-  //   }
-  //   return item.identifier ? item.identifier : item.label();
-  // }
-  // this.currentSection = m.prop();
-  // this.isActive = function(identifier){
-  //   console.log(this.currentSection(), identifier);
-  //   return this.currentSection() == identifier;
-  // }.bind(this);
 }
 
 common.stickyTabs.locHandler = function(hash){
@@ -299,7 +281,7 @@ common.stickyTabs.locHandler = function(hash){
 
 common.stickyTabs.config = function(ctrl){
   return function(elem, isInit){
-    setTimeout(function(){
+    // setTimeout(function(){
       if (!ctrl.idPosDict) {
         ctrl.idPosDict = _.chain(ctrl.tabs())
           .map(function(t){
@@ -326,9 +308,9 @@ common.stickyTabs.config = function(ctrl){
             m.endComputation();
           }
         });
-        console.log(location.hash);
+        // console.log(location.hash);
       }
-    }, 100)
+    // }, 100)
     
     common.sticky.config(ctrl)(elem, isInit);
   }

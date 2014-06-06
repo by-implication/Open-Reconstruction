@@ -136,10 +136,10 @@ request.view = function(ctrl){
                   ]),
                   m(".row", [
                     m(".columns.medium-6", [
-                      // m("p", [
-                      //   "Processing Time",
-                      //   m("h4#stagnation-" + ctrl.id + ".value"), // actual content c/o recursive update function in controller
-                      // ]),
+                      m("p", [
+                        "Processing Time",
+                        m("h4#stagnation-" + ctrl.id + ".value"), // actual content c/o recursive update function in controller
+                      ]),
                       m("p", [
                         "Amount",
                         ctrl.degs.amount.view(
