@@ -7,6 +7,7 @@ import play.api.db._
 import play.api.libs.json._
 import play.api.Play.current
 import recon.support._
+import scala.language.existentials
 
 object Req extends ReqGen {
 
