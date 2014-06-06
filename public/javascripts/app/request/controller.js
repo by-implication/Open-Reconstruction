@@ -20,7 +20,7 @@ request.controller = function(){
     {label: m.prop("References"), href: "#references"},
     {label: m.prop("Activity"), href: "#activity"}
   ]);
-  this.requestTabs.currentSection("#summary");
+  // this.requestTabs.currentSection("#summary");
 
   this.id = m.route.param("id");
 
@@ -180,14 +180,10 @@ request.controller = function(){
       return; 
     } else {
       this.coords(new L.LatLng(split[0], split[1]));
-      window.setTimeout(function(){
-        if(map) map.setView(this.coords(), 8);
-        L.marker(this.coords()).addTo(map);
-      }.bind(this), 200) // I'M SO SORRY
+      if(map) map.setView(this.coords(), 8);
+      L.marker(this.coords()).addTo(map);
     }
   }.bind(this)
-
-  this.dropzone = null;
 
   this.curUserCanUpload = function(){
     // if requester, you can only upload if the assessor hasn't approved it
@@ -258,7 +254,7 @@ request.controller = function(){
           element.innerHTML = common.stagnation(this)
         }
         if(m.route().startsWith(routes.controllers.Requests.view(requestId).url)){
-          setTimeout(update.bind(this), 40);
+          update.bind(this);
         }
       }.bind(this)();
     }
@@ -321,19 +317,15 @@ request.controller = function(){
 
   this.initMap = function(elem, isInit){
     if(!isInit){
-      window.setTimeout(function(){
-        map = L.map(elem, {scrollWheelZoom: false}).setView([11.3333, 123.0167], 5);
-        var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-        var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-        var osm = new L.TileLayer(osmUrl, {minZoom: 5, maxZoom: 19, attribution: osmAttrib}).addTo(map);   
+      map = L.map(elem, {scrollWheelZoom: false}).setView([11.3333, 123.0167], 5);
+      var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+      var osm = new L.TileLayer(osmUrl, {minZoom: 5, maxZoom: 19, attribution: osmAttrib}).addTo(map);   
 
-        var editableLayers = new L.FeatureGroup();
-        map.addLayer(editableLayers);
-
-        // Initialise the draw control and pass it the FeatureGroup of editable layers
-      }, 100) // I'M SO SORRY
+      var editableLayers = new L.FeatureGroup();
+      map.addLayer(editableLayers);
     }
-  }.bind(this)
+  }
 
   this.refreshHistory = function(){
     bi.ajax(routes.controllers.Requests.viewMeta(this.id)).then(function(data){
@@ -376,7 +368,7 @@ request.controller = function(){
   this.initImageDropzone = function(elem, isInit){
     if(!isInit){
 
-      this.dropzone = new Dropzone(elem, {
+      var dz = new Dropzone(elem, {
         url: routes.controllers.Attachments.add(this.id, "img").url,
         previewTemplate: m.stringify(dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop photos here, or click to browse.",
@@ -387,7 +379,7 @@ request.controller = function(){
         acceptedFiles: "image/*"
       })
 
-      this.dropzone.on("success", function (_, r){
+      dz.on("success", function (_, r){
         this.attachments().imgs.push(r.attachment);
         this.history().unshift(r.event);
         m.redraw();
@@ -399,7 +391,7 @@ request.controller = function(){
   this.initDocDropzone = function(elem, isInit){
     if(!isInit){
 
-      this.dropzone = new Dropzone(elem, {
+      var dz = new Dropzone(elem, {
         url: routes.controllers.Attachments.add(this.id, "doc").url,
         previewTemplate: m.stringify(dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop documents here, or click to browse. We recommend pdfs and doc files.",
@@ -407,7 +399,7 @@ request.controller = function(){
         autoDiscover: false
       });
 
-      this.dropzone.on("success", function (_, r){
+      dz.on("success", function (_, r){
         this.attachments().docs.push(r.attachment);
         this.history().unshift(r.event);
         m.redraw();
@@ -415,83 +407,4 @@ request.controller = function(){
 
     }
   }.bind(this);
-
-  var scrollInit = false;
-
-  this.scrollHandler = function(elem, isInit){
-    var boundary = function(elem){
-      var posType = $(elem).css("position");
-      var offset = 0;
-      if (posType === "relative") {
-        offset = parseInt($(elem).css("top"));
-      }
-      return $(elem).position().top - offset;
-    }
-    var updateTabMenuPos = function(){
-      if ($(window).scrollTop() > boundary(elem)) {
-        $(".tabs.vertical").css({
-          position: "relative",
-          top: ($(window).scrollTop()) - boundary(elem)
-        })
-      } else {
-        $(".tabs.vertical").removeAttr("style");
-      }
-    }
-    
-    var idPosDict;
-    var poss;
-
-    if (isInit) {
-      updateTabMenuPos();
-      idPosDict = _.chain(self.requestTabs.tabs())
-        .map(function(t){
-          return t.href;
-        })
-        .map(function(i){
-          return [$(i).position().top + $(i).height() - 20, i];
-        })
-        .object()
-        .value();
-      poss = _.chain(idPosDict).map(function(v, k){
-        return k;
-      }).value();
-
-      var windowPos = $(window).scrollTop();
-      var closestPos = _.find(poss, function(p){
-        return p >= windowPos
-      });
-
-      if (self.requestTabs.currentSection() != idPosDict[closestPos]) {
-        self.requestTabs.currentSection(idPosDict[closestPos]);
-        m.redraw();
-      }
-    }
-    $(window).on("scroll", function(e){
-      if (!scrollInit) {
-        m.redraw();
-        scrollInit = true;
-      } else {
-        updateTabMenuPos()
-        if (isInit) {
-          var windowPos = $(window).scrollTop();
-          var closestPos = _.find(poss, function(p){
-            return p >= windowPos
-          });
-          if (self.requestTabs.currentSection() != idPosDict[closestPos]) {
-            self.requestTabs.currentSection(idPosDict[closestPos]);
-            m.redraw();
-            // console.log(self.requestTabs.currentSection());
-          }
-        };
-        // if (isInit) {
-        //   var windowPos = $(window).scrollTop();
-        //   var closestPos = _.find(poss, function(p){
-        //     return p >= windowPos
-        //   });
-        //   var hash = idPosDict[closestPos];
-        //   window.location.hash = hash;
-        // };
-      }
-    })
-  }
 }
