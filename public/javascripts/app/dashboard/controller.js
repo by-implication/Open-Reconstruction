@@ -61,8 +61,8 @@ dashboard.controller = function(){
   // this is to make sure charts are ok
   // (ideally) we need a callback when rendering is finished
 
-  window.setTimeout(function(){
-    window.onresize();
-  },1500);
+  // window.setTimeout(function(){
+  //   window.onresize();
+  // },1500);
 
 }

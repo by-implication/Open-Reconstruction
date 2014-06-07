@@ -26,31 +26,32 @@ visPanel.controller = function(){
   this.type = m.prop("type");
   this.isFullView = m.prop(false);
   this.config = function(elem, isInitialized){
-    if(isInitialized) return;
-    var chartSettings = self.chartSettings();
+    if(!isInitialized){
+      var chartSettings = self.chartSettings();
 
-    if (chartSettings.size){
-      self.size(chartSettings.size);
-    }
-
-    if (self.isFullView()){
-      self.size({
-        height: 300,
-        width: undefined
-      });
-      if(!_.isUndefined(chartSettings.axis.x) 
-        && !_.isUndefined(chartSettings.axis.x.tick)
-        && !_.isUndefined(chartSettings.axis.x.tick.culling)){
-        chartSettings.axis.x.tick.culling.max = undefined;
+      if (chartSettings.size){
+        self.size(chartSettings.size);
       }
+
+      if (self.isFullView()){
+        self.size({
+          height: 300,
+          width: undefined
+        });
+        if(!_.isUndefined(chartSettings.axis.x) 
+          && !_.isUndefined(chartSettings.axis.x.tick)
+          && !_.isUndefined(chartSettings.axis.x.tick.culling)){
+          chartSettings.axis.x.tick.culling.max = undefined;
+        }
+      }
+      var chart = c3.generate({
+        data: chartSettings.data,
+        axis: chartSettings.axis,
+        color: self.color(),
+        grid: self.grid(),
+        size: self.size()
+      })
+      elem.appendChild(chart.element);
     }
-    var chart = c3.generate({
-      data: chartSettings.data,
-      axis: chartSettings.axis,
-      color: self.color(),
-      grid: self.grid(),
-      size: self.size()
-    })
-    elem.appendChild(chart.element);
   }
 }

@@ -265,24 +265,6 @@ common.stickyTabs.menu = function(ctrl, options){
 
 common.stickyTabs.controller = function(){
   this.tabs = m.prop([]);
-  // this.currentTab = function() {
-  //   var item = _.find(this.tabs(), function(tab) {
-  //     if(window.location.hash){
-  //       return tab.href === window.location.hash;
-  //     } else {
-  //       return tab.href == m.route() 
-  //     }
-  //   });
-  //   if(item == undefined) {
-  //     item = _.head(this.tabs());
-  //   }
-  //   return item.identifier ? item.identifier : item.label();
-  // }
-  // this.currentSection = m.prop();
-  // this.isActive = function(identifier){
-  //   console.log(this.currentSection(), identifier);
-  //   return this.currentSection() == identifier;
-  // }.bind(this);
 }
 
 common.stickyTabs.locHandler = function(hash){
@@ -300,36 +282,35 @@ common.stickyTabs.locHandler = function(hash){
 common.stickyTabs.config = function(ctrl){
   return function(elem, isInit){
     setTimeout(function(){
-      if (!ctrl.idPosDict) {
-        ctrl.idPosDict = _.chain(ctrl.tabs())
+      if (!isInit){
+        idPosDict = _.chain(ctrl.tabs())
           .map(function(t){
             var item = t.href;
+            // console.log($(item).position().top, $(item).height());
             return [$(item).position().top + $(item).height(), item];
           })
           .object()
           .value();
-      }
 
-      var poss = _.keys(ctrl.idPosDict);
-      var windowPos = $(window).scrollTop();
-      var closestPos = _.find(poss, function(p){ return p >= windowPos });
-      if (!isInit){
+        var poss = _.keys(idPosDict);
+        var windowPos = $(window).scrollTop();
+        var closestPos = _.find(poss, function(p){ return p >= windowPos });
+
         $(window).on("scroll", function(e){
           var windowPos = $(window).scrollTop();
           var closestPos = _.find(poss, function(p){
             return p >= windowPos
           });
-          var hash = ctrl.idPosDict[closestPos];
+          var hash = idPosDict[closestPos];
           if ((location.hash != hash)){
+            // console.log(hash);
             m.startComputation();
             common.stickyTabs.locHandler(hash);
             m.endComputation();
           }
         });
-        console.log(location.hash);
       }
     }, 100)
-    
     common.sticky.config(ctrl)(elem, isInit);
   }
 }
