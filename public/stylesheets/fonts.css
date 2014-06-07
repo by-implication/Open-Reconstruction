@@ -16,3 +16,15 @@
   font-weight: 700;
   src: local('Roboto Condensed Bold'), local('RobotoCondensed-Bold'), url(/assets/fonts/robotocondensed/v9/b9QBgL0iMZfDSpmcXcE8nCSLrGe-fkSRw2DeVgOoWcQ.woff) format('woff');
 }
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Roboto Regular'), local('Roboto-Regular'), url(/assets/fonts/roboto/v11/CrYjSnGjrRCn0pd9VQsnFOvvDin1pK8aKteLpeZ5c0A.woff) format('woff');
+}
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Roboto Bold'), local('Roboto-Bold'), url(/assets/fonts/roboto/v11/d-6IYplOFocCacKzxwXSOLO3LdcAZYWl9Si6vvxL-qU.woff) format('woff');
+}
