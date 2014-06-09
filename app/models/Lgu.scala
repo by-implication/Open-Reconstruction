@@ -36,7 +36,7 @@ object Lgu extends LguGen {
 
   def getChildren(psgc: PGLTree) = getDescendants(psgc, true)
 
-  def getDescendants(psgc: PGLTree, childrenOnly: Boolean): Seq[(GovUnit, Lgu)] = DB.withConnection { implicit c =>
+  def getDescendants(psgc: PGLTree, childrenOnly: Boolean = false): Seq[(GovUnit, Lgu)] = DB.withConnection { implicit c =>
     SQL("""
       SELECT * FROM lgus LEFT join gov_units ON lgu_id = gov_unit_id
       WHERE lgu_psgc <@ {psgc}
@@ -45,7 +45,13 @@ object Lgu extends LguGen {
     .on('psgc -> psgc).list(GovUnit.simple ~ simple map(flatten))
   }
 
-  def getLocFilters(psgcOpt: Option[String]) = {
+  def getLocFilters(_psgc: String) = {
+
+    val psgcOpt = if(_psgc == "-"){
+      None
+    } else {
+      Some(_psgc)
+    }
 
     val locFilters = Json.toJson(psgcOpt.map { psgc =>
 
@@ -57,10 +63,10 @@ object Lgu extends LguGen {
         )
       }
 
-      val psgcIntSeq = psgc.split(".").map(_.toInt)
+      val psgcIntSeq = psgc.split("\\.").toList.map(_.toInt).take(3)
 
-      psgc.zipWithIndex.map { case (e, i) =>
-        Json.arr(Lgu.getChildren(PGLTree(psgcIntSeq.take(i))).map(toJson))
+      psgcIntSeq.zipWithIndex.map { case (e, i) =>
+        Json.toJson(Lgu.getChildren(PGLTree(psgcIntSeq.take(i+1))).map(toJson))
       }.toList
 
     }.getOrElse(List.empty[JsArray]).padTo(3, Json.arr())).as[JsArray]

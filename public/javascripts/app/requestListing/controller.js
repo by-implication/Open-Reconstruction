@@ -15,8 +15,13 @@ requestListing.controller = function(){
   this.tab = m.route.param("tab") || "all";
   this.page = parseInt(m.route.param("page")) || 0;
   this.projectTypeId = m.route.param("projectTypeId") || 0;
-  this._queryLocFilters = m.route.param("locFilters");
-  this.queryLocFilters = (this._queryLocFilters || "").split(".");
+  this._queryLocFilters = m.route.param("l") || "-";
+  this.queryLocFilters = function(){
+    var f = self._queryLocFilters;
+    f = (f != "-" && f.split(".")) || [];
+    while(f.length < 4){ f.push("-");}
+    return f;
+  }
   this.counts = {};
 
   function DefLocFilter(label, value){
@@ -25,44 +30,45 @@ requestListing.controller = function(){
     this.value = m.prop(value);
     this.onchange = function(v){
       this.value(v);
-      var index = self.locFilters.indexOf(this);
-      var locFilterQueryParam = self.locFilters.filter(function (e){
-        return i <= index;
-      }).map(function (f, i){
-        return f.value();
-      }).join(".");
       var targetRoute = routes.controllers.Requests.indexPage(
-        self.tab, self.page, self.projectTypeId, locFilterQueryParam
+        self.tab, self.page, self.projectTypeId, v
       ).url;
       m.route(targetRoute);
     }
   };
 
   this.locFilters = ["Region", "Province", "City / Municipality", "Barangay"].map(function (label, index){
-    return new DefLocFilter(label, self.queryLocFilters[index]);
+    var val;
+    var qlf = self.queryLocFilters();
+    if(qlf[index] != "-"){
+      val = qlf.slice(0, index+1).join(".");
+    } else {
+      val = "-"
+    }
+    return new DefLocFilter(label, val);
   });
 
   var tabs = [
     {
       identifier: this.tabFilters.ALL,
-      href: routes.controllers.Requests.indexPage("all", this.page, this.projectTypeId).url,
+      href: routes.controllers.Requests.indexPage("all", this.page, this.projectTypeId, this._queryLocFilters).url,
       _label: "All"
     },
     {
       identifier: this.tabFilters.SIGNOFF,
-      href: routes.controllers.Requests.indexPage("signoff", this.page, this.projectTypeId).url,
+      href: routes.controllers.Requests.indexPage("signoff", this.page, this.projectTypeId, this._queryLocFilters).url,
       when: function(){ return _.contains(self.app.currentUser().permissions, 5) },
       _label: "Needs signoff"
     },
     {
       identifier: this.tabFilters.ASSESSOR,
-      href: routes.controllers.Requests.indexPage("assessor", this.page, this.projectTypeId).url,
+      href: routes.controllers.Requests.indexPage("assessor", this.page, this.projectTypeId, this._queryLocFilters).url,
       when: function(){ return self.app.isSuperAdmin() },
       _label: "Needs assessor"
     },
     {
       identifier: this.tabFilters.MINE,
-      href: routes.controllers.Requests.indexPage("mine", this.page, this.projectTypeId).url,
+      href: routes.controllers.Requests.indexPage("mine", this.page, this.projectTypeId, this._queryLocFilters).url,
       when: function(){ return _.contains(self.app.currentUser().permissions, 1) },
       _label: function(){
         if(self.app.currentUser().govUnit && self.app.currentUser().govUnit.role == "LGU") {
@@ -74,13 +80,13 @@ requestListing.controller = function(){
     },
     {
       identifier: this.tabFilters.APPROVAL,
-      href: routes.controllers.Requests.indexPage("approval", this.page, this.projectTypeId).url,
+      href: routes.controllers.Requests.indexPage("approval", this.page, this.projectTypeId, this._queryLocFilters).url,
       when: function(){ return !self.app.currentUser() },
       _label: "Pending Approval"
     },
     {
       identifier: this.tabFilters.IMPLEMENTATION,
-      href: routes.controllers.Requests.indexPage("implementation", this.page, this.projectTypeId).url,
+      href: routes.controllers.Requests.indexPage("implementation", this.page, this.projectTypeId, this._queryLocFilters).url,
       when: function(){ return !self.app.currentUser() },
       _label: "Implementation"
     },
@@ -138,7 +144,7 @@ requestListing.controller = function(){
     this.counts = r.counts;
     this.projectFilters = this.projectFilters.concat(r.filters);
     for(var i in r.locFilters){
-      this.locFilters[i].data = [{id: 0, name: 'All'}].concat(r.locFilters[i].sort(function (a, b){
+      this.locFilters[i].data = [{id: '-', name: 'All'}].concat(r.locFilters[i].sort(function (a, b){
         return a.id - b.id;
       }));
     }

@@ -174,9 +174,9 @@ object Requests extends Controller with Secured {
 
   def index = Application.index
 
-  def indexPage(tab: String, page: Int, projectTypeId: Int, locFilters: Option[String]) = Application.index
+  def indexPage(tab: String, page: Int, projectTypeId: Int, locFilters: String) = Application.index
 
-  def indexMeta(tab: String, page: Int, projectTypeId: Int, locFilters: Option[String]) = UserAction(){ implicit user => implicit request =>
+  def indexMeta(tab: String, page: Int, projectTypeId: Int, locFilters: String) = UserAction(){ implicit user => implicit request =>
 
     val limit = 20
     val offset = page * limit

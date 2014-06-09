@@ -34,7 +34,7 @@ requestListing.view = function(ctrl){
     return m("ul.pagination", [
       m("li.arrow",{className: ctrl.page === 0 ? "unavailable" : ""}, [
         m("a", {
-          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page - 1, ctrl.projectTypeId).url,
+          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page - 1, ctrl.projectTypeId, ctrl._queryLocFilters).url,
           config: m.route
         }, [
           "«"
@@ -48,7 +48,7 @@ requestListing.view = function(ctrl){
           else {
             return m("li", {className: page === ctrl.page ? "current" : ""}, [
               m("a", {
-                href: routes.controllers.Requests.indexPage(ctrl.tab, page, ctrl.projectTypeId).url,
+                href: routes.controllers.Requests.indexPage(ctrl.tab, page, ctrl.projectTypeId, ctrl._queryLocFilters).url,
                 config: m.route
               }, [
                 page + 1
@@ -59,7 +59,7 @@ requestListing.view = function(ctrl){
         .value(),
       m("li.arrow",{className: ctrl.page === ctrl.maxPage() ? "unavailable" : ""}, [
         m("a", {
-          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page + 1, ctrl.projectTypeId).url,
+          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page + 1, ctrl.projectTypeId, ctrl._queryLocFilters).url,
           config: m.route
         },[
           "»"
@@ -112,7 +112,7 @@ requestListing.view = function(ctrl){
             .map(function (filter){
               return m("li.filter",{className: (ctrl.projectTypeId == filter.id) ? "active" : ""}, [
                 m("a", {
-                  href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page, filter.id).url,
+                  href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page, filter.id, ctrl._queryLocFilters).url,
                   config: m.route
                 }, filter.name)
               ])
