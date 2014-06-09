@@ -144,9 +144,9 @@ welcome.view = function(ctrl){
                   ]),
                   m("td", [
                     m("h2", [
-                      ctrl.vizData().yolanda.saro.qty + " ",
+                      "13 ",
                       m("span", "SAROs"),
-                      m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.saro.amt, 2) )
+                      m("h6", "PHP " + helper.truncate(2161379935, 2) )
                     ]),
                   ])
                 ])
@@ -158,9 +158,9 @@ welcome.view = function(ctrl){
                   ]),
                   m("td", [
                     m("h2", [
-                      // ctrl.vizData().bohol.saro.qty + "",
-                      "no data",
-                      m("h6", "(no data)")
+                      "3 ",
+                      m("span", "SAROs"),
+                      m("h6", "PHP " + helper.truncate(201597043, 2) )
                     ]),
                   ])
                 ])
