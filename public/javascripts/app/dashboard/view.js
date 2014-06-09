@@ -24,11 +24,11 @@ dashboard.view = function(ctrl){
         })),
       ]
     }
-    return m("div", [
+    return m("div", _.flatten([
       linkGroup("request"),
       linkGroup("saro"),
       linkGroup("project")
-    ])
+    ]))
   }
 
   var visSection = function(key){
