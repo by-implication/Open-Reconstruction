@@ -13,11 +13,14 @@ case class PGObject(sType: String, sValue: Any = Nil) extends PGobject {
 }
 
 case class PGLTree(list: Seq[Int]) extends PGobject {
+	override def toString = list.mkString(".")
 	setType("ltree")
-	setValue(list.mkString("."))
+	setValue(toString)
 }
 
 object PGLTree {
+
+	def fromString(s: String) = PGLTree(s.split(".").map(_.toInt))
 	
 	implicit def rowToPGLTree: Column[PGLTree] = {
 		Column[PGLTree](transformer = { (value, meta) =>

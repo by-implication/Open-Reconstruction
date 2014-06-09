@@ -17,7 +17,7 @@ GET     /lguParser                                controllers.Application.lguPar
 GET     /admin                                    controllers.Application.admin
 GET     /admin/lgus                               controllers.Application.adminLgus
 GET     /admin/lgus/meta                          controllers.GovUnits.listLgus
-GET     /admin/lgus/:l/:id                        controllers.GovUnits.getChildren(l: Int, id: Int)
+GET     /admin/lgus/:psgc                         controllers.GovUnits.getChildren(psgc: String)
 GET     /admin/agencies                           controllers.Application.adminAgencies
 GET     /admin/agencies/meta                      controllers.GovUnits.listAgencies
 GET     /admin/types/project                      controllers.Admin.projectTypes
@@ -40,8 +40,8 @@ GET     /users/:id                                controllers.Users.view(id: Int
 GET     /users/:id/meta                           controllers.Users.viewMeta(id: Int)
 
 GET			/requests																	controllers.Requests.index
-GET     /requests/:t/:p/:pid/:l                   controllers.Requests.indexPage(t: String, p: Int, pid: Int, l: String)
-GET     /requests/:t/:p/:pid/:l/meta              controllers.Requests.indexMeta(t: String, p: Int, pid: Int, l: String)
+GET     /requests/:t/:p/:pid                      controllers.Requests.indexPage(t: String, p: Int, pid: Int, l: Option[String] ?= None)
+GET     /requests/:t/:p/:pid/meta                 controllers.Requests.indexMeta(t: String, p: Int, pid: Int, l: Option[String] ?= None)
 
 
 GET     /requests/new                             controllers.Requests.create

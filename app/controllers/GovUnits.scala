@@ -56,15 +56,18 @@ object GovUnits extends Controller with Secured {
     ))
   }
 
-  def getChildren(level: Int, id: Int) = UserAction(){ implicit user => implicit request =>
+  def getChildren(psgc: String) = UserAction(){ implicit user => implicit request =>
 
     def toJson(t: (GovUnit, Lgu)) = {
       t match {
-        case (govUnit, lgu) => govUnit.toJson ++ Json.obj("level" -> lgu.level)
+        case (govUnit, lgu) => govUnit.toJson ++ Json.obj(
+          "level" -> lgu.level,
+          "psgc" -> lgu.psgc.toString
+        )
       }
     }
 
-    Ok(Json.toJson(Lgu.getChildren(level, id).map(toJson)))
+    Ok(Json.toJson(Lgu.getChildren(PGLTree.fromString(psgc)).map(toJson)))
 
   }
 

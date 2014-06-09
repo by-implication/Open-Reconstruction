@@ -30,15 +30,43 @@ object Lgu extends LguGen {
     17 -> "REGION IV-B (MIMAROPA)"
   )
 
-    def regionsJson = Json.toJson(REGIONS.toSeq.map {
-      case (id, name) => Json.obj("id" -> id, "name" -> name)
-    })
+  def regionsJson = Json.toJson(REGIONS.toSeq.map {
+    case (id, name) => Json.obj("id" -> id, "name" -> name)
+  })
 
-  def getChildren(level: Int, id: Int): Seq[(GovUnit, Lgu)] = DB.withConnection { implicit c =>
+  def getChildren(psgc: PGLTree) = getDescendants(psgc, true)
+
+  def getDescendants(psgc: PGLTree, childrenOnly: Boolean): Seq[(GovUnit, Lgu)] = DB.withConnection { implicit c =>
     SQL("""
       SELECT * FROM lgus LEFT join gov_units ON lgu_id = gov_unit_id
-      WHERE parent_""" + (if (level == 0) "region" else "lgu") + """_id = {id}
-    """).on('id -> id).list(GovUnit.simple ~ simple map(flatten))
+      WHERE lgu_psgc <@ {psgc}
+      AND lgu_psgc != {psgc}
+    """ + (if (childrenOnly) "AND nlevel(lgu_psgc) = nlevel({psgc}) + 1" else ""))
+    .on('psgc -> psgc).list(GovUnit.simple ~ simple map(flatten))
+  }
+
+  def getLocFilters(psgcOpt: Option[String]) = {
+
+    val locFilters = Json.toJson(psgcOpt.map { psgc =>
+
+      def toJson(t: (GovUnit, Lgu)) = {
+        val (govUnit, lgu) = t
+        Json.obj(
+          "id" -> lgu.psgc.toString,
+          "name" -> govUnit.name
+        )
+      }
+
+      val psgcIntSeq = psgc.split(".").map(_.toInt)
+
+      psgc.zipWithIndex.map { case (e, i) =>
+        Json.arr(Lgu.getChildren(PGLTree(psgcIntSeq.take(i))).map(toJson))
+      }.toList
+
+    }.getOrElse(List.empty[JsArray]).padTo(3, Json.arr())).as[JsArray]
+
+    Json.arr(Lgu.regionsJson) ++ locFilters
+
   }
 
 }

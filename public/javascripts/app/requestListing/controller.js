@@ -15,8 +15,8 @@ requestListing.controller = function(){
   this.tab = m.route.param("tab") || "all";
   this.page = parseInt(m.route.param("page")) || 0;
   this.projectTypeId = m.route.param("projectTypeId") || 0;
-  this._queryLocFilters = m.route.param("locFilters") || "0-0-0-0";
-  this.queryLocFilters = this._queryLocFilters.split("-");
+  this._queryLocFilters = m.route.param("locFilters");
+  this.queryLocFilters = (this._queryLocFilters || "").split(".");
   this.counts = {};
 
   function DefLocFilter(label, value){
@@ -26,10 +26,11 @@ requestListing.controller = function(){
     this.onchange = function(v){
       this.value(v);
       var index = self.locFilters.indexOf(this);
-      var locFilterQueryParam = self.locFilters.map(function (f, i){
-        if(i > index) return 0;
+      var locFilterQueryParam = self.locFilters.filter(function (e){
+        return i <= index;
+      }).map(function (f, i){
         return f.value();
-      }).join("-");
+      }).join(".");
       var targetRoute = routes.controllers.Requests.indexPage(
         self.tab, self.page, self.projectTypeId, locFilterQueryParam
       ).url;
