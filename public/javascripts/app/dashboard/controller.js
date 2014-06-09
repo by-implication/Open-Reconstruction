@@ -57,6 +57,12 @@ dashboard.controller = function(){
   bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
     self.saros(r.data);
   })
+
+  this.visDict = _.chain(visualizations.library)
+    .groupBy(function(v){
+      return v(self).type();
+    })
+    .value()
   
   // this is to make sure charts are ok
   // (ideally) we need a callback when rendering is finished
