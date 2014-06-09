@@ -2,6 +2,8 @@
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;;
 
+CREATE EXTENSION IF NOT EXISTS ltree;;
+
 CREATE TABLE roles (
     role_id serial PRIMARY KEY,
     role_name text NOT NULL,
@@ -18,10 +20,8 @@ CREATE TABLE gov_units (
 CREATE TABLE lgus (
     lgu_id serial PRIMARY KEY REFERENCES gov_units(gov_unit_id),
     lgu_level int NOT NULL,
-    parent_lgu_id int REFERENCES lgus(lgu_id),
-    parent_region_id int,
     lgu_municipality_class int,
-    lgu_psgc text
+    lgu_psgc ltree NOT NULL
 );;
 
 CREATE TABLE users (
@@ -42,5 +42,7 @@ DROP TABLE IF EXISTS lgus;;
 DROP TABLE IF EXISTS gov_units;;
 
 DROP TABLE IF EXISTS roles;;
+
+DROP EXTENSION IF EXISTS ltree;;
 
 DROP EXTENSION IF EXISTS pgcrypto;;

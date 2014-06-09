@@ -60,11 +60,7 @@ object GovUnits extends Controller with Secured {
 
     def toJson(t: (GovUnit, Lgu)) = {
       t match {
-        case (govUnit, lgu) => govUnit.toJson ++ Json.obj(
-          "parentRegion" -> lgu.parentRegionId,
-          "parentLGU" -> lgu.parentLguId,
-          "level" -> lgu.level
-        )
+        case (govUnit, lgu) => govUnit.toJson ++ Json.obj("level" -> lgu.level)
       }
     }
 
@@ -107,13 +103,13 @@ object GovUnits extends Controller with Secured {
         Rest.formError(_),
         _.create().map { govUnit =>
           
-          val lgu = if (level > 0){
-            Lgu(govUnit.id, level + 1, parentLguId = Some(parentId))
+          val psgc = if(level == 0){
+            Seq(parentId)
           } else {
-            Lgu(govUnit.id, level + 1, parentRegionId = Some(parentId))
+            Lgu.findById(parentId).get.psgc.list :+ parentId
           }
 
-          lgu.create().map { _ =>
+          Lgu(govUnit.id, level + 1, psgc = psgc).create().map { _ =>
             Rest.success()
           }.getOrElse(Rest.serverError())
 

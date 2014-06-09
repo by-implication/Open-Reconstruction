@@ -47,10 +47,8 @@ object Lgu extends LguGen {
 case class Lgu(
   id: Pk[Int] = NA,
   level: Int = 0,
-  parentLguId: Option[Int] = None,
-  parentRegionId: Option[Int] = None,
   municipalityClass: Option[Int] = None,
-  psgc: Option[String] = None
+  psgc: PGLTree = Nil
 ) extends LguCCGen with Entity[Lgu]
 // GENERATED case class end
 
@@ -59,12 +57,10 @@ trait LguGen extends EntityCompanion[Lgu] {
   val simple = {
     get[Pk[Int]]("lgu_id") ~
     get[Int]("lgu_level") ~
-    get[Option[Int]]("parent_lgu_id") ~
-    get[Option[Int]]("parent_region_id") ~
     get[Option[Int]]("lgu_municipality_class") ~
-    get[Option[String]]("lgu_psgc") map {
-      case id~level~parentLguId~parentRegionId~municipalityClass~psgc =>
-        Lgu(id, level, parentLguId, parentRegionId, municipalityClass, psgc)
+    get[PGLTree]("lgu_psgc") map {
+      case id~level~municipalityClass~psgc =>
+        Lgu(id, level, municipalityClass, psgc)
     }
   }
 
@@ -95,23 +91,17 @@ trait LguGen extends EntityCompanion[Lgu] {
           insert into lgus (
             lgu_id,
             lgu_level,
-            parent_lgu_id,
-            parent_region_id,
             lgu_municipality_class,
             lgu_psgc
           ) VALUES (
             DEFAULT,
             {level},
-            {parentLguId},
-            {parentRegionId},
             {municipalityClass},
             {psgc}
           )
         """).on(
           'id -> o.id,
           'level -> o.level,
-          'parentLguId -> o.parentLguId,
-          'parentRegionId -> o.parentRegionId,
           'municipalityClass -> o.municipalityClass,
           'psgc -> o.psgc
         ).executeInsert()
@@ -122,23 +112,17 @@ trait LguGen extends EntityCompanion[Lgu] {
           insert into lgus (
             lgu_id,
             lgu_level,
-            parent_lgu_id,
-            parent_region_id,
             lgu_municipality_class,
             lgu_psgc
           ) VALUES (
             {id},
             {level},
-            {parentLguId},
-            {parentRegionId},
             {municipalityClass},
             {psgc}
           )
         """).on(
           'id -> o.id,
           'level -> o.level,
-          'parentLguId -> o.parentLguId,
-          'parentRegionId -> o.parentRegionId,
           'municipalityClass -> o.municipalityClass,
           'psgc -> o.psgc
         ).executeInsert().flatMap(x => Some(o))
@@ -150,16 +134,12 @@ trait LguGen extends EntityCompanion[Lgu] {
     SQL("""
       update lgus set
         lgu_level={level},
-        parent_lgu_id={parentLguId},
-        parent_region_id={parentRegionId},
         lgu_municipality_class={municipalityClass},
         lgu_psgc={psgc}
       where lgu_id={id}
     """).on(
       'id -> o.id,
       'level -> o.level,
-      'parentLguId -> o.parentLguId,
-      'parentRegionId -> o.parentRegionId,
       'municipalityClass -> o.municipalityClass,
       'psgc -> o.psgc
     ).executeUpdate() > 0

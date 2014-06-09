@@ -15,20 +15,13 @@ object Req extends ReqGen {
     SQL("SELECT DISTINCT req_location FROM reqs WHERE isnumeric(req_location)")
     .list(get[String]("req_location") map { loc =>
 
-      val List(_region, province, city) = padLeft(loc, 6, "0").grouped(2).toList
-      val region = _region.toInt
+      val psgc = padLeft(loc, 6, "0").grouped(2).toList.map(_.toInt)
 
       val lguId = SQL("""
         SELECT lgu_id FROM lgus
-        WHERE lgu_psgc = {city}
-        AND parent_lgu_id = ANY(
-          SELECT lgu_id FROM lgus
-          WHERE lgu_psgc = {province}
-          AND parent_region_id = {region}
-      )""").on(
-        'region -> region,
-        'province -> province,
-        'city -> city
+        WHERE lgu_psgc = {psgc}
+      """).on(
+        'psgc -> PGLTree(psgc)
       ).single(get[Int]("lgu_id"))
 
       User(
