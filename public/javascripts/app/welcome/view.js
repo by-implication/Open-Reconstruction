@@ -25,7 +25,7 @@ welcome.view = function(ctrl){
           ])
         ]),
       ]),
-    m("section.proposals", [
+      m("section.proposals", [
         m(".row", [
           m(".columns.medium-3", [
               m("img", {src:"/assets/images/landing/1-time since.svg"}),
@@ -167,12 +167,12 @@ welcome.view = function(ctrl){
         // m(".row.tickets",[
         //   m("span", "eTickets tracked in System"),
         //   " — ",
-        //   m("strong", 
+        //   m("strong",
         //     ctrl.vizData().yolanda.Proposals.qty + ctrl.vizData().bohol.EPLCProjects.qty
         //   ),
         //   " (total)  /  PHP ",
         //   m("strong",
-        //     helper.truncate(( ctrl.vizData().yolanda.Proposals.amt + ctrl.vizData().bohol.projects.amt ), 2) 
+        //     helper.truncate(( ctrl.vizData().yolanda.Proposals.amt + ctrl.vizData().bohol.projects.amt ), 2)
         //   ),
         //   " "
 
@@ -409,7 +409,7 @@ welcome.view = function(ctrl){
             m("h4", "Open Source"),
             m("p","This system proudly builds upon and contributes to several open-source projects, and is open source itself. Check out the code, submit issues, or even contribute patches!"),
             m("a.button.micro", {
-              href:"https://github.com/by-implication/Reconstruction-Watch"
+              href:"https://github.com/by-implication/Open-Reconstruction"
             }, "Fork us on GitHub")
             // (twss)
           ])

@@ -268,8 +268,8 @@ common.stickyTabs.controller = function(){
 }
 
 common.stickyTabs.locHandler = function(hash){
-  if(history.pushState) { 
-    history.pushState({}, "", hash);
+  if(history.replaceState) { 
+    history.replaceState({}, "", hash);
   } else { 
     scrollV = document.body.scrollTop;
     scrollH = document.body.scrollLeft;

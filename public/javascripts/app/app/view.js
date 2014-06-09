@@ -37,7 +37,7 @@ app.template = function(a, b, c, d){
       // m("link[href='/assets/bower_components/select2/select2.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/stylesheets/select2-foundation5.css'][rel='stylesheet'][type='text/css']")
     ]),
-    m("body", attrs, modals.concat(app.navbar(ctrl), content, app.footer(ctrl), app.feedback(ctrl)))
+    m("body", attrs, modals.concat(app.navbar(ctrl), m(".container", content), app.footer(ctrl), app.feedback(ctrl)))
   ])
 }
 
@@ -48,7 +48,48 @@ app.feedback = function(ctrl){
 }
 
 app.footer = function(ctrl){
-  return [m("footer", ["\n",m(".row", ["\n",m(".large-4.medium-4.columns", ["\n",m(".row", ["\n",m(".large-5.columns", [m("img[src='http://www.gov.ph/wp-content/themes/govph4/faith-assets/img/govph-seal-mono-footer.png']")]),"\n",m(".large-7.columns", ["\n",m("h4", "Republic of the Philippines"),"\n",m("p", "All content is in the public domain unless otherwise stated."),"\n",m("p", "Privacy Policy"),"\n"]),"\n"]),"\n"]),"\n",m(".large-6.medium-6.columns", ["\n",m(".row", ["\n",m(".large-5.medium-5.columns", ["\n",m("h4", "About GOVPH"),"\n",m("p", "Learn more about the Philippine government, its structure, how government works and the people behind it. "),"\n",m("ul", ["\n",m("li", "Official Gazette"),"\n",m("li", "Open Data Portal"),"\n",m("li", "Send us your feedback"),"\n"]),"\n"]),"\n",m(".large-4.medium-4.columns", ["\n",m("h4", "Government Links"),"\n",m("ul", ["\n",m("li", "Office of the President"),"\n",m("li", "Office of the Vice President"),"\n",m("li", "Senate of the Philippines"),"\n",m("li", "House of Representatives"),"\n",m("li", "Supreme Court"),"\n",m("li", "Court of Appeals"),"\n",m("li", "Sandiganbayan"),"\n"]),"\n"]),"\n"]),"\n"]),"\n"]),"\n"])]
+  return [
+    m("footer", [
+       m(".row", [
+         m(".large-4.medium-4.columns", [
+           m(".row", [
+            m(".large-5.columns", [
+              m("img[src='http://www.gov.ph/wp-content/themes/govph4/faith-assets/img/govph-seal-mono-footer.png']")
+            ]),
+            m(".large-7.columns", [
+              m("h4", "Republic of the Philippines"),
+              m("p", "All content is in the public domain unless otherwise stated."),
+              m("p", "Privacy Policy")
+            ]),
+          ]),
+        ]),
+      m(".large-6.medium-6.columns", [
+        m(".row", [
+          m(".large-5.medium-5.columns", [
+            m("h4", "About GOVPH"),
+            m("p", "Learn more about the Philippine government, its structure, how government works and the people behind it. "),
+            m("ul", [
+              m("li", "Official Gazette"),
+              m("li", "Open Data Portal"),
+              m("li", "Send us your feedback"),
+            ]),
+          ]),
+          m(".large-4.medium-4.columns", [
+            m("h4", "Government Links"),
+            m("ul", [
+              m("li", "Office of the President"),
+              m("li", "Office of the Vice President"),
+              m("li", "Senate of the Philippines"),
+              m("li", "House of Representatives"),
+              m("li", "Supreme Court"),
+              m("li", "Court of Appeals"),
+              m("li", "Sandiganbayan")
+            ])
+          ])
+        ])
+      ])
+    ])
+  ])]
 }
 
 app.navbar = function(ctrl){
@@ -99,15 +140,6 @@ app.navbar = function(ctrl){
             className: (m.route().startsWith(routes.controllers.Requests.index().url) ? "active" : "")
           }, "Requests")
         ]),
-        ctrl.currentUser().govUnit.id ?
-          m("li", [
-            m("a", {
-              href: routes.controllers.GovUnits.view(ctrl.currentUser().govUnit.id).url,
-              config: m.route,
-              className: (routes.controllers.GovUnits.view(ctrl.currentUser().govUnit.id).url === m.route() ? "active" : "")
-            }, ctrl.currentUser().govUnit.role == "LGU" ? "My LGU" : "My Agency")
-          ])
-        : "",
         ctrl.currentUser().isSuperAdmin ?
           m("li", [
             m("a", {
@@ -126,7 +158,7 @@ app.navbar = function(ctrl){
         // ]),
         m("li.has-dropdown.not-click", [
           m("a", {href: "#"}, [
-            m.cookie().logged_in ? 
+            m.cookie().logged_in ?
               m("span", [
                 m.cookie().logged_in,
                 m("span.label", [
@@ -138,6 +170,21 @@ app.navbar = function(ctrl){
             : "Guest"
           ]),
           m("ul.dropdown", [
+            // console.log(ctrl.currentUser().id),
+            ctrl.currentUser().id ?
+              m("li", [
+                m("a", {href: "users/" + ctrl.currentUser().id, config: m.route}, "My Profile"),
+              ])
+            : "",
+            ctrl.currentUser().govUnit.id ?
+              m("li", [
+                m("a", {
+                  href: routes.controllers.GovUnits.view(ctrl.currentUser().govUnit.id).url,
+                  config: m.route,
+                  className: (routes.controllers.GovUnits.view(ctrl.currentUser().govUnit.id).url === m.route() ? "active" : "")
+                }, ctrl.currentUser().govUnit.role == "LGU" ? "My LGU" : "My Agency")
+              ])
+            : "",
             m.cookie().logged_in ?
               m("li", [
                 m("a", {href: routes.controllers.Users.logout().url}, "Log out")

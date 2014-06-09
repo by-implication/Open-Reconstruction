@@ -5,6 +5,11 @@
 
 @import variables
 
+html, body
+  padding: 0
+  margin: 0
+  height: 100%
+
 body
   &.detail
     background-color: #eee
@@ -16,6 +21,15 @@ body
     padding-bottom: 1rem
   ul
     margin-left: 0
+
+h1, h2, h3, h4, h5, h6
+  text-transform: capitalize
+
+.container
+  min-height: 70%
+  min-height: calc(100% - 235px)
+  // estimated height of nav + footer
+  position: relative
 
 .portrait
   border-radius: 50%
@@ -153,6 +167,15 @@ section.history
   position: relative
   // &:first-child
     // padding-top: 40px
+  &.new-comment
+    // .details
+    //   padding-bottom: 0
+    padding-top: 20px
+    padding-bottom: 0
+    textarea
+      max-width: 100%
+    button
+      margin-bottom: 0
   p
     margin-bottom: 4px
   &:last-child
@@ -701,13 +724,6 @@ nav
       &:last-child
         margin-right: 0px
 
-footer
-  padding: 20px 0px
-  // colors taken from gov.ph sites. sorry.
-  background: #e9e9e9
-  border-top: 1px solid #e1e1e1
-  color: #666
-
 #d3-chart
   div
     background-color: black
@@ -777,10 +793,11 @@ a#feedback-tab
       margin: 20px 0px
 
 footer
+  color: #666
   font-family: "Helvetica Neue", "Helvetica", sans-serif
   background: #e9e9e9
   padding: 1.25rem 0
-  border-top: 1px solid #f2f2f2
+  border-top: 1px solid #d9d9d9
   img.republic-seal
   h4, p, li, a
     color: #999
@@ -798,3 +815,12 @@ footer
     list-style: none
     display: block
 
+.select2-hidden-accessible
+  border: 0
+  clip: rect(0 0 0 0)
+  height: 1px
+  margin: -1px
+  overflow: hidden
+  padding: 0
+  position: absolute
+  width: 1px

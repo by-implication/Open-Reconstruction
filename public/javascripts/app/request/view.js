@@ -464,13 +464,15 @@ request.view = function(ctrl){
                   })
                   .reverse()
                   ),
-                  ctrl.app.currentUser() ? m("hr") : "",
+                  // ctrl.app.currentUser() ? m("hr") : "",
                   ctrl.app.currentUser() ?
-                    m(".event", [
-                      m("form.details", {onsubmit: ctrl.submitComment}, [
+                    m(".event.new-comment", [
+                      m("form", {onsubmit: ctrl.submitComment}, [
                         m("label", [
-                          "Comment",
-                          m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.comment)})
+                          m("h3", [
+                            "New Comment"
+                          ]),
+                          m("textarea", {onchange: m.withAttr("value", ctrl.input.comment)})
                         ]),
                         m("button", "Submit")
                       ])
@@ -505,10 +507,6 @@ request.approval = function(ctrl){
               m("button", {onclick: ctrl.signoffModal.show.bind(ctrl.signoffModal)}, [
                 m("i.fa.fa-fw.fa-check"),
                 "Sign off"
-              ]),
-              m("button", {onclick: ctrl.saroModal.show.bind(ctrl.saroModal)}, [
-                m("i.fa.fa-fw.fa-check"),
-                "Assign SARO"
               ]),
               m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
                 m("i.fa.fa-fw.fa-times"),

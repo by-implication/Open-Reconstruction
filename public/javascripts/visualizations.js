@@ -98,7 +98,7 @@ visualizations.create(
   "project",
   function(ctrl){
 
-    var byType = ctrl.eplc().byType;
+    var byType = ctrl.projects().byType;
     var labels = byType.map(function (e){ return e.n; });
     var counts = byType.map(function (e){ return e.c; });
 
@@ -136,7 +136,7 @@ visualizations.create(
   'project',
   function(ctrl){
 
-    var byMonth = visualizations.padMonths(ctrl.eplc().byMonth);
+    var byMonth = visualizations.padMonths(ctrl.projects().byMonth);
     var labels = byMonth.map(function (e){ return new Date(e.yearMonth); });
     var countPerMonth = byMonth.map(function (e){ return e.count; });
     var amountPerMonth = byMonth.map(function (e){ return e.amount * 1000; });
