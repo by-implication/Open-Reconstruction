@@ -140,15 +140,6 @@ app.navbar = function(ctrl){
             className: (m.route().startsWith(routes.controllers.Requests.index().url) ? "active" : "")
           }, "Requests")
         ]),
-        ctrl.currentUser().govUnit.id ?
-          m("li", [
-            m("a", {
-              href: routes.controllers.GovUnits.view(ctrl.currentUser().govUnit.id).url,
-              config: m.route,
-              className: (routes.controllers.GovUnits.view(ctrl.currentUser().govUnit.id).url === m.route() ? "active" : "")
-            }, ctrl.currentUser().govUnit.role == "LGU" ? "My LGU" : "My Agency")
-          ])
-        : "",
         ctrl.currentUser().isSuperAdmin ?
           m("li", [
             m("a", {
@@ -179,6 +170,21 @@ app.navbar = function(ctrl){
             : "Guest"
           ]),
           m("ul.dropdown", [
+            // console.log(ctrl.currentUser().id),
+            ctrl.currentUser().id ?
+              m("li", [
+                m("a", {href: "users/" + ctrl.currentUser().id, config: m.route}, "My Profile"),
+              ])
+            : "",
+            ctrl.currentUser().govUnit.id ?
+              m("li", [
+                m("a", {
+                  href: routes.controllers.GovUnits.view(ctrl.currentUser().govUnit.id).url,
+                  config: m.route,
+                  className: (routes.controllers.GovUnits.view(ctrl.currentUser().govUnit.id).url === m.route() ? "active" : "")
+                }, ctrl.currentUser().govUnit.role == "LGU" ? "My LGU" : "My Agency")
+              ])
+            : "",
             m.cookie().logged_in ?
               m("li", [
                 m("a", {href: routes.controllers.Users.logout().url}, "Log out")
