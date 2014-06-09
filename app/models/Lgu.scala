@@ -45,15 +45,9 @@ object Lgu extends LguGen {
     .on('psgc -> psgc).list(GovUnit.simple ~ simple map(flatten))
   }
 
-  def getLocFilters(_psgc: String) = {
+  def getLocFilters(psgc: PGLTree) = {
 
-    val psgcOpt = if(_psgc == "-"){
-      None
-    } else {
-      Some(_psgc)
-    }
-
-    val locFilters = Json.toJson(psgcOpt.map { psgc =>
+    val locFilters = Json.toJson((if(!psgc.list.isEmpty){
 
       def toJson(t: (GovUnit, Lgu)) = {
         val (govUnit, lgu) = t
@@ -63,13 +57,13 @@ object Lgu extends LguGen {
         )
       }
 
-      val psgcIntSeq = psgc.split("\\.").toList.map(_.toInt).take(3)
+      val psgcIntSeq = psgc.list.take(3)
 
       psgcIntSeq.zipWithIndex.map { case (e, i) =>
         Json.toJson(Lgu.getChildren(PGLTree(psgcIntSeq.take(i+1))).map(toJson))
       }.toList
 
-    }.getOrElse(List.empty[JsArray]).padTo(3, Json.arr())).as[JsArray]
+    } else List.empty[JsArray]).padTo(3, Json.arr())).as[JsArray]
 
     Json.arr(Lgu.regionsJson) ++ locFilters
 

@@ -232,7 +232,7 @@ object Req extends ReqGen {
     )
   }
 
-  private def getSqlParams(tab: String, projectTypeId: Option[Int])(implicit user: User) = {
+  private def getSqlParams(tab: String, projectTypeId: Option[Int], psgc: PGLTree)(implicit user: User) = {
 
     var table = "reqs"
     var whereClauses = List.empty[String]
@@ -275,25 +275,34 @@ object Req extends ReqGen {
       }
     }
 
+    if(!psgc.list.isEmpty){
+      table = """
+        reqs LEFT JOIN users ON author_id = user_id
+        LEFT JOIN lgus ON lgus.lgu_id = users.gov_unit_id
+      """
+      addWhereClause("lgu_psgc <@ {psgc}")
+    }
+
     (table, whereClauses)
 
   }
 
-  def indexCount(tab: String, projectTypeId: Option[Int])(implicit user: User): Long = {
-    val (table, whereClauses) = getSqlParams(tab, projectTypeId)
+  def indexCount(tab: String, projectTypeId: Option[Int], psgc: PGLTree)(implicit user: User): Long = {
+    val (table, whereClauses) = getSqlParams(tab, projectTypeId, psgc)
     DB.withConnection { implicit c =>
       SQL("SELECT COUNT(*) FROM " + table + {
         if (!whereClauses.isEmpty) " WHERE " + whereClauses.mkString(" AND ")
         else ""
       })
       .on(
-        'projectTypeId -> projectTypeId
+        'projectTypeId -> projectTypeId,
+        'psgc -> psgc
       ).as(scalar[Long].single)
     }
   }
 
-  def indexList(tab: String, offset: Int, limit: Int, projectTypeId: Option[Int])(implicit user: User): Seq[Req] = {
-    val (table, whereClauses) = getSqlParams(tab, projectTypeId)
+  def indexList(tab: String, offset: Int, limit: Int, projectTypeId: Option[Int], psgc: PGLTree)(implicit user: User): Seq[Req] = {
+    val (table, whereClauses) = getSqlParams(tab, projectTypeId, psgc)
     DB.withConnection { implicit c =>
       SQL("SELECT * FROM " + table + {
         if (!whereClauses.isEmpty) " WHERE " + whereClauses.mkString(" AND ")
@@ -305,7 +314,8 @@ object Req extends ReqGen {
       """).on(
         'projectTypeId -> projectTypeId,
         'offset -> offset,
-        'limit -> limit
+        'limit -> limit,
+        'psgc -> psgc
       ).list(simple)
     }
   }
