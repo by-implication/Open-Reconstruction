@@ -71,16 +71,14 @@ requestListing.view = function(ctrl){
     common.banner("List of Requested Projects"),
     m("section", [
 
-      ctrl.app.currentUser() ?
+      ctrl.app.isAuthorized(process.permissions.CREATE_REQUESTS) ?
         m(".row", [
           m(".columns.medium-12", [
-            ctrl.app.isAuthorized(process.permissions.CREATE_REQUESTS) ?
-              m(
-                "a.button",
-                {href: routes.controllers.Requests.create().url, config: m.route},
-                "New Request"
-              )
-            : ""
+            m(
+              "a.button",
+              {href: routes.controllers.Requests.create().url, config: m.route},
+              "New Request"
+            )
           ]),
         ])
       : "",
