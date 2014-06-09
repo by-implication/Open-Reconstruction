@@ -2,7 +2,7 @@
 
 CREATE TABLE projects (
     project_id serial PRIMARY KEY,
-    req_id int NOT NULL REFERENCES reqs,
+    req_id int NOT NULL REFERENCES reqs ON DELETE CASCADE,
     project_source_id text NOT NULL,
     project_name text NOT NULL,
     project_amount numeric(12,2) NOT NULL,

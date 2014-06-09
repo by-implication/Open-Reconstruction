@@ -4,7 +4,7 @@ dashboard.controller = function(){
 
   this.requests = m.prop({});
   this.projects = m.prop({});
-  this.saros = m.prop({});
+  this.saros = m.prop([]);
 
   this.mostCommonDisasterType = m.prop(0);
   this.mostCommonProjectType = m.prop(0);
@@ -15,9 +15,30 @@ dashboard.controller = function(){
   this.requests().byLevel = m.prop([]);
   this.requests().byNamedDisaster = m.prop();
 
-  this.projects().byMonth = m.prop([]);
+  var projectTabs = function(){
+    return _.chain(visualizations.library)
+      .groupBy(function(v){
+        return v(self).type();
+      })
+      .keys()
+      .value();
+  }
 
-  m.startComputation();
+  this.projectVisTabs = new common.stickyTabs.controller();
+  this.projectVisTabs.tabs(_.chain(visualizations.library)
+    .groupBy(function(v){
+      return v(self).type();
+    })
+    .keys()
+    .map(function(t){
+      return {
+        label: m.prop(t + " visualizations"),
+        href: "#" + t + "-visualizations"
+      }
+    })
+    .value()
+  );
+
   bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
     self.mostCommonDisasterType(r.mostCommonDisasterType);
     self.mostCommonProjectType(r.mostCommonProjectType);
@@ -27,7 +48,6 @@ dashboard.controller = function(){
     self.requests().byDisasterType(r.byDisasterType);
     self.requests().byProjectType(r.byProjectType);
     self.requests().byNamedDisaster(r.byNamedDisaster);
-    m.endComputation();
   });
 
   bi.ajax(routes.controllers.Visualizations.getData("EPLC")).then(function (r){
@@ -38,17 +58,17 @@ dashboard.controller = function(){
     self.saros(r.data);
   })
 
-  this.projectHistory = visualizations.library['requestHistory'](self);
-  this.disasterHistory = visualizations.library['disasterHistory'](self);
-  this.projectTypes = visualizations.library['projectTypes'](self);
-  this.topDisasters = visualizations.library['topDisasters'](self);
-  this.topDisastersAmount = visualizations.library['topDisastersAmount'](self);
-
+  this.visDict = _.chain(visualizations.library)
+    .groupBy(function(v){
+      return v(self).type();
+    })
+    .value()
+  
   // this is to make sure charts are ok
   // (ideally) we need a callback when rendering is finished
 
-  window.setTimeout(function(){
-    window.onresize();
-  },1500);
+  // window.setTimeout(function(){
+  //   window.onresize();
+  // },1500);
 
 }

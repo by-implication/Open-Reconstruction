@@ -17,6 +17,29 @@ requestListing.controller = function(){
   this.projectTypeId = m.route.param("projectTypeId") || 0;
   this.counts = {};
 
+  this.locFilter = [
+    {
+      label: "Region",
+      data: [],
+      value: m.prop()
+    },
+    {
+      label: "Province",
+      data: [],
+      value: m.prop()
+    },
+    {
+      label: "City / Municipality",
+      data: [],
+      value: m.prop()
+    },
+    {
+      label: "Barangay",
+      data: [],
+      value: m.prop()
+    }
+  ];
+
   var tabs = [
     {
       identifier: this.tabFilters.ALL,

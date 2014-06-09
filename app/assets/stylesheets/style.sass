@@ -5,6 +5,11 @@
 
 @import variables
 
+html, body
+  padding: 0
+  margin: 0
+  height: 100%
+
 body
   &.detail
     background-color: #eee
@@ -16,6 +21,15 @@ body
     padding-bottom: 1rem
   ul
     margin-left: 0
+
+h1, h2, h3, h4, h5, h6
+  text-transform: capitalize
+
+.container
+  min-height: 70%
+  min-height: calc(100% - 235px)
+  // estimated height of nav + footer
+  position: relative
 
 .portrait
   border-radius: 50%
@@ -44,14 +58,14 @@ body
 
 #nprogress
   .bar
-    background: $accent
+    background: $orange
 
   .peg
-    box-shadow: 0 0 10px $accent, 0 0 5px $accent
+    box-shadow: 0 0 10px $orange, 0 0 5px $orange
 
   .spinner-icon
-    border-top-color: $accent
-    border-left-color: $accent
+    border-top-color: $orange
+    border-left-color: $orange
 
 ul
   list-style: none
@@ -88,6 +102,18 @@ section
 
 .name
   margin-right: 10px
+
+nav.top-bar .govph
+  line-height: $topbar-height
+  font-size: $topbar-title-font-size
+  margin: 0
+  a
+    font-weight: $topbar-title-weight
+    color: $topbar-link-color
+    width: 75%
+    display: block
+    padding: 0 $topbar-link-padding
+    font-family: "Roboto"
 
 .prog
   +clearfix
@@ -141,6 +167,15 @@ section.history
   position: relative
   // &:first-child
     // padding-top: 40px
+  &.new-comment
+    // .details
+    //   padding-bottom: 0
+    padding-top: 20px
+    padding-bottom: 0
+    textarea
+      max-width: 100%
+    button
+      margin-bottom: 0
   p
     margin-bottom: 4px
   &:last-child
@@ -568,6 +603,8 @@ nav
       background: darken($accent, 12%)
   .notice
     text-align: center
+    a
+      border-bottom: 1px solid rgba($accent, 0.5)
     i
       margin-right: 10px
       color: $orange
@@ -575,29 +612,46 @@ nav
   .proposals
     text-align: center
     padding-top: 0
+    ul
+      margin: 0
+      li:nth-child(1)
+        @media #{$medium-up}
+          td
+            &:nth-child(1)
+              display: table-cell
+            &:nth-child(2)
+              h2
+                text-align: left
     h2.title
-      font-size: 18px
+      font-size: 16px
     .val-group
       border: 0
       margin-top: 15px
       margin-bottom: 0
       background: none
       td
+        height: 65px
+        vertical-align: middle
         padding: 0
         &:nth-child(1)
           padding-right: 8px
           border-right: 1px solid $accent
-          width: 41%
-          height: 65px
-          // find a better way to do this ^
+          width: 40%
         &:nth-child(2)
           padding-left: 3px
+        @media #{$medium-up}
+          &:nth-child(1)
+            display: none
+          &:nth-child(2)
+            h2
+              text-align: center
       h2
         text-align: left
         font-weight: bold
         font-size: 28px
         margin: 0
       h6
+        margin: 0
         margin-top: -4px
     .caption
       text-align: right
@@ -617,7 +671,11 @@ nav
     h3
       margin-bottom: 0
   // yes this is sad
-  a.columns
+  li a
+    padding-top: 12px
+    padding-bottom: 12px
+    margin-top: -12px
+    margin-bottom: -12px
     +transition( all 0.2s )
     &:hover
       background-color: #f4f4f4
@@ -683,13 +741,6 @@ nav
       &:last-child
         margin-right: 0px
 
-footer
-  padding: 20px 0px
-  // colors taken from gov.ph sites. sorry.
-  background: #e9e9e9
-  border-top: 1px solid #e1e1e1
-  color: #666
-
 #d3-chart
   div
     background-color: black
@@ -736,13 +787,6 @@ footer
 .columns.large-gutters
   padding: 0px 30px
 
-// #feedback-tab
-//   position: fixed
-//   bottom: 0px
-//   left: 10px
-//   background-color: $red
-//   color: white
-//   padding: 10px 20px
 
 a#feedback-tab
   position: fixed
@@ -757,3 +801,43 @@ a#feedback-tab
     bottom: 0
     padding: 10px 20px
     opacity: 1
+
+.tabs-content
+  .section
+    // padding: 20px 0px
+    h2.section-title
+      text-transform: capitalize
+      margin: 20px 0px
+
+footer
+  color: #666
+  font-family: "Helvetica Neue", "Helvetica", sans-serif
+  background: #e9e9e9
+  padding: 1.25rem 0
+  border-top: 1px solid #d9d9d9
+  img.republic-seal
+  h4, p, li, a
+    color: #999
+  h4
+    font-family: "Roboto"
+    font-weight: bold
+    text-transform: uppercase
+    font-size: 60%
+  p, li
+    font-size: 70%
+  ul
+    padding: 0
+    margin: 0
+  li
+    list-style: none
+    display: block
+
+.select2-hidden-accessible
+  border: 0
+  clip: rect(0 0 0 0)
+  height: 1px
+  margin: -1px
+  overflow: hidden
+  padding: 0
+  position: absolute
+  width: 1px

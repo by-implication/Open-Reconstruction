@@ -1,26 +1,60 @@
 dashboard.view = function(ctrl){
-  var listVis = function(){
-    return _.chain(visualizations.library)
-      .groupBy(function(v){
-        return v(ctrl).type();
-      })
-      .map(function(g){
-        return m(".filter-group", [
-          m("h4", [
-            g[0]().type(),
-            " Visualizations"
-          ]),
-          m("ul.filters", g.map(function(v){
-            return m("li.filter", [
-              m("a", {href: "visualizations/"+v(ctrl).link(), config: m.route}, [
-                v(ctrl).title()
-              ])
-            ]);
-          }))
-        ]);
-      })
-      .value();
-  };
+  var directory = function(){
+    var linkGroup = function(key){
+      var g = ctrl.visDict[key]
+      var title;
+      if (key === "request") {
+        title = "Requests (Infrastructure Cluster)";
+      }
+      if (key === "saro") {
+        title = "Budget Releases (DBM SAROs)";
+      }
+      if (key === "project") {
+        title = "Projects (DPWH)";
+      }
+      return [
+        m("h4", [
+          title
+        ]),
+        m("ul", g.map(function(v){
+          // console.log(v(ctrl));
+          return m("li", [
+            m("a", {href: routes.controllers.Visualizations.view(v(ctrl).link()).url}, v(ctrl).title())
+          ]);
+        })),
+      ]
+    }
+    return m("div", _.flatten([
+      linkGroup("request"),
+      linkGroup("saro"),
+      linkGroup("project")
+    ]))
+  }
+
+  var visSection = function(key){
+    var g = ctrl.visDict[key];
+    var title;
+    if (key === "request") {
+      title = "Requests (Infrastructure Cluster)";
+    }
+    if (key === "saro") {
+      title = "Budget Releases (DBM SAROs)";
+    }
+    if (key === "project") {
+      title = "Projects (DPWH)";
+    }
+    return m(".section", {id: key + "-visualizations"}, [
+      m("h2.section-title", [
+        title,
+        //" Visualizations"
+      ]),
+      m("ul.medium-block-grid-2", g.map(function(v){
+        return m("li", [
+          visPanel.view(v(ctrl))
+        ])
+      })),
+    ])
+  }
   return app.template(ctrl.app, [
     m("div", [
       common.banner("Visualizations"),
@@ -35,22 +69,17 @@ dashboard.view = function(ctrl){
       ]),
       m("section.alt", [
         m(".row", [
-          m(".columns.medium-3",
-            listVis()
-          ),
+          // common.stickyTabs.menu(ctrl.projectVisTabs, {className: "vertical", config: ctrl.scrollHandler}),
+          m(".columns.medium-3", {config: common.sticky.config(ctrl)}, [
+            directory(),
+          ]),
           m(".columns.medium-9", [
-            m("ul.medium-block-grid-2",
-              _.chain(visualizations.library)
-                .map(function(v){
-                  return m("li", [
-                    visPanel.view(v(ctrl))
-                  ]);
-                })
-                .value()
-            ),
+            visSection("request"),
+            visSection("saro"),
+            visSection("project")
           ]),
         ]),
-      ]),
+      ])
     ])
   ]);
-};
+}

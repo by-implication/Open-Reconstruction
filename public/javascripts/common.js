@@ -249,9 +249,14 @@ common.stickyTabs.menu = function(ctrl, options){
       }
     })
     .map(function (tab, i){
-      var options = { href: tab.href };
-      // console.log(ctrl.currentSection(), tab.href);
-      return m("dd", {class: (ctrl.currentSection() === tab.href) ? "active" : ""}, [
+      var options = { 
+        href: tab.href, 
+        onclick: function(e){
+          e.preventDefault();
+          $("html, body").animate({scrollTop: $(tab.href).position().top + "px"});
+        }
+      };
+      return m("dd", {class: (location.hash === tab.href) ? "active" : ""}, [
         m("a", options, tab.label())
       ]);
     })
@@ -260,24 +265,86 @@ common.stickyTabs.menu = function(ctrl, options){
 
 common.stickyTabs.controller = function(){
   this.tabs = m.prop([]);
-  this.currentTab = function() {
-    var item = _.find(this.tabs(), function(tab) {
-      if(window.location.hash){
-        return tab.href === window.location.hash;
-      } else {
-        return tab.href == m.route() 
-      }
-    });
-    if(item == undefined) {
-      item = _.head(this.tabs());
-    }
-    return item.identifier ? item.identifier : item.label();
+}
+
+common.stickyTabs.locHandler = function(hash){
+  if(history.replaceState) { 
+    history.replaceState({}, "", hash);
+  } else { 
+    scrollV = document.body.scrollTop;
+    scrollH = document.body.scrollLeft;
+    location.hash = hash;
+    document.body.scrollTop = scrollV;
+    document.body.scrollLeft = scrollH;
   }
-  this.currentSection = m.prop();
-  this.isActive = function(identifier){
-    console.log(this.currentSection(), identifier);
-    return this.currentSection() == identifier;
-  }.bind(this);
+}
+
+common.stickyTabs.config = function(ctrl){
+  return function(elem, isInit){
+    setTimeout(function(){
+      if (!isInit){
+        idPosDict = _.chain(ctrl.tabs())
+          .map(function(t){
+            var item = t.href;
+            // console.log($(item).position().top, $(item).height());
+            return [$(item).position().top + $(item).height(), item];
+          })
+          .object()
+          .value();
+
+        var poss = _.keys(idPosDict);
+        var windowPos = $(window).scrollTop();
+        var closestPos = _.find(poss, function(p){ return p >= windowPos });
+
+        $(window).on("scroll", function(e){
+          var windowPos = $(window).scrollTop();
+          var closestPos = _.find(poss, function(p){
+            return p >= windowPos
+          });
+          var hash = idPosDict[closestPos];
+          if ((location.hash != hash)){
+            // console.log(hash);
+            m.startComputation();
+            common.stickyTabs.locHandler(hash);
+            m.endComputation();
+          }
+        });
+      }
+    }, 100)
+    common.sticky.config(ctrl)(elem, isInit);
+  }
+}
+
+common.sticky = {};
+common.sticky.config = function(ctrl){
+  // ctrl.isScrolled = false;
+  return function(elem, isInit){
+    // var updateTabMenuPos = function(){
+    var boundary = function(elem){
+      var posType = $(elem).css("position");
+      var offset = 0;
+      if (posType === "relative") {
+        offset = parseInt($(elem).css("top")) || 0;
+      }
+      return $(elem).position().top - offset;
+    }
+    var adjustLayout = function(){
+      if ($(window).scrollTop() > boundary(elem)) {
+        $(elem).css({
+          position: "relative",
+          top: ($(window).scrollTop()) - boundary(elem)
+        })
+      } else {
+        $(elem).removeAttr("style");
+      }
+    }
+
+    if(!isInit){
+      $(window).on("scroll", function(e){
+        adjustLayout();
+      });
+    }
+  }
 }
 
 common.modal = {};
@@ -286,8 +353,6 @@ common.modal.controller = function(){
   this.show = function(){
     this.isVisible(true);
     this.height = helper.docHeight;
-    // console.log($("html, body"));
-    // $("html, body").animate({ scrollTop: "0px" });
   }
   this.close = function(){
     this.isVisible(false);

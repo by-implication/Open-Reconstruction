@@ -7,8 +7,47 @@ import play.api.db._
 import play.api.libs.json._
 import play.api.Play.current
 import recon.support._
+import scala.language.existentials
 
 object Req extends ReqGen {
+
+  def assignByPsgc = DB.withConnection { implicit c =>
+    SQL("SELECT DISTINCT req_location FROM reqs WHERE isnumeric(req_location)")
+    .list(get[String]("req_location") map { loc =>
+
+      val List(_region, province, city) = padLeft(loc, 6, "0").grouped(2).toList
+      val region = _region.toInt
+
+      val lguId = SQL("""
+        SELECT lgu_id FROM lgus
+        WHERE lgu_psgc = {city}
+        AND parent_lgu_id = ANY(
+          SELECT lgu_id FROM lgus
+          WHERE lgu_psgc = {province}
+          AND parent_region_id = {region}
+      )""").on(
+        'region -> region,
+        'province -> province,
+        'city -> city
+      ).single(get[Int]("lgu_id"))
+
+      User(
+        name = "Legacy Data",
+        handle = "legacy" + lguId,
+        password = "legacy" + lguId + "getsupport",
+        govUnitId = lguId
+      ).create().map { u =>
+
+        SQL("""
+          UPDATE reqs SET author_id = {userId} WHERE req_location = {loc}
+        """).on('userId -> u.id, 'loc -> loc).executeUpdate()
+
+        None
+
+      }.getOrElse(Some("Failed to create user for" + lguId))
+
+    }).flatten.mkString("\n")
+  }
 
   private def byProjectType = DB.withConnection { implicit c =>
     SQL("""
@@ -46,6 +85,9 @@ object Req extends ReqGen {
   }
 
   def createSampleRequests = DB.withConnection { implicit c =>
+
+    play.Logger.info("* Inferring requests from entries.")
+
     SQL("""
       INSERT INTO reqs (req_description, project_type_id, req_scope, req_disaster_name, req_amount, author_id, req_location, req_disaster_date)
       SELECT group_id,
@@ -65,11 +107,45 @@ object Req extends ReqGen {
           ELSE oparr_bohol.amount::numeric(12,2)
           END
         ) as amount,
-        1 as author_id, group_id as loc, NOW() 
+        1 as author_id, psgc as loc,
+        CASE 
+          WHEN lower(disaster_name) ilike '%bohol%' THEN '2013-10-15'::date
+          WHEN lower(disaster_name) ilike '%yolanda%' THEN '2013-11-8'::date
+          ELSE now()
+          END as disaster_date
       FROM oparr_bohol
       LEFT JOIN project_types on initcap(project_type_name) = initcap(project_type)
-      GROUP BY group_id, disaster_name
+      GROUP BY group_id, disaster_name, oparr_bohol.psgc
     """).execute()
+    play.Logger.info("*   OPARR-Bohol requests created.")
+
+    SQL("""
+      INSERT INTO reqs (req_description, project_type_id, req_amount,
+        req_scope, author_id, req_location, disaster_type_id, 
+        req_disaster_date, req_date, req_disaster_name, req_remarks
+        )
+      SELECT project_description, 
+        1 as project_type_id,
+        coalesce(project_abc*1000, 0) as amount,
+        'Others'::project_scope as scope,
+        1 as author_id,
+        psgc, 
+        CASE 
+          WHEN lower(disaster) ilike '%earthquake%' THEN 1
+          WHEN lower(disaster) ilike '%typhoon%' THEN 2
+          ELSE 7
+          END as disaster_type,
+        CASE 
+          WHEN lower(disaster) ilike '%bohol%' THEN '2013-10-15'::date
+          WHEN lower(disaster) ilike '%yolanda%' THEN '2013-11-8'::date
+          ELSE now()
+          END as disaster_date,
+        activity_1_start_date as req_date,
+        disaster,
+        project_id
+      FROM dpwh_eplc
+    """).execute()
+    play.Logger.info("*   DPWH EPLC Requests created.")
   }
 
   private def byDisasterType = DB.withConnection { implicit c =>
@@ -77,21 +153,21 @@ object Req extends ReqGen {
       SELECT
         EXTRACT(YEAR FROM req_date) AS year,
         EXTRACT(MONTH FROM req_date) AS month,
-        disaster_type_id,
+        disaster_type_name,
         COUNT(req_id)
-      FROM reqs
-      GROUP BY disaster_type_id, year, month
-      ORDER BY disaster_type_id, year, month
+      FROM reqs NATURAL JOIN disaster_types
+      GROUP BY disaster_type_name, year, month
+      ORDER BY disaster_type_name, year, month
     """).list(
       get[Double]("year") ~
       get[Double]("month") ~
-      get[Int]("disaster_type_id") ~
-      get[Long]("count") map { case _year~_month~disasterTypeId~count =>
+      get[String]("disaster_type_name") ~
+      get[Long]("count") map { case _year~_month~disasterType~count =>
         val year = _year.toInt
         val month = _month.toInt
         Json.obj(
           "yearMonth" -> (year + "-" + (if (month < 10) "0" + month else month)),
-          "disasterTypeId" -> disasterTypeId,
+          "disasterType" -> disasterType,
           "count" -> count
         )
       }

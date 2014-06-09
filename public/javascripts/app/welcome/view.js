@@ -2,17 +2,13 @@ welcome.view = function(ctrl){
   return app.template(ctrl.app, [
     m("div#welcome", [
       m("section.banner", [
-        m("div", {class:"row"}, [
-          m("div", {class: "columns medium-8"}, [
+        m(".row", [
+          m(".columns.medium-8", [
             m("h1", "Open Reconstruction"),
             m("p", [
               "Tracking post-disaster reconstruction spending. Rebuilding a better Philippines, for all to see."
             ])
           ]),
-          // m("div", {class: "columns medium-4 info"}, [
-          //   m("h2", "Info 1"),
-          //   m("h2", "Info 2")
-          // ])
         ])
       ]),
       m("section", [
@@ -20,159 +16,205 @@ welcome.view = function(ctrl){
           m(".columns.medium-12", [
             m(".notice", [
               m("i.fa.fa-exclamation-triangle"),
-              "Note: This system is very new, and not all legacy data has been imported. Please check back for updates!"
+              "Note: This system is very new, and not all legacy data has been imported. Please check back for updates, and let us ",
+              m("a", {target:"potato", href:"https://docs.google.com/forms/d/1GUdE6Si1QnnMtVJ8ig8rwECo9DK9BloOXiGVVnj_efw/viewform"},
+                "know what you think"
+              ),
+              "!"
             ])
           ])
         ]),
       ]),
-    m("section.proposals", [
+      m("section.proposals", [
         m(".row", [
-          m(".columns.medium-3", [
+        m("ul.medium-block-grid-5#derp", [
+          m("li", [
               m("img", {src:"/assets/images/landing/1-time since.svg"}),
-            m("h2.title", "Time since Disaster"),
-            m("table.val-group", [
-              m("tr", [
-                m("td", [
-                  m(".caption", "Yolanda"),
-                ]),
-                m("td", [
-                  m("h2", [
-                    "210 ",
-                    m("span", "days")
+              m("h2.title", "Time since Disaster"),
+              m("table.val-group", [
+                m("tr", [
+                  m("td", [
+                    m(".caption", "Typhoon Yolanda"),
                   ]),
+                  m("td", [
+                    m("h2", [
+                      ctrl.daysSinceYolanda,
+                      m("span", " days")
+                    ]),
+                  ])
                 ])
-              ])
-            ]),
-            m("table.val-group", [
-              m("tr", [
-                m("td", [
-                  m(".caption", "Bohol"),
-                ]),
-                m("td", [
-                  m("h2", [
-                    "229 ",
-                    m("span", "days")
+              ]),
+              m("table.val-group", [
+                m("tr", [
+                  m("td", [
+                    m(".caption", "Bohol Quake"),
                   ]),
+                  m("td", [
+                    m("h2", [
+                      ctrl.daysSinceBohol,
+                      m("span", " days")
+                    ]),
+                  ])
                 ])
-              ])
-            ]),
+              ]),
           ]),
-          m("a.columns.medium-3", {
-            href:"/requests",
-            config:m.route
-          }, [
-            m("img", {src:"/assets/images/landing/2-projects requested.svg"}),
-            m("h2.title", "Requested Projects"),
-            m("table.val-group", [
-              m("tr", [
-                m("td", [
-                  m(".caption", "Yolanda"),
-                ]),
-                m("td", [
-                  m("h2", [
-                    ctrl.yolandaProjectsQuantity(),
-                    m("h6", "PHP " + helper.truncate(ctrl.yolandaProjectsAmount(), 2) + "")
+          m("li", [
+            m("a", {
+              href:"/requests",
+              config:m.route
+            }, [
+              m("img", {src:"/assets/images/landing/2-projects requested.svg"}),
+              m("h2.title", "Requested Projects"),
+              m("table.val-group", [
+                m("tr", [
+                  m("td", [
+                    m(".caption", "Typhoon Yolanda"),
                   ]),
+                  m("td", [
+                    m("h2", [
+                      ctrl.vizData().yolanda.projects.qty,
+                      m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.projects.amt, 2) + "")
+                    ]),
+                  ])
                 ])
-              ])
-            ]),
-            m("table.val-group", [
-              m("tr", [
-                m("td", [
-                  m(".caption", "Bohol"),
-                ]),
-                m("td", [
-                  m("h2", [
-                    ctrl.boholProjectsQuantity(),
-                    m("h6", "PHP " + helper.truncate(ctrl.boholProjectsAmount(), 2) + "")
+              ]),
+              m("table.val-group", [
+                m("tr", [
+                  m("td", [
+                    m(".caption", "Bohol Quake"),
                   ]),
+                  m("td", [
+                    m("h2", [
+                      ctrl.vizData().bohol.projects.qty,
+                      m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.projects.amt, 2) + "")
+                    ]),
+                  ])
                 ])
               ])
             ])
           ]),
-          m("a.columns.medium-3", {
-            href:"/dashboard",
-            config:m.route
-          }, [
-            m("img", {src:"/assets/images/landing/3-budget releases.svg"}),
-            m("h2.title", "Budget Releases"),
-            m("table.val-group", [
-              m("tr", [
-                m("td", [
-                  m(".caption", "Yolanda"),
-                ]),
-                m("td", [
-                  m("h2", [
-                    ctrl.yolandaSAROQuantity() + " ",
-                    m("span", "SAROs"),
-                    m("h6", "PHP " + helper.truncate(ctrl.yolandaSAROAmount(), 2) )
+          m("li", [
+            m("a", {
+              href: routes.controllers.Application.dashboard().url,
+              config:m.route
+            }, [
+              m("img", {src:"/assets/images/landing/3-budget releases.svg"}),
+              m("h2.title", "Budget Releases"),
+              m("table.val-group", [
+                m("tr", [
+                  m("td", [
+                    m(".caption", "Typhoon Yolanda"),
                   ]),
+                  m("td", [
+                    m("h2", [
+                      ctrl.vizData().yolanda.saro.qty + " ",
+                      m("span", "SAROs"),
+                      m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.saro.amt, 2) )
+                    ]),
+                  ])
                 ])
-              ])
-            ]),
-            m("table.val-group", [
-              m("tr", [
-                m("td", [
-                  m(".caption", "Bohol"),
-                ]),
-                m("td", [
-                  m("h2", [
-                    // ctrl.boholSAROQuantity() + "",
-                    "no data",
-                    m("h6", "(" + ctrl.boholSAROAmount() + ")")
+              ]),
+              m("table.val-group", [
+                m("tr", [
+                  m("td", [
+                    m(".caption", "Bohol Quake"),
                   ]),
+                  m("td", [
+                    m("h2", [
+                      ctrl.vizData().bohol.saro.qty + " ",
+                      m("span", "SAROs"),
+                      m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.saro.amt, 2) )
+                    ]),
+                  ])
                 ])
-              ])
-            ]),
+              ]),
+            ])
           ]),
-          m("a.columns.medium-3", {
-            href:"/requests",
-            config:m.route
-          }, [
-            m("img", {src:"/assets/images/landing/4-ongoing projects.svg"}),
-            m("h2.title", [
-              "Ongoing Projects ",
-              m("span", [
-                m("strong", "(DPWH)")
-              ])
-            ]),
-            m("table.val-group", [
-              m("tr", [
-                m("td", [
-                  m(".caption", "Yolanda"),
-                ]),
-                m("td", [
-                  m("h2", [
-                    ctrl.yolandaEPLCProjectsQuantity(),
-                    m("h6", "PHP " + helper.truncate(ctrl.yolandaEPLCProjectsAmount(), 2) + "")
+          m("li", [
+            m("a", {
+              href: routes.controllers.Application.dashboard().url,
+              config:m.route
+            }, [
+              m("img", {src:"/assets/images/landing/3-budget releases.svg"}),
+              m("h2.title", "DPWH Budget Releases"),
+              m("table.val-group", [
+                m("tr", [
+                  m("td", [
+                    m(".caption", "Typhoon Yolanda"),
                   ]),
+                  m("td", [
+                    m("h2", [
+                      "13 ",
+                      m("span", "SAROs"),
+                      m("h6", "PHP " + helper.truncate(2161379935, 2) )
+                    ]),
+                  ])
                 ])
-              ])
-            ]),
-            m("table.val-group", [
-              m("tr", [
-                m("td", [
-                  m(".caption", "Bohol"),
-                ]),
-                m("td", [
-                  m("h2", [
-                    ctrl.boholEPLCProjectsQuantity(),
-                    m("h6", "PHP " + helper.truncate(ctrl.boholEPLCProjectsAmount(), 2) + "")
+              ]),
+              m("table.val-group", [
+                m("tr", [
+                  m("td", [
+                    m(".caption", "Bohol Quake"),
                   ]),
+                  m("td", [
+                    m("h2", [
+                      "3 ",
+                      m("span", "SAROs"),
+                      m("h6", "PHP " + helper.truncate(201597043, 2) )
+                    ]),
+                  ])
+                ])
+              ]),
+            ])
+          ]),
+          m("li", [
+            m("a", {
+              href:"/requests",
+              config:m.route
+            }, [
+              m("img", {src:"/assets/images/landing/4-ongoing projects.svg"}),
+              m("h2.title", [
+                "DPWH Ongoing Projects",
+              ]),
+              m("table.val-group", [
+                m("tr", [
+                  m("td", [
+                    m(".caption", "Typhoon Yolanda"),
+                  ]),
+                  m("td", [
+                    m("h2", [
+                      ctrl.vizData().yolanda.fundedProjects.qty,
+                      m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.fundedProjects.amt, 2) + "")
+                    ]),
+                  ])
+                ])
+              ]),
+              m("table.val-group", [
+                m("tr", [
+                  m("td", [
+                    m(".caption", "Bohol Quake"),
+                  ]),
+                  m("td", [
+                    m("h2", [
+                      ctrl.vizData().bohol.fundedProjects.qty,
+                      m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.fundedProjects.amt, 2) + "")
+                    ]),
+                  ])
                 ])
               ])
             ])
           ])
         ]),
+        ]),
         // m(".row.tickets",[
         //   m("span", "eTickets tracked in System"),
         //   " — ",
-        //   m("strong", 
-        //     ctrl.yolandaProposalsQuantity() + ctrl.boholEPLCProjectsQuantity()
+        //   m("strong",
+        //     ctrl.vizData().yolanda.Proposals.qty + ctrl.vizData().bohol.EPLCProjects.qty
         //   ),
         //   " (total)  /  PHP ",
         //   m("strong",
-        //     helper.truncate(( ctrl.yolandaProposalsAmount() + ctrl.boholProjectsAmount() ), 2) 
+        //     helper.truncate(( ctrl.vizData().yolanda.Proposals.amt + ctrl.vizData().bohol.projects.amt ), 2)
         //   ),
         //   " "
 
@@ -409,18 +451,11 @@ welcome.view = function(ctrl){
             m("h4", "Open Source"),
             m("p","This system proudly builds upon and contributes to several open-source projects, and is open source itself. Check out the code, submit issues, or even contribute patches!"),
             m("a.button.micro", {
-              href:"https://github.com/by-implication/Reconstruction-Watch"
+              href:"https://github.com/by-implication/Open-Reconstruction"
             }, "Fork us on GitHub")
             // (twss)
           ])
         ]),
-      ]),
-      m("footer", [
-        m(".row", [
-          m(".columns.medium-12",
-            "This is where the obligatory standard gov.ph footer goes. We need to know what goes in here."
-          )
-        ])
       ])
     ])
   ]);

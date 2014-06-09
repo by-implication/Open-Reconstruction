@@ -71,16 +71,14 @@ requestListing.view = function(ctrl){
     common.banner("List of Requested Projects"),
     m("section", [
 
-      ctrl.app.currentUser() ?
+      ctrl.app.isAuthorized(process.permissions.CREATE_REQUESTS) ?
         m(".row", [
           m(".columns.medium-12", [
-            ctrl.app.isAuthorized(process.permissions.CREATE_REQUESTS) ?
-              m(
-                "a.button",
-                {href: routes.controllers.Requests.create().url, config: m.route},
-                "New Request"
-              )
-            : ""
+            m(
+              "a.button",
+              {href: routes.controllers.Requests.create().url, config: m.route},
+              "New Request"
+            )
           ]),
         ])
       : "",
@@ -97,6 +95,15 @@ requestListing.view = function(ctrl){
           pagination(),
         ]),
         m(".columns.medium-3", [
+          m("h4", [
+            "Filter by Location"
+          ]),
+          ctrl.locFilter.map(function (f){
+            return m("label", [
+              f.label,
+              select2.view({data: f.data, value: f.value(), onchange: m.withAttr("value", f.value)})
+            ])
+          }),
           m("h4", [
             "Filter by Project Type"
           ]),

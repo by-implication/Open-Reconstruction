@@ -93,11 +93,18 @@ object Application extends Controller with Secured {
 
   def populate() = Action { implicit request =>
     play.Logger.info("Populating database:")
-    Req.createSampleRequests
-    play.Logger.info("* Requests created")
-    Project.createSampleProjects
-    play.Logger.info("* Projects created")
-    play.Logger.info("* Database population complete!")
+    if (Req.listAll().length > 100){
+      play.Logger.info("* Aborted: Database already populated!")
+    } else {
+      Req.createSampleRequests
+      play.Logger.info("* Requests created")
+      Project.createSampleProjects
+      play.Logger.info("* Projects created")
+      play.Logger.info("  Processing PSGC migrations")
+      play.Logger.info(Req.assignByPsgc)
+      play.Logger.info("* PSGC processed")
+      play.Logger.info("* Database population complete!")
+    }
     Redirect(routes.Application.index)
   }
 
@@ -108,6 +115,7 @@ object Application extends Controller with Secured {
       routes.javascript.Application.adminLgus,
       routes.javascript.Application.adminAgencies,
       routes.javascript.Application.dashboard,
+      routes.javascript.Application.index,
       routes.javascript.Application.saro,
       routes.javascript.Application.welcome,
       routes.javascript.Application.dashboardMeta,
