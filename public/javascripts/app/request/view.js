@@ -469,7 +469,9 @@ request.view = function(ctrl){
                     m(".event.new-comment", [
                       m("form", {onsubmit: ctrl.submitComment}, [
                         m("label", [
-                          "Comment",
+                          m("h3", [
+                            "New Comment"
+                          ]),
                           m("textarea", {onchange: m.withAttr("value", ctrl.input.comment)})
                         ]),
                         m("button", "Submit")
