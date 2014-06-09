@@ -117,9 +117,9 @@ welcome.view = function(ctrl){
                 ]),
                 m("td", [
                   m("h2", [
-                    // ctrl.vizData().bohol.saro.qty + "",
-                    "no data",
-                    m("h6", "(no data)")
+                    ctrl.vizData().bohol.saro.qty + " ",
+                    m("span", "SAROs"),
+                    m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.saro.amt, 2) )
                   ]),
                 ])
               ])

@@ -39,7 +39,9 @@ object Visualization {
       SELECT yolanda.count as yolanda_req_qty, yolanda.sum as yolanda_req_amt,
         bohol.count as bohol_req_qty, bohol.sum as bohol_req_amt,
         saro_yolanda.count as yolanda_saro_qty,
-        saro_yolanda.sum as yolanda_saro_amt
+        saro_yolanda.sum as yolanda_saro_amt,
+        saro_bohol.count as bohol_saro_qty,
+        saro_bohol.sum as bohol_saro_amt
       FROM (
         SELECT count(*), sum(req_amount)
         FROM reqs
@@ -52,18 +54,26 @@ object Visualization {
       ) as bohol,
       (
         SELECT count(*), sum(amount) FROM saro_bureau_g
-      ) as saro_yolanda
+        WHERE disaster ILIKE '%yolanda%'
+      ) as saro_yolanda,
+      (
+        SELECT count(*), sum(amount) FROM saro_bureau_g
+        WHERE disaster ILIKE '%bohol%'
+      ) as saro_bohol
     """).singleOpt(
       get[Long]("yolanda_req_qty") ~
       get[java.math.BigDecimal]("yolanda_req_amt") ~
       get[Long]("bohol_req_qty") ~
       get[java.math.BigDecimal]("bohol_req_amt") ~
       get[Long]("yolanda_saro_qty") ~
-      get[java.math.BigDecimal]("yolanda_saro_amt") map {
+      get[java.math.BigDecimal]("yolanda_saro_amt") ~
+      get[Long]("bohol_saro_qty") ~
+      get[java.math.BigDecimal]("bohol_saro_amt") map {
 
         case yolanda_req_qty ~ yolanda_req_amt ~
           bohol_req_qty ~ bohol_req_amt ~
-          yolanda_saro_qty ~ yolanda_saro_amt => {
+          yolanda_saro_qty ~ yolanda_saro_amt ~
+          bohol_saro_qty ~ bohol_saro_amt => {
 
           val List(bohol_unfunded, bohol_funded) = disasterProjects("bohol")
           val List(yolanda_unfunded, yolanda_funded) = disasterProjects("yolanda")
@@ -85,6 +95,7 @@ object Visualization {
             ),
             "bohol" -> Json.obj(
               "req" -> qtyAmt(bohol_req_qty, bohol_req_amt),
+              "saro" -> qtyAmt(bohol_saro_qty, bohol_saro_amt),
               "projects" -> qtyAmt(
                 bohol_unfunded._1 + bohol_funded._1,
                 bohol_unfunded._2 + bohol_funded._2
