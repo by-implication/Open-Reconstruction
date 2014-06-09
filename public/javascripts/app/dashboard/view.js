@@ -2,9 +2,19 @@ dashboard.view = function(ctrl){
   var directory = function(){
     var linkGroup = function(key){
       var g = ctrl.visDict[key]
+      var title;
+      if (key === "request") {
+        title = "Requests (Infrastructure Cluster)";
+      }
+      if (key === "saro") {
+        title = "Budget Releases (DBM SAROs)";
+      }
+      if (key === "project") {
+        title = "Projects (DPWH)";
+      }
       return [
         m("h4", [
-          key
+          title
         ]),
         m("ul", g.map(function(v){
           // console.log(v(ctrl));
@@ -14,19 +24,29 @@ dashboard.view = function(ctrl){
         })),
       ]
     }
-    return m("div", [
+    return m("div", _.flatten([
       linkGroup("request"),
       linkGroup("saro"),
       linkGroup("project")
-    ])
+    ]))
   }
 
   var visSection = function(key){
     var g = ctrl.visDict[key];
+    var title;
+    if (key === "request") {
+      title = "Requests (Infrastructure Cluster)";
+    }
+    if (key === "saro") {
+      title = "Budget Releases (DBM SAROs)";
+    }
+    if (key === "project") {
+      title = "Projects (DPWH)";
+    }
     return m(".section", {id: key + "-visualizations"}, [
       m("h2.section-title", [
-        key, 
-        " Visualizations"
+        title,
+        //" Visualizations"
       ]),
       m("ul.medium-block-grid-2", g.map(function(v){
         return m("li", [
