@@ -20,7 +20,7 @@ case class PGLTree(list: Seq[Int]) extends PGobject {
 
 object PGLTree {
 
-	def fromString(s: String) = PGLTree(s.split(".").map(_.toInt))
+	def fromString(s: String) = PGLTree(s.split("\\.").map(_.toInt))
 	
 	implicit def rowToPGLTree: Column[PGLTree] = {
 		Column[PGLTree](transformer = { (value, meta) =>

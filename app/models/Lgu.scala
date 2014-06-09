@@ -31,7 +31,7 @@ object Lgu extends LguGen {
   )
 
   def regionsJson = Json.toJson(REGIONS.toSeq.map {
-    case (id, name) => Json.obj("id" -> id, "name" -> name)
+    case (id, name) => Json.obj("id" -> id, "name" -> name, "psgc" -> id)
   })
 
   def getChildren(psgc: PGLTree) = getDescendants(psgc, true)

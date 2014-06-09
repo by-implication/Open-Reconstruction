@@ -182,11 +182,11 @@ object Requests extends Controller with Secured {
     val offset = page * limit
     val projectTypeIdOption = if (projectTypeId == 0) None else Some(projectTypeId)
 
-    val psgc = PGLTree(if(locFilters == "-"){
-      List.empty[Int]
+    val psgc = if(locFilters == "-"){
+      PGLTree(List.empty[Int])
     } else {
-      locFilters.split("\\.").map(_.toInt)
-    })
+      PGLTree.fromString(locFilters)
+    }
 
     val reqListOption = tab match {
       case "all" | "approval" | "assessor" | "implementation" | "mine" | "signoff" => {
