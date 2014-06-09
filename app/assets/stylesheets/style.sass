@@ -167,11 +167,18 @@ section.history
   position: relative
   // &:first-child
     // padding-top: 40px
+  &.new-comment
+    // .details
+    //   padding-bottom: 0
+    textarea
+      max-width: 100%
   p
     margin-bottom: 4px
   &:last-child
     .details
       border-bottom: none
+      button
+        margin-bottom: 0
   .type
     +box-sizing(border-box)
     height: 54px
