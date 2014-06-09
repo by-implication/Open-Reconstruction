@@ -66,7 +66,7 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "TY"),
+                  m(".caption", "Typhoon Yolanda"),
                 ]),
                 m("td", [
                   m("h2", [
@@ -79,7 +79,7 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "BE"),
+                  m(".caption", "Bohol Earthquake"),
                 ]),
                 m("td", [
                   m("h2", [
@@ -99,7 +99,7 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "TY"),
+                  m(".caption", "Typhoon Yolanda"),
                 ]),
                 m("td", [
                   m("h2", [
@@ -113,7 +113,7 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "BE"),
+                  m(".caption", "Bohol Earthquake"),
                 ]),
                 m("td", [
                   m("h2", [
@@ -139,7 +139,7 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "TY"),
+                  m(".caption", "Typhoon Yolanda"),
                 ]),
                 m("td", [
                   m("h2", [
@@ -152,7 +152,7 @@ welcome.view = function(ctrl){
             m("table.val-group", [
               m("tr", [
                 m("td", [
-                  m(".caption", "BE"),
+                  m(".caption", "Bohol Earthquake"),
                 ]),
                 m("td", [
                   m("h2", [
