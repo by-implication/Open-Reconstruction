@@ -603,8 +603,18 @@ nav
   .proposals
     text-align: center
     padding-top: 0
+    ul
+      margin: 0
+      li:nth-child(1)
+        @media #{$medium-up}
+          td
+            &:nth-child(1)
+              display: table-cell
+            &:nth-child(2)
+              h2
+                text-align: left
     h2.title
-      font-size: 18px
+      font-size: 16px
     .val-group
       border: 0
       margin-top: 15px
@@ -615,11 +625,17 @@ nav
         &:nth-child(1)
           padding-right: 8px
           border-right: 1px solid $accent
-          width: 41%
+          width: 40%
           height: 65px
           // find a better way to do this ^
         &:nth-child(2)
           padding-left: 3px
+        @media #{$medium-up}
+          &:nth-child(1)
+            display: none
+          &:nth-child(2)
+            h2
+              text-align: center
       h2
         text-align: left
         font-weight: bold
@@ -645,7 +661,7 @@ nav
     h3
       margin-bottom: 0
   // yes this is sad
-  a.columns
+  li a
     padding-top: 12px
     padding-bottom: 12px
     margin-top: -12px
