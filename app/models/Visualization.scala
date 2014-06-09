@@ -122,16 +122,16 @@ object Visualization {
     val byMonth = SQL("""
       SELECT
         EXTRACT(YEAR FROM saro_date) AS year,
-        EXTRACT(MONTH FROM saro_date) AS month,
+        EXTRACT(MONTH FROM saro_date) AS extracted_month,
         COUNT(*),
         SUM(amount)
       FROM saro_bureau_g
       WHERE saro_date IS NOT NULL
-      GROUP BY EXTRACT(YEAR FROM saro_date), month
-      ORDER BY year, month
+      GROUP BY EXTRACT(YEAR FROM saro_date), extracted_month
+      ORDER BY year, extracted_month
     """).list(
       get[Double]("year") ~
-      get[Double]("month") ~
+      get[Double]("extracted_month") ~
       get[Long]("count") ~
       get[java.math.BigDecimal]("sum") map { case _year~_month~count~amount =>
         val year = _year.toInt
