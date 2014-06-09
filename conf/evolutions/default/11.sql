@@ -193,13 +193,15 @@ CREATE TABLE saro_bureau_g (
     agency text,
     saro_number text,
     saro_date timestamp,
+    month text,
     year integer,
     amount decimal,
     project_quantity integer,
+    disaster text,
     remarks text
 );;
 
-COPY saro_bureau_g FROM '140531 Clean_SARO_BureauG.csv' CSV ENCODING 'ISO_8859_9';;
+COPY saro_bureau_g FROM 'Clean_SARO_BureauG.csv' CSV ENCODING 'ISO_8859_9';;
 
 # --- !Downs
 
