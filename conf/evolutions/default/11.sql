@@ -13,6 +13,7 @@ CREATE TABLE oparr_bohol (
     scope text,
     amount text,
     disaster_name text,
+    disaster_date timestamp,
     implementing_agency text,
     psgc text,
     latitude decimal,
