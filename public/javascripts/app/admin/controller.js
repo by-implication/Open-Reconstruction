@@ -82,7 +82,7 @@ admin.controller = function(){
   this.toggleLguExpansion = function(lgu){
     var isExpanded = !lgu.isExpanded();
     if(isExpanded){
-      bi.ajax(routes.controllers.GovUnits.getChildren(lgu.level(), lgu.id())).then(function (r){
+      bi.ajax(routes.controllers.GovUnits.getChildren(lgu.psgc())).then(function (r){
         lgu.children(r.map(function (child){
           return new govUnit.LGU(child);
         }));

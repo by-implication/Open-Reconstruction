@@ -174,17 +174,23 @@ object Requests extends Controller with Secured {
 
   def index = Application.index
 
-  def indexPage(tab: String, page: Int, projectTypeId: Int) = Application.index
+  def indexPage(tab: String, page: Int, projectTypeId: Int, locFilters: String) = Application.index
 
-  def indexMeta(tab: String, page: Int, projectTypeId: Int) = UserAction(){ implicit user => implicit request =>
+  def indexMeta(tab: String, page: Int, projectTypeId: Int, locFilters: String) = UserAction(){ implicit user => implicit request =>
 
     val limit = 20
     val offset = page * limit
     val projectTypeIdOption = if (projectTypeId == 0) None else Some(projectTypeId)
 
+    val psgc = if(locFilters == "-"){
+      PGLTree(List.empty[Int])
+    } else {
+      PGLTree.fromString(locFilters)
+    }
+
     val reqListOption = tab match {
       case "all" | "approval" | "assessor" | "implementation" | "mine" | "signoff" => {
-        Some(Req.indexList(tab, offset, limit, projectTypeIdOption))
+        Some(Req.indexList(tab, offset, limit, projectTypeIdOption, psgc))
       }
       case _ => None
     }
@@ -193,13 +199,14 @@ object Requests extends Controller with Secured {
       Ok(Json.obj(
         "list" -> reqList.map(_.indexJson),
         "filters" -> ProjectType.jsonList,
+        "locFilters" -> Lgu.getLocFilters(psgc),
         "counts" -> Json.obj(
-          "all" -> Req.indexCount("all", projectTypeIdOption),
-          "approval" -> Req.indexCount("approval", projectTypeIdOption),
-          "assessor" -> Req.indexCount("assessor", projectTypeIdOption),
-          "implementation" -> Req.indexCount("implementation", projectTypeIdOption),
-          "mine" -> Req.indexCount("mine", projectTypeIdOption),
-          "signoff" -> Req.indexCount("signoff", projectTypeIdOption)
+          "all" -> Req.indexCount("all", projectTypeIdOption, psgc),
+          "approval" -> Req.indexCount("approval", projectTypeIdOption, psgc),
+          "assessor" -> Req.indexCount("assessor", projectTypeIdOption, psgc),
+          "implementation" -> Req.indexCount("implementation", projectTypeIdOption, psgc),
+          "mine" -> Req.indexCount("mine", projectTypeIdOption, psgc),
+          "signoff" -> Req.indexCount("signoff", projectTypeIdOption, psgc)
         )
       ))
     }.getOrElse(Rest.error("invalid tab"))
