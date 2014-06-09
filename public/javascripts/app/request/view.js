@@ -464,7 +464,7 @@ request.view = function(ctrl){
                   })
                   .reverse()
                   ),
-                  ctrl.app.currentUser() ? m("hr") : "",
+                  // ctrl.app.currentUser() ? m("hr") : "",
                   ctrl.app.currentUser() ?
                     m(".event.new-comment", [
                       m("form", {onsubmit: ctrl.submitComment}, [
