@@ -479,23 +479,17 @@ visualizations.create(
   'Request Type Distribution',
   'projectTypes',
   'request',
-  function(ctrl2){
-    var ctrl = ctrl2.requests();
-    var data = _.chain(ctrl.byProjectType())
-      .sortBy(function(t){
-        return t.count * -1;
-      })
-      .value();
-    var counts = data.map(function(t){
-      return t.count;
+  function(ctrl){
+    var byType = _.sortBy(ctrl.requests().byProjectType(), function(t){
+      return t.count * -1;
     });
-    var types = data.map(function(t){
-      return t.name;
-    });
+    // console.log(byType);
+    var counts = _.pluck(byType, "count");
+    var types = _.pluck(byType, "name");
     return {
-      size: {
-        height: 400
-      },
+      // size: {
+      //   height: 400
+      // },
       data: {
         columns: [
           ["Number of Requests"].concat(counts)
