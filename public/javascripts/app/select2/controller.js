@@ -5,7 +5,6 @@ select2.config = function(ctrl){
       .on("change", function(e){
         m.startComputation();
         if (typeof ctrl.onchange === "function"){
-          console.log('triggered')
           ctrl.onchange(el.select2("val"));
         }
         m.endComputation();
