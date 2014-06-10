@@ -29,7 +29,7 @@ common.stagnation = function(reqCtrl){
   }
 
   var dd = current - timestamp;
-  var ms = helper.pad(Math.floor((dd%1000)/10));
+  // var ms = helper.pad(Math.floor((dd%1000)/10));
   dd/=1000;
   var s = helper.pad(Math.floor(dd%60));
   dd/=60;
@@ -38,7 +38,7 @@ common.stagnation = function(reqCtrl){
   var h = helper.pad(Math.floor(dd%24));
   dd/=24;
   var d = Math.floor(dd);
-  return d + " DAYS " + h + ":" + m + ":" + s + "." + ms;
+  return d + " DAYS " + h + ":" + m + ":" + s;
 }
 
 common.duration = function(ms){
