@@ -72,7 +72,7 @@ welcome.view = function(ctrl){
                   ]),
                   m("td", [
                     m("h2", [
-                      ctrl.vizData().yolanda.projects.qty,
+                      helper.commaize(ctrl.vizData().yolanda.projects.qty),
                       m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.projects.amt, 2) + "")
                     ]),
                   ])
@@ -85,7 +85,7 @@ welcome.view = function(ctrl){
                   ]),
                   m("td", [
                     m("h2", [
-                      ctrl.vizData().bohol.projects.qty,
+                      helper.commaize(ctrl.vizData().bohol.projects.qty),
                       m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.projects.amt, 2) + "")
                     ]),
                   ])

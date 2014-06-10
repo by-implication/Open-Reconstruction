@@ -309,7 +309,7 @@ request.view = function(ctrl){
                             img.filename
                           ]),
                         ]),
-                       
+
                         m(".uploader", [
                           "Uploaded by ",
                           m("a", {href: routes.controllers.Users.view(img.uploader.id).url, config: m.route},[
@@ -442,7 +442,7 @@ request.view = function(ctrl){
                               p.scope
                             ]),
                             m("td", [
-                              p.amount
+                              helper.commaize(p.amount)
                             ])
                           ])
                         })
