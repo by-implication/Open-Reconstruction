@@ -109,9 +109,7 @@ visualizations.create(
         height: 400
       },
       data: {
-        // x: "x",
         columns: [
-          // ["x"].concat(labels),
           ["Count per Agency"].concat(counts),
           ["Amount per Agency"].concat(amounts)
         ],
@@ -279,8 +277,7 @@ visualizations.create(
 
     return {
       size: {
-        height: 300,
-        width: 400
+        height: 400
       },
       data: {
         columns: [
@@ -587,33 +584,28 @@ visualizations.create(
   'request',
   function(ctrl2){
     var ctrl = ctrl2.requests();
-    var data = _.chain(ctrl.byNamedDisaster())
-      .sortBy(function(d){
+    var byDisaster = _.sortBy(ctrl.byNamedDisaster(), function(d){
         return d.count * -1;
-      })
-      .take(5)
-      .value();
-    var counts = data.map(function(d){
-      return d.count / 1;
-    });
-    var cats = data.map(function(d){
-      if (d.name) {
-        return d.name;
-      } else {
-        return "unnamed";
-      }
-    });
+      });
+    var counts = _.pluck(byDisaster, "count");
+    var amounts = _.pluck(byDisaster, "amount");
+    var labels = _.pluck(byDisaster, "name");
     return {
       data: {
         columns: [
-          ["Number of Requests"].concat(counts)
+          ["Count per Disaster"].concat(counts),
+          ["Amount per Disaster"].concat(amounts)
         ],
+        axes: {
+          "Count per Disaster": "y",
+          "Amount per Disaster": "y2"
+        },
         type: "bar",
       },
       axis: {
         x: {
           type: "categorized",
-          categories: cats,
+          categories: labels,
           label: {
             text: "Disaster",
             position: "outer-middle"
@@ -625,63 +617,20 @@ visualizations.create(
             position: "outer-center"
           }
         },
-        rotated: true,
-      },
-    }
-  }
-)
-
-visualizations.create(
-  'Request Amounts per Unique Named Disaster',
-  'topDisastersAmount',
-  'request',
-  function(ctrl2){
-    var ctrl = ctrl2.requests();
-    var data = _.chain(ctrl.byNamedDisaster())
-      .sortBy(function(d){
-        return d.amount * -1;
-      })
-      .take(5)
-      .value();
-    var amounts = data.map(function(d){
-      return d.amount / 1;
-    });
-    var cats = data.map(function(d){
-      if (d.name) {
-        return d.name;
-      } else {
-        return "unnamed";
-      }
-    });
-    return {
-      data: {
-        columns: [
-          ["Number of Requests"].concat(amounts)
-        ],
-        type: "bar"
-      },
-      axis: {
-        x: {
-          type: "categorized",
-          categories: cats,
-          label: {
-            text: "Disaster",
-            position: "outer-middle"
-          }
-        },
-        y: {
-          label: {
-            text: "Amount in PHP",
-            position: "outer-center"
-          },
+        y2: {
+          show: true,
           tick: {
             format: function(t){
               return helper.truncate(t, 2);
             }
           },
+          label: {
+            text: "Amount in PHP",
+            position: "outer-center"
+          },
         },
-        rotated: true
-      }
+        rotated: true,
+      },
     }
   }
 )
