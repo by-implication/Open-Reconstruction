@@ -52,6 +52,7 @@ visPanel.controller = function(){
         size: self.size()
       })
       elem.appendChild(chart.element);
+      window.onresize();
     }
   }
 }
