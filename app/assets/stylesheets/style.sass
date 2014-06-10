@@ -522,8 +522,11 @@ nav
       .label
         margin-right: 0
         margin-left: 10px
-      & > a.active, & > a.active:hover
-        color: $accent
+      & > a.active
+        background: $accent !important
+        &:hover
+          background: darken($accent, 5%) !important
+
 
 .field-icon p
   text-align: right
