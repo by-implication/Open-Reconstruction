@@ -93,6 +93,72 @@ visualizations.padMonths = function padMonths(a){
 // )
 
 visualizations.create(
+  "Project Count and Amount, Distributed by Agency",
+  "projectCountAmountAgency",
+  "project",
+  function(ctrl){
+    var byAgency = _.sortBy(ctrl.projects().byAgency(), function(a){
+      return a.count * -1;
+    });
+    var labels = _.pluck(byAgency, "name");
+    var counts = _.pluck(byAgency, "count");
+    var amounts = _.pluck(byAgency, "amount");
+
+    return {
+      size: {
+        height: 400
+      },
+      data: {
+        columns: [
+          ["Count per Agency"].concat(counts),
+          ["Amount per Agency"].concat(amounts)
+        ],
+        axes: {
+          "Count per Agency": "y",
+          "Amount per Agency": "y2"
+        },
+        types: {
+          "Count per Agency": "bar",
+          "Amount per Agency": "bar"
+        }
+      },
+      axis: {
+        y: {
+          label: {
+            text: "Number of Projects",
+            position: "outer-center"
+          }
+        },
+        x: {
+          type: 'categorized',
+          categories: labels,
+          label: {
+            text: "Agency",
+            position: "outer-middle"
+          }
+        },
+        y2: {
+          show: true,
+          tick: {
+            format: function(t){
+              return helper.truncate(t, 2);
+            }
+          },
+          label: {
+            text: "Amount in PHP",
+            position: "outer-center"
+          },
+          padding: {
+            bottom: 0
+          }
+        },
+        rotated: true
+      }
+    }
+  }
+)
+
+visualizations.create(
   "Project Type Distribution",
   "projectTypeDistribution",
   "project",
@@ -198,83 +264,34 @@ visualizations.create(
 )
 
 visualizations.create(
-  'SARO Amount Distribution by Agency',
-  'saroAmountAgency',
+  'SARO Count and Amount Distribution by Agency',
+  'saroCountAmountAgency',
   'saro',
   function(ctrl){
-    var byAgency = ctrl.saros().byAgency.sort(function (a, b){
-      if ( a.amount > b.amount )
-        return -1;
-      if ( a.amount < b.amount )
-        return 1;
-      return 0;
+    var byAgency = _.sortBy(ctrl.saros().byAgency, function(a){
+      return a.count * -1;
     })
-    var labels = byAgency.map(function (e){ return e.agency; });
-    var amountPerAgency = byAgency.map(function (e){ return e.amount; });
+    var labels = _.pluck(byAgency, "agency");
+    var counts = _.pluck(byAgency, "count");
+    var amounts = _.pluck(byAgency, "amount");
 
     return {
       size: {
-        height: 300,
-        width: 400
+        height: 400
       },
       data: {
         columns: [
-          ["Amount per Agency"].concat(amountPerAgency)
+          ["Count per Agency"].concat(counts),
+          ["Amount per Agency"].concat(amounts)
         ],
-        type: "bar"
-      },
-      axis: {
-        x: {
-          type: "categorized",
-          categories: labels,
-          label: {
-            text: "Agency",
-            position: "outer-middle"
-          }
+        axes: {
+          "Count per Agency": "y",
+          "Amount per Agency": "y2"
         },
-        y: {
-          tick: {
-            format: function(t){
-              // var format =  d3.format(",")
-              return helper.truncate(t, 2);
-            }
-          },
-          label: {
-            text: "Amount in PHP",
-            position: "outer-center"
-          }
-        },
-        rotated: true
-      }
-    }
-  }
-)
-
-visualizations.create(
-  'SARO Count Distribution by Agency',
-  'saroCountAgency',
-  'saro',
-  function(ctrl){
-    var byAgency = ctrl.saros().byAgency.sort(function (a, b){
-      if ( a.count > b.count )
-        return -1;
-      if ( a.count < b.count )
-        return 1;
-      return 0;
-    })
-    var labels = byAgency.map(function (e){ return e.agency; });
-    var countPerAgency = byAgency.map(function (e){ return e.count; });
-
-    return {
-      size: {
-        height: 300,
-        width: 400
-      },
-      data: {
-        columns: [
-          ["Count per Agency"].concat(countPerAgency)
-        ],
-        type: "bar"
+        types: {
+          "Count per Agency": "bar",
+          "Amount per Agency": "bar"
+        }
       },
       axis: {
         x: {
@@ -288,6 +305,18 @@ visualizations.create(
         y: {
           label: {
             text: "Number of SAROs assigned",
+            position: "outer-center"
+          }
+        },
+        y2: {
+          show: true,
+          tick: {
+            format: function(t){
+              return helper.truncate(t, 2);
+            }
+          },
+          label: {
+            text: "Amount in PHP",
             position: "outer-center"
           }
         },
@@ -555,33 +584,28 @@ visualizations.create(
   'request',
   function(ctrl2){
     var ctrl = ctrl2.requests();
-    var data = _.chain(ctrl.byNamedDisaster())
-      .sortBy(function(d){
+    var byDisaster = _.sortBy(ctrl.byNamedDisaster(), function(d){
         return d.count * -1;
-      })
-      .take(5)
-      .value();
-    var counts = data.map(function(d){
-      return d.count / 1;
-    });
-    var cats = data.map(function(d){
-      if (d.name) {
-        return d.name;
-      } else {
-        return "unnamed";
-      }
-    });
+      });
+    var counts = _.pluck(byDisaster, "count");
+    var amounts = _.pluck(byDisaster, "amount");
+    var labels = _.pluck(byDisaster, "name");
     return {
       data: {
         columns: [
-          ["Number of Requests"].concat(counts)
+          ["Count per Disaster"].concat(counts),
+          ["Amount per Disaster"].concat(amounts)
         ],
+        axes: {
+          "Count per Disaster": "y",
+          "Amount per Disaster": "y2"
+        },
         type: "bar",
       },
       axis: {
         x: {
           type: "categorized",
-          categories: cats,
+          categories: labels,
           label: {
             text: "Disaster",
             position: "outer-middle"
@@ -593,63 +617,20 @@ visualizations.create(
             position: "outer-center"
           }
         },
-        rotated: true,
-      },
-    }
-  }
-)
-
-visualizations.create(
-  'Request Amounts per Unique Named Disaster',
-  'topDisastersAmount',
-  'request',
-  function(ctrl2){
-    var ctrl = ctrl2.requests();
-    var data = _.chain(ctrl.byNamedDisaster())
-      .sortBy(function(d){
-        return d.amount * -1;
-      })
-      .take(5)
-      .value();
-    var amounts = data.map(function(d){
-      return d.amount / 1;
-    });
-    var cats = data.map(function(d){
-      if (d.name) {
-        return d.name;
-      } else {
-        return "unnamed";
-      }
-    });
-    return {
-      data: {
-        columns: [
-          ["Number of Requests"].concat(amounts)
-        ],
-        type: "bar"
-      },
-      axis: {
-        x: {
-          type: "categorized",
-          categories: cats,
-          label: {
-            text: "Disaster",
-            position: "outer-middle"
-          }
-        },
-        y: {
-          label: {
-            text: "Amount in PHP",
-            position: "outer-center"
-          },
+        y2: {
+          show: true,
           tick: {
             format: function(t){
               return helper.truncate(t, 2);
             }
           },
+          label: {
+            text: "Amount in PHP",
+            position: "outer-center"
+          },
         },
-        rotated: true
-      }
+        rotated: true,
+      },
     }
   }
 )
