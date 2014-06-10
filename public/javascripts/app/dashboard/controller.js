@@ -87,12 +87,5 @@ dashboard.controller = function(){
       return v(self).type();
     })
     .value()
-  
-  // this is to make sure charts are ok
-  // (ideally) we need a callback when rendering is finished
-
-  // window.setTimeout(function(){
-  //   window.onresize();
-  // },1500);
 
 }
