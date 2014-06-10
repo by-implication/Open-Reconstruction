@@ -94,7 +94,7 @@ object Req extends ReqGen {
           WHEN count(DISTINCT initcap(scope)) = 1 THEN (array_agg(initcap(scope)))[1]::project_scope
           ELSE 'Others'
          END as scope,
-        disaster_name, 
+        trim(disaster_name), 
         SUM( CASE
           WHEN oparr_bohol.amount = '-' THEN 0
           ELSE oparr_bohol.amount::numeric(12,2)
