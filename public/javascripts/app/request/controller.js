@@ -1,5 +1,4 @@
 request.controller = function(){
-  var map;
   var self = this;
   this.app = new app.controller();
   this.signoffModal = new common.modal.controller();
@@ -173,17 +172,7 @@ request.controller = function(){
     degs.disaster.htmlDate(helper.toDateValue(newDate));
   }
 
-  var parseLocation = function(location){
-    var split = location.split(',').map(function(coord){return parseFloat(coord)});
-    if (_.contains(split, NaN) || (split.length % 2)) {
-      // display as plain string
-      return; 
-    } else {
-      this.coords(new L.LatLng(split[0], split[1]));
-      if(map) map.setView(this.coords(), 8);
-      L.marker(this.coords()).addTo(map);
-    }
-  }.bind(this)
+  
 
   this.curUserCanUpload = function(){
     // if requester, you can only upload if the assessor hasn't approved it
@@ -259,7 +248,11 @@ request.controller = function(){
       }.bind(this)();
     }
 
-    parseLocation(data.request.location);
+    this.location(data.request.location);
+    var split = self.location().split(',').map(function(coord){return parseFloat(coord)});
+    if(!_.contains(split, NaN) && !(split.length % 2)){
+      this.coords(new L.LatLng(split[0], split[1]));
+    }
 
   }.bind(this));
 
@@ -316,14 +309,21 @@ request.controller = function(){
   }.bind(this);
 
   this.initMap = function(elem, isInit){
-    if(!isInit){
-      map = L.map(elem, {scrollWheelZoom: false}).setView([11.3333, 123.0167], 5);
-      var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-      var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-      var osm = new L.TileLayer(osmUrl, {minZoom: 5, maxZoom: 19, attribution: osmAttrib}).addTo(map);   
+    if(!isInit && self.coords()){
 
-      var editableLayers = new L.FeatureGroup();
-      map.addLayer(editableLayers);
+      !function tryMap(){
+        if($(elem).height()){
+          var map = L.map(elem, {scrollWheelZoom: false}).setView([11.3333, 123.0167], 5);
+          var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+          var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+          var osm = new L.TileLayer(osmUrl, {minZoom: 5, maxZoom: 19, attribution: osmAttrib}).addTo(map);
+          map.setView(self.coords(), 8);
+          L.marker(self.coords()).addTo(map);
+        } else {
+          setTimeout(tryMap, 100);
+        }
+      }()
+
     }
   }
 
