@@ -159,9 +159,11 @@ request.view = function(ctrl){
                               return dt.id == ctrl.request().disaster.typeId;
                             })[0];
                             return m("h4", [
-                              disasterType.name + " "
-                              + ctrl.request().disaster.name + " in "
-                              + common.displayDate(ctrl.request().disaster.date)
+                              ctrl.request().disaster.name + " in "
+                              + common.displayDate(ctrl.request().disaster.date) + " ",
+                              m("span.label", [
+                                disasterType.name
+                              ])
                             ]
                           )},
                           function(){
