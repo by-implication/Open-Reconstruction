@@ -254,7 +254,7 @@ request.controller = function(){
           element.innerHTML = common.stagnation(this)
         }
         if(m.route().startsWith(routes.controllers.Requests.view(requestId).url)){
-          update.bind(this);
+          setTimeout(update.bind(this), 1000);
         }
       }.bind(this)();
     }
