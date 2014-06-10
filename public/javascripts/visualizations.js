@@ -93,6 +93,72 @@ visualizations.padMonths = function padMonths(a){
 // )
 
 visualizations.create(
+  "Project Count and Amount, Distributed by Agency",
+  "projectCountAmountAgency",
+  "project",
+  function(ctrl){
+    var byAgency = _.sortBy(ctrl.projects().byAgency(), "count");
+    var labels = _.pluck(byAgency, "name");
+    var counts = _.pluck(byAgency, "count");
+    var amounts = _.pluck(byAgency, "amount");
+
+    return {
+      size: {
+        height: 400
+      },
+      data: {
+        // x: "x",
+        columns: [
+          // ["x"].concat(labels),
+          ["Count per Agency"].concat(counts),
+          ["Amount per Agency"].concat(amounts)
+        ],
+        axes: {
+          "Count per Agency": "y",
+          "Amount per Agency": "y2"
+        },
+        types: {
+          "Count per Agency": "bar",
+          "Amount per Agency": "bar"
+        }
+      },
+      axis: {
+        y: {
+          label: {
+            text: "Number of Projects",
+            position: "outer-center"
+          }
+        },
+        x: {
+          type: 'categorized',
+          categories: labels,
+          label: {
+            text: "Agency",
+            position: "outer-middle"
+          }
+        },
+        y2: {
+          show: true,
+          tick: {
+            format: function(t){
+              return helper.truncate(t, 2);
+            }
+          },
+          label: {
+            text: "Amount in PHP",
+            position: "outer-center"
+          },
+          padding: {
+            bottom: 0
+          }
+        },
+        rotated: true
+      }
+    }
+  }
+)
+
+visualizations.create(
   "Project Type Distribution",
   "projectTypeDistribution",
   "project",
