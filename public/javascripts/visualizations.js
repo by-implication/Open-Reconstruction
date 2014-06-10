@@ -483,13 +483,9 @@ visualizations.create(
     var byType = _.sortBy(ctrl.requests().byProjectType(), function(t){
       return t.count * -1;
     });
-    // console.log(byType);
     var counts = _.pluck(byType, "count");
     var types = _.pluck(byType, "name");
     return {
-      // size: {
-      //   height: 400
-      // },
       data: {
         columns: [
           ["Number of Requests"].concat(counts)
