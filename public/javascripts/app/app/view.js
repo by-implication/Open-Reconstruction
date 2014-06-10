@@ -50,9 +50,14 @@ app.feedback = function(ctrl){
 app.footer = function(ctrl){
   return [
     m("footer", [
-       m(".row", [
-         m(".large-4.medium-4.columns", [
-           m(".row", [
+      m(".row.notice", [
+        m(".columns",
+          "The data presented may be incomplete, and is pending refinement by the relevant agencies."
+        )
+      ]),
+      m(".row", [
+        m(".large-4.medium-4.columns", [
+          m(".row", [
             m(".large-5.columns", [
               m("img[src='http://www.gov.ph/wp-content/themes/govph4/faith-assets/img/govph-seal-mono-footer.png']")
             ]),
