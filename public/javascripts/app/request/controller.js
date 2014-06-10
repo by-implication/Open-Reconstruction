@@ -302,6 +302,8 @@ request.controller = function(){
     }).then(function (r){
       if(r.success){
         ctrl.history().unshift(r.event);
+        alert('SARO assigned.');
+        this.saroModal.close();
       } else {
         alert("An error occurred.");
       }
