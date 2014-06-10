@@ -569,7 +569,7 @@ visualizations.create(
 )
 
 visualizations.create(
-  'Number of Requests per Unique Named Disaster',
+  'Request Count and Amount per Unique Named Disaster',
   'topDisasters',
   'request',
   function(ctrl2){
