@@ -1,3 +1,10 @@
+var callCount = 0;
+function tryResize(){
+  if(callCount++ == 9){
+    window.onresize();
+  }
+}
+
 visPanel.controller = function(){
   var self = this;
   this.size = m.prop({
@@ -52,7 +59,7 @@ visPanel.controller = function(){
         size: self.size()
       })
       elem.appendChild(chart.element);
-      window.onresize();
+      tryResize();
     }
   }
 }
