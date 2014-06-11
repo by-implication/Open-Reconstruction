@@ -20,8 +20,8 @@ userCreation.controller = function(){
   this.submit = function(e){
     e.preventDefault();
     bi.ajax(routes.controllers.Users.insert(this.slug()), {data: this.input}).then(function (r){
-      window.location = '/';
-    }, function (r){
+      m.route(routes.controllers.GovUnits.view(this.slug()).url);
+    }.bind(this), function (r){
       if(r.reason == "form error"){
         alert("User not created!");
       } else {
