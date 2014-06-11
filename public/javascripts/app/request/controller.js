@@ -180,7 +180,9 @@ request.controller = function(){
     // if assesor, can only upload if you haven't approved it
     (this.currentUserBelongsToAssessingAgency() && this.request().level === 1) ||
     // if OCD, can only upload if you haven't approved it
-    (this.app.isSuperAdmin() && this.request().level < 3)
+    (this.app.isSuperAdmin() && this.request().level < 3) ||
+    // implementer can upload
+    (this.currentUserBelongsToImplementingAgency())
   }
 
   this.currentUserBelongsToAssessingAgency = function(){
