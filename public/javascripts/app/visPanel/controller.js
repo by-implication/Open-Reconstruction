@@ -6,7 +6,7 @@ visPanel.onresizer = {
     if(this.scheduled) return;
     this.scheduled = true;
     setTimeout(function(){
-      this.scheduled = false;
+      visPanel.onresizer.scheduled = false;
       window.onresize();
     }, 500);
   }

@@ -81,7 +81,7 @@ request.view = function(ctrl){
             m(".section", [
               m("h3", "Reference a Project"),
               m("p", [
-                "Should be from the project management system of the implementing agency."
+                "Should be from the project monitoring system of the implementing agency."
               ]),
             ]),
             m("hr"),
@@ -138,7 +138,7 @@ request.view = function(ctrl){
                     m(".columns.medium-6", [
                       m("p", [
                         "Processing Time",
-                        m("h4#stagnation-" + ctrl.id + ".value"), // actual content c/o recursive update function in controller
+                        m("h4#stagnation-" + ctrl.id + ".value", ctrl.request().stagnation), // actual content c/o recursive update function in controller
                       ]),
                       m("p", [
                         "Amount",
@@ -408,7 +408,7 @@ request.view = function(ctrl){
                     "No SARO has been referenced yet."
                   ]),
                   m("h4", ((ctrl.request().level > 4 && ctrl.currentUserBelongsToImplementingAgency()) ? [
-                    "Project Management",
+                    "Project Monitoring",
                     m("button.tiny.right", {type: "button", onclick: ctrl.addProjectModal.show.bind(ctrl.addProjectModal)}, [
                       "Reference a Project"
                     ]),

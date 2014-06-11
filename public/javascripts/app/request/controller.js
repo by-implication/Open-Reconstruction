@@ -66,13 +66,11 @@ request.controller = function(){
         amount: self.addProjectModal.project.amount()
       }
     }).then(function (r){
-      if(r.success){
-        alert('Submitted!')
-        self.history().unshift(r.event);
-      } else {
-        alert("Your input was invalid.");
-      }
-    }.bind(this));
+      alert('Submitted!')
+      self.history().unshift(r.event);
+    }, function (r){
+      alert("Your input was invalid.");
+    });
   }
 
   this.unassignedAgency = {id: 0};
@@ -102,15 +100,14 @@ request.controller = function(){
       bi.ajax(routes.controllers.Requests.editField(ctrl.id, field), {
         data: {input: this.input}
       }).then(function (r){
-        if(r.success){
-          ctrl.request()[field] = this.input();
-          ctrl.history().unshift(r.event);
-          processResult(r);
-        } else {
-          alert("Your input was invalid.");
-        }
+        ctrl.request()[field] = this.input();
+        ctrl.history().unshift(r.event);
+        processResult(r);
         c();
-      }.bind(this));
+      }.bind(this), function (r){
+        alert("Your input was invalid.");
+        c();
+      });
     }
   }
 
@@ -238,6 +235,7 @@ request.controller = function(){
     this.canEdit(data.canEdit);
     request.disasterTypes(data.disasterTypes);
 
+    this.request().stagnation = common.stagnation(this);
     if(data.request.level < 4 && !data.request.isRejected){
       !function update(){
         var element = document.getElementById("stagnation-" + this.id);
@@ -263,17 +261,15 @@ request.controller = function(){
     bi.ajax(routes.controllers.Requests.signoff(this.id), {
       data: {password: this.signoffModal.password}
     }).then(function (r){
-      if(r.success){
-        this.canSignoff(false);
-        this.hasSignedoff(true);
-        alert('Signoff successful!');
-        this.signoffModal.close();
-        this.history().unshift(r.event);
-        this.request().level++;
-      } else {
-        alert("Failed to signoff: " + r.messages.password);
-      }
-    }.bind(this));
+      this.canSignoff(false);
+      this.hasSignedoff(true);
+      alert('Signoff successful!');
+      this.signoffModal.close();
+      this.history().unshift(r.event);
+      this.request().level++;
+    }.bind(this), function (r){
+      alert("Failed to signoff: " + r.messages.password);
+    });
   }.bind(this);
 
   this.rejectModal.reject = function(e){
@@ -281,20 +277,18 @@ request.controller = function(){
     bi.ajax(routes.controllers.Requests.reject(this.id), {
       data: {password: this.rejectModal.password, content: this.rejectModal.content}
     }).then(function (r){
-      if(r.success){
-        this.canSignoff(false);
-        this.request().isRejected = true;
-        alert('Request rejected.');
-        this.rejectModal.close();
-        this.history().unshift(r.event);
-      } else {
-        var errors = [];
-        for(var field in r.messages){
-          errors.push([field, r.messages[field]]);
-        }
-        alert("Failed to reject:\n" + errors.join("\n"));
+      this.canSignoff(false);
+      this.request().isRejected = true;
+      alert('Request rejected.');
+      this.rejectModal.close();
+      this.history().unshift(r.event);
+    }.bind(this), function (r){
+      var errors = [];
+      for(var field in r.messages){
+        errors.push([field, r.messages[field]]);
       }
-    }.bind(this));
+      alert("Failed to reject:\n" + errors.join("\n"));
+    });
   }.bind(this);
 
   this.saroModal.submit = function(e){
@@ -302,14 +296,12 @@ request.controller = function(){
     bi.ajax(routes.controllers.Requests.assignSaro(ctrl.id), {
       data: {input: this.saroModal.content}
     }).then(function (r){
-      if(r.success){
-        ctrl.history().unshift(r.event);
-        alert('SARO assigned.');
-        this.saroModal.close();
-      } else {
-        alert("An error occurred.");
-      }
-    }.bind(this));
+      ctrl.history().unshift(r.event);
+      alert('SARO assigned.');
+      this.saroModal.close();
+    }.bind(this), function (r){
+      alert("An error occurred.");
+    });
   }.bind(this);
 
   this.initMap = function(elem, isInit){
