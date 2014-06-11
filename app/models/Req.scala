@@ -411,8 +411,6 @@ case class Req(
 
   def projects: Seq[Project] = Req.projects(id)
 
-  def insertJson = Json.obj("id" -> id.get)
-
   def indexJson(implicit user: User) = Json.obj(
     "id" -> id.get,
     "description" -> description,

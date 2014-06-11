@@ -99,7 +99,7 @@ object Requests extends Controller with Secured {
           Event.newRequest().create().map { _ =>
             Event.disaster().create().map { _ =>
               Checkpoint.push(user).map { _ =>
-  				      Rest.success("id" -> r.insertJson)
+  				      Rest.success("id" -> Json.toJson(r.id.get))
               }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())
           }.getOrElse(Rest.serverError())

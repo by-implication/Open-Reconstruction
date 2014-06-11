@@ -100,8 +100,8 @@ requestCreation.controller = function(){
       var newDate = (new Date(oldDate)).getTime();
       this.input.disasterDate(newDate);
 
-      bi.ajax(routes.controllers.Requests.insert(), {data: this.input}).then(function(r){
-        window.location = '/';
+      bi.ajax(routes.controllers.Requests.insert(), {data: this.input}).then(function (r){
+        m.route(routes.controllers.Requests.view(r.id).url);
       }, function (r){
         if(r.reason == "form error"){
           var msg = "Request not created because of the following:";
