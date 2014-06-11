@@ -238,6 +238,7 @@ request.controller = function(){
     this.canEdit(data.canEdit);
     request.disasterTypes(data.disasterTypes);
 
+    this.request().stagnation = common.stagnation(this);
     if(data.request.level < 4 && !data.request.isRejected){
       !function update(){
         var element = document.getElementById("stagnation-" + this.id);

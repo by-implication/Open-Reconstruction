@@ -138,7 +138,7 @@ request.view = function(ctrl){
                     m(".columns.medium-6", [
                       m("p", [
                         "Processing Time",
-                        m("h4#stagnation-" + ctrl.id + ".value"), // actual content c/o recursive update function in controller
+                        m("h4#stagnation-" + ctrl.id + ".value", ctrl.request().stagnation), // actual content c/o recursive update function in controller
                       ]),
                       m("p", [
                         "Amount",
