@@ -101,22 +101,20 @@ requestCreation.controller = function(){
       this.input.disasterDate(newDate);
 
       bi.ajax(routes.controllers.Requests.insert(), {data: this.input}).then(function(r){
-        if(r.success){
-          window.location = '/';
-        } else {
-          if(r.reason == "form error"){
-            var msg = "Request not created because of the following:";
-            for(var field in r.messages){
-              var message = r.messages[field];
-              msg += "\n" + field + " - " + message;
-            }
-            alert(msg);
-          } else {
-            alert(r.reason);
+        window.location = '/';
+      }, function (r){
+        if(r.reason == "form error"){
+          var msg = "Request not created because of the following:";
+          for(var field in r.messages){
+            var message = r.messages[field];
+            msg += "\n" + field + " - " + message;
           }
-          this.submitButtonDisabled(false);
+          alert(msg);
+        } else {
+          alert(r.reason);
         }
-      }.bind(this));
+        this.submitButtonDisabled(false);
+      });
       
     } else {
       alert('To avoid double-budgeting, please make sure to request for assistance only once!');

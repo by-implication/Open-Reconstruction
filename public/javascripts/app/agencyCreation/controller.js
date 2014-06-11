@@ -6,11 +6,9 @@ agencyCreation.controller = function(){
   this.roles = m.prop([{id: 0, name: 'Loading...'}]);
 
   bi.ajax(routes.controllers.GovUnits.createAgencyMeta()).then(function (r){
-    if(r.success){
-      self.roles(r.roles);
-    } else {
-      alert(r.reason);
-    }
+    self.roles(r.roles);
+  }, function (r){
+    alert(r.reason);
   });
 
   this.input = {
@@ -22,9 +20,9 @@ agencyCreation.controller = function(){
   this.submit = function(e){
     e.preventDefault();
     bi.ajax(routes.controllers.GovUnits.insertAgency(), {data: self.input}).then(function (r){
-      if(r.success){
-        window.location = '/';
-      } else if(r.reason == "form error"){
+      window.location = '/';
+    }, function (r){      
+      if(r.reason == "form error"){
         alert("Agency not created!");
       } else {
         alert(r.reason);

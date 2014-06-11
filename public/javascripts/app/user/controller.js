@@ -13,14 +13,12 @@ user.controller = function(){
   this.sortBy = m.prop("id");
 
   bi.ajax(routes.controllers.Users.viewMeta(self.id)).then(function (r){
-    if(r.success){
-      this.user(r.user)
-      this.requestList(r.requests);
-      this.filteredList = function(){
-        return _.chain(this.requestList);
-      }
-    } else {
-      alert(r.reason);
+    this.user(r.user)
+    this.requestList(r.requests);
+    this.filteredList = function(){
+      return _.chain(this.requestList);
     }
-  }.bind(this))
+  }.bind(this), function (r){    
+    alert(r.reason);
+  })
 }
