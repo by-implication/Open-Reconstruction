@@ -286,7 +286,6 @@ object Requests extends Controller with Secured {
     case "saroNo" => {
       mapping(
         "input" -> nonEmptyText.verifying("Unauthorized", _ => {
-          play.Logger.info("Checkingg: " + user.isDBM)
           user.isDBM
         })
       )(saroNo => req.copy(saroNo = Some(saroNo))
