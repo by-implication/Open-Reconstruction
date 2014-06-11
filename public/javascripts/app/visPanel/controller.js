@@ -50,10 +50,7 @@ visPanel.controller = function(){
       }
 
       if (self.isFullView()){
-        self.size({
-          height: 300,
-          width: undefined
-        });
+        self.size().width = undefined;
         if(!_.isUndefined(chartSettings.axis.x) 
           && !_.isUndefined(chartSettings.axis.x.tick)
           && !_.isUndefined(chartSettings.axis.x.tick.culling)){
