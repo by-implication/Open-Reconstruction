@@ -16,12 +16,10 @@ admin.controller = function(){
   }
 
   bi.ajax(routes.controllers.GovUnits.listAgencies()).then(function (r){
-    if(r.success){
-      this.agencyList(r.agencies);
-    } else {
-      alert(r.reason);
-    }
-  }.bind(this));
+    this.agencyList(r.agencies);
+  }.bind(this), function (r){
+    alert(r.reason);
+  });
 
   bi.ajax(routes.controllers.GovUnits.listLgus()).then(function (r){
     var regions = [];
@@ -44,13 +42,12 @@ admin.controller = function(){
         bi.ajax(routes.controllers.Admin.updateType(type, t.id), {
           data: {name: this.input}
         }).then(function (r){
-          if(r.success){
-            this.value(r.type.name);
-          } else {
-            alert("Your input was invalid.");
-          }
+          this.value(r.type.name);
           c();
-        }.bind(this));
+        }.bind(this), function (r){
+          alert("Your input was invalid.");
+          c();
+        });
       }, null, {value: m.prop(t.name)});
       return deg;
     }

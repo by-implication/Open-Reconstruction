@@ -106,7 +106,8 @@ visualizations.create(
 
     return {
       size: {
-        height: 400
+        height: 400,
+        fullViewHeight: 600
       },
       data: {
         columns: [
@@ -277,7 +278,8 @@ visualizations.create(
 
     return {
       size: {
-        height: 400
+        height: 400,
+        fullViewHeight: 600
       },
       data: {
         columns: [
