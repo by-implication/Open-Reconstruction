@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 17.0.2, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [
+	<!ENTITY ns_extend "http://ns.adobe.com/Extensibility/1.0/">
+	<!ENTITY ns_ai "http://ns.adobe.com/AdobeIllustrator/10.0/">
+	<!ENTITY ns_graphs "http://ns.adobe.com/Graphs/1.0/">
+	<!ENTITY ns_vars "http://ns.adobe.com/Variables/1.0/">
+	<!ENTITY ns_imrep "http://ns.adobe.com/ImageReplacement/1.0/">
+	<!ENTITY ns_sfw "http://ns.adobe.com/SaveForWeb/1.0/">
+	<!ENTITY ns_custom "http://ns.adobe.com/GenericCustomNamespace/1.0/">
+	<!ENTITY ns_adobe_xpath "http://ns.adobe.com/XPath/1.0/">
+]>
+<svg version="1.1" id="Layer_1" xmlns:x="&ns_extend;" xmlns:i="&ns_ai;" xmlns:graph="&ns_graphs;"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100px" height="107.875px"
+	 viewBox="0 0 100 107.875" enable-background="new 0 0 100 107.875" xml:space="preserve">
+<metadata>
+	<sfw  xmlns="&ns_sfw;">
+		<slices></slices>
+		<sliceSourceBounds  x="430.27" y="-333.875" width="99.504" height="103.75" bottomLeftOrigin="true"></sliceSourceBounds>
+	</sfw>
+</metadata>
+<path fill="#F1F1F2" d="M94.588,24.297L54.991,3.095C53.665,2.383,51.896,2,49.993,2c-1.89,0-3.657,0.383-4.985,1.095L5.412,24.297
+	c-2.945,1.576-5.164,5.273-5.164,8.615v41.925c0,3.342,2.219,7.04,5.164,8.615l39.596,21.188c2.753,1.479,7.231,1.479,9.983,0
+	l39.596-21.188c2.945-1.575,5.164-5.273,5.164-8.615V32.913C99.752,29.571,97.533,25.873,94.588,24.297z M74.442,44.062v10.067
+	L52.91,65.675V55.279l0.369-0.11c0.7-0.205,1.247-0.424,1.712-0.671L74.442,44.062z M47.747,8.232
+	c0.534-0.287,1.383-0.424,2.246-0.424v0.479v0.521V48.76v0.548v0.507c-0.89,0-1.698-0.164-2.232-0.452L9.37,28.776L47.747,8.232z
+	 M47.09,55.265v10.409L24.792,53.718V43.651l20.216,10.847c0.465,0.247,1.027,0.466,1.712,0.657L47.09,55.265z M6.069,33.611
+	l12.902,6.916v10.067L6.069,43.678V33.611z M6.069,50.28L28.106,62.1v10.697L6.069,60.977V50.28z M18.971,84.11L8.164,78.316
+	c-1.055-0.562-2.095-2.288-2.095-3.479v-7.245l12.902,6.916V84.11z M47.09,99.162l-22.298-11.93v-9.601l20.216,10.833
+	c0.465,0.247,1.027,0.466,1.712,0.671l0.37,0.11V99.162z M49.993,83.795c-0.89,0-1.698-0.164-2.232-0.452L33.927,75.92V65.223
+	l11.081,5.944c2.739,1.465,7.244,1.465,9.983,0l10.781-5.78v10.697l-13.533,7.259C51.705,83.63,50.897,83.795,49.993,83.795z
+	 M75.25,87.205L52.91,99.162v-9.916l0.369-0.11c0.7-0.205,1.247-0.411,1.712-0.671L75.25,77.604V87.205z M93.931,74.838
+	c0,1.191-1.041,2.917-2.096,3.479l-10.764,5.766v-9.601l12.86-6.889V74.838z M93.931,60.977L71.593,72.961V62.264L93.931,50.28
+	V60.977z M93.931,43.678l-13.668,7.327V40.939l13.668-7.328V43.678z"/>
+</svg>

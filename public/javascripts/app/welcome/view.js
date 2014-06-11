@@ -3,7 +3,8 @@ welcome.view = function(ctrl){
     m("div#welcome", [
       m("section.banner", [
         m(".row", [
-          m(".columns.medium-8", [
+          m(".columns.medium-11", [
+            m("img#logo", {src:"/assets/images/logo.svg"}),
             m("h1", "Open Reconstruction"),
             m("p", [
               "Tracking post-disaster reconstruction spending. Rebuilding a better Philippines, for all to see."
