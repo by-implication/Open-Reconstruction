@@ -302,14 +302,18 @@ object Requests extends Controller with Secured {
   def assignSaro(id: Int) = UserAction(){ implicit user => implicit request =>
     if(!user.isAnon){
       Req.findById(id).map { implicit req =>
-        editForm("saroNo").bindFromRequest.fold(
-          Rest.formError(_),
-          _.save().map { implicit req =>
-            (Event.assignSaro()).create().map { e =>
-              Rest.success("event" -> e.listJson)
+        if (req.implementingAgencyId.isDefined){
+          editForm("saroNo").bindFromRequest.fold(
+            Rest.formError(_),
+            _.save().map { implicit req =>
+              (Event.assignSaro()).create().map { e =>
+                Rest.success("event" -> e.listJson)
+              }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())
-          }.getOrElse(Rest.serverError())
-        )
+          )
+        } else {
+          Rest.serverError()
+        }
       }.getOrElse(Rest.notFound())
     } else Rest.unauthorized()
   }
