@@ -1,6 +1,10 @@
 package recon.models
 
 import anorm._
+import recon.support._
+import play.api.libs.json.Json
+import play.api.libs.json.Json.JsValueWrapper
+import play.api.libs.json.JsValue
 
 trait EntityCompanion[T] {
   def insert(o: T): Option[T]
@@ -12,6 +16,9 @@ trait Entity[T] { self: T =>
   
   def id: Pk[Int]
   def companion: EntityCompanion[T]
+
+  def insertSeq(): Seq[(String, JsValueWrapper)] = Seq("id" -> id)
+  def insertJson(): JsValue = Json.obj(insertSeq:_*)
 
   /** Inserts the record into the database
     */

@@ -3,6 +3,7 @@ package controllers
 import java.io.File
 import play.api._
 import play.api.libs.Files.TemporaryFile
+import play.api.libs.json.Json
 import play.api.mvc._
 import recon.models._
 import recon.support._
@@ -18,7 +19,7 @@ object Attachments extends Controller with Secured {
             a.file.getParentFile().mkdirs()
             upload.ref.moveTo(a.file, true)
             if (a.isImage) ImageHandling.generateThumbnail(a)
-            if(req.addToAttachments(a.id.get)){
+            if(req.addToAttachments(a.id)){
               Event.attachment(a).create().map { e => Rest.success(
                 "attachment" -> Attachment.insertJson(a, user),
                 "event" -> e.listJson

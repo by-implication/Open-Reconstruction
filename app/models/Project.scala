@@ -29,7 +29,7 @@ case class Project(
   lazy val disasterName: Option[String] = req.disasterName
 
   def requestViewJson: JsObject = Json.obj(
-    "id" -> id.get,
+    "id" -> id,
     "name" -> name,
     "amount" -> amount,
     "scope" -> scope.toString

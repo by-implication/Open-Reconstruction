@@ -60,7 +60,7 @@ object Users extends Controller with Secured {
 
       createForm.bindFromRequest.fold(
         Rest.formError(_),
-        _.create().map(u => Rest.success("id" -> Json.toJson(u.id.get)))
+        _.create().map(u => Rest.success(u.insertSeq:_*))
         .getOrElse(Rest.serverError())
       )
 

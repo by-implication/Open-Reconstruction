@@ -36,15 +36,15 @@ object Requests extends Controller with Secured {
         "isInvolved" -> Json.toJson(user.isInvolvedWith(req)),
         "hasSignedoff" -> Json.toJson(user.hasSignedoff(req)),
         "canSignoff" -> Json.toJson(user.canSignoff(req)),
-        "author" -> User.findById(req.authorId).map(_.infoJson).getOrElse(JsNull),
+        "author" -> User.findById(req.authorId).map(_.infoJson),
         "assessingAgencies" -> Json.toJson(GovUnit.withPermission(Permission.VALIDATE_REQUESTS).map(_.toJson)),
         "implementingAgencies" -> Json.toJson(GovUnit.withPermission(Permission.IMPLEMENT_REQUESTS).map(_.toJson)),
         "assessingAgency" -> req.assessingAgencyId.map { aid =>
-          GovUnit.findById(aid).map(_.toJson).getOrElse(JsNull)
-        }.getOrElse(JsNull),
+          GovUnit.findById(aid).map(_.toJson)
+        },
         "implementingAgency" -> req.implementingAgencyId.map { aid =>
-          GovUnit.findById(aid).map(_.toJson).getOrElse(JsNull)
-        }.getOrElse(JsNull),
+          GovUnit.findById(aid).map(_.toJson)
+        },
         "attachments" -> {
           val (imgs, docs) = req.attachments.partition(_._1.isImage)
           val tf = (Attachment.insertJson _).tupled
@@ -96,7 +96,7 @@ object Requests extends Controller with Secured {
           Event.newRequest().create().map { _ =>
             Event.disaster().create().map { _ =>
               Checkpoint.push(user).map { _ =>
-  				      Rest.success("id" -> Json.toJson(r.id.get))
+  				      Rest.success(r.insertSeq:_*)
               }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())
           }.getOrElse(Rest.serverError())

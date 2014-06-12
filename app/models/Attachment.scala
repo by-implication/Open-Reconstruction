@@ -12,11 +12,11 @@ import recon.support._
 object Attachment extends AttachmentGen {
 
   def insertJson(attachment: Attachment, uploader: User) = Json.obj(
-    "id" -> attachment.id.get,
+    "id" -> attachment.id,
     "filename" -> attachment.filename,
     "dateUploaded" -> attachment.dateUploaded,
     "uploader" -> Json.obj(
-      "id" -> uploader.id.get,
+      "id" -> uploader.id,
       "name" -> uploader.name
     )
   )
@@ -37,7 +37,7 @@ case class Attachment(
 
   lazy val uploader = User.findById(uploaderId).get
 
-  def insertJson = Attachment.insertJson(this, uploader)
+  override def insertJson = Attachment.insertJson(this, uploader)
 
   lazy val req = Req.findById(reqId).get
 

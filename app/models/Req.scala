@@ -200,7 +200,7 @@ object Req extends ReqGen {
       case "mine" => {
         if (!user.isAnon){
           table = "reqs LEFT JOIN users ON author_id = user_id"
-          addWhereClause("gov_unit_id = " + user.govUnit.id.get)
+          addWhereClause("gov_unit_id = " + user.govUnit.id)
         }
       }
       case "approval" => {
@@ -347,7 +347,7 @@ case class Req(
   def projects: Seq[Project] = Req.projects(id)
 
   def indexJson(implicit user: User) = Json.obj(
-    "id" -> id.get,
+    "id" -> id,
     "description" -> description,
     "projectTypeId" -> projectTypeId,
     "age" -> age(),
@@ -357,7 +357,7 @@ case class Req(
       "id" -> authorId,
       "govUnit" -> Json.obj(
         "name" -> author.govUnit.name,
-        "id" -> author.govUnit.id.get
+        "id" -> author.govUnit.id
       )
     ),
     "assessingAgencyId" -> assessingAgencyId,
@@ -366,7 +366,7 @@ case class Req(
   )
 
   def viewJson = Json.obj(
-    "id" -> id.get,
+    "id" -> id,
     "description" -> description,
     "projectType" -> projectType.name,
     "amount" -> amount,
