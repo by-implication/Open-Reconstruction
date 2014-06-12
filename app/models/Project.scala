@@ -28,6 +28,7 @@ object Project extends ProjectGen {
       FROM oparr_bohol
       LEFT JOIN reqs on req_description = group_id
       LEFT JOIN project_types on initcap(project_type_name) = initcap(project_type)
+      WHERE oparr_bohol.psgc = reqs.req_location
     """).execute()
     play.Logger.info("*   OPARR-Bohol projects assigned.")
 
