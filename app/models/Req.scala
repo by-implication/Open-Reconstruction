@@ -262,9 +262,9 @@ object Req extends ReqGen {
     }
   }
 
-  def authoredBy(id: Int, offset: Int, limit: Int) = DB.withConnection { implicit c =>
-    SQL("""
-      SELECT * FROM reqs WHERE author_id = {id} 
+  def authoredBy(id: Int, offset: Int, limit: Int): (Seq[Req], Long) = DB.withConnection { implicit c =>
+    val sqlResult = SQL("""
+      SELECT *, count(*) OVER() FROM reqs WHERE author_id = {id} 
       ORDER BY req_date DESC
       OFFSET {offset}
       LIMIT {limit}
@@ -272,7 +272,12 @@ object Req extends ReqGen {
     'id -> id,
     'offset -> offset,
     'limit -> limit
-    ).list(simple)
+    )
+
+    val parsed = sqlResult.list(simple)
+    val counted:Long = sqlResult.list(get[Long]("count")).headOption.getOrElse(0)
+
+    (parsed, counted)
   }
 
   def projects(id: Int): Seq[Project] = DB.withConnection { implicit c =>
