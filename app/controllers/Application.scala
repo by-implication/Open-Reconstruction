@@ -14,7 +14,6 @@ object Application extends Controller {
   def index1(x: Int) = index
   def index2(x: Int, y: Int) = index
 
-  def dashboard = index
   def welcome = index
   def saro = index
   def admin = index
@@ -26,10 +25,6 @@ object Application extends Controller {
 
   def process() = Action {
     Ok(views.html.js.process()).withHeaders("Content-Type" -> "text/javascript")
-  }
-
-  def dashboardMeta() = Action {
-    Ok(Req.dashboardData)
   }
 
   def populate() = Action { implicit request =>
@@ -45,11 +40,9 @@ object Application extends Controller {
       routes.javascript.Application.admin,
       routes.javascript.Application.adminLgus,
       routes.javascript.Application.adminAgencies,
-      routes.javascript.Application.dashboard,
       routes.javascript.Application.index,
       routes.javascript.Application.saro,
       routes.javascript.Application.welcome,
-      routes.javascript.Application.dashboardMeta,
       routes.javascript.Application.process,
       Users.authenticate,
       Users.create,
@@ -91,8 +84,10 @@ object Application extends Controller {
       Requests.viewActivity,
       Requests.viewReferences,
       Requests.viewMeta,
-      Visualizations.view,
-      Visualizations.getData,
+      Viz.index,
+      Viz.indexMeta,
+      Viz.view,
+      Viz.getData,
       GovUnits.edit,
       GovUnits.editMeta,
       GovUnits.update,

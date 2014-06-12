@@ -132,9 +132,9 @@ app.navbar = function(ctrl){
         // ]),
         m("li", [
           m("a", {
-            href: routes.controllers.Application.dashboard().url,
+            href: routes.controllers.Viz.index().url,
             config: m.route,
-            className: (routes.controllers.Application.dashboard().url === m.route() ? "active" : "")
+            className: (routes.controllers.Viz.index().url === m.route() ? "active" : "")
           }, "Visualizations")
         ]),
         // m("li", [

@@ -95,7 +95,7 @@ welcome.view = function(ctrl){
           ]),
           m("li", [
             m("a", {
-              href: routes.controllers.Application.dashboard().url,
+              href: routes.controllers.Viz.index().url,
               config:m.route
             }, [
               m("img", {src:"/assets/images/landing/3-budget releases.svg"}),
@@ -132,7 +132,7 @@ welcome.view = function(ctrl){
           ]),
           m("li", [
             m("a", {
-              href: routes.controllers.Application.dashboard().url,
+              href: routes.controllers.Viz.index().url,
               config:m.route
             }, [
               m("img", {src:"/assets/images/landing/3-budget releases.svg"}),

@@ -63,7 +63,7 @@ welcome.controller = function(){
     return r;
   }
 
-  bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
+  bi.ajax(routes.controllers.Viz.indexMeta()).then(function (r){
     self.mostCommonDisasterType(r.mostCommonDisasterType);
     self.mostCommonProjectType(r.mostCommonProjectType);
     self.byLevel(r.byLevel);
@@ -71,13 +71,13 @@ welcome.controller = function(){
     self.byDisasterType(r.byDisasterType);
   });
 
-  bi.ajax(routes.controllers.Visualizations.getData("landing")).then(function (r){
+  bi.ajax(routes.controllers.Viz.getData("landing")).then(function (r){
     self.vizData(r.data);
   });
 
-  this.yolandaSaroVis = _.extend({}, visualizations.library["saroHistory"](self));
+  this.yolandaSaroVis = _.extend({}, viz.library["saroHistory"](self));
   this.yolandaSaroVis.isFullView(true);
-  bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
+  bi.ajax(routes.controllers.Viz.getData("DBMBureauG")).then(function(r){
     self.saros(r.data);
   })
 

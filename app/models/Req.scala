@@ -156,7 +156,7 @@ object Req extends ReqGen {
     )
   }
 
-  def dashboardData = {
+  def vizData = {
     Json.obj(
       "mostCommonDisasterType" -> mostCommonDisasterType,
       "mostCommonProjectType" -> mostCommonProjectType,

@@ -1,4 +1,4 @@
-dashboard.controller = function(){
+vizIndex.controller = function(){
   var self = this;
   this.app = new app.controller();
 
@@ -17,7 +17,7 @@ dashboard.controller = function(){
   this.requests().byNamedDisaster = m.prop();
 
   var projectTabs = function(){
-    return _.chain(visualizations.library)
+    return _.chain(viz.library)
       .groupBy(function(v){
         return v(self).type();
       })
@@ -26,7 +26,7 @@ dashboard.controller = function(){
   }
 
   this.projectVisTabs = new common.stickyTabs.controller();
-  this.projectVisTabs.tabs(_.chain(visualizations.library)
+  this.projectVisTabs.tabs(_.chain(viz.library)
     .groupBy(function(v){
       return v(self).type();
     })
@@ -40,18 +40,18 @@ dashboard.controller = function(){
     .value()
   );
 
-  bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
+  bi.ajax(routes.controllers.Viz.indexMeta()).then(function (r){
     self.mostCommonDisasterType(r.mostCommonDisasterType);
     self.mostCommonProjectType(r.mostCommonProjectType);
 
     self.requests().byLevel(r.byLevel);
-    self.requests().byMonth(visualizations.padMonths(r.byMonth));
+    self.requests().byMonth(viz.padMonths(r.byMonth));
     self.requests().byDisasterType(r.byDisasterType);
     self.requests().byProjectType(r.byProjectType);
     self.requests().byNamedDisaster(r.byNamedDisaster);
   });
 
-  bi.ajax(routes.controllers.Visualizations.getData("EPLC")).then(function (r){
+  bi.ajax(routes.controllers.Viz.getData("EPLC")).then(function (r){
     self.projects(r.data);
     self.projects().byAgency = m.prop([{count: 46, amount: 53501000.00, name: "NIA"},
       {count: 15, amount: 846931858.80, name: "DOTC - PPA"},
@@ -78,11 +78,11 @@ dashboard.controller = function(){
     ]);
   });
 
-  bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
+  bi.ajax(routes.controllers.Viz.getData("DBMBureauG")).then(function(r){
     self.saros(r.data);
   })
 
-  this.visDict = _.chain(visualizations.library)
+  this.visDict = _.chain(viz.library)
     .groupBy(function(v){
       return v(self).type();
     })

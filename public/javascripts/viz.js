@@ -1,9 +1,9 @@
-var visualizations = {
+var viz = {
   library: {}
 };
 
-visualizations.create = function(title, id, type, chartSettingsCreator){
-  visualizations.library[id] = function(ctrl){
+viz.create = function(title, id, type, chartSettingsCreator){
+  viz.library[id] = function(ctrl){
     var visCtrl = new visPanel.controller();
     visCtrl.title(title);
     visCtrl.link(id);
@@ -13,7 +13,7 @@ visualizations.create = function(title, id, type, chartSettingsCreator){
   }
 }
 
-visualizations.nextYearMonth = function nextYearMonth(yearMonth){
+viz.nextYearMonth = function nextYearMonth(yearMonth){
   var ym = yearMonth.split("-");
   var y = parseInt(ym[0]);
   var m = parseInt(ym[1]);
@@ -25,7 +25,7 @@ visualizations.nextYearMonth = function nextYearMonth(yearMonth){
   return y + "-" + (m < 10 ? "0" + m : m);
 }
 
-visualizations.padMonths = function padMonths(a){
+viz.padMonths = function padMonths(a){
   a = a.sort(function (a, b){
     if ( a.yearMonth < b.yearMonth )
       return -1;
@@ -34,7 +34,7 @@ visualizations.padMonths = function padMonths(a){
     return 0;
   });
   var r = [];
-  for(var ym = a[0] && a[0].yearMonth; a.length; ym = visualizations.nextYearMonth(ym)){
+  for(var ym = a[0] && a[0].yearMonth; a.length; ym = viz.nextYearMonth(ym)){
     var nextElem = {yearMonth: ym, amount: 0, count: 0};
     while(a[0] && a[0].yearMonth == ym){
       nextElem = a.shift();
@@ -44,7 +44,7 @@ visualizations.padMonths = function padMonths(a){
   return r;
 }
 
-// visualizations.create(
+// viz.create(
 //   "Average Residence Time Per Project Stage",
 //   "projectResidenceTime",
 //   "project",
@@ -92,7 +92,7 @@ visualizations.padMonths = function padMonths(a){
 //   }
 // )
 
-visualizations.create(
+viz.create(
   "Project Count and Amount, Distributed by Agency",
   "projectCountAmountAgency",
   "project",
@@ -159,7 +159,7 @@ visualizations.create(
   }
 )
 
-visualizations.create(
+viz.create(
   "Project Type Distribution",
   "projectTypeDistribution",
   "project",
@@ -197,13 +197,13 @@ visualizations.create(
   }
 )
 
-visualizations.create(
+viz.create(
   'Project Count and Amount History',
   'projectCountHistory',
   'project',
   function(ctrl){
 
-    var byMonth = visualizations.padMonths(ctrl.projects().byMonth);
+    var byMonth = viz.padMonths(ctrl.projects().byMonth);
     var labels = byMonth.map(function (e){ return new Date(e.yearMonth); });
     var countPerMonth = byMonth.map(function (e){ return e.count; });
     var amountPerMonth = byMonth.map(function (e){ return e.amount * 1000; });
@@ -264,7 +264,7 @@ visualizations.create(
   }
 )
 
-visualizations.create(
+viz.create(
   'SARO Count and Amount Distribution by Agency',
   'saroCountAmountAgency',
   'saro',
@@ -328,13 +328,13 @@ visualizations.create(
   }
 )
 
-visualizations.create(
+viz.create(
   'SARO Count and Amount History',
   'saroHistory',
   'saro',
   function(ctrl){
 
-    var byMonth = visualizations.padMonths(ctrl.saros().byMonth)
+    var byMonth = viz.padMonths(ctrl.saros().byMonth)
 
     var labels = byMonth
       .map(function(s){
@@ -406,7 +406,7 @@ visualizations.create(
   }
 )
 
-visualizations.create(
+viz.create(
   'Request Count and Amount History',
   'requestHistory',
   'request',
@@ -477,7 +477,7 @@ visualizations.create(
   }
 )
 
-visualizations.create(
+viz.create(
   'Request Type Distribution',
   'projectTypes',
   'request',
@@ -515,7 +515,7 @@ visualizations.create(
   }
 )
 
-visualizations.create(
+viz.create(
   'Request History by Disaster Type', 
   'disasterHistory', 
   'request',
@@ -526,13 +526,13 @@ visualizations.create(
         return p.disasterType;
       })
       .map(function(subData, key){
-        return [key].concat(visualizations.padMonths(subData).map(function(d){
+        return [key].concat(viz.padMonths(subData).map(function(d){
           return d.count
         }));
       })
       .value();
 
-    var range = visualizations.padMonths(ctrl.byDisasterType()).map(function(d){
+    var range = viz.padMonths(ctrl.byDisasterType()).map(function(d){
       return new Date(d.yearMonth);
     });
 
@@ -570,7 +570,7 @@ visualizations.create(
   }
 )
 
-visualizations.create(
+viz.create(
   'Request Count and Amount per Unique Named Disaster',
   'topDisasters',
   'request',
