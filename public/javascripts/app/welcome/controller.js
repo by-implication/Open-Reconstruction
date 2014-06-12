@@ -99,7 +99,7 @@ welcome.controller = function(){
   // draw logo
 
   this.drawLogo = function() {
-    phiDraw("#lines path", "l", 250, 50);
+    phiDraw(".lines path", "l", 250, 50);
   }
 
 
