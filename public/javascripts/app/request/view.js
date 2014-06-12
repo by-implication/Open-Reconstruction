@@ -285,7 +285,7 @@ request.view = function(ctrl){
                           }
                         ),
                         m("p.help", [
-                          "The Implementing Agency will be responsible for the handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
+                          "The Implementing Agency will be responsible for handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
                         ]),
                       ]),
                     ]),
