@@ -1,6 +1,6 @@
 var common = {};
 
-common.stagnation = function(reqCtrl){
+common.stagnation = function(reqCtrl, offset){
 
   function getDateRejected(history){
     var rejection = history.filter(function (h){
@@ -25,10 +25,10 @@ common.stagnation = function(reqCtrl){
   } else if(req.level > 3){
     current = getDateApproved(reqCtrl.history());
   } else {
-    current = new Date();
+    current = new Date(req.now).getTime();
   }
 
-  var dd = current - timestamp;
+  var dd = current + offset - timestamp;
   // var ms = helper.pad(Math.floor((dd%1000)/10));
   dd/=1000;
   var s = helper.pad(Math.floor(dd%60));

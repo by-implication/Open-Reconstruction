@@ -83,70 +83,6 @@ object Req extends ReqGen {
     )
   }
 
-  def createSampleRequests = DB.withConnection { implicit c =>
-
-    play.Logger.info("* Inferring requests from entries.")
-
-    SQL("""
-      INSERT INTO reqs (req_description, project_type_id, req_scope, req_disaster_name, req_amount, author_id, req_location, req_disaster_date)
-      SELECT group_id,
-        CASE 
-          WHEN array_agg(DISTINCT project_type_id) = ARRAY[NULL]::INT[] THEN 
-            (SELECT project_type_id FROM project_types WHERE project_type_name = 'Others')
-          WHEN count(DISTINCT project_type) = 1 THEN (array_agg(project_type_id))[1]
-          ELSE (SELECT project_type_id from project_types WHERE project_type_name = 'Mixed')
-        END AS project_type_id,
-        CASE 
-          WHEN count(DISTINCT initcap(scope)) = 1 THEN (array_agg(initcap(scope)))[1]::project_scope
-          ELSE 'Others'
-         END as scope,
-        trim(disaster_name), 
-        SUM( CASE
-          WHEN oparr_bohol.amount = '-' THEN 0
-          ELSE oparr_bohol.amount::numeric(12,2)
-          END
-        ) as amount,
-        1 as author_id, psgc as loc,
-        CASE 
-          WHEN disaster_name ilike '%bohol%' THEN '2013-10-15'::date
-          WHEN disaster_name ilike '%yolanda%' THEN '2013-11-8'::date
-          ELSE now()
-          END as disaster_date
-      FROM oparr_bohol
-      LEFT JOIN project_types on initcap(project_type_name) = initcap(project_type)
-      GROUP BY group_id, disaster_name, oparr_bohol.psgc
-    """).execute()
-    play.Logger.info("*   OPARR-Bohol requests created.")
-
-    SQL("""
-      INSERT INTO reqs (req_description, project_type_id, req_amount,
-        req_scope, author_id, req_location, disaster_type_id, 
-        req_disaster_date, req_date, req_disaster_name, req_remarks
-        )
-      SELECT project_description, 
-        1 as project_type_id,
-        coalesce(project_abc*1000, 0) as amount,
-        'Others'::project_scope as scope,
-        1 as author_id,
-        psgc, 
-        CASE 
-          WHEN disaster ilike '%earthquake%' THEN 1
-          WHEN disaster ilike '%typhoon%' THEN 2
-          ELSE 7
-          END as disaster_type,
-        CASE 
-          WHEN disaster ilike '%bohol%' THEN '2013-10-15'::date
-          WHEN disaster ilike '%yolanda%' THEN '2013-11-8'::date
-          ELSE now()
-          END as disaster_date,
-        activity_1_start_date as req_date,
-        disaster,
-        project_id
-      FROM dpwh_eplc
-    """).execute()
-    play.Logger.info("*   DPWH EPLC Requests created.")
-  }
-
   private def byDisasterType = DB.withConnection { implicit c =>
     SQL("""
       SELECT
@@ -226,7 +162,7 @@ object Req extends ReqGen {
     )
   }
 
-  def dashboardData = {
+  def vizData = {
     Json.obj(
       "mostCommonDisasterType" -> mostCommonDisasterType,
       "mostCommonProjectType" -> mostCommonProjectType,
@@ -270,7 +206,7 @@ object Req extends ReqGen {
       case "mine" => {
         if (!user.isAnon){
           table = "reqs LEFT JOIN users ON author_id = user_id"
-          addWhereClause("gov_unit_id = " + user.govUnit.id.get)
+          addWhereClause("gov_unit_id = " + user.govUnit.id)
         }
       }
       case "approval" => {
@@ -342,7 +278,6 @@ case class Req(
   description: String = "",
   projectTypeId: Int = 0,
   amount: BigDecimal = 0,
-  scope: ProjectScope = ProjectScope.REPAIR,
   date: Timestamp = Time.now,
   level: Int = 0,
   isValidated: Boolean = false,
@@ -418,7 +353,7 @@ case class Req(
   def projects: Seq[Project] = Req.projects(id)
 
   def indexJson(implicit user: User) = Json.obj(
-    "id" -> id.get,
+    "id" -> id,
     "description" -> description,
     "projectTypeId" -> projectTypeId,
     "age" -> age(),
@@ -428,7 +363,7 @@ case class Req(
       "id" -> authorId,
       "govUnit" -> Json.obj(
         "name" -> author.govUnit.name,
-        "id" -> author.govUnit.id.get
+        "id" -> author.govUnit.id
       )
     ),
     "assessingAgencyId" -> assessingAgencyId,
@@ -437,12 +372,12 @@ case class Req(
   )
 
   def viewJson = Json.obj(
-    "id" -> id.get,
+    "id" -> id,
     "description" -> description,
     "projectType" -> projectType.name,
     "amount" -> amount,
-    "scope" -> scope.toString,
     "date" -> date,
+    "now" -> Time.now.getTime,
     "level" -> level,
     "isValidated" -> isValidated,
     "isRejected" -> isRejected,
@@ -468,7 +403,6 @@ trait ReqGen extends EntityCompanion[Req] {
     get[String]("req_description") ~
     get[Int]("project_type_id") ~
     get[java.math.BigDecimal]("req_amount") ~
-    get[ProjectScope]("req_scope") ~
     get[Timestamp]("req_date") ~
     get[Int]("req_level") ~
     get[Boolean]("req_validated") ~
@@ -483,8 +417,8 @@ trait ReqGen extends EntityCompanion[Req] {
     get[Timestamp]("req_disaster_date") ~
     get[Option[String]]("req_disaster_name") ~
     get[Option[String]]("saro_no") map {
-      case id~description~projectTypeId~amount~scope~date~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachmentIds~disasterTypeId~disasterDate~disasterName~saroNo =>
-        Req(id, description, projectTypeId, amount, scope, date, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachmentIds, disasterTypeId, disasterDate, disasterName, saroNo)
+      case id~description~projectTypeId~amount~date~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachmentIds~disasterTypeId~disasterDate~disasterName~saroNo =>
+        Req(id, description, projectTypeId, amount, date, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachmentIds, disasterTypeId, disasterDate, disasterName, saroNo)
     }
   }
 
@@ -517,7 +451,6 @@ trait ReqGen extends EntityCompanion[Req] {
             req_description,
             project_type_id,
             req_amount,
-            req_scope,
             req_date,
             req_level,
             req_validated,
@@ -537,7 +470,6 @@ trait ReqGen extends EntityCompanion[Req] {
             {description},
             {projectTypeId},
             {amount},
-            {scope},
             {date},
             {level},
             {isValidated},
@@ -558,7 +490,6 @@ trait ReqGen extends EntityCompanion[Req] {
           'description -> o.description,
           'projectTypeId -> o.projectTypeId,
           'amount -> o.amount.bigDecimal,
-          'scope -> o.scope,
           'date -> o.date,
           'level -> o.level,
           'isValidated -> o.isValidated,
@@ -583,7 +514,6 @@ trait ReqGen extends EntityCompanion[Req] {
             req_description,
             project_type_id,
             req_amount,
-            req_scope,
             req_date,
             req_level,
             req_validated,
@@ -603,7 +533,6 @@ trait ReqGen extends EntityCompanion[Req] {
             {description},
             {projectTypeId},
             {amount},
-            {scope},
             {date},
             {level},
             {isValidated},
@@ -624,7 +553,6 @@ trait ReqGen extends EntityCompanion[Req] {
           'description -> o.description,
           'projectTypeId -> o.projectTypeId,
           'amount -> o.amount.bigDecimal,
-          'scope -> o.scope,
           'date -> o.date,
           'level -> o.level,
           'isValidated -> o.isValidated,
@@ -650,7 +578,6 @@ trait ReqGen extends EntityCompanion[Req] {
         req_description={description},
         project_type_id={projectTypeId},
         req_amount={amount},
-        req_scope={scope},
         req_date={date},
         req_level={level},
         req_validated={isValidated},
@@ -671,7 +598,6 @@ trait ReqGen extends EntityCompanion[Req] {
       'description -> o.description,
       'projectTypeId -> o.projectTypeId,
       'amount -> o.amount.bigDecimal,
-      'scope -> o.scope,
       'date -> o.date,
       'level -> o.level,
       'isValidated -> o.isValidated,

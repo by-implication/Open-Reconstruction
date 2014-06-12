@@ -2,16 +2,16 @@
 // routes
 m.route.mode = "pathname";
 m.route(document, window.location.pathname, {
-  "/": welcome,
+  "/": home,
   "/requests": requestListing,
   "/requests/:tab/:page/:projectTypeId/:l": requestListing,
   "/requests/new": requestCreation,
   "/requests/:id": request,
   "/requests/:id/:tab": request,
-  "/visualizations/:v": visualization,
-  "/dashboard": dashboard,
+  "/viz/:v": viz,
+  "/viz": vizIndex,
   "/saro": saro,
-  "/welcome": welcome,
+  "/home": home,
   "/users/:id": user,
   "/admin": admin,
   "/admin/lgus": admin,

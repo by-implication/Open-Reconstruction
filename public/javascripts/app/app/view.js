@@ -114,27 +114,27 @@ app.navbar = function(ctrl){
         m("li.name", [
           m("h1", [
             m("a", {
-              href: routes.controllers.Application.welcome().url, 
+              href: routes.controllers.Application.home().url, 
               config: m.route,
-              className: (routes.controllers.Application.welcome().url === m.route() ? "active" : "")
+              className: (routes.controllers.Application.home().url === m.route() ? "active" : "")
             }, "Open Reconstruction")
           ])
         ]),
         m("li.divider"),
         // m("li", [
         //   m("a", {
-        //     href: routes.controllers.Application.welcome().url,
+        //     href: routes.controllers.Application.home().url,
         //     config: m.route,
-        //     className: (routes.controllers.Application.welcome().url === m.route() ? "active" : "")
+        //     className: (routes.controllers.Application.home().url === m.route() ? "active" : "")
         //   }, [
         //     m("i.fa.fa-home.fa-lg")
         //   ])
         // ]),
         m("li", [
           m("a", {
-            href: routes.controllers.Application.dashboard().url,
+            href: routes.controllers.Viz.index().url,
             config: m.route,
-            className: (routes.controllers.Application.dashboard().url === m.route() ? "active" : "")
+            className: (routes.controllers.Viz.index().url === m.route() ? "active" : "")
           }, "Visualizations")
         ]),
         // m("li", [

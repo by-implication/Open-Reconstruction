@@ -1,4 +1,4 @@
-dashboard.view = function(ctrl){
+vizIndex.view = function(ctrl){
   var directory = function(){
     var linkGroup = function(key){
       var g = ctrl.visDict[key]
@@ -17,9 +17,8 @@ dashboard.view = function(ctrl){
           title
         ]),
         m("ul", g.map(function(v){
-          // console.log(v(ctrl));
           return m("li", [
-            m("a", {href: routes.controllers.Visualizations.view(v(ctrl).link()).url}, v(ctrl).title())
+            m("a", {href: routes.controllers.Viz.view(v(ctrl).link()).url, config: m.route}, v(ctrl).title())
           ]);
         })),
       ]

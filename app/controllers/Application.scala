@@ -14,8 +14,7 @@ object Application extends Controller {
   def index1(x: Int) = index
   def index2(x: Int, y: Int) = index
 
-  def dashboard = index
-  def welcome = index
+  def home = index
   def saro = index
   def admin = index
   def adminLgus = index
@@ -28,24 +27,10 @@ object Application extends Controller {
     Ok(views.html.js.process()).withHeaders("Content-Type" -> "text/javascript")
   }
 
-  def dashboardMeta() = Action {
-    Ok(Req.dashboardData)
-  }
-
   def populate() = Action { implicit request =>
-    play.Logger.info("Populating database:")
-    if (Req.listAll().length > 100){
-      play.Logger.info("* Aborted: Database already populated!")
-    } else {
-      Req.createSampleRequests
-      play.Logger.info("* Requests created")
-      Project.createSampleProjects
-      play.Logger.info("* Projects created")
-      play.Logger.info("  Processing PSGC migrations")
-      play.Logger.info(Req.assignByPsgc)
-      play.Logger.info("* PSGC processed")
-      play.Logger.info("* Database population complete!")
-    }
+    play.Logger.info("  Processing PSGC migrations")
+    play.Logger.info(Req.assignByPsgc)
+    play.Logger.info("* PSGC processed")
     Redirect(routes.Application.index)
   }
 
@@ -55,11 +40,9 @@ object Application extends Controller {
       routes.javascript.Application.admin,
       routes.javascript.Application.adminLgus,
       routes.javascript.Application.adminAgencies,
-      routes.javascript.Application.dashboard,
       routes.javascript.Application.index,
       routes.javascript.Application.saro,
-      routes.javascript.Application.welcome,
-      routes.javascript.Application.dashboardMeta,
+      routes.javascript.Application.home,
       routes.javascript.Application.process,
       Users.authenticate,
       Users.create,
@@ -101,8 +84,10 @@ object Application extends Controller {
       Requests.viewActivity,
       Requests.viewReferences,
       Requests.viewMeta,
-      Visualizations.view,
-      Visualizations.getData,
+      Viz.index,
+      Viz.indexMeta,
+      Viz.view,
+      Viz.getData,
       GovUnits.edit,
       GovUnits.editMeta,
       GovUnits.update,

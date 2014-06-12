@@ -1,6 +1,6 @@
-visualization.view = function(ctrl){
+viz.view = function(ctrl){
   return app.template(ctrl.app, {className: "detail"}, [
-    m("div#view.dashboard", [
+    m("div#view.viz", [
       common.banner(ctrl.vis.title()),
       visPanel.view(ctrl.vis),
       m("section", [

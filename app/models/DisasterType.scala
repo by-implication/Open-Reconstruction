@@ -20,7 +20,7 @@ case class DisasterType(
 // GENERATED case class end
 {
   def toJson = Json.obj(
-    "id" -> id.get,
+    "id" -> id,
     "name" -> name
   )
 }

@@ -5,10 +5,8 @@
 # Home page
 
 GET     /                                         controllers.Application.index
-GET     /welcome                                  controllers.Application.welcome
+GET     /home 		                                controllers.Application.home
 GET     /populate                                 controllers.Application.populate
-GET     /dashboard                                controllers.Application.dashboard
-GET     /dashboard/meta                           controllers.Application.dashboardMeta
 GET     /saro                                     controllers.Application.saro
 GET     /process                                  controllers.Application.process
 GET     /assets/javascripts/routes/play.js        controllers.Application.jsRoutes
@@ -58,13 +56,15 @@ POST    /requests/:id/new-project                 controllers.Projects.insert(id
 
 POST    /requests/:id/signoff                     controllers.Requests.signoff(id: Int)
 POST    /requests/:id/reject                      controllers.Requests.reject(id: Int)
-POST    /requests/:id/assign-saro                  controllers.Requests.assignSaro(id: Int)
+POST    /requests/:id/assign-saro                 controllers.Requests.assignSaro(id: Int)
 POST    /requests/:id/comment                     controllers.Requests.comment(id: Int)
 POST    /requests/:id/edit/:f                     controllers.Requests.editField(id: Int, f: String)
 POST    /requests/:id/attach/:type                controllers.Attachments.add(id: Int, type: String)
 
-GET     /visualizations/data/:v                   controllers.Visualizations.getData(v: String)
-GET     /visualizations/:v                        controllers.Visualizations.view(v: String)
+GET     /viz			                                controllers.Viz.index
+GET     /viz/meta                           			controllers.Viz.indexMeta
+GET     /viz/data/:v                   						controllers.Viz.getData(v: String)
+GET     /viz/:v                        						controllers.Viz.view(v: String)
 
 GET     /attachments/:id/preview                  controllers.Attachments.preview(id: Int)
 GET     /attachments/:id/download                 controllers.Attachments.download(id: Int)

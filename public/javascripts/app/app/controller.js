@@ -25,7 +25,7 @@ app.controller = function(){
       if(this.currentUser().govUnit.id){
         m.route(routes.controllers.Requests.index().url);
       } else {
-        m.route(routes.controllers.Application.welcome().url);
+        m.route(routes.controllers.Application.home().url);
       }
     }
 

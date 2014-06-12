@@ -116,15 +116,6 @@ requestCreation.view = function(ctrl){
           })
           .render(),
         common.field(
-          "Scope of Work",
-          m("select", {onchange: m.withAttr("value", ctrl.input.scopeOfWork), value: ctrl.input.scopeOfWork()},
-            ctrl.info().projectScopes.map(function (e){
-              return m("option", {value: e}, scopeLabel(e))
-            })
-          ),
-          "Tell us the extent of the work that needs to be done."
-        ),
-        common.field(
           "Location",
           m("div", {id: "map", config: ctrl.initMap}),
           "Tell us where the project is. If you can, draw a shape encompassing the project, or a line describing a road/bridge."

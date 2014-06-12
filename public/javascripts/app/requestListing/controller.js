@@ -13,7 +13,7 @@ requestListing.controller = function(){
   this.sortBy = m.prop("id");
 
   this.tab = m.route.param("tab") || "all";
-  this.page = parseInt(m.route.param("page")) || 0;
+  this.page = parseInt(m.route.param("page")) || 1;
   this.projectTypeId = m.route.param("projectTypeId") || 0;
   this._queryLocFilters = m.route.param("l") || "-";
   this.queryLocFilters = function(){
@@ -114,7 +114,7 @@ requestListing.controller = function(){
   this.projectFilters = [{id: 0, name: "All"}];
   this.maxPage = function(){
     var count = parseInt(this.counts[this.tab]) || 0;
-    return Math.floor(count / 20);
+    return Math.ceil(count / 20);
   };
 
   bi.ajax(routes.controllers.Requests.indexMeta(this.tab, this.page, this.projectTypeId, this._queryLocFilters)).then(function (r){
