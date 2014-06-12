@@ -57,7 +57,7 @@ requestListing.view = function(ctrl){
         .value(),
       m("li.arrow",{className: ctrl.page === ctrl.maxPage() ? "unavailable" : ""}, [
         m("a", {
-          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page, ctrl.projectTypeId, ctrl._queryLocFilters).url,
+          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page + 1, ctrl.projectTypeId, ctrl._queryLocFilters).url,
           config: m.route
         },[
           "»"
