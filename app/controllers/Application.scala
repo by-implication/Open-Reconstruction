@@ -14,7 +14,7 @@ object Application extends Controller {
   def index1(x: Int) = index
   def index2(x: Int, y: Int) = index
 
-  def welcome = index
+  def home = index
   def saro = index
   def admin = index
   def adminLgus = index
@@ -42,7 +42,7 @@ object Application extends Controller {
       routes.javascript.Application.adminAgencies,
       routes.javascript.Application.index,
       routes.javascript.Application.saro,
-      routes.javascript.Application.welcome,
+      routes.javascript.Application.home,
       routes.javascript.Application.process,
       Users.authenticate,
       Users.create,

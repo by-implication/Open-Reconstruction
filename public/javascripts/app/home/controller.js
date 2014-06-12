@@ -1,4 +1,4 @@
-welcome.controller = function(){
+home.controller = function(){
   var self = this;
   this.app = new app.controller();
 
