@@ -176,7 +176,7 @@ object Requests extends Controller with Secured {
   def indexMeta(tab: String, page: Int, projectTypeId: Int, locFilters: String) = UserAction(){ implicit user => implicit request =>
 
     val limit = 20
-    val offset = page * limit
+    val offset = (page-1) * limit
     val projectTypeIdOption = if (projectTypeId == 0) None else Some(projectTypeId)
 
     val psgc = if(locFilters == "-"){
