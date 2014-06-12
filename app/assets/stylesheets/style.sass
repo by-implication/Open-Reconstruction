@@ -866,6 +866,7 @@ footer
 
 .lines path
   +transition(stroke-dasharray 10.25s, stroke-dashoffset 10.25s)
+  +animation(fadeOut 0.4s 3.4s 1 both)
 
 #filled
   +animation(fadeIn 1.2s 2.0s 1 both)
@@ -875,3 +876,9 @@ footer
     opacity: 0
   to
     opacity: 1
+
++keyframes(fadeOut)
+  from
+    opacity: 1
+  to
+    opacity: 0
