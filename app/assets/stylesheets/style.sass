@@ -858,3 +858,20 @@ footer
   padding: 0
   position: absolute
   width: 1px
+
+// helper for svg animation
+
+.killtransition
+  +transition(none !important)
+
+path
+  +transition(all 10.25s)
+
+#filled
+  +animation(fadeIn 1.2s 2.0s 1 both)
+
++keyframes(fadeIn)
+  from
+    opacity: 0
+  to
+    opacity: 1

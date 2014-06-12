@@ -301,20 +301,20 @@ phiDraw = function(elements, GID, initialDelay, propagationDelay) {
     // console.log("hi");
     if (j++ < path.length -1 ) {
 
-      if(Math.random() > 0.5) {
+      // if(Math.random() > 0.5) {
 
         // resetting offset to 0 "draws" the line
 
         path[j].style.strokeDashoffset = "0";
 
-      } else {
+      // } else {
 
         // reverse direction
         // (twice the dash-length)
 
         // path[j].style.strokeDashoffset = path[j].phi_length * 2;
 
-      }
+      // }
 
       // delay drawing the next line in the series
 

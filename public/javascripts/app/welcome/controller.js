@@ -24,7 +24,7 @@ welcome.controller = function(){
       fundedProjects: qtyAmt()
     }
   });
-  
+
   // graph
 
   this.saros  = m.prop(0);
@@ -94,4 +94,13 @@ welcome.controller = function(){
 
   // this is to make sure charts are ok
   // (ideally)  we need a callback when rendering is finished
+
+
+  // draw logo
+
+  this.drawLogo = function() {
+    phiDraw("#lines path", "l", 250, 50);
+  }
+
+
 }

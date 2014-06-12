@@ -4,7 +4,7 @@ welcome.view = function(ctrl){
       m("section.banner", [
         m(".row", [
           m(".columns.medium-11", [
-            m("img#logo", {src:"/assets/images/logo.svg"}),
+            m("div#logo", {config: ctrl.drawLogo}, m.trust(welcome.Logo)),
             m("h1", "Open Reconstruction"),
             m("p", [
               "Tracking post-disaster reconstruction spending. Rebuilding a better Philippines, for all to see."
