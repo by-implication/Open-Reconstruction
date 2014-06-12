@@ -371,6 +371,7 @@ case class Req(
     "projectType" -> projectType.name,
     "amount" -> amount,
     "date" -> date,
+    "now" -> Time.now.getTime,
     "level" -> level,
     "isValidated" -> isValidated,
     "isRejected" -> isRejected,
