@@ -102,8 +102,8 @@ object Req extends ReqGen {
         ) as amount,
         1 as author_id, psgc as loc,
         CASE 
-          WHEN lower(disaster_name) ilike '%bohol%' THEN '2013-10-15'::date
-          WHEN lower(disaster_name) ilike '%yolanda%' THEN '2013-11-8'::date
+          WHEN disaster_name ilike '%bohol%' THEN '2013-10-15'::date
+          WHEN disaster_name ilike '%yolanda%' THEN '2013-11-8'::date
           ELSE now()
           END as disaster_date
       FROM oparr_bohol
@@ -124,13 +124,13 @@ object Req extends ReqGen {
         1 as author_id,
         psgc, 
         CASE 
-          WHEN lower(disaster) ilike '%earthquake%' THEN 1
-          WHEN lower(disaster) ilike '%typhoon%' THEN 2
+          WHEN disaster ilike '%earthquake%' THEN 1
+          WHEN disaster ilike '%typhoon%' THEN 2
           ELSE 7
           END as disaster_type,
         CASE 
-          WHEN lower(disaster) ilike '%bohol%' THEN '2013-10-15'::date
-          WHEN lower(disaster) ilike '%yolanda%' THEN '2013-11-8'::date
+          WHEN disaster ilike '%bohol%' THEN '2013-10-15'::date
+          WHEN disaster ilike '%yolanda%' THEN '2013-11-8'::date
           ELSE now()
           END as disaster_date,
         activity_1_start_date as req_date,
