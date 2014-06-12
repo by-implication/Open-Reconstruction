@@ -22,8 +22,7 @@ object Requests extends Controller with Secured {
   def createMeta() = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
       "disasterTypes" -> DisasterType.jsonList,
-      "projectTypes" -> ProjectType.jsonList,
-      "projectScopes" -> ProjectScope.jsonList
+      "projectTypes" -> ProjectType.jsonList
     ))
   }
 
@@ -72,12 +71,11 @@ object Requests extends Controller with Secured {
         "disasterName" -> optional(text),
         "disasterTypeId" -> number,
         "location" -> nonEmptyText,
-        "projectTypeId" -> number,
-        "scopeOfWork" -> nonEmptyText
+        "projectTypeId" -> number
       )
       ((amount, description, 
         disasterDate, disasterName, disasterTypeId,
-        location, projectTypeId, scope) => {
+        location, projectTypeId) => {
         Req(
           amount = amount.getOrElse(0),
           description = description,
@@ -85,7 +83,6 @@ object Requests extends Controller with Secured {
           disasterName = disasterName,
           disasterTypeId = disasterTypeId,
           projectTypeId = projectTypeId,
-          scope = ProjectScope.withName(scope),
           location = location
         )
       })

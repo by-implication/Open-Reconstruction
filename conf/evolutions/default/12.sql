@@ -2,7 +2,7 @@
 
 -- create OPARR-Bohol requests
 
-INSERT INTO reqs (req_description, project_type_id, req_scope, req_disaster_name, req_amount, author_id, req_location, req_disaster_date)
+INSERT INTO reqs (req_description, project_type_id, req_disaster_name, req_amount, author_id, req_location, req_disaster_date)
 SELECT group_id,
   CASE 
     WHEN array_agg(DISTINCT project_type_id) = ARRAY[NULL]::INT[] THEN 
@@ -10,10 +10,6 @@ SELECT group_id,
     WHEN count(DISTINCT project_type) = 1 THEN (array_agg(project_type_id))[1]
     ELSE (SELECT project_type_id from project_types WHERE project_type_name = 'Mixed')
   END AS project_type_id,
-  CASE 
-    WHEN count(DISTINCT initcap(scope)) = 1 THEN (array_agg(initcap(scope)))[1]::project_scope
-    ELSE 'Others'
-   END as scope,
   trim(disaster_name), 
   SUM( CASE
     WHEN oparr_bohol.amount = '-' THEN 0
@@ -33,13 +29,12 @@ GROUP BY group_id, disaster_name, oparr_bohol.psgc;;
 -- create DPWH EPLC requests
 
 INSERT INTO reqs (req_description, project_type_id, req_amount,
-  req_scope, author_id, req_location, disaster_type_id, 
+  author_id, req_location, disaster_type_id, 
   req_disaster_date, req_date, req_disaster_name, req_remarks
   )
 SELECT project_description, 
   1 as project_type_id,
   coalesce(project_abc*1000, 0) as amount,
-  'Others'::project_scope as scope,
   1 as author_id,
   psgc, 
   CASE 

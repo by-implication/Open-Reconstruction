@@ -272,7 +272,6 @@ case class Req(
   description: String = "",
   projectTypeId: Int = 0,
   amount: BigDecimal = 0,
-  scope: ProjectScope = ProjectScope.REPAIR,
   date: Timestamp = Time.now,
   level: Int = 0,
   isValidated: Boolean = false,
@@ -371,7 +370,6 @@ case class Req(
     "description" -> description,
     "projectType" -> projectType.name,
     "amount" -> amount,
-    "scope" -> scope.toString,
     "date" -> date,
     "level" -> level,
     "isValidated" -> isValidated,
@@ -398,7 +396,6 @@ trait ReqGen extends EntityCompanion[Req] {
     get[String]("req_description") ~
     get[Int]("project_type_id") ~
     get[java.math.BigDecimal]("req_amount") ~
-    get[ProjectScope]("req_scope") ~
     get[Timestamp]("req_date") ~
     get[Int]("req_level") ~
     get[Boolean]("req_validated") ~
@@ -413,8 +410,8 @@ trait ReqGen extends EntityCompanion[Req] {
     get[Timestamp]("req_disaster_date") ~
     get[Option[String]]("req_disaster_name") ~
     get[Option[String]]("saro_no") map {
-      case id~description~projectTypeId~amount~scope~date~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachmentIds~disasterTypeId~disasterDate~disasterName~saroNo =>
-        Req(id, description, projectTypeId, amount, scope, date, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachmentIds, disasterTypeId, disasterDate, disasterName, saroNo)
+      case id~description~projectTypeId~amount~date~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachmentIds~disasterTypeId~disasterDate~disasterName~saroNo =>
+        Req(id, description, projectTypeId, amount, date, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachmentIds, disasterTypeId, disasterDate, disasterName, saroNo)
     }
   }
 
@@ -447,7 +444,6 @@ trait ReqGen extends EntityCompanion[Req] {
             req_description,
             project_type_id,
             req_amount,
-            req_scope,
             req_date,
             req_level,
             req_validated,
@@ -467,7 +463,6 @@ trait ReqGen extends EntityCompanion[Req] {
             {description},
             {projectTypeId},
             {amount},
-            {scope},
             {date},
             {level},
             {isValidated},
@@ -488,7 +483,6 @@ trait ReqGen extends EntityCompanion[Req] {
           'description -> o.description,
           'projectTypeId -> o.projectTypeId,
           'amount -> o.amount.bigDecimal,
-          'scope -> o.scope,
           'date -> o.date,
           'level -> o.level,
           'isValidated -> o.isValidated,
@@ -513,7 +507,6 @@ trait ReqGen extends EntityCompanion[Req] {
             req_description,
             project_type_id,
             req_amount,
-            req_scope,
             req_date,
             req_level,
             req_validated,
@@ -533,7 +526,6 @@ trait ReqGen extends EntityCompanion[Req] {
             {description},
             {projectTypeId},
             {amount},
-            {scope},
             {date},
             {level},
             {isValidated},
@@ -554,7 +546,6 @@ trait ReqGen extends EntityCompanion[Req] {
           'description -> o.description,
           'projectTypeId -> o.projectTypeId,
           'amount -> o.amount.bigDecimal,
-          'scope -> o.scope,
           'date -> o.date,
           'level -> o.level,
           'isValidated -> o.isValidated,
@@ -580,7 +571,6 @@ trait ReqGen extends EntityCompanion[Req] {
         req_description={description},
         project_type_id={projectTypeId},
         req_amount={amount},
-        req_scope={scope},
         req_date={date},
         req_level={level},
         req_validated={isValidated},
@@ -601,7 +591,6 @@ trait ReqGen extends EntityCompanion[Req] {
       'description -> o.description,
       'projectTypeId -> o.projectTypeId,
       'amount -> o.amount.bigDecimal,
-      'scope -> o.scope,
       'date -> o.date,
       'level -> o.level,
       'isValidated -> o.isValidated,
