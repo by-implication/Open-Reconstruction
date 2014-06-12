@@ -262,8 +262,17 @@ object Req extends ReqGen {
     }
   }
 
-  def authoredBy(id: Int) = DB.withConnection { implicit c =>
-    SQL("SELECT * FROM reqs WHERE author_id = {id} ORDER BY req_date DESC").on('id -> id).list(simple)
+  def authoredBy(id: Int, offset: Int, limit: Int) = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT * FROM reqs WHERE author_id = {id} 
+      ORDER BY req_date DESC
+      OFFSET {offset}
+      LIMIT {limit}
+    """).on(
+    'id -> id,
+    'offset -> offset,
+    'limit -> limit
+    ).list(simple)
   }
 
   def projects(id: Int): Seq[Project] = DB.withConnection { implicit c =>

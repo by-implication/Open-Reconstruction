@@ -11,8 +11,9 @@ user.controller = function(){
   this.requestList = m.prop([]);
   this.currentFilter = {requests: function(){return null}};
   this.sortBy = m.prop("id");
+  this.page = parseInt(m.route.param("page")) || 1;
 
-  bi.ajax(routes.controllers.Users.viewMeta(self.id)).then(function (r){
+  bi.ajax(routes.controllers.Users.viewMeta(self.id, self.page)).then(function (r){
     this.user(r.user)
     this.requestList(r.requests);
     this.filteredList = function(){

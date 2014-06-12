@@ -68,12 +68,17 @@ object Users extends Controller with Secured {
   }
 
   def view = Application.index1 _
+  def viewPage = Application.index2 _
 
-  def viewMeta(id: Int): Action[AnyContent] = GenericAction(){ implicit currentUser => implicit request =>
+  def viewMeta(id: Int, page: Int): Action[AnyContent] = GenericAction(){ implicit currentUser => implicit request =>
     User.findById(id) match {
       case Some(user) => Rest.success(
         "user" -> user.infoJson,
-        "requests" -> Json.toJson(user.authoredRequests.map(_.indexJson))
+        "requests" -> {
+          val limit = 20
+          val offset = (page - 1) * limit
+          Json.toJson(user.authoredRequests(offset, limit).map(_.indexJson))
+        } 
       )
       case None => Rest.notFound()
     }
