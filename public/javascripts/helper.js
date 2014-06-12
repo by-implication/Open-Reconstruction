@@ -201,7 +201,7 @@ m.stringify = function(mObj){
       return "";
     }
   }
-  
+
   var attrs = _.chain(mObj.attrs)
     .map(function(val, key){
       if(key === "className"){
@@ -213,7 +213,7 @@ m.stringify = function(mObj){
       return a + b
     }, "")
     .value();
-  
+
   return "<" + mObj.tag + " " + attrs + ">" + children(mObj) + "</" + mObj.tag + ">";
 }
 
@@ -221,7 +221,110 @@ helper.docHeight = function(){
   var body = document.body,
       html = document.documentElement;
 
-  var height = Math.max( body.scrollHeight, body.offsetHeight, 
+  var height = Math.max( body.scrollHeight, body.offsetHeight,
                          html.clientHeight, html.scrollHeight, html.offsetHeight );
   return height;
 }
+
+
+phiDraw = function(elements, GID, initialDelay, propagationDelay) {
+
+  var allTheThings = $(elements);
+
+  // init
+
+  // temporarily disable transitions -- http://stackoverflow.com/questions/11131875/what-is-the-cleanest-way-to-disable-css-transition-effects-temporarily
+  // deal with SVG class manipulation -- http://stackoverflow.com/questions/8638621/jquery-svg-why-cant-i-addclass
+
+  allTheThings.attr('class', function(index, classNames) {
+      return classNames + ' killtransition';
+  });
+
+  // triggers DOM reflow (hack for transition disabling -- see link above)
+
+  allTheThings.each(function(){
+    this.getBBox();
+  });
+
+  // eh
+
+  allTheThings.each(function(index){
+    this.id = GID + index;
+  })
+
+  var totalThings = allTheThings.length;
+
+  var path = [];
+
+  // compute the actual length of line per path
+  // use that as the stroke-dash length
+
+  for(var i=0; i<totalThings;i++){
+    path[i] = document.getElementById(GID+i);
+    var l = path[i].getTotalLength();
+    path[i].phi_length = l;
+    path[i].style.strokeDasharray = l + ' ' + l;
+    path[i].style.strokeDashoffset = l;
+  }
+
+  allTheThings.each(function(){
+    this.getBBox();
+  });
+
+  // restore transitions (verbose because SVG)
+
+  allTheThings.attr('class', function(index, classNames) {
+      return classNames.replace('killtransition', '');
+  });
+
+  // randomize order
+
+  function doTheShuffle(array) {
+      for (var i = array.length - 1; i > 0; i--) {
+          var r = Math.floor(Math.random() * (i + 1));
+          var temp = array[i];
+          array[i] = array[r];
+          array[r] = temp;
+      }
+      return array;
+  }
+
+  doTheShuffle(path);
+
+  // draw!
+  // this merely sets the dash offset
+  // relies on CSS transitions for "animation"
+
+  var j = -1;
+
+  function drawNext() {
+    // console.log("hi");
+    if (j++ < path.length -1 ) {
+
+      if(Math.random() > 0.5) {
+
+        // resetting offset to 0 "draws" the line
+
+        path[j].style.strokeDashoffset = "0";
+
+      } else {
+
+        // reverse direction
+        // (twice the dash-length)
+
+        // path[j].style.strokeDashoffset = path[j].phi_length * 2;
+
+      }
+
+      // delay drawing the next line in the series
+
+      setTimeout(drawNext, propagationDelay);
+    }
+  }
+
+  // delay before drawing the first line
+  // yeah it's called drawNext, deal with it
+
+  setTimeout(drawNext, initialDelay);
+
+};
