@@ -189,7 +189,7 @@ case class User(
   def authoredRequests: Seq[Req] = Req.authoredBy(id)
 
   def isInvolvedWith(r: Req): Boolean = {
-    !isAnon && (r.authorId == id || {role.name match {
+    !isAnon && (r.authorId == pkToInt(id) || {role.name match {
       case OCD | OP | DBM => true
       case _ => r.assessingAgencyId.map(_ == govUnitId).getOrElse(false)
     }})
@@ -252,7 +252,7 @@ case class User(
 
   def canEditRequest(r: Req): Boolean = DB.withConnection { implicit c =>
     isSuperAdmin ||
-    r.authorId == id ||
+    r.authorId == pkToInt(id) ||
     r.assessingAgencyId.map(_ == govUnitId && r.level < 2).getOrElse(false) ||
     r.implementingAgencyId.map(_ == govUnitId).getOrElse(false)
   }
