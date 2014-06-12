@@ -2,15 +2,61 @@ var viz = {
   library: {}
 };
 
-viz.create = function(title, id, type, chartSettingsCreator){
+viz.create = function(title, id, type, chartSettingsCreator, sorts){
   viz.library[id] = function(ctrl){
     var visCtrl = new visPanel.controller();
     visCtrl.title(title);
     visCtrl.link(id);
     visCtrl.type(type);
     visCtrl.chartSettings = chartSettingsCreator.bind(this, ctrl);
+    if(!_.isUndefined(sorts)){
+      visCtrl.sorts(sorts);
+    }
     return visCtrl;
   }
+}
+
+viz.parseYearMonth = function(yearMonth){
+  var ym = yearMonth.split("-");
+  var y = parseInt(ym[0]);
+  var m = parseInt(ym[1]);
+  return {
+    year: y,
+    month: m,
+    yearMonth: yearMonth
+  }
+}
+
+viz.genYearMonth = function(start, end){
+  var s = viz.parseYearMonth(start);
+  var e = viz.parseYearMonth(end);
+
+  return _.chain(s.year)
+    .range(e.year + 1)
+    .map(function(y, index){
+      // if the first, then get s.month to (12 + 1)
+      // if the last, then get 1 to (e.month + 1)
+      // if the first === last, then get s.month to e.month
+      var lastIndex = e.year - s.year;
+      var firstIndex = 0;
+      var monthRange = [];
+
+      if (lastIndex === firstIndex) {
+        monthRange = _.range(s.month, e.month + 1);
+      } else if (index === firstIndex) {
+        monthRange = _.range(s.month, 13);
+      } else if (index === lastIndex) {
+        monthRange = _.range(1, e.month + 1);
+      } else {
+        monthRange = _.range(1, 13);
+      }
+
+      return monthRange.map(function(m){
+        return y + "-" + helper.pad(m);
+      })
+    })
+    .flatten()
+    .value()
 }
 
 viz.nextYearMonth = function nextYearMonth(yearMonth){
@@ -42,6 +88,42 @@ viz.padMonths = function padMonths(a){
     r.push(nextElem);
   }
   return r;
+}
+
+viz.zeroDatapoint = function(datapoint, date){
+  var keys = _.keys(datapoint);
+  var values = keys.map(function(d){
+    if (d == "yearMonth") {
+      return date
+    } else {
+      return null
+    }
+  });
+  return _.object(keys, values);
+}
+
+viz.padMonths2 = function (data){
+  data = _.sortBy(data, "yearMonth")
+  var r = [];
+  var range = viz.genYearMonth(data[0].yearMonth, _.last(data).yearMonth);
+
+  var dataDict = _.groupBy(data, "yearMonth")
+  return range.map(function(d){
+    var dPoint = dataDict[d];
+    if (!_.isUndefined(dPoint)){
+      return dPoint[0];
+    } else {
+      return viz.zeroDatapoint(data[0], d);
+    }
+  })
+}
+
+viz.History = function(){
+
+}
+
+viz.Distribution = function(){
+
 }
 
 // viz.create(
@@ -98,30 +180,24 @@ viz.create(
   "project",
   function(ctrl){
     var byAgency = _.sortBy(ctrl.projects().byAgency(), function(a){
-      return a.count * -1;
+      return a["count"] * -1;
     });
-    var labels = _.pluck(byAgency, "name");
-    var counts = _.pluck(byAgency, "count");
-    var amounts = _.pluck(byAgency, "amount");
-
     return {
       size: {
         height: 400,
         fullViewHeight: 600
       },
       data: {
-        columns: [
-          ["Count per Agency"].concat(counts),
-          ["Amount per Agency"].concat(amounts)
-        ],
-        axes: {
-          "Count per Agency": "y",
-          "Amount per Agency": "y2"
+        json: byAgency,
+        keys: {
+          x: "name",
+          value: ["name", "count", "amount"]
         },
-        types: {
-          "Count per Agency": "bar",
-          "Amount per Agency": "bar"
-        }
+        axes: {
+          "count": "y",
+          "amount": "y2"
+        },
+        type: "bar"
       },
       axis: {
         y: {
@@ -131,8 +207,7 @@ viz.create(
           }
         },
         x: {
-          type: 'categorized',
-          categories: labels,
+          type: 'category',
           label: {
             text: "Agency",
             position: "outer-middle"
@@ -156,7 +231,8 @@ viz.create(
         rotated: true
       }
     }
-  }
+  },
+  ["count", "amount"]
 )
 
 viz.create(
@@ -166,20 +242,19 @@ viz.create(
   function(ctrl){
 
     var byType = ctrl.projects().byType;
-    var labels = byType.map(function (e){ return e.n; });
-    var counts = byType.map(function (e){ return e.c; });
 
     return {
       data: {
-        columns: [
-          ["Count per Project Type"].concat(counts)
-        ],
+        json: byType,
+        keys: {
+          x: "n",
+          value: ["n", "c"]
+        },
         type: "bar"
       },
       axis: {
         x: {
-          type: "categorized",
-          categories: labels,
+          type: "category",
           label: {
             text: "Project Types",
             position: "outer-middle"
@@ -203,25 +278,27 @@ viz.create(
   'project',
   function(ctrl){
 
-    var byMonth = viz.padMonths(ctrl.projects().byMonth);
-    var labels = byMonth.map(function (e){ return new Date(e.yearMonth); });
-    var countPerMonth = byMonth.map(function (e){ return e.count; });
-    var amountPerMonth = byMonth.map(function (e){ return e.amount * 1000; });
+    var byMonth = viz.padMonths(ctrl.projects().byMonth).map(function(d){
+      return {
+        date: new Date(d.yearMonth),
+        count: d.count,
+        amount: d.amount * 1000
+      }
+    });
 
     return {
       data: {
-        x: "x",
-        columns: [
-          ["x"].concat(labels),
-          ["Count per Month"].concat(countPerMonth),
-          ["Amount per Month"].concat(amountPerMonth)
-        ],
+        json: byMonth,
+        keys: {
+          x: "date",
+          value: ["date", "count", "amount"]
+        },
         axes: {
-          "Count per Month": "y",
-          "Amount per Month": "y2"
+          "count": "y",
+          "amount": "y2"
         },
         types: {
-          "Count per Month": "bar"
+          "count": "bar"
         }
       },
       axis: {
@@ -272,9 +349,6 @@ viz.create(
     var byAgency = _.sortBy(ctrl.saros().byAgency, function(a){
       return a.count * -1;
     })
-    var labels = _.pluck(byAgency, "agency");
-    var counts = _.pluck(byAgency, "count");
-    var amounts = _.pluck(byAgency, "amount");
 
     return {
       size: {
@@ -282,23 +356,20 @@ viz.create(
         fullViewHeight: 600
       },
       data: {
-        columns: [
-          ["Count per Agency"].concat(counts),
-          ["Amount per Agency"].concat(amounts)
-        ],
-        axes: {
-          "Count per Agency": "y",
-          "Amount per Agency": "y2"
+        json: byAgency,
+        keys: {
+          x: "agency",
+          value: ["agency", "count", "amount"]
         },
-        types: {
-          "Count per Agency": "bar",
-          "Amount per Agency": "bar"
-        }
+        axes: {
+          "count": "y",
+          "amount": "y2"
+        },
+        type: "bar"
       },
       axis: {
         x: {
-          type: "categorized",
-          categories: labels,
+          type: "category",
           label: {
             text: "Agency",
             position: "outer-middle"
@@ -333,37 +404,27 @@ viz.create(
   'saroHistory',
   'saro',
   function(ctrl){
+    var byMonth = viz.padMonths(ctrl.saros().byMonth).map(function(d){
+      return {
+        date: new Date(d.yearMonth),
+        amount: d.amount,
+        count: d.count
+      }
+    });
 
-    var byMonth = viz.padMonths(ctrl.saros().byMonth)
-
-    var labels = byMonth
-      .map(function(s){
-        return new Date(s.yearMonth);
-      });
-    var amountPerMonth = byMonth
-      .map(function(g){
-        return g.amount;
-      });
-    var countPerMonth = byMonth
-      .map(function(g){
-        return g.count;
-      });
-
-    // console.log(labels, amountPerMonth);
     return {
       data: {
-        x: "x",
-        columns: [
-          ["x"].concat(labels),
-          ["Count per Month"].concat(countPerMonth),
-          ["Amount per Month"].concat(amountPerMonth)
-        ],
+        json: byMonth,
+        keys: {
+          x: "date",
+          value: ["date", "count", "amount"]
+        },
         axes: {
-          "Count per Month": "y",
-          "Amount per Month": "y2"
+          "count": "y",
+          "amount": "y2"
         },
         types: {
-          "Count per Month": "bar"
+          "count": "bar"
         },
       },
       axis: {
@@ -410,31 +471,28 @@ viz.create(
   'Request Count and Amount History',
   'requestHistory',
   'request',
-  function(ctrl2){
-    var ctrl = ctrl2.requests();
-    var labels = _.chain(ctrl.byMonth())
-      .pluck('yearMonth')
-      .map(function(l){
-        return new Date(l);
-      })
-      .value();
-    var amountPerMonth = ctrl.byMonth().map(function (e){ return e.amount / 1; });
-    var countPerMonth = ctrl.byMonth().map(function (e){ return e.count; });
-
+  function(ctrl){
+    var byMonth = ctrl.requests().byMonth().map(function(d){
+      return {
+        date: new Date(d.yearMonth),
+        amount: d.amount / 1,
+        count: d.count
+      }
+    });
+   
     return {
       data: {
-        x: "x",
-        columns: [
-          ["x"].concat(labels),
-          ["Count per Month"].concat(countPerMonth),
-          ["Amount per Month"].concat(amountPerMonth)
-        ],
+        json: byMonth,
+        keys: {
+          x: "date",
+          value: ["date", "count", "amount"]
+        },
         axes: {
-          "Count per Month": 'y',
-          "Amount per Month": 'y2'
+          "count": 'y',
+          "amount": 'y2'
         },
         types: {
-          "Count per Month": 'bar',
+          "count": 'bar',
         }
       },
       axis : {
@@ -485,19 +543,20 @@ viz.create(
     var byType = _.sortBy(ctrl.requests().byProjectType(), function(t){
       return t.count * -1;
     });
-    var counts = _.pluck(byType, "count");
-    var types = _.pluck(byType, "name");
+    // var counts = _.pluck(byType, "count");
+    // var types = _.pluck(byType, "name");
     return {
       data: {
-        columns: [
-          ["Number of Requests"].concat(counts)
-        ],
+        json: byType,
+        keys: {
+          x: "name",
+          value: ["count"]
+        },
         type: "bar",
       },
       axis: {
         x: {
-          type: "categorized",
-          categories: types,
+          type: "category",
           label: {
             text: "Request Types",
             position: "outer-middle"
@@ -519,30 +578,53 @@ viz.create(
   'Request History by Disaster Type', 
   'disasterHistory', 
   'request',
-  function(ctrl2){
-    var ctrl = ctrl2.requests();
-    var data = _.chain(ctrl.byDisasterType())
-      .groupBy(function(p){
-        return p.disasterType;
-      })
-      .map(function(subData, key){
-        return [key].concat(viz.padMonths(subData).map(function(d){
-          return d.count
-        }));
-      })
+  function(ctrl){
+
+    var disasters = _.chain(ctrl.requests().byDisasterType())
+      .groupBy("disasterType")
+      .keys()
       .value();
 
-    var range = viz.padMonths(ctrl.byDisasterType()).map(function(d){
-      return new Date(d.yearMonth);
+    var proto = _.chain(ctrl.requests().byDisasterType())
+      .groupBy(function(p){ return p.yearMonth; })
+      .map(function(d, k){ return { yearMonth: k, data: d } })
+      .value();
+
+    var data2 = viz.padMonths2(proto).map(function(datapoint){
+      var keys = disasters.concat("yearMonth");
+      var values = disasters.map(function(dis){
+        // look at each disaster from the set of all available disasters
+        if(datapoint.data){
+          // does the datapoint data exist?
+          var disInData = _(datapoint.data).find(function(d){
+            return d.disasterType === dis;
+          })
+          // grouped by disaster type for easy access
+          if (!_(disInData).isUndefined()) {
+            return disInData.count;
+            // access the data for that disaster if it exists
+          } else {
+            // data for that disaster doesn't exist.
+            return 0;
+          }
+        } else {
+          return 0;
+        }
+      }).concat(new Date(datapoint.yearMonth));
+
+      return _.object(keys, values);
     });
 
     return {
       data: {
-        x: "x",
-        columns: [["x"].concat(range)].concat(data),
+        json: data2,
+        keys: {
+          x: "yearMonth",
+          value: disasters.concat("yearMonth")
+        },
         type: 'area',
         groups: [
-          ["Disaster 1"]
+          disasters
         ]
       },
       axis: {
