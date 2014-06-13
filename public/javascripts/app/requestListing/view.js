@@ -66,21 +66,24 @@ requestListing.view = function(ctrl){
     ])
   }
   return app.template(ctrl.app, [
-    common.banner("List of Requested Projects"),
-    m("section", [
-
-      ctrl.app.isAuthorized(process.permissions.CREATE_REQUESTS) ?
+    common.banner("Requests"),
+    ctrl.app.isAuthorized(process.permissions.CREATE_REQUESTS) ?
+      m("section#new-request-banner", [
         m(".row", [
           m(".columns.medium-12", [
+            m("h2.left", [
+              "Make a new request. We're here to help."
+            ]),
             m(
-              "a.button",
+              "a.button.right",
               {href: routes.controllers.Requests.create().url, config: m.route},
               "New Request"
             )
           ]),
-        ])
-      : "",
-
+        ]),
+      ])
+    : "",
+    m("section", [
       m(".row", [
         m(".columns.medium-12", [
           common.tabs.menu(ctrl.tabs, {className: "left", config: ctrl.setCurrentTab})
