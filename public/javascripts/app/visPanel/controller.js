@@ -15,6 +15,8 @@ visPanel.onresizer = {
 visPanel.controller = function(){
   
   var self = this;
+  this.sorts = m.prop([]);
+  this.currentSort = m.prop();
   this.size = m.prop({
     height: 200,
     width: 400
@@ -36,6 +38,8 @@ visPanel.controller = function(){
       axis: {}
     }
   }
+  this.data = m.prop({});
+  this.axis = m.prop({});
   this.title = m.prop("Chart Title");
   this.link = m.prop("Chart Link");
   this.type = m.prop("type");
