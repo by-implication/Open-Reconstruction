@@ -33,19 +33,26 @@ vizIndex.view = function(ctrl){
   var visSection = function(key){
     var g = ctrl.visDict[key];
     var title;
+    var desc;
     if (key === "request") {
       title = "Requests (Infrastructure Cluster)";
+      desc = "Requests are submitted by LGUs and NGAs. These are essentially requests for financial and implementation support.";
     }
     if (key === "saro") {
       title = "Budget Releases (DBM SAROs)";
+      desc = "SAROs, or Special Allotment Release Orders, signify government approval for the release for funds for a certain purpose.";
     }
     if (key === "project") {
       title = "Projects (DPWH)";
+      desc = "The DPWH looks at the requests that come their way, and divide it into manageable projects and entered into their PMS. In other words, projects are children of requests.";
     }
     return m(".section", {id: key + "-visualizations"}, [
       m("h2.section-title", [
         title,
         //" Visualizations"
+      ]),
+      m("p", [
+        desc
       ]),
       m("ul.medium-block-grid-2", g.map(function(v){
         return m("li", [
