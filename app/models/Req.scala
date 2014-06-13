@@ -15,29 +15,35 @@ object Req extends ReqGen {
     SQL("SELECT DISTINCT req_location FROM reqs WHERE isnumeric(req_location)")
     .list(get[String]("req_location") map { loc =>
 
-      val psgc = padLeft(loc, 6, "0").grouped(2).toList.map(_.toInt)
+      val psgc = padLeft(loc, 6, "0").grouped(2).toList.map(_.toInt).filter(_ > 0)
 
       val lguId = SQL("""
         SELECT lgu_id FROM lgus
         WHERE lgu_psgc = {psgc}
       """).on(
         'psgc -> PGLTree(psgc)
-      ).single(get[Int]("lgu_id"))
+      ).singleOpt(get[Int]("lgu_id"))
 
-      User(
-        name = "Legacy Data",
-        handle = "legacy" + lguId,
-        password = "legacy" + lguId + "getsupport",
-        govUnitId = lguId
-      ).create().map { u =>
+      lguId match {
+        case Some(lguId) => {
+          User(
+            name = "Legacy Data",
+            handle = "legacy" + lguId,
+            password = "legacy" + lguId + "getsupport",
+            govUnitId = lguId
+          ).create().map { u =>
 
-        SQL("""
-          UPDATE reqs SET author_id = {userId} WHERE req_location = {loc}
-        """).on('userId -> u.id, 'loc -> loc).executeUpdate()
+            SQL("""
+              UPDATE reqs SET author_id = {userId} WHERE req_location = {loc}
+            """).on('userId -> u.id, 'loc -> loc).executeUpdate()
 
-        None
+            None
 
-      }.getOrElse(Some("Failed to create user for" + lguId))
+          }.getOrElse(Some("Failed to create user for" + lguId))
+        }
+        case _ => Some("No government unit matching PSGC " + loc)
+      }
+
 
     }).flatten.mkString("\n")
   }
@@ -200,7 +206,7 @@ object Req extends ReqGen {
       case "mine" => {
         if (!user.isAnon){
           table = "reqs LEFT JOIN users ON author_id = user_id"
-          addWhereClause("gov_unit_id = " + user.govUnit.id.get)
+          addWhereClause("gov_unit_id = " + user.govUnit.id)
         }
       }
       case "approval" => {
@@ -256,8 +262,22 @@ object Req extends ReqGen {
     }
   }
 
-  def authoredBy(id: Int) = DB.withConnection { implicit c =>
-    SQL("SELECT * FROM reqs WHERE author_id = {id} ORDER BY req_date DESC").on('id -> id).list(simple)
+  def authoredBy(id: Int, offset: Int, limit: Int): (Seq[Req], Long) = DB.withConnection { implicit c =>
+    val sqlResult = SQL("""
+      SELECT *, count(*) OVER() FROM reqs WHERE author_id = {id} 
+      ORDER BY req_date DESC
+      OFFSET {offset}
+      LIMIT {limit}
+    """).on(
+    'id -> id,
+    'offset -> offset,
+    'limit -> limit
+    )
+
+    val parsed = sqlResult.list(simple)
+    val counted:Long = sqlResult.list(get[Long]("count")).headOption.getOrElse(0)
+
+    (parsed, counted)
   }
 
   def projects(id: Int): Seq[Project] = DB.withConnection { implicit c =>
@@ -347,7 +367,7 @@ case class Req(
   def projects: Seq[Project] = Req.projects(id)
 
   def indexJson(implicit user: User) = Json.obj(
-    "id" -> id.get,
+    "id" -> id,
     "description" -> description,
     "projectTypeId" -> projectTypeId,
     "age" -> age(),
@@ -357,7 +377,7 @@ case class Req(
       "id" -> authorId,
       "govUnit" -> Json.obj(
         "name" -> author.govUnit.name,
-        "id" -> author.govUnit.id.get
+        "id" -> author.govUnit.id
       )
     ),
     "assessingAgencyId" -> assessingAgencyId,
@@ -366,11 +386,12 @@ case class Req(
   )
 
   def viewJson = Json.obj(
-    "id" -> id.get,
+    "id" -> id,
     "description" -> description,
     "projectType" -> projectType.name,
     "amount" -> amount,
     "date" -> date,
+    "now" -> Time.now.getTime,
     "level" -> level,
     "isValidated" -> isValidated,
     "isRejected" -> isRejected,

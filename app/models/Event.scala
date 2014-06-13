@@ -109,11 +109,11 @@ case class Event(
     "content" -> content,
     "date" -> date.getTime,
     "user" -> userId.map(User.findById(_).map(u => Json.obj(
-      "id" -> u.id.get,
+      "id" -> u.id,
       "name" -> u.name
     ))),
     "govUnit" -> userId.map(User.findById(_).map(u => Json.obj(
-      "id" -> u.govUnit.id.get,
+      "id" -> u.govUnit.id,
       "name" -> u.govUnit.name
     )))
   )

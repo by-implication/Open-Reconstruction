@@ -60,7 +60,7 @@ object Users extends Controller with Secured {
 
       createForm.bindFromRequest.fold(
         Rest.formError(_),
-        _.create().map(u => Rest.success("id" -> Json.toJson(u.id.get)))
+        _.create().map(u => Rest.success(u.insertSeq:_*))
         .getOrElse(Rest.serverError())
       )
 
@@ -68,13 +68,24 @@ object Users extends Controller with Secured {
   }
 
   def view = Application.index1 _
+  def viewPage = Application.index2 _
 
-  def viewMeta(id: Int): Action[AnyContent] = GenericAction(){ implicit currentUser => implicit request =>
+  def viewMeta(id: Int, page: Int): Action[AnyContent] = GenericAction(){ implicit currentUser => implicit request =>
     User.findById(id) match {
-      case Some(user) => Rest.success(
-        "user" -> user.infoJson,
-        "requests" -> Json.toJson(user.authoredRequests.map(_.indexJson))
-      )
+      case Some(user) => {
+
+        val limit = 20
+        val offset = (page - 1) * limit
+        val (requests, requestCount): (Seq[Req], Long) = user.authoredRequests(offset, limit)
+
+        Rest.success(
+          "user" -> user.infoJson,
+          "requests" -> {
+            Json.toJson( requests.map(_.indexJson))
+          },
+          "requestCount" -> requestCount
+        )
+      } 
       case None => Rest.notFound()
     }
   }

@@ -5,7 +5,7 @@ import anorm.SqlParser._
 import com.redis.serialization.Parse.Implicits._
 import java.sql.Timestamp
 import play.api.db._
-import play.api.libs.json.{JsNull, Json}
+import play.api.libs.json.{JsNull, Json, JsValue}
 import play.api.mvc.RequestHeader
 import play.api.Play.current
 import recon.support._
@@ -146,16 +146,16 @@ case class User(
 // GENERATED case class end
 {
 
-  lazy val infoJson = {
+  lazy val infoJson: JsValue = {
     if(!isAnon){
       Json.obj(
         "handle" -> handle,
-        "id" -> id.get,
+        "id" -> id,
         "name" -> name,
         "govUnit" -> Json.obj(
           "name" -> govUnit.name,
           "acronym" -> govUnit.acronym,
-          "id" -> govUnit.id.get,
+          "id" -> govUnit.id,
           "role" -> Role.findById(govUnit.roleId).map(_.name)
         ),
         "isAdmin" -> isAdmin,
@@ -186,10 +186,10 @@ case class User(
 
   var sessionId = -1
 
-  def authoredRequests: Seq[Req] = Req.authoredBy(id)
+  def authoredRequests(offset: Int, limit: Int): (Seq[Req], Long) = Req.authoredBy(id, offset, limit)
 
   def isInvolvedWith(r: Req): Boolean = {
-    !isAnon && (r.authorId == id.get || {role.name match {
+    !isAnon && (r.authorId == pkToInt(id) || {role.name match {
       case OCD | OP | DBM => true
       case _ => r.assessingAgencyId.map(_ == govUnitId).getOrElse(false)
     }})
@@ -252,12 +252,12 @@ case class User(
 
   def canEditRequest(r: Req): Boolean = DB.withConnection { implicit c =>
     isSuperAdmin ||
-    r.authorId == id.get ||
+    r.authorId == pkToInt(id) ||
     r.assessingAgencyId.map(_ == govUnitId && r.level < 2).getOrElse(false) ||
     r.implementingAgencyId.map(_ == govUnitId).getOrElse(false)
   }
 
-  def isAnon = id.get == -1
+  def isAnon = pkToInt(id) == -1
 
 }
 

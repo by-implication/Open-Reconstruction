@@ -237,15 +237,16 @@ request.controller = function(){
 
     this.request().stagnation = common.stagnation(this);
     if(data.request.level < 4 && !data.request.isRejected){
-      !function update(){
+      var baseTime = new Date().getTime();
+      !function update(offset){
         var element = document.getElementById("stagnation-" + this.id);
         if(element){
-          element.innerHTML = common.stagnation(this)
+          element.innerHTML = common.stagnation(this, offset);
         }
         if(m.route().startsWith(routes.controllers.Requests.view(requestId).url)){
-          setTimeout(update.bind(this), 1000);
+          setTimeout(update.bind(this, (new Date().getTime() - baseTime)), 1000);
         }
-      }.bind(this)();
+      }.bind(this)(0);
     }
 
     this.location(data.request.location);

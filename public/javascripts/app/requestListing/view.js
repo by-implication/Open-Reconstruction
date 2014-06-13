@@ -9,12 +9,12 @@ requestListing.view = function(ctrl){
       var pageNum = ctrl.page;
       var pages = [];
       if(pageCount <= displayedPages) {
-        pages = _.range(0, pageCount);
+        pages = _.range(1, pageCount+1);
       }
       else {
-        pages.push(0);
+        pages.push(1);
         if(pageNum <= allowance) {
-          pages = pages.concat(_.range(1, displayedPages - 2));
+          pages = pages.concat(_.range(2, displayedPages - 2));
           pages.push("...");
         }
         else if(pageNum <= pageCount - allowance) {
@@ -50,9 +50,7 @@ requestListing.view = function(ctrl){
               m("a", {
                 href: routes.controllers.Requests.indexPage(ctrl.tab, page, ctrl.projectTypeId, ctrl._queryLocFilters).url,
                 config: m.route
-              }, [
-                page + 1
-              ])
+              }, page)
             ])
           }
         })

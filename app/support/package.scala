@@ -2,9 +2,17 @@ package recon
 
 import anorm._
 import java.sql.Timestamp
+import play.api.libs.json.{Json, JsValue, Writes}
 import play.api.mvc._
+import scala.language.implicitConversions
 
 package object support {
+
+	implicit def pkToInt(id: Pk[Int]): Int = id.get
+
+	implicit val pkWrites = new Writes[Pk[Int]] {
+    implicit def writes(id: Pk[Int]): JsValue = Json.toJson(pkToInt(id))
+  }
 
 	def padLeft(s: String, len: Int, pad: String) = (pad * (len - s.length)) + s
 
