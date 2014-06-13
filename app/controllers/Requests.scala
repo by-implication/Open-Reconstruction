@@ -23,7 +23,7 @@ object Requests extends Controller with Secured {
     Ok(Json.obj(
       "disasterTypes" -> DisasterType.jsonList,
       "projectTypes" -> ProjectType.jsonList,
-      "bucketKey" -> Bucket.generateKey
+      "bucketKey" -> Bucket.getAvailableKey
     ))
   }
 

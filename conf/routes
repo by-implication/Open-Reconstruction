@@ -5,7 +5,7 @@
 # Home page
 
 GET     /                                         controllers.Application.index
-GET     /home 		                                controllers.Application.home
+GET     /home                                     controllers.Application.home
 GET     /populate                                 controllers.Application.populate
 GET     /saro                                     controllers.Application.saro
 GET     /process                                  controllers.Application.process
@@ -23,7 +23,7 @@ GET     /admin/types/project/meta                 controllers.Admin.projectTypes
 GET     /admin/types/disaster                     controllers.Admin.disasterTypes
 GET     /admin/types/disaster/meta                controllers.Admin.disasterTypesMeta
 POST    /admin/types/:k/new                       controllers.Admin.insertType(k: String)
-POST    /admin/types/:k/:id                    		controllers.Admin.updateType(k: String, id: Int)
+POST    /admin/types/:k/:id                       controllers.Admin.updateType(k: String, id: Int)
 
 # Map static resources from the /public folder to the /assets URL path
 
@@ -37,12 +37,16 @@ GET     /users/meta                               controllers.Users.meta
 GET     /users/:id                                controllers.Users.view(id: Int)
 GET     /users/:id/meta                           controllers.Users.viewMeta(id: Int)
 
-GET			/requests																	controllers.Requests.index
+GET     /requests                                 controllers.Requests.index
 GET     /requests/:t/:p/:pid/:l                   controllers.Requests.indexPage(t: String, p: Int, pid: Int, l: String)
 GET     /requests/:t/:p/:pid/:l/meta              controllers.Requests.indexMeta(t: String, p: Int, pid: Int, l: String)
 
 GET     /requests/new                             controllers.Requests.create
 GET     /requests/new/meta                        controllers.Requests.createMeta
+POST    /requests/new/attach/:k/:t                controllers.Attachments.addToBucket(k: String, t: String)
+GET     /requests/new/thumb/:k/:t/:f              controllers.Attachments.bucketThumb(k: String, t: String, f: String)
+GET     /requests/new/preview/:k/:t/:f            controllers.Attachments.bucketPreview(k: String, t: String, f: String)
+GET     /requests/new/download/:k/:t/:f           controllers.Attachments.bucketDownload(k: String, t: String, f: String)
 POST    /requests/new                             controllers.Requests.insert
 
 GET     /requests/:id                             controllers.Requests.view(id: Int)
@@ -61,10 +65,10 @@ POST    /requests/:id/comment                     controllers.Requests.comment(i
 POST    /requests/:id/edit/:f                     controllers.Requests.editField(id: Int, f: String)
 POST    /requests/:id/attach/:type                controllers.Attachments.add(id: Int, type: String)
 
-GET     /viz			                                controllers.Viz.index
-GET     /viz/meta                           			controllers.Viz.indexMeta
-GET     /viz/data/:v                   						controllers.Viz.getData(v: String)
-GET     /viz/:v                        						controllers.Viz.view(v: String)
+GET     /viz                                      controllers.Viz.index
+GET     /viz/meta                                 controllers.Viz.indexMeta
+GET     /viz/data/:v                              controllers.Viz.getData(v: String)
+GET     /viz/:v                                   controllers.Viz.view(v: String)
 
 GET     /attachments/:id/preview                  controllers.Attachments.preview(id: Int)
 GET     /attachments/:id/download                 controllers.Attachments.download(id: Int)

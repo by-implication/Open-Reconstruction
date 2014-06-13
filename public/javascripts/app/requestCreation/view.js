@@ -124,6 +124,81 @@ requestCreation.view = function(ctrl){
       // help: "Now tell us about this project. Please be as brief as you can when describing your project. Making it simple and easy to understand will make your project more likely to be approved."
     },
     {
+      icon: "fa-paperclip",
+      content: [
+        m("h2", "Attachments"),
+        m(".header", [
+          m("h1", ["Images"]),
+        ]),
+        m(".content", [
+          m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone}),
+          ctrl.attachments().imgs.length ?
+            m("ul.attachments-images.small-block-grid-4", ctrl.attachments().imgs.map(function (img){
+              return m("li", [
+                m("img", {src: routes.controllers.Attachments.bucketThumb(img.key, "img", img.filename).url}),
+                m(".filename", [
+                  m("a", {title: "Preview", href: routes.controllers.Attachments.bucketPreview(img.key, "img", img.filename).url, target: "_blank"}, [
+                    img.filename
+                  ]),
+                ]),
+
+                m(".uploader", [
+                  "Uploaded by ",
+                  m("a", {href: routes.controllers.Users.view(img.uploader.id).url, config: m.route},[
+                    img.uploader.name
+                  ]),
+                  m(".date", [
+                    helper.timeago(new Date(img.dateUploaded)),
+                  ]),
+                ])
+              ]);
+            }))
+          : m("h3.empty", [
+            "No images have been uploaded yet."
+          ])
+        ]),
+        m(".header", [
+          m("h1", ["Documents"]),
+        ]),
+        m(".content", [
+          m("div.dropzone", {config: ctrl.initDocDropzone}),
+          ctrl.attachments().docs.length ?
+            m("table.doc-list", [
+              m("thead", [
+                m("tr", [
+                  m("td", "Filename"),
+                  m("td", "Date Uploaded"),
+                  m("td", "Uploader"),
+                  m("td", "Actions")
+                ])
+              ]),
+              m("tbody", [
+                ctrl.attachments().docs.map(function (doc){
+                  return m("tr", [
+                    m("td", doc.filename),
+                    m("td", common.displayDate(doc.dateUploaded)),
+                    m("td", [
+                      m("a", {href: routes.controllers.Users.view(doc.uploader.id).url, config: m.route}, doc.uploader.name)
+                    ]),
+                    m("td", [
+                      m("a", {title: "Preview", href: routes.controllers.Attachments.bucketPreview(doc.key, "doc", doc.filename).url, target: "_blank"}, [
+                        m("i.fa.fa-lg.fa-fw.fa-eye"),
+                      ]),
+                      m("a", {title: "Download", href: routes.controllers.Attachments.bucketDownload(doc.key, "doc", doc.filename).url}, [
+                        m("i.fa.fa-lg.fa-fw.fa-download"),
+                      ])
+                    ])
+                  ])
+                })
+              ])
+            ])
+          : m("h3.empty", [
+            "No documents have been uploaded yet."
+          ])
+        ])
+      ]
+    },
+    {
       content: [
         m("button", {disabled: ctrl.submitButtonDisabled(), onclick: function(e){
           ctrl.submitButtonDisabled(true);

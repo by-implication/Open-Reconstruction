@@ -340,34 +340,12 @@ request.controller = function(){
     }.bind(this));
   }.bind(this);
 
-  var dropzonePreviewTemplate = m(".dz-preview.dz-file-preview", [
-    m(".dz-details", [
-      m("img", {"data-dz-thumbnail": true}),
-      m(".dz-filename", [
-        m("span", {"data-dz-name": true}),
-      ]),
-      m(".dz-size", {"data-dz-size": true}),
-    ]),
-    m(".dz-progress", [
-      m("span.dz-upload", {"data-dz-uploadprogress": true}),
-    ]),
-    // m(".dz-success-mark", [
-    //   m("i.fa.fa-check"),
-    // ]),
-    // m(".dz-error-mark", [
-    //   m("i.fa.fa-times")
-    // ]),
-    m(".dz-error-message", [
-      m("span", {"data-dz-errormessage": true})
-    ]),
-  ]);
-
   this.initImageDropzone = function(elem, isInit){
     if(!isInit){
 
       var dz = new Dropzone(elem, {
         url: routes.controllers.Attachments.add(this.id, "img").url,
-        previewTemplate: m.stringify(dropzonePreviewTemplate), 
+        previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop photos here, or click to browse.",
         clickable: true,
         autoDiscover: false,
@@ -390,7 +368,7 @@ request.controller = function(){
 
       var dz = new Dropzone(elem, {
         url: routes.controllers.Attachments.add(this.id, "doc").url,
-        previewTemplate: m.stringify(dropzonePreviewTemplate), 
+        previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop documents here, or click to browse. We recommend pdfs and doc files.",
         clickable: true,
         autoDiscover: false

@@ -6,6 +6,8 @@ import java.io.File
 import java.sql.Timestamp
 import play.api.db._
 import play.api.libs.json._
+import play.api.libs.Files.TemporaryFile
+import play.api.mvc.MultipartFormData.FilePart
 import play.api.Play.current
 import recon.support._
 import scala.concurrent.duration._
@@ -186,20 +188,41 @@ trait AttachmentCCGen {
 }
 // GENERATED object end
 
+case class BucketFile(key: String, typ: String, filename: String){
+  private lazy val folderPath = Seq("buckets", key, typ)
+  lazy val path = (folderPath :+ filename).mkString(File.separator)
+  lazy val file = new File(path)
+  lazy val thumbPath = (folderPath :+ ("t" + filename)).mkString(File.separator)
+  lazy val thumb = new File(thumbPath)
+}
+
 object Bucket {
 
   private def ALPHANUM = ('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')
   private def TIMEOUT = 1.day
-  private def _generateKey = "bucket-" + generateRandomString(10, ALPHANUM)
+  private def generateKey = generateRandomString(10, ALPHANUM)
 
-  def generateKey() = Redis.xaction { r =>
-    var key = _generateKey
-    while(r.exists(key)){
-      key = _generateKey
+  def getAvailableKey: String = Redis.xaction { r =>
+    val key = generateKey
+    val redisKey = "bucket-" + key
+    if(r.exists(redisKey)){
+      getAvailableKey
+    } else {
+      r.set(redisKey, true)
+      r.expire(redisKey, TIMEOUT.toSeconds.toInt)
+      key
     }
-    r.set(key, true)
-    r.expire(key, TIMEOUT.toSeconds.toInt)
-    key
+  }
+
+  def add(key: String, typ: String, upload: FilePart[TemporaryFile]): Boolean = {
+    try {
+      val bf = BucketFile(key, typ, upload.filename)
+      val r = upload.ref.moveTo(bf.file, true)
+      if(typ == "img"){
+        ImageHandling.generateThumbnail(bf.path, bf.thumbPath)
+      }
+      true
+    } catch { case _: Throwable => false }
   }
 
 }
