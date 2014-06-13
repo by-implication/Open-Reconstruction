@@ -5,8 +5,16 @@ import java.sql.Timestamp
 import play.api.libs.json.{Json, JsValue, Writes}
 import play.api.mvc._
 import scala.language.implicitConversions
+import scala.util.Random
 
 package object support {
+
+	def generateRandomString(length: Int, alphabet: Seq[Char]): String = {
+	  (1 to length).map { _ =>
+	    val index = Random.nextInt(alphabet.length)
+	    alphabet(index)
+	  }.mkString("")
+	}
 
 	implicit def pkToInt(id: Pk[Int]): Int = id.get
 

@@ -22,7 +22,8 @@ object Requests extends Controller with Secured {
   def createMeta() = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
       "disasterTypes" -> DisasterType.jsonList,
-      "projectTypes" -> ProjectType.jsonList
+      "projectTypes" -> ProjectType.jsonList,
+      "bucketKey" -> Bucket.generateKey
     ))
   }
 

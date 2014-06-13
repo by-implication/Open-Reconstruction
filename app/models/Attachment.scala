@@ -8,6 +8,7 @@ import play.api.db._
 import play.api.libs.json._
 import play.api.Play.current
 import recon.support._
+import scala.concurrent.duration._
 
 object Attachment extends AttachmentGen {
 
@@ -185,3 +186,20 @@ trait AttachmentCCGen {
 }
 // GENERATED object end
 
+object Bucket {
+
+  private def ALPHANUM = ('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')
+  private def TIMEOUT = 1.day
+  private def _generateKey = "bucket-" + generateRandomString(10, ALPHANUM)
+
+  def generateKey() = Redis.xaction { r =>
+    var key = _generateKey
+    while(r.exists(key)){
+      key = _generateKey
+    }
+    r.set(key, true)
+    r.expire(key, TIMEOUT.toSeconds.toInt)
+    key
+  }
+
+}
