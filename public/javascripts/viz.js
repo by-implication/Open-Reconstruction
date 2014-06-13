@@ -605,10 +605,10 @@ viz.create(
             // access the data for that disaster if it exists
           } else {
             // data for that disaster doesn't exist.
-            return 0;
+            return 0.00001;
           }
         } else {
-          return 0;
+          return 0.00001;
         }
       }).concat(new Date(datapoint.yearMonth));
 
@@ -656,30 +656,29 @@ viz.create(
   'Request Count and Amount per Unique Named Disaster',
   'topDisasters',
   'request',
-  function(ctrl2){
-    var ctrl = ctrl2.requests();
-    var byDisaster = _.sortBy(ctrl.byNamedDisaster(), function(d){
+  function(ctrl){
+    var byDisaster = _.sortBy(ctrl.requests().byNamedDisaster(), function(d){
         return d.count * -1;
       });
-    var counts = _.pluck(byDisaster, "count");
-    var amounts = _.pluck(byDisaster, "amount");
-    var labels = _.pluck(byDisaster, "name");
+    // var counts = _.pluck(byDisaster, "count");
+    // var amounts = _.pluck(byDisaster, "amount");
+    // var labels = _.pluck(byDisaster, "name");
     return {
       data: {
-        columns: [
-          ["Count per Disaster"].concat(counts),
-          ["Amount per Disaster"].concat(amounts)
-        ],
+        json: byDisaster,
+        keys: {
+          x: "name",
+          value: ["name", "count", "amount"]
+        },
         axes: {
-          "Count per Disaster": "y",
-          "Amount per Disaster": "y2"
+          "count": "y",
+          "amount": "y2"
         },
         type: "bar",
       },
       axis: {
         x: {
-          type: "categorized",
-          categories: labels,
+          type: "category",
           label: {
             text: "Disaster",
             position: "outer-middle"
