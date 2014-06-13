@@ -179,9 +179,7 @@ viz.create(
   "projectCountAmountAgency",
   "project",
   function(ctrl){
-    var byAgency = _.sortBy(ctrl.projects().byAgency(), function(a){
-      return a["count"] * -1;
-    });
+    var byAgency = _.sortBy(ctrl.projects().byAgency(), "count").reverse();
     return {
       size: {
         height: 400,
@@ -240,7 +238,6 @@ viz.create(
   "projectTypeDistribution",
   "project",
   function(ctrl){
-
     var byType = ctrl.projects().byType;
 
     return {
@@ -346,9 +343,7 @@ viz.create(
   'saroCountAmountAgency',
   'saro',
   function(ctrl){
-    var byAgency = _.sortBy(ctrl.saros().byAgency, function(a){
-      return a.count * -1;
-    })
+    var byAgency = _.sortBy(ctrl.saros().byAgency, "count").reverse();
 
     return {
       size: {
@@ -540,9 +535,7 @@ viz.create(
   'projectTypes',
   'request',
   function(ctrl){
-    var byType = _.sortBy(ctrl.requests().byProjectType(), function(t){
-      return t.count * -1;
-    });
+    var byType = _.sortBy(ctrl.requests().byProjectType(), "count").reverse();
     // var counts = _.pluck(byType, "count");
     // var types = _.pluck(byType, "name");
     return {
@@ -657,12 +650,7 @@ viz.create(
   'topDisasters',
   'request',
   function(ctrl){
-    var byDisaster = _.sortBy(ctrl.requests().byNamedDisaster(), function(d){
-        return d.count * -1;
-      });
-    // var counts = _.pluck(byDisaster, "count");
-    // var amounts = _.pluck(byDisaster, "amount");
-    // var labels = _.pluck(byDisaster, "name");
+    var byDisaster = _.sortBy(ctrl.requests().byNamedDisaster(), "count").reverse();
     return {
       data: {
         json: byDisaster,
