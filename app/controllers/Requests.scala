@@ -270,7 +270,7 @@ object Requests extends Controller with Secured {
     case "implementingAgency" => {
       mapping(
         "input" -> number.verifying("Unauthorized",
-          id => user.isSuperAdmin && (id match {
+          id => (user.isSuperAdmin || user.isDBM) && (id match {
             case 0 => true
             case _ => GovUnit.findById(id).get.canImplement
           })
@@ -318,6 +318,7 @@ object Requests extends Controller with Secured {
   def editField(id: Int, field: String) = UserAction(){ implicit user => implicit request =>
     if(!user.isAnon){
       Req.findById(id).map { implicit req =>
+        play.Logger.info("canEdit: " + user.canEditRequest(req))
         if(user.canEditRequest(req)){
           editForm(field).bindFromRequest.fold(
             Rest.formError(_),

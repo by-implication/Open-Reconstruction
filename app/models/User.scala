@@ -254,7 +254,8 @@ case class User(
     isSuperAdmin ||
     r.authorId == pkToInt(id) ||
     r.assessingAgencyId.map(_ == govUnitId && r.level < 2).getOrElse(false) ||
-    r.implementingAgencyId.map(_ == govUnitId).getOrElse(false)
+    r.implementingAgencyId.map(_ == govUnitId).getOrElse(false) ||
+    isDBM
   }
 
   def isAnon = pkToInt(id) == -1
