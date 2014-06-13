@@ -13,7 +13,7 @@ requestListing.controller = function(){
   this.sortBy = m.prop("id");
 
   this.tab = m.route.param("tab") || "all";
-  this.page = parseInt(m.route.param("page")) || 0;
+  this.page = parseInt(m.route.param("page")) || 1;
   this.projectTypeId = m.route.param("projectTypeId") || 0;
   this._queryLocFilters = m.route.param("l") || "-";
   this.queryLocFilters = function(){
