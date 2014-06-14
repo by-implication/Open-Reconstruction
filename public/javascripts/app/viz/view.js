@@ -6,13 +6,19 @@ viz.view = function(ctrl){
       m("section", [
         m(".row", [
           m(".columns.medium-8", [
-            m("h1", [
-              "Comments go here"
+            m("h2", [
+              "Comments"
+            ]),
+            m("p", [
+              "Coming Soon"
             ]),
           ]),
           m(".columns.medium-4", [
-            m("h1", [
-              "Share options here"
+            m("h2", [
+              "Share options"
+            ]),
+            m("p", [
+              "Coming Soon"
             ]),
           ]),
         ]),
