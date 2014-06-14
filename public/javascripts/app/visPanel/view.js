@@ -1,14 +1,15 @@
 visPanel.view = function(ctrl){
   return m(".vis-panel", [
     ctrl.isFullView() ?
-      m("div", [
-        m(".section", [
-          "sorting shit",
-          ctrl.sorts() ?
-            console.log(ctrl.sorts())
-          : ""
-        ]),
-      ])
+      ""
+      // m("div", [
+      //   m(".section", [
+      //     "sorting shit",
+      //     ctrl.sorts() ?
+      //       console.log(ctrl.sorts())
+      //     : ""
+      //   ]),
+      // ])
     : m("div", [
         m(".section", [
           m("h5", [
