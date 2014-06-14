@@ -38,8 +38,8 @@ SELECT project_description,
   1 as author_id,
   psgc, 
   CASE 
-    WHEN disaster ilike '%earthquake%' THEN 1
-    WHEN disaster ilike '%typhoon%' THEN 2
+    WHEN disaster ilike '%typhoon%' THEN 1
+    WHEN disaster ilike '%earthquake%' THEN 2
     ELSE 7
     END as disaster_type,
   CASE 
