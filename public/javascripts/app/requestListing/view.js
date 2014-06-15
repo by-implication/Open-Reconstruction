@@ -84,11 +84,12 @@ requestListing.view = function(ctrl){
       ])
     : "",
     m("section", [
-      m(".row", [
-        m(".columns.medium-12", [
-          common.tabs.menu(ctrl.tabs, {className: "left", config: ctrl.setCurrentTab})
-        ]),
-      ]),
+      m.cookie().logged_in ?
+        m(".row", [
+          m(".columns.medium-12", [
+            common.tabs.menu(ctrl.tabs, {className: "left", config: ctrl.setCurrentTab})
+          ]),
+        ]) : "",
       m(".row", [
         m(".columns.medium-9", [
           pagination(),
@@ -113,7 +114,7 @@ requestListing.view = function(ctrl){
             .map(function (filter){
               return m("li.filter",{className: (ctrl.projectTypeId == filter.id) ? "active" : ""}, [
                 m("a", {
-                  href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page, filter.id, ctrl._queryLocFilters).url,
+                  href: routes.controllers.Requests.indexPage(ctrl.tab, 1, filter.id, ctrl._queryLocFilters).url,
                   config: m.route
                 }, filter.name)
               ])

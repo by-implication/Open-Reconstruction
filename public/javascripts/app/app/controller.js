@@ -22,7 +22,7 @@ app.controller = function(){
     this.currentUser(r || anon);
 
     if(m.route() == routes.controllers.Application.index().url){
-      if(this.currentUser().govUnit.id){
+      if(m.cookie().logged_in){
         m.route(routes.controllers.Requests.index().url);
       } else {
         m.route(routes.controllers.Application.home().url);
