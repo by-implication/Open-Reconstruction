@@ -11,14 +11,14 @@ import recon.support._
 object Attachments extends Controller with Secured {
 
   def bucketThumb(key: String, typ: String, filename: String) = UserAction(){ implicit user => implicit request =>
-    val bf = BucketFile(key, typ, filename)
+    val bf = Bucket(key).getFile(typ, filename)
     if(bf.thumb.exists){
       Ok.sendFile(bf.thumb, true, _ => bf.filename)
     } else NotFound
   }
 
   private def bucketGet(inline: Boolean)(key: String, typ: String, filename: String) = Action {
-    val bf = BucketFile(key, typ, filename)
+    val bf = Bucket(key).getFile(typ, filename)
     if(bf.file.exists){      
       Ok.sendFile(bf.file, inline, _ => bf.filename)
     } else NotFound
@@ -29,7 +29,7 @@ object Attachments extends Controller with Secured {
 
   def addToBucket(key: String, typ: String) = UserAction(parse.multipartFormData){ implicit user => implicit request =>
     request.body.file("file").map { upload =>
-      if(Bucket.add(key, typ, upload)){
+      if(Bucket(key).add(typ, upload)){
         Rest.success(
           "key" -> key,
           "filename" -> upload.filename,

@@ -10,6 +10,7 @@ import play.api.libs.Files.TemporaryFile
 import play.api.mvc.MultipartFormData.FilePart
 import play.api.Play.current
 import recon.support._
+import scala.collection.JavaConversions._
 import scala.concurrent.duration._
 
 object Attachment extends AttachmentGen {
@@ -188,12 +189,83 @@ trait AttachmentCCGen {
 }
 // GENERATED object end
 
-case class BucketFile(key: String, typ: String, filename: String){
-  private lazy val folderPath = Seq("buckets", key, typ)
-  lazy val path = (folderPath :+ filename).mkString(File.separator)
-  lazy val file = new File(path)
-  lazy val thumbPath = (folderPath :+ ("t" + filename)).mkString(File.separator)
-  lazy val thumb = new File(thumbPath)
+case class Bucket(key: String){
+
+  case class BFile(typ: String, filename: String){
+    private lazy val folderPath = bucketFolderPath :+ typ
+    lazy val path = (folderPath :+ filename).mkString(File.separator)
+    lazy val file = new File(path)
+    lazy val thumbPath = (folderPath.dropRight(1) ++ Seq("thumbs", filename)).mkString(File.separator)
+    lazy val thumb = new File(thumbPath)
+  }
+
+  lazy val bucketFolderPath = Seq("buckets", key)
+
+  def getFile(typ: String, filename: String) = BFile(typ, filename)
+
+  def add(typ: String, upload: FilePart[TemporaryFile]): Boolean = {
+    try {
+      val bf = getFile(typ, upload.filename)
+      upload.ref.moveTo(bf.file, true)
+      if(typ == "img"){
+        bf.thumb.getParentFile().mkdirs()
+        ImageHandling.generateThumbnail(bf.path, bf.thumbPath)
+      }
+      true
+    } catch {
+      case t: Throwable => {
+        play.Logger.error(t.toString)
+        false
+      }
+    }
+  }
+
+  private def files(typ: String): Seq[BFile] = {
+    val dir = new File((bucketFolderPath :+ typ).mkString(File.separator))
+    if(dir.exists){
+      dir.list().map(f => BFile(typ, f))
+    } else {
+      Seq.empty[BFile]
+    }
+  }
+
+  private def delete = Redis.xaction { r =>
+    r.del(key)
+    deleteFile(new File(bucketFolderPath.mkString(File.separator)))
+  }
+
+  def dumpTo(req: Req): Boolean = {
+
+    def moveFile(src: File, dst: File) = {
+      dst.getParentFile().mkdirs()
+      if(!src.renameTo(dst)){
+        play.Logger.error("Failed to move file: " + src.getAbsolutePath + " -> " + dst.getAbsolutePath)
+      }
+    }
+
+    val attachmentIds: Seq[Int] = Seq("img", "doc").map { typ =>
+      files(typ).map { f =>
+        val isImage = typ == "img"
+        Attachment(filename = f.filename, uploaderId = req.authorId, isImage = isImage, reqId = req.id)
+            .create().map { a =>
+
+          moveFile(f.file, a.file)
+          if(isImage) moveFile(f.thumb, a.thumb)
+
+          Event.attachment(a)(req, req.author).create().getOrElse(Rest.serverError())
+
+          a.id
+
+        }
+      }
+    }.flatten.flatten.map(pkToInt)
+
+    req.copy(attachmentIds = attachmentIds).save()
+
+    delete
+
+  }
+
 }
 
 object Bucket {
@@ -212,17 +284,6 @@ object Bucket {
       r.expire(redisKey, TIMEOUT.toSeconds.toInt)
       key
     }
-  }
-
-  def add(key: String, typ: String, upload: FilePart[TemporaryFile]): Boolean = {
-    try {
-      val bf = BucketFile(key, typ, upload.filename)
-      val r = upload.ref.moveTo(bf.file, true)
-      if(typ == "img"){
-        ImageHandling.generateThumbnail(bf.path, bf.thumbPath)
-      }
-      true
-    } catch { case _: Throwable => false }
   }
 
 }

@@ -32,7 +32,7 @@ requestCreation.controller = function(){
     if(!isInit){
 
       var dz = new Dropzone(elem, {
-        url: routes.controllers.Attachments.addToBucket(this.info().bucketKey, "img").url,
+        url: routes.controllers.Attachments.addToBucket(this.input.bucketKey, "img").url,
         previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop photos here, or click to browse.",
         clickable: true,
@@ -54,7 +54,7 @@ requestCreation.controller = function(){
     if(!isInit){
 
       var dz = new Dropzone(elem, {
-        url: routes.controllers.Attachments.addToBucket(this.info().bucketKey, "doc").url,
+        url: routes.controllers.Attachments.addToBucket(this.input.bucketKey, "doc").url,
         previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop documents here, or click to browse. We recommend pdfs and doc files.",
         clickable: true,
@@ -128,6 +128,7 @@ requestCreation.controller = function(){
   bi.ajax(routes.controllers.Requests.createMeta()).then(function (data){
     this.info(data);
     this.input.disasterTypeId(data.disasterTypes[0].id);
+    this.input.bucketKey = data.bucketKey;
   }.bind(this));
 
   this.disasterDate = [2001, 1, 1];
