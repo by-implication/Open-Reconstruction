@@ -84,11 +84,12 @@ requestListing.view = function(ctrl){
       ])
     : "",
     m("section", [
-      m(".row", [
-        m(".columns.medium-12", [
-          common.tabs.menu(ctrl.tabs, {className: "left", config: ctrl.setCurrentTab})
-        ]),
-      ]),
+      m.cookie().logged_in ?
+        m(".row", [
+          m(".columns.medium-12", [
+            common.tabs.menu(ctrl.tabs, {className: "left", config: ctrl.setCurrentTab})
+          ]),
+        ]) : "",
       m(".row", [
         m(".columns.medium-9", [
           pagination(),
