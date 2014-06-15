@@ -113,7 +113,7 @@ requestListing.view = function(ctrl){
             .map(function (filter){
               return m("li.filter",{className: (ctrl.projectTypeId == filter.id) ? "active" : ""}, [
                 m("a", {
-                  href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page, filter.id, ctrl._queryLocFilters).url,
+                  href: routes.controllers.Requests.indexPage(ctrl.tab, 1, filter.id, ctrl._queryLocFilters).url,
                   config: m.route
                 }, filter.name)
               ])
