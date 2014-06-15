@@ -368,7 +368,11 @@ Mithril = m = new function app(window) {
 		m.route(e.currentTarget[m.route.mode].slice(modes[m.route.mode].length))
 	}
 	function scrollToHash() {
-		if (m.route.mode != "hash" && window.location.hash) window.location.hash = window.location.hash
+		if (m.route.mode != "hash" && window.location.hash){
+			window.location.hash = window.location.hash
+		} else {
+			window.scroll(0, 0)
+		}
 	}
 	function buildQueryString(object, prefix) {
 		var str = []
