@@ -2,7 +2,9 @@
 
 -- create OPARR-Bohol requests
 
-INSERT INTO reqs (req_description, project_type_id, req_disaster_name, req_amount, author_id, req_location, req_disaster_date)
+INSERT INTO reqs (req_description, project_type_id, req_disaster_name, 
+  req_amount, author_id, req_location, req_disaster_date,
+  disaster_type_id)
 SELECT group_id,
   CASE 
     WHEN array_agg(DISTINCT project_type_id) = ARRAY[NULL]::INT[] THEN 
@@ -21,7 +23,12 @@ SELECT group_id,
     WHEN disaster_name ilike '%bohol%' THEN '2013-10-15'::date
     WHEN disaster_name ilike '%yolanda%' THEN '2013-11-8'::date
     ELSE now()
-    END as disaster_date
+    END as disaster_date,
+  CASE 
+    WHEN disaster_name ilike '%bohol%' THEN 2
+    WHEN disaster_name ilike '%yolanda%' THEN 1
+    ELSE 7
+    END as disaster_type
 FROM oparr_bohol
 LEFT JOIN project_types on initcap(project_type_name) = initcap(project_type)
 GROUP BY group_id, disaster_name, oparr_bohol.psgc;;
@@ -38,8 +45,8 @@ SELECT project_description,
   1 as author_id,
   psgc, 
   CASE 
-    WHEN disaster ilike '%earthquake%' THEN 1
-    WHEN disaster ilike '%typhoon%' THEN 2
+    WHEN disaster ilike '%typhoon%' THEN 1
+    WHEN disaster ilike '%earthquake%' THEN 2
     ELSE 7
     END as disaster_type,
   CASE 
