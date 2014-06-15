@@ -317,33 +317,20 @@ common.stickyTabs.config = function(ctrl){
 
 common.sticky = {};
 common.sticky.config = function(ctrl){
-  // ctrl.isScrolled = false;
   return function(elem, isInit){
-    // var updateTabMenuPos = function(){
-    
     var maxScrollRange = function(){
       var parent = $(elem).parent();
-      return parent.height() + parent.position().top;
+      return parent.height() + parent.position().top - $(elem).height();
     }
-    var bottomPosition = function(){
-      return $(window).scrollTop() + $(elem).height();
-    }
-    var boundary = function(elem){
+    var initialTop = function(elem){
       var offset = parseInt($(elem).css("top")) || 0;
       return $(elem).position().top - offset;
     }
     var adjustLayout = function(){
-      if ($(window).scrollTop() > boundary(elem)) {
-        console.log(bottomPosition(), maxScrollRange());
-        if (bottomPosition() >= maxScrollRange()) {
-          $(elem).css({
-            top: maxScrollRange() - $(elem).height() - boundary(elem)
-          })
-        } else {
-          $(elem).css({
-            top: ($(window).scrollTop()) - boundary(elem)
-          })
-        }
+      var scrollTop = $(window).scrollTop()
+      if (scrollTop > initialTop(elem)) {
+        var top = Math.min(scrollTop, maxScrollRange()) - initialTop(elem);
+        $(elem).css("top", top);
       } else {
         $(elem).removeAttr("style");
       }
