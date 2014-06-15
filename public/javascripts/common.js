@@ -328,12 +328,11 @@ common.sticky.config = function(ctrl){
     }
     var adjustLayout = function(){
       var scrollTop = $(window).scrollTop()
+      var top = 0;
       if (scrollTop > initialTop(elem)) {
-        var top = Math.min(scrollTop, maxScrollRange()) - initialTop(elem);
-        $(elem).css("top", top);
-      } else {
-        $(elem).removeAttr("style");
+        top = Math.min(scrollTop, maxScrollRange()) - initialTop(elem);
       }
+      $(elem).css("top", top);
     }
     var posType = $(elem).css("position");
     if (posType != "relative") {
