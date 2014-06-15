@@ -320,25 +320,38 @@ common.sticky.config = function(ctrl){
   // ctrl.isScrolled = false;
   return function(elem, isInit){
     // var updateTabMenuPos = function(){
+    
+    var maxScrollRange = function(){
+      var parent = $(elem).parent();
+      return parent.height() + parent.position().top;
+    }
+    var bottomPosition = function(){
+      return $(window).scrollTop() + $(elem).height();
+    }
     var boundary = function(elem){
-      var posType = $(elem).css("position");
-      var offset = 0;
-      if (posType === "relative") {
-        offset = parseInt($(elem).css("top")) || 0;
-      }
+      var offset = parseInt($(elem).css("top")) || 0;
       return $(elem).position().top - offset;
     }
     var adjustLayout = function(){
       if ($(window).scrollTop() > boundary(elem)) {
-        $(elem).css({
-          position: "relative",
-          top: ($(window).scrollTop()) - boundary(elem)
-        })
+        console.log(bottomPosition(), maxScrollRange());
+        if (bottomPosition() >= maxScrollRange()) {
+          $(elem).css({
+            top: maxScrollRange() - $(elem).height() - boundary(elem)
+          })
+        } else {
+          $(elem).css({
+            top: ($(window).scrollTop()) - boundary(elem)
+          })
+        }
       } else {
         $(elem).removeAttr("style");
       }
     }
-
+    var posType = $(elem).css("position");
+    if (posType != "relative") {
+      $(elem).css("position", "relative")
+    };
     if(!isInit){
       $(window).on("scroll", function(e){
         adjustLayout();
