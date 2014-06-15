@@ -186,7 +186,7 @@ case class User(
 
   var sessionId = -1
 
-  def authoredRequests: Seq[Req] = Req.authoredBy(id)
+  def authoredRequests(offset: Int, limit: Int): (Seq[Req], Long) = Req.authoredBy(id, offset, limit)
 
   def isInvolvedWith(r: Req): Boolean = {
     !isAnon && (r.authorId == pkToInt(id) || {role.name match {
@@ -254,7 +254,8 @@ case class User(
     isSuperAdmin ||
     r.authorId == pkToInt(id) ||
     r.assessingAgencyId.map(_ == govUnitId && r.level < 2).getOrElse(false) ||
-    r.implementingAgencyId.map(_ == govUnitId).getOrElse(false)
+    r.implementingAgencyId.map(_ == govUnitId).getOrElse(false) ||
+    isDBM
   }
 
   def isAnon = pkToInt(id) == -1

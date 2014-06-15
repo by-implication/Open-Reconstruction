@@ -143,7 +143,9 @@ request.controller = function(){
       }
     )),
 
-    implement: new deg(this.app.isSuperAdmin, edit("implementingAgency"), save("implementingAgency",
+    implement: new deg(function(){
+      return (self.app.isSuperAdmin() || self.app.isDBM());
+    }, edit("implementingAgency"), save("implementingAgency",
       function (r){
         var agency = extractAgency(r);
         if(agency.id){

@@ -55,7 +55,9 @@ requestCreation.view = function(ctrl){
                 })
               ])
             ])
-          ])
+          ]),
+          null,
+          true
         ),
         common.field(
           "Name",
@@ -118,7 +120,7 @@ requestCreation.view = function(ctrl){
         common.field(
           "Location",
           m("div", {id: "map", config: ctrl.initMap}),
-          "Tell us where the project is. If you can, draw a shape encompassing the project, or a line describing a road/bridge."
+          "Tell us where the project is. Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map."
         )
       ],
       // help: "Now tell us about this project. Please be as brief as you can when describing your project. Making it simple and easy to understand will make your project more likely to be approved."

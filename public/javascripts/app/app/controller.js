@@ -22,7 +22,7 @@ app.controller = function(){
     this.currentUser(r || anon);
 
     if(m.route() == routes.controllers.Application.index().url){
-      if(this.currentUser().govUnit.id){
+      if(m.cookie().logged_in){
         m.route(routes.controllers.Requests.index().url);
       } else {
         m.route(routes.controllers.Application.home().url);
@@ -41,6 +41,10 @@ app.controller = function(){
 
   this.isSuperAdmin = function(){
     return this.currentUser().isSuperAdmin;
+  }.bind(this);
+
+  this.isDBM = function(){
+    return (this.currentUser().govUnit.role == "DBM");
   }.bind(this);
 
   this.isGovUnitAdmin = function(govUnitId){

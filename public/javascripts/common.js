@@ -158,20 +158,32 @@ common.banner = function(text){
   ]);
 }
 
-common.field = function(name, content, help){
-  return m("label", [
-    m("div.row", [
-      m("div.columns.medium-12", name)
+common.field = function(name, content, help, outsideLabel){
+
+  var label = m("div.row", [
+    m("div.columns.medium-12", name)
+  ]);
+  
+  var contents = m("div.row", [
+    m("div.columns.medium-8", [
+      content
     ]),
-    m("div.row", [
-      m("div.columns.medium-8", [
-        content
-      ]),
-      m("div.columns.medium-4.help-container", [
-        m("p.help", help)
-      ])
+    m("div.columns.medium-4.help-container", [
+      m("p.help", help)
     ])
-  ])
+  ]);
+
+  if(outsideLabel){
+    return m("div", [
+      m("label", [label]),
+      contents
+    ]);
+  } else {
+    return m("label", [
+      label,
+      contents
+    ]);
+  }
 }
 
 common.formSection = function(icon, content, i){
@@ -333,28 +345,27 @@ common.stickyTabs.config = function(ctrl){
 
 common.sticky = {};
 common.sticky.config = function(ctrl){
-  // ctrl.isScrolled = false;
   return function(elem, isInit){
-    // var updateTabMenuPos = function(){
-    var boundary = function(elem){
-      var posType = $(elem).css("position");
-      var offset = 0;
-      if (posType === "relative") {
-        offset = parseInt($(elem).css("top")) || 0;
-      }
+    var maxScrollRange = function(){
+      var parent = $(elem).parent();
+      return parent.height() + parent.position().top - $(elem).height();
+    }
+    var initialTop = function(elem){
+      var offset = parseInt($(elem).css("top")) || 0;
       return $(elem).position().top - offset;
     }
     var adjustLayout = function(){
-      if ($(window).scrollTop() > boundary(elem)) {
-        $(elem).css({
-          position: "relative",
-          top: ($(window).scrollTop()) - boundary(elem)
-        })
-      } else {
-        $(elem).removeAttr("style");
+      var scrollTop = $(window).scrollTop()
+      var top = 0;
+      if (scrollTop > initialTop(elem)) {
+        top = Math.min(scrollTop, maxScrollRange()) - initialTop(elem);
       }
+      $(elem).css("top", top);
     }
-
+    var posType = $(elem).css("position");
+    if (posType != "relative") {
+      $(elem).css("position", "relative")
+    };
     if(!isInit){
       $(window).on("scroll", function(e){
         adjustLayout();

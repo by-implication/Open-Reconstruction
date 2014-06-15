@@ -15,7 +15,8 @@ SELECT req_id, group_id, project_name,
   false
 FROM oparr_bohol
 LEFT JOIN reqs on req_description = group_id
-LEFT JOIN project_types on initcap(project_type_name) = initcap(project_type);;
+LEFT JOIN project_types on initcap(project_type_name) = initcap(project_type)
+WHERE oparr_bohol.psgc = reqs.req_location;;
 
 -- assign DPWH EPLC projects
 
