@@ -55,7 +55,9 @@ requestCreation.view = function(ctrl){
                 })
               ])
             ])
-          ])
+          ]),
+          null,
+          true
         ),
         common.field(
           "Name",

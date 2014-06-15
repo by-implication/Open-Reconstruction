@@ -142,20 +142,32 @@ common.banner = function(text){
   ]);
 }
 
-common.field = function(name, content, help){
-  return m("label", [
-    m("div.row", [
-      m("div.columns.medium-12", name)
+common.field = function(name, content, help, outsideLabel){
+
+  var label = m("div.row", [
+    m("div.columns.medium-12", name)
+  ]);
+  
+  var contents = m("div.row", [
+    m("div.columns.medium-8", [
+      content
     ]),
-    m("div.row", [
-      m("div.columns.medium-8", [
-        content
-      ]),
-      m("div.columns.medium-4.help-container", [
-        m("p.help", help)
-      ])
+    m("div.columns.medium-4.help-container", [
+      m("p.help", help)
     ])
-  ])
+  ]);
+
+  if(outsideLabel){
+    return m("div", [
+      m("label", [label]),
+      contents
+    ]);
+  } else {
+    return m("label", [
+      label,
+      contents
+    ]);
+  }
 }
 
 common.formSection = function(icon, content, i){
