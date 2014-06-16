@@ -227,7 +227,7 @@ requestCreation.view = function(ctrl){
         )
       ]),
       ctrl.preamble() ?
-        m("div.m-grow", {config: ctrl.configShowForm}, sections.map(function(s, i){
+        m("div", sections.map(function(s, i){
           return common.formSection(s.icon, s.content, i + 1);
         }))
       : ""
