@@ -69,11 +69,11 @@ requestCreation.controller = function(){
     }
   }.bind(this);
 
-  this.configShowForm = function(elem){
-    window.setTimeout(function(){
-      elem.classList.add("expand");
-    }, 0)
-  }
+  // this.configShowForm = function(elem){
+  //   window.setTimeout(function(){
+  //     elem.classList.add("expand");
+  //   }, 0)
+  // }
 
   this.initMap = function(elem, isInit){
     // this.app.initMap(elem, isInit, {scrollWheelZoom: false}, true);
