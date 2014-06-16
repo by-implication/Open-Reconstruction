@@ -598,10 +598,10 @@ viz.create(
             // access the data for that disaster if it exists
           } else {
             // data for that disaster doesn't exist.
-            return 0.00001;
+            return 0;
           }
         } else {
-          return 0.00001;
+          return 0;
         }
       }).concat(new Date(datapoint.yearMonth));
 
