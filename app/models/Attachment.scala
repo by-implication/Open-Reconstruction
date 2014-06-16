@@ -199,7 +199,7 @@ case class Bucket(key: String){
     lazy val thumb = new File(thumbPath)
   }
 
-  lazy val bucketFolderPath = Seq("buckets", key)
+  lazy val bucketFolderPath = Seq(Bucket.FOLDER, key)
 
   def getFile(typ: String, filename: String) = BFile(typ, filename)
 
@@ -270,13 +270,16 @@ case class Bucket(key: String){
 
 object Bucket {
 
+  def FOLDER = "buckets"
+
   private def ALPHANUM = ('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')
   private def TIMEOUT = 1.day
   private def generateKey = generateRandomString(10, ALPHANUM)
+  private def toRedisKey(k: String) = "bucket-" + k
 
   def getAvailableKey: String = Redis.xaction { r =>
     val key = generateKey
-    val redisKey = "bucket-" + key
+    val redisKey = toRedisKey(key)
     if(r.exists(redisKey)){
       getAvailableKey
     } else {
@@ -284,6 +287,18 @@ object Bucket {
       r.expire(redisKey, TIMEOUT.toSeconds.toInt)
       key
     }
+  }
+
+  def sweepStale(): Int = Redis.xaction { r =>
+    val folder = new File(FOLDER)
+    if(folder.exists){
+      folder.listFiles().map { f =>
+        if(!r.exists(toRedisKey(f.getName))){
+          deleteFile(f)
+          1
+        } else 0
+      }.sum
+    } else 0
   }
 
 }
