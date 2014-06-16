@@ -10,14 +10,18 @@ requestListing.controller = function(){
     APPROVAL: 'approval',
     IMPLEMENTATION: 'implementation'
   }
-  this.sortBy = m.prop("id");
 
   this.tab = m.route.param("tab") || "all";
   this.page = parseInt(m.route.param("page")) || 1;
   this.projectTypeId = m.route.param("projectTypeId") || 0;
   this._queryLocFilters = m.route.param("l") || "-";
-  this.sort = m.route.param("sort");
-  this.sortDir = m.route.param("sortDir");
+  this.sort = m.route.param("sort") || "id";
+  this.sortDir = m.route.param("sortDir") || "asc";
+  
+  this.sortBy = function(sort){
+    var sortDir = (self.sortDir == "asc" && sort == self.sort) ? "desc" : "asc";
+    return routes.controllers.Requests.indexPage("all", self.page, self.projectTypeId, self._queryLocFilters, sort, sortDir).url
+  }
 
   this.queryLocFilters = function(){
     var f = self._queryLocFilters;

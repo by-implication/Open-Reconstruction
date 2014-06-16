@@ -602,24 +602,16 @@ request.listView = function(reqs, sortBy){
       m("thead", [
         m("tr", [
           m("th", [
-            m("a", {onclick: function(){ sortBy("id") }}, [
-              "Id"
+            m("a", {href: sortBy("id"), config: m.route}, [
+              "Id "
             ]),
           ]),
-          m("th", [
-            m("a", {onclick: function(){ sortBy("age") }}, [
-              "Stagnation"
-            ]),
-          ]),
+          m("th", "Stagnation"),
           m("th", "Name"),
           m("th", "Gov Unit"),
-          m("th", [
-            m("a", {onclick: function(){ sortBy("level") }}, [
-              "Status"
-            ]),
-          ]),
+          m("th", "Status"),
           m("th.text-right", [
-            m("a", {onclick: function(){ sortBy("amount") }}, [
+            m("a", {href: sortBy("amount"), config: m.route}, [
               "Amount"
             ]),
           ])
