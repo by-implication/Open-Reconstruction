@@ -243,14 +243,28 @@ object Req extends ReqGen {
     }
   }
 
-  def indexList(tab: String, offset: Int, limit: Int, projectTypeId: Option[Int], psgc: PGLTree)(implicit user: User): Seq[Req] = {
+  def indexList(tab: String, offset: Int, limit: Int, projectTypeId: Option[Int], psgc: PGLTree, sort: String, sortDir: String)(implicit user: User): Seq[Req] = {
     val (table, whereClauses) = getSqlParams(tab, projectTypeId, psgc)
+    val sortColumn = (sort match {
+      case "id" => "req_id"
+      case "status" => "req_level"
+      case "amount" => "req_amount"
+      case _ => "req_date"
+    })
+
+    val sortColumnDir = (sortDir match {
+      case "asc" => "ASC"
+      case _ => "DESC"
+    })
+
+    val sortString =  sortColumn + " " + sortColumnDir
+
     DB.withConnection { implicit c =>
       SQL("SELECT * FROM " + table + {
         if (!whereClauses.isEmpty) " WHERE " + whereClauses.mkString(" AND ")
         else ""
       } + """
-        ORDER BY req_date DESC
+        ORDER BY """ + sortColumn  + " " + sortColumnDir + """
         OFFSET {offset}
         LIMIT {limit}
       """).on(

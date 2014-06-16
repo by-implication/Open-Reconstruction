@@ -16,6 +16,9 @@ requestListing.controller = function(){
   this.page = parseInt(m.route.param("page")) || 1;
   this.projectTypeId = m.route.param("projectTypeId") || 0;
   this._queryLocFilters = m.route.param("l") || "-";
+  this.urlSort = m.route.param("sort");
+  this.urlSortDir = m.route.param("sortDir");
+
   this.queryLocFilters = function(){
     var f = self._queryLocFilters;
     f = (f != "-" && f.split(".")) || [];
@@ -117,7 +120,7 @@ requestListing.controller = function(){
     return Math.ceil(count / 20);
   };
 
-  bi.ajax(routes.controllers.Requests.indexMeta(this.tab, this.page, this.projectTypeId, this._queryLocFilters)).then(function (r){
+  bi.ajax(routes.controllers.Requests.indexMeta(this.tab, this.page, this.projectTypeId, this._queryLocFilters, this.urlSort, this.urlSortDir)).then(function (r){
 
     if(m.route() == routes.controllers.Requests.index().url){
 
