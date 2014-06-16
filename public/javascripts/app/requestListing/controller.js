@@ -16,8 +16,8 @@ requestListing.controller = function(){
   this.page = parseInt(m.route.param("page")) || 1;
   this.projectTypeId = m.route.param("projectTypeId") || 0;
   this._queryLocFilters = m.route.param("l") || "-";
-  this.urlSort = m.route.param("sort");
-  this.urlSortDir = m.route.param("sortDir");
+  this.sort = m.route.param("sort");
+  this.sortDir = m.route.param("sortDir");
 
   this.queryLocFilters = function(){
     var f = self._queryLocFilters;
@@ -54,24 +54,24 @@ requestListing.controller = function(){
   var tabs = [
     {
       identifier: this.tabFilters.ALL,
-      href: routes.controllers.Requests.indexPage("all", this.page, this.projectTypeId, this._queryLocFilters).url,
+      href: routes.controllers.Requests.indexPage("all", this.page, this.projectTypeId, this._queryLocFilters, this.sort, this.sortDir).url,
       _label: "All"
     },
     {
       identifier: this.tabFilters.SIGNOFF,
-      href: routes.controllers.Requests.indexPage("signoff", this.page, this.projectTypeId, this._queryLocFilters).url,
+      href: routes.controllers.Requests.indexPage("signoff", this.page, this.projectTypeId, this._queryLocFilters, this.sort, this.sortDir).url,
       when: function(){ return _.contains(self.app.currentUser().permissions, 5) },
       _label: "Needs signoff"
     },
     {
       identifier: this.tabFilters.ASSESSOR,
-      href: routes.controllers.Requests.indexPage("assessor", this.page, this.projectTypeId, this._queryLocFilters).url,
+      href: routes.controllers.Requests.indexPage("assessor", this.page, this.projectTypeId, this._queryLocFilters, this.sort, this.sortDir).url,
       when: function(){ return self.app.isSuperAdmin() },
       _label: "Needs assessor"
     },
     {
       identifier: this.tabFilters.MINE,
-      href: routes.controllers.Requests.indexPage("mine", this.page, this.projectTypeId, this._queryLocFilters).url,
+      href: routes.controllers.Requests.indexPage("mine", this.page, this.projectTypeId, this._queryLocFilters, this.sort, this.sortDir).url,
       when: function(){ return _.contains(self.app.currentUser().permissions, 1) },
       _label: function(){
         if(self.app.currentUser().govUnit && self.app.currentUser().govUnit.role == "LGU") {
@@ -83,13 +83,13 @@ requestListing.controller = function(){
     },
     {
       identifier: this.tabFilters.APPROVAL,
-      href: routes.controllers.Requests.indexPage("approval", this.page, this.projectTypeId, this._queryLocFilters).url,
+      href: routes.controllers.Requests.indexPage("approval", this.page, this.projectTypeId, this._queryLocFilters, this.sort, this.sortDir).url,
       when: function(){ return !self.app.currentUser() },
       _label: "Pending Approval"
     },
     {
       identifier: this.tabFilters.IMPLEMENTATION,
-      href: routes.controllers.Requests.indexPage("implementation", this.page, this.projectTypeId, this._queryLocFilters).url,
+      href: routes.controllers.Requests.indexPage("implementation", this.page, this.projectTypeId, this._queryLocFilters, this.sort, this.sortDir).url,
       when: function(){ return !self.app.currentUser() },
       _label: "Implementation"
     },
@@ -120,7 +120,7 @@ requestListing.controller = function(){
     return Math.ceil(count / 20);
   };
 
-  bi.ajax(routes.controllers.Requests.indexMeta(this.tab, this.page, this.projectTypeId, this._queryLocFilters, this.urlSort, this.urlSortDir)).then(function (r){
+  bi.ajax(routes.controllers.Requests.indexMeta(this.tab, this.page, this.projectTypeId, this._queryLocFilters, this.sort, this.sortDir)).then(function (r){
 
     if(m.route() == routes.controllers.Requests.index().url){
 
@@ -132,13 +132,13 @@ requestListing.controller = function(){
       }
 
       if(this.app.isSuperAdmin()){
-        goTo(routes.controllers.Requests.indexPage("assessor", this.page, this.projectTypeId, this._queryLocFilters));
+        goTo(routes.controllers.Requests.indexPage("assessor", this.page, this.projectTypeId, this._queryLocFilters, this.sort, this.sortDir));
       } else if(_.contains(this.app.currentUser().permissions, 5)){
-        goTo(routes.controllers.Requests.indexPage("signoff", this.page, this.projectTypeId, this._queryLocFilters));
+        goTo(routes.controllers.Requests.indexPage("signoff", this.page, this.projectTypeId, this._queryLocFilters, this.sort, this.sortDir));
       } else if(_.contains(this.app.currentUser().permissions, 1)){
-        goTo(routes.controllers.Requests.indexPage("mine", this.page, this.projectTypeId, this._queryLocFilters));
+        goTo(routes.controllers.Requests.indexPage("mine", this.page, this.projectTypeId, this._queryLocFilters, this.sort, this.sortDir));
       } else {
-        goTo(routes.controllers.Requests.indexPage("all", this.page, this.projectTypeId, this._queryLocFilters));
+        goTo(routes.controllers.Requests.indexPage("all", this.page, this.projectTypeId, this._queryLocFilters, this.sort, this.sortDir));
       }
 
     }

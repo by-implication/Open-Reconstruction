@@ -34,7 +34,7 @@ requestListing.view = function(ctrl){
     return m("ul.pagination", [
       m("li.arrow",{className: ctrl.page === 0 ? "unavailable" : ""}, [
         m("a", {
-          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page - 1, ctrl.projectTypeId, ctrl._queryLocFilters).url,
+          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page - 1, ctrl.projectTypeId, ctrl._queryLocFilters, ctrl.sort, ctrl.sortDir).url,
           config: m.route
         }, [
           "«"
@@ -48,7 +48,7 @@ requestListing.view = function(ctrl){
           else {
             return m("li", {className: page === ctrl.page ? "current" : ""}, [
               m("a", {
-                href: routes.controllers.Requests.indexPage(ctrl.tab, page, ctrl.projectTypeId, ctrl._queryLocFilters).url,
+                href: routes.controllers.Requests.indexPage(ctrl.tab, page, ctrl.projectTypeId, ctrl._queryLocFilters, ctrl.sort, ctrl.sortDir).url,
                 config: m.route
               }, page)
             ])
@@ -57,7 +57,7 @@ requestListing.view = function(ctrl){
         .value(),
       m("li.arrow",{className: ctrl.page === ctrl.maxPage() ? "unavailable" : ""}, [
         m("a", {
-          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page + 1, ctrl.projectTypeId, ctrl._queryLocFilters).url,
+          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page + 1, ctrl.projectTypeId, ctrl._queryLocFilters, ctrl.sort, ctrl.sortDir).url,
           config: m.route
         },[
           "»"
