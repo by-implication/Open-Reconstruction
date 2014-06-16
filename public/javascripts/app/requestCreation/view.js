@@ -218,9 +218,9 @@ requestCreation.view = function(ctrl){
     common.banner("New Project Request"),
     m("form", {onsubmit: ctrl.submitNewRequest }, [
       common.formSection("fa-star", [
-        m("h2", ["Preamble"]),
+        m("h2", ["Terms of Agreement"]),
         common.field(
-          "Terms of Agreement",
+          "",
           m("div", [
             m("input", {type: "checkbox", onchange: m.withAttr("checked", ctrl.preamble)}),
             m("span", [
