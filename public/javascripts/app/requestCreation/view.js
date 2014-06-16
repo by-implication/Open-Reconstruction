@@ -129,8 +129,11 @@ requestCreation.view = function(ctrl){
       icon: "fa-paperclip",
       content: [
         m("h2", "Attachments"),
+        m("p", [
+          "Uploading attachments is optional. You can also add attachments later on if you like."
+        ]),
         m(".header", [
-          m("h1", ["Images"]),
+          m("h3", ["Images"]),
         ]),
         m(".content", [
           m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone}),
@@ -160,7 +163,7 @@ requestCreation.view = function(ctrl){
           ])
         ]),
         m(".header", [
-          m("h1", ["Documents"]),
+          m("h3", ["Documents"]),
         ]),
         m(".content", [
           m("div.dropzone", {config: ctrl.initDocDropzone}),
