@@ -345,8 +345,6 @@ common.stickyTabs.config = function(ctrl){
 
 common.sticky = {};
 common.sticky.config = function(ctrl){
-  // ctrl.cachedMaxScrollRange = 0;
-
   return function(elem, isInit){
     var maxScrollRange = function(){
       var parent = $(elem).parent();
@@ -360,7 +358,7 @@ common.sticky.config = function(ctrl){
       var scrollTop = $(window).scrollTop()
       var top = 0;
       if (scrollTop > initialTop(elem)) {
-        top = Math.min(scrollTop, ctrl.cachedMaxScrollRange) - initialTop(elem);
+        top = Math.min(scrollTop, maxScrollRange()) - initialTop(elem);
       }
       $(elem).css("top", top);
     }
@@ -369,11 +367,6 @@ common.sticky.config = function(ctrl){
       $(elem).css("position", "relative")
     };
     if(!isInit){
-      if (_.isUndefined(ctrl.cachedMaxScrollRange)) {
-        setTimeout(function(){
-          ctrl.cachedMaxScrollRange = maxScrollRange();
-        }, 500)
-      };
       $(window).on("scroll", function(e){
         adjustLayout();
       });
