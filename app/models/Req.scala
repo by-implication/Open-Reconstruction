@@ -257,8 +257,6 @@ object Req extends ReqGen {
       case _ => "DESC"
     })
 
-    val sortString =  sortColumn + " " + sortColumnDir
-
     DB.withConnection { implicit c =>
       SQL("SELECT * FROM " + table + {
         if (!whereClauses.isEmpty) " WHERE " + whereClauses.mkString(" AND ")
@@ -276,10 +274,23 @@ object Req extends ReqGen {
     }
   }
 
-  def authoredBy(id: Int, offset: Int, limit: Int): (Seq[Req], Long) = DB.withConnection { implicit c =>
+  def authoredBy(id: Int, offset: Int, limit: Int, sort: String, sortDir: String): (Seq[Req], Long) = DB.withConnection { implicit c =>
+    
+    val sortColumn = (sort match {
+      case "id" => "req_id"
+      case "status" => "req_level"
+      case "amount" => "req_amount"
+      case _ => "req_date"
+    })
+
+    val sortColumnDir = (sortDir match {
+      case "asc" => "ASC"
+      case _ => "DESC"
+    })
+
     val sqlResult = SQL("""
       SELECT *, count(*) OVER() FROM reqs WHERE author_id = {id} 
-      ORDER BY req_date DESC
+      ORDER BY """ + sortColumn + " " + sortColumnDir + """
       OFFSET {offset}
       LIMIT {limit}
     """).on(

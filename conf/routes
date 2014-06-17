@@ -35,8 +35,8 @@ GET     /logout                                   controllers.Users.logout
 
 GET     /users/meta                               controllers.Users.meta
 GET     /users/:id                                controllers.Users.view(id: Int)
-GET     /users/:id/:page                          controllers.Users.viewPage(id: Int, page: Int)
-GET     /users/:id/:page/meta                     controllers.Users.viewMeta(id: Int, page: Int)
+GET     /users/:id/:page/:s/:sD                   controllers.Users.viewPage(id: Int, page: Int, s: String, sD: String)
+GET     /users/:id/:page/:s/:sD/meta              controllers.Users.viewMeta(id: Int, page: Int, s: String, sD: String)
 
 GET			/requests																	controllers.Requests.index
 GET     /requests/:t/:p/:pid/:l/:s/:sD            controllers.Requests.indexPage(t: String, p: Int, pid: Int, l: String, s: String, sD: String)

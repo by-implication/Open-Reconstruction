@@ -186,7 +186,7 @@ case class User(
 
   var sessionId = -1
 
-  def authoredRequests(offset: Int, limit: Int): (Seq[Req], Long) = Req.authoredBy(id, offset, limit)
+  def authoredRequests(offset: Int, limit: Int, sort: String, sortDir: String): (Seq[Req], Long) = Req.authoredBy(id, offset, limit, sort, sortDir)
 
   def isInvolvedWith(r: Req): Boolean = {
     !isAnon && (r.authorId == pkToInt(id) || {role.name match {

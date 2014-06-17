@@ -13,7 +13,7 @@ m.route(document, window.location.pathname, {
   "/saro": saro,
   "/home": home,
   "/users/:id": user,
-  "/users/:id/:page": user,
+  "/users/:id/:page/:sort/:sortDir": user,
   "/admin": admin,
   "/admin/lgus": admin,
   "/admin/agencies": admin,
