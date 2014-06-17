@@ -15,12 +15,10 @@ govUnitEdit.controller = function(){
   this.submit = function(e){
     e.preventDefault();
     bi.ajax(routes.controllers.GovUnits.update(this.id), {data: this.input}).then(function (r){
-      if(r.success){
-        m.route(routes.controllers.GovUnits.view(this.id).url);
-      } else {
-        alert("Editing failed! " + JSON.stringify(r));
-      }
-    }.bind(this));
+      m.route(routes.controllers.GovUnits.view(this.id).url);
+    }.bind(this), function (r){
+      alert("Editing failed! " + JSON.stringify(r));
+    });
   }.bind(this);
 
   this.cancel = function(){

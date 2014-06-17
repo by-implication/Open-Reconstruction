@@ -1,4 +1,4 @@
-visualization.controller = function(){
+viz.controller = function(){
   var self = this;
 
   this.app = new app.controller();
@@ -19,19 +19,19 @@ visualization.controller = function(){
   this.id = m.route.param('v');
 
   m.startComputation();
-  bi.ajax(routes.controllers.Application.dashboardMeta()).then(function (r){
+  bi.ajax(routes.controllers.Viz.indexMeta()).then(function (r){
     self.mostCommonDisasterType(r.mostCommonDisasterType);
     self.mostCommonProjectType(r.mostCommonProjectType);
 
     self.requests().byLevel(r.byLevel);
-    self.requests().byMonth(visualizations.padMonths(r.byMonth));
+    self.requests().byMonth(viz.padMonths(r.byMonth));
     self.requests().byDisasterType(r.byDisasterType);
     self.requests().byProjectType(r.byProjectType);
     self.requests().byNamedDisaster(r.byNamedDisaster);
     m.endComputation();
   });
 
-  bi.ajax(routes.controllers.Visualizations.getData("EPLC")).then(function (r){
+  bi.ajax(routes.controllers.Viz.getData("EPLC")).then(function (r){
     self.projects(r.data);
     self.projects().byAgency = m.prop([{count: 46, amount: 53501000.00, name: "NIA"},
       {count: 15, amount: 846931858.80, name: "DOTC - PPA"},
@@ -58,10 +58,10 @@ visualization.controller = function(){
     ]);
   });
 
-  bi.ajax(routes.controllers.Visualizations.getData("DBMBureauG")).then(function(r){
+  bi.ajax(routes.controllers.Viz.getData("DBMBureauG")).then(function(r){
     self.saros(r.data);
   })
 
-  this.vis = _.extend({}, visualizations.library[this.id](self));
+  this.vis = _.extend({}, viz.library[this.id](self));
   this.vis.isFullView(true);
 }

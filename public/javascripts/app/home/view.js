@@ -1,6 +1,6 @@
-welcome.view = function(ctrl){
+home.view = function(ctrl){
   return app.template(ctrl.app, [
-    m("div#welcome", [
+    m("div#home", [
       m("section.banner", [
         m(".row", [
           m(".columns.medium-11", [
@@ -96,7 +96,7 @@ welcome.view = function(ctrl){
           ]),
           m("li", [
             m("a", {
-              href: routes.controllers.Application.dashboard().url,
+              href: routes.controllers.Viz.index().url,
               config:m.route
             }, [
               m("img", {src:"/assets/images/landing/3-budget releases.svg"}),
@@ -133,7 +133,7 @@ welcome.view = function(ctrl){
           ]),
           m("li", [
             m("a", {
-              href: routes.controllers.Application.dashboard().url,
+              href: routes.controllers.Viz.index().url,
               config:m.route
             }, [
               m("img", {src:"/assets/images/landing/3-budget releases.svg"}),

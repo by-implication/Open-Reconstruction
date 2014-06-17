@@ -49,9 +49,7 @@ CREATE TABLE reqs (
     req_description text NOT NULL,
     project_type_id int NOT NULL REFERENCES project_types,
     req_amount numeric(15,2) NOT NULL,
-    req_scope project_scope NOT NULL DEFAULT 'Repair',
     req_date timestamp NOT NULL DEFAULT NOW(),
-    -- req_code text NOT NULL,
     req_level int NOT NULL DEFAULT 0,
     req_validated boolean NOT NULL DEFAULT FALSE,
     req_rejected boolean NOT NULL DEFAULT FALSE,
@@ -63,7 +61,8 @@ CREATE TABLE reqs (
     req_attachment_ids int[] NOT NULL DEFAULT '{}',
     disaster_type_id int NOT NULL REFERENCES disaster_types DEFAULT 1,
     req_disaster_date timestamp NOT NULL,
-    req_disaster_name text
+    req_disaster_name text,
+    saro_no text
 );;
 
 # --- !Downs

@@ -12,10 +12,6 @@ CREATE TABLE projects (
     project_funded boolean NOT NULL DEFAULT FALSE
 );;
 
-ALTER TABLE reqs ADD COLUMN saro_no text;;
-
 # --- !Downs
-
-ALTER TABLE reqs DROP COLUMN IF EXISTS saro_no;;
 
 DROP TABLE IF EXISTS projects;;

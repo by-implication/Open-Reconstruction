@@ -5,7 +5,13 @@ import play.api.mvc._
 import recon.models._
 import recon.support._
 
-object Visualizations extends Controller with Secured {
+object Viz extends Controller with Secured {
+
+  def index = Application.index
+	 
+  def indexMeta() = Action {
+    Ok(Req.vizData)
+  }
 
   def view(v: String) = Application.index
 

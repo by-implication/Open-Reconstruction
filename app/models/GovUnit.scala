@@ -20,6 +20,16 @@ object GovUnit extends GovUnitGen {
     ).singleOpt(simple)
   }
 
+  def findByAcronym(acronym: String): Option[GovUnit] = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT * FROM gov_units
+      WHERE gov_unit_acronym = {acronym}
+      LIMIT 1
+    """).on(
+      'acronym -> acronym
+    ).singleOpt(simple)
+  }
+
   def listAgencies = DB.withConnection { implicit c =>
     SQL("""
       SELECT * FROM gov_units g
@@ -59,6 +69,28 @@ case class GovUnit(
 ) extends GovUnitCCGen with Entity[GovUnit]
 // GENERATED case class end
 {
+
+  def requests(p: Int) = DB.withConnection { implicit c =>
+    
+    val limit = Req.PAGE_LIMIT
+
+    val r = SQL("""
+      SELECT *, COUNT(*) OVER() FROM reqs
+      LEFT JOIN users ON user_id = author_id
+      WHERE gov_unit_id = {id}
+      LIMIT {limit} OFFSET {offset}
+    """).on(
+      'id -> id,
+      'limit -> limit,
+      'offset -> (p-1) * limit
+    )
+
+    val list = r.list(Req.simple)
+    val count = r.list(get[Long]("count")).headOption.getOrElse(0)
+
+    (list, count)
+
+  }
 
   def canAssess = canDo(Permission.VALIDATE_REQUESTS)
   def canImplement = canDo(Permission.IMPLEMENT_REQUESTS)

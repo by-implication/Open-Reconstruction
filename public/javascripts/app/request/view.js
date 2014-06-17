@@ -81,7 +81,7 @@ request.view = function(ctrl){
             m(".section", [
               m("h3", "Reference a Project"),
               m("p", [
-                "Should be from the project management system of the implementing agency."
+                "Should be from the project monitoring system of the implementing agency."
               ]),
             ]),
             m("hr"),
@@ -138,7 +138,7 @@ request.view = function(ctrl){
                     m(".columns.medium-6", [
                       m("p", [
                         "Processing Time",
-                        m("h4#stagnation-" + ctrl.id + ".value"), // actual content c/o recursive update function in controller
+                        m("h4#stagnation-" + ctrl.id + ".value", ctrl.request().stagnation), // actual content c/o recursive update function in controller
                       ]),
                       m("p", [
                         "Amount",
@@ -285,7 +285,7 @@ request.view = function(ctrl){
                           }
                         ),
                         m("p.help", [
-                          "The Implementing Agency will be responsible for the handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
+                          "The Implementing Agency will be responsible for handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
                         ]),
                       ]),
                     ]),
@@ -408,7 +408,7 @@ request.view = function(ctrl){
                     "No SARO has been referenced yet."
                   ]),
                   m("h4", ((ctrl.request().level > 4 && ctrl.currentUserBelongsToImplementingAgency()) ? [
-                    "Project Management",
+                    "Project Monitoring",
                     m("button.tiny.right", {type: "button", onclick: ctrl.addProjectModal.show.bind(ctrl.addProjectModal)}, [
                       "Reference a Project"
                     ]),
@@ -602,24 +602,16 @@ request.listView = function(reqs, sortBy){
       m("thead", [
         m("tr", [
           m("th", [
-            m("a", {onclick: function(){ sortBy("id") }}, [
-              "Id"
+            m("a", {href: sortBy("id"), config: m.route}, [
+              "Id "
             ]),
           ]),
-          m("th", [
-            m("a", {onclick: function(){ sortBy("age") }}, [
-              "Stagnation"
-            ]),
-          ]),
+          m("th", "Stagnation"),
           m("th", "Name"),
           m("th", "Gov Unit"),
-          m("th", [
-            m("a", {onclick: function(){ sortBy("level") }}, [
-              "Status"
-            ]),
-          ]),
+          m("th", "Status"),
           m("th.text-right", [
-            m("a", {onclick: function(){ sortBy("amount") }}, [
+            m("a", {href: sortBy("amount"), config: m.route}, [
               "Amount"
             ]),
           ])

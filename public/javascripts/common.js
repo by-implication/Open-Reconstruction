@@ -1,6 +1,22 @@
 var common = {};
 
-common.stagnation = function(reqCtrl){
+common.dropzonePreviewTemplate = m(".dz-preview.dz-file-preview", [
+  m(".dz-details", [
+    m("img", {"data-dz-thumbnail": true}),
+    m(".dz-filename", [
+      m("span", {"data-dz-name": true}),
+    ]),
+    m(".dz-size", {"data-dz-size": true}),
+  ]),
+  m(".dz-progress", [
+    m("span.dz-upload", {"data-dz-uploadprogress": true}),
+  ]),
+  m(".dz-error-message", [
+    m("span", {"data-dz-errormessage": true})
+  ]),
+]);
+
+common.stagnation = function(reqCtrl, offset){
 
   function getDateRejected(history){
     var rejection = history.filter(function (h){
@@ -25,10 +41,10 @@ common.stagnation = function(reqCtrl){
   } else if(req.level > 3){
     current = getDateApproved(reqCtrl.history());
   } else {
-    current = new Date();
+    current = new Date(req.now).getTime();
   }
 
-  var dd = current - timestamp;
+  var dd = current + offset - timestamp;
   // var ms = helper.pad(Math.floor((dd%1000)/10));
   dd/=1000;
   var s = helper.pad(Math.floor(dd%60));
@@ -142,20 +158,32 @@ common.banner = function(text){
   ]);
 }
 
-common.field = function(name, content, help){
-  return m("label", [
-    m("div.row", [
-      m("div.columns.medium-12", name)
+common.field = function(name, content, help, outsideLabel){
+
+  var label = m("div.row", [
+    m("div.columns.medium-12", name)
+  ]);
+  
+  var contents = m("div.row", [
+    m("div.columns.medium-8", [
+      content
     ]),
-    m("div.row", [
-      m("div.columns.medium-8", [
-        content
-      ]),
-      m("div.columns.medium-4.help-container", [
-        m("p.help", help)
-      ])
+    m("div.columns.medium-4.help-container", [
+      m("p.help", help)
     ])
-  ])
+  ]);
+
+  if(outsideLabel){
+    return m("div", [
+      m("label", [label]),
+      contents
+    ]);
+  } else {
+    return m("label", [
+      label,
+      contents
+    ]);
+  }
 }
 
 common.formSection = function(icon, content, i){
@@ -317,28 +345,27 @@ common.stickyTabs.config = function(ctrl){
 
 common.sticky = {};
 common.sticky.config = function(ctrl){
-  // ctrl.isScrolled = false;
   return function(elem, isInit){
-    // var updateTabMenuPos = function(){
-    var boundary = function(elem){
-      var posType = $(elem).css("position");
-      var offset = 0;
-      if (posType === "relative") {
-        offset = parseInt($(elem).css("top")) || 0;
-      }
+    var maxScrollRange = function(){
+      var parent = $(elem).parent();
+      return parent.height() + parent.position().top - $(elem).height();
+    }
+    var initialTop = function(elem){
+      var offset = parseInt($(elem).css("top")) || 0;
       return $(elem).position().top - offset;
     }
     var adjustLayout = function(){
-      if ($(window).scrollTop() > boundary(elem)) {
-        $(elem).css({
-          position: "relative",
-          top: ($(window).scrollTop()) - boundary(elem)
-        })
-      } else {
-        $(elem).removeAttr("style");
+      var scrollTop = $(window).scrollTop()
+      var top = 0;
+      if (scrollTop > initialTop(elem)) {
+        top = Math.min(scrollTop, maxScrollRange()) - initialTop(elem);
       }
+      $(elem).css("top", top);
     }
-
+    var posType = $(elem).css("position");
+    if (posType != "relative") {
+      $(elem).css("position", "relative")
+    };
     if(!isInit){
       $(window).on("scroll", function(e){
         adjustLayout();
@@ -386,4 +413,69 @@ common.modal.view = function(ctrl, content){
   } else {
     return ""
   }
+}
+
+common.pagination = function(pageNum, pageCount, p2link){
+
+  var adjacentPages = 3;
+  var displayedPages = 1 + 2 * adjacentPages + 2 + 2;
+  var allowance = 1 + 2 + adjacentPages;
+  var pagesToDisplay = function() {
+    var pages = [];
+    if(pageCount <= displayedPages) {
+      pages = _.range(1, pageCount+1);
+    }
+    else {
+      pages.push(1);
+      if(pageNum <= allowance) {
+        pages = pages.concat(_.range(2, displayedPages - 2));
+        pages.push("...");
+      }
+      else if(pageNum <= pageCount - allowance) {
+        pages.push("...");
+        pages = pages.concat(_.range(pageNum - adjacentPages, pageNum + adjacentPages + 1));
+        pages.push("...");
+      }
+      else {
+        pages.push("...");
+        pages = pages.concat(_.range(pageCount - displayedPages + 3, pageCount));
+      }
+      pages.push(pageCount);
+    }
+    return pages;
+  }
+
+  return m("ul.pagination", [
+    m("li.arrow",{className: pageNum === 0 ? "unavailable" : ""}, [
+      m("a", {
+        href: p2link(Math.max(pageNum - 1, 1)),
+        config: m.route
+      }, [
+        "«"
+      ]),
+    ]),
+    _.chain(pagesToDisplay())
+      .map(function (page){
+        if(page == "...") {
+          return m("li.unavailable", m("a", "..."));
+        }
+        else {
+          return m("li", {className: page === pageNum ? "current" : ""}, [
+            m("a", {
+              href: p2link(page),
+              config: m.route
+            }, page)
+          ])
+        }
+      })
+      .value(),
+    m("li.arrow",{className: pageNum === pageCount ? "unavailable" : ""}, [
+      m("a", {
+        href: p2link(Math.min(pageNum + 1, pageCount)),
+        config: m.route
+      },[
+        "»"
+      ]),
+    ]),
+  ])
 }

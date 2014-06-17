@@ -1,4 +1,13 @@
 govUnit.view = function(ctrl){
+
+  var pagination = common.pagination(
+    ctrl.page,
+    ctrl.maxPage(),
+    function (p){
+      return routes.controllers.GovUnits.viewPage(ctrl.id, p).url;
+    }
+  );
+
   return app.template(ctrl.app, [
     common.banner([
       ctrl.govUnit().name,
@@ -36,6 +45,7 @@ govUnit.view = function(ctrl){
         ]),
       ]),
       m(".row", [
+        m("h1", "Users"),
         m(".columns.medium-9", [
           m("table", [
             m("thead", [
@@ -71,6 +81,13 @@ govUnit.view = function(ctrl){
               })
             ]),
           ]),
+        ]),
+      ]),
+      m(".row", [
+        m("h1", "Requests"),
+        m(".columns.medium-9", [
+          pagination,
+          request.listView(ctrl.requests(), function(){ return m.route(); })
         ]),
       ])
     ]),

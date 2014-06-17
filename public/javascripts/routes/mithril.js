@@ -2,17 +2,18 @@
 // routes
 m.route.mode = "pathname";
 m.route(document, window.location.pathname, {
-  "/": welcome,
+  "/": home,
   "/requests": requestListing,
-  "/requests/:tab/:page/:projectTypeId/:l": requestListing,
+  "/requests/:tab/:page/:projectTypeId/:l/:sort/:sortDir": requestListing,
   "/requests/new": requestCreation,
   "/requests/:id": request,
   "/requests/:id/:tab": request,
-  "/visualizations/:v": visualization,
-  "/dashboard": dashboard,
+  "/viz/:v": viz,
+  "/viz": vizIndex,
   "/saro": saro,
-  "/welcome": welcome,
+  "/home": home,
   "/users/:id": user,
+  "/users/:id/:page/:sort/:sortDir": user,
   "/admin": admin,
   "/admin/lgus": admin,
   "/admin/agencies": admin,
@@ -23,6 +24,7 @@ m.route(document, window.location.pathname, {
   "/gov-units/new/lgu/:level/:parentId": lguCreation,
   "/gov-units/:id/new-user": userCreation,
   "/gov-units/:id": govUnit,
+  "/gov-units/:id/:page": govUnit,
   "/gov-units/:id/edit": govUnitEdit,
   "/login": login
 });
