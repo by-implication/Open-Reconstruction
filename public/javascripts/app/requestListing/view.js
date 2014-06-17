@@ -1,70 +1,13 @@
 requestListing.view = function(ctrl){
-  var pagination = function(){
-    var adjacentPages = 3;
-    var displayedPages = 1 + 2 * adjacentPages + 2 + 2;
-    var allowance = 1 + 2 + adjacentPages;
-
-    var pagesToDisplay = function() {
-      var pageCount = ctrl.maxPage();
-      var pageNum = ctrl.page;
-      var pages = [];
-      if(pageCount <= displayedPages) {
-        pages = _.range(1, pageCount+1);
-      }
-      else {
-        pages.push(1);
-        if(pageNum <= allowance) {
-          pages = pages.concat(_.range(2, displayedPages - 2));
-          pages.push("...");
-        }
-        else if(pageNum <= pageCount - allowance) {
-          pages.push("...");
-          pages = pages.concat(_.range(pageNum - adjacentPages, pageNum + adjacentPages + 1));
-          pages.push("...");
-        }
-        else {
-          pages.push("...");
-          pages = pages.concat(_.range(pageCount - displayedPages + 3, pageCount));
-        }
-        pages.push(pageCount);
-      }
-      return pages;
+  
+  var pagination = common.pagination(
+    ctrl.page,
+    ctrl.maxPage(),
+    function (p){
+      return routes.controllers.Requests.indexPage(ctrl.tab, p, ctrl.projectTypeId, ctrl._queryLocFilters).url;
     }
+  );
 
-    return m("ul.pagination", [
-      m("li.arrow",{className: ctrl.page === 0 ? "unavailable" : ""}, [
-        m("a", {
-          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page - 1, ctrl.projectTypeId, ctrl._queryLocFilters).url,
-          config: m.route
-        }, [
-          "«"
-        ]),
-      ]),
-      _.chain(pagesToDisplay())
-        .map(function(page){
-          if(page == "...") {
-            return m("li.unavailable", m("a", "..."));
-          }
-          else {
-            return m("li", {className: page === ctrl.page ? "current" : ""}, [
-              m("a", {
-                href: routes.controllers.Requests.indexPage(ctrl.tab, page, ctrl.projectTypeId, ctrl._queryLocFilters).url,
-                config: m.route
-              }, page)
-            ])
-          }
-        })
-        .value(),
-      m("li.arrow",{className: ctrl.page === ctrl.maxPage() ? "unavailable" : ""}, [
-        m("a", {
-          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page + 1, ctrl.projectTypeId, ctrl._queryLocFilters).url,
-          config: m.route
-        },[
-          "»"
-        ]),
-      ]),
-    ])
-  }
   return app.template(ctrl.app, [
     common.banner("Requests"),
     ctrl.app.isAuthorized(process.permissions.CREATE_REQUESTS) ?
@@ -92,9 +35,9 @@ requestListing.view = function(ctrl){
         ]) : "",
       m(".row", [
         m(".columns.medium-9", [
-          pagination(),
+          pagination,
           common.tabs.content(ctrl.tabs),
-          pagination(),
+          pagination,
         ]),
         m(".columns.medium-3", [
           m("h4", [

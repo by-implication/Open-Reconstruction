@@ -1,6 +1,7 @@
 govUnit.controller = function(){
   this.app = new app.controller();
-  this.slug = m.prop(m.route.param("id"));
+  this.id = m.route.param("id");
+  this.page = parseInt(m.route.param("page")) || 1;
   var self = this;
   this.govUnit = m.prop({
     id: -1,
@@ -9,10 +10,18 @@ govUnit.controller = function(){
     role: ""
   });
   this.users = m.prop([]);
+  this.requests = m.prop([]);
+  this.totalReqs = m.prop(0);
+  this.maxPage = function(){
+    var count = parseInt(this.totalReqs()) || 0;
+    return Math.ceil(count / 20);
+  };
 
-  bi.ajax(routes.controllers.GovUnits.viewMeta(this.slug())).then(function (r){
-    self.govUnit(r.govUnit)
-    self.users(r.users)
+  bi.ajax(routes.controllers.GovUnits.viewMeta(this.id, this.page)).then(function (r){
+    self.govUnit(r.govUnit);
+    self.users(r.users);
+    self.requests(r.requests);
+    self.totalReqs(r.totalReqs);
   }, function (r){    
     if(r.reason == "form error"){
       alert("Agency not created!");

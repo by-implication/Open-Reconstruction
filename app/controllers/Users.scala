@@ -74,7 +74,7 @@ object Users extends Controller with Secured {
     User.findById(id) match {
       case Some(user) => {
 
-        val limit = 20
+        val limit = Req.PAGE_LIMIT
         val offset = (page - 1) * limit
         val (requests, requestCount): (Seq[Req], Long) = user.authoredRequests(offset, limit)
 

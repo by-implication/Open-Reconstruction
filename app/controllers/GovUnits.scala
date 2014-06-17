@@ -12,14 +12,20 @@ object GovUnits extends Controller with Secured {
 
   def createAgency = Application.index
   def view = Application.index1 _
+  def viewPage = Application.index2 _
   def edit = Application.index1 _
 
-  def viewMeta(id: Int): Action[AnyContent] = GenericAction(){ implicit user => implicit request =>
+  def viewMeta(id: Int, p: Int): Action[AnyContent] = GenericAction(){ implicit user => implicit request =>
     GovUnit.findById(id) match {
-      case Some(govUnit) => Rest.success(
-        "govUnit" -> govUnit.toJson,
-        "users" -> Json.toJson(govUnit.users.map(_.infoJson))
-      )
+      case Some(govUnit) => {
+        val (reqs, count: Long) = govUnit.requests(p)
+        Rest.success(
+          "govUnit" -> govUnit.toJson,
+          "users" -> govUnit.users.map(_.infoJson),
+          "requests" -> reqs.map(_.indexJson),
+          "totalReqs" -> count
+        )
+      }
       case None => Rest.notFound()
     }
   }

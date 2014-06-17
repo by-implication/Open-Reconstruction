@@ -414,3 +414,68 @@ common.modal.view = function(ctrl, content){
     return ""
   }
 }
+
+common.pagination = function(pageNum, pageCount, p2link){
+
+  var adjacentPages = 3;
+  var displayedPages = 1 + 2 * adjacentPages + 2 + 2;
+  var allowance = 1 + 2 + adjacentPages;
+  var pagesToDisplay = function() {
+    var pages = [];
+    if(pageCount <= displayedPages) {
+      pages = _.range(1, pageCount+1);
+    }
+    else {
+      pages.push(1);
+      if(pageNum <= allowance) {
+        pages = pages.concat(_.range(2, displayedPages - 2));
+        pages.push("...");
+      }
+      else if(pageNum <= pageCount - allowance) {
+        pages.push("...");
+        pages = pages.concat(_.range(pageNum - adjacentPages, pageNum + adjacentPages + 1));
+        pages.push("...");
+      }
+      else {
+        pages.push("...");
+        pages = pages.concat(_.range(pageCount - displayedPages + 3, pageCount));
+      }
+      pages.push(pageCount);
+    }
+    return pages;
+  }
+
+  return m("ul.pagination", [
+    m("li.arrow",{className: pageNum === 0 ? "unavailable" : ""}, [
+      m("a", {
+        href: p2link(Math.max(pageNum - 1, 1)),
+        config: m.route
+      }, [
+        "«"
+      ]),
+    ]),
+    _.chain(pagesToDisplay())
+      .map(function (page){
+        if(page == "...") {
+          return m("li.unavailable", m("a", "..."));
+        }
+        else {
+          return m("li", {className: page === pageNum ? "current" : ""}, [
+            m("a", {
+              href: p2link(page),
+              config: m.route
+            }, page)
+          ])
+        }
+      })
+      .value(),
+    m("li.arrow",{className: pageNum === pageCount ? "unavailable" : ""}, [
+      m("a", {
+        href: p2link(Math.min(pageNum + 1, pageCount)),
+        config: m.route
+      },[
+        "»"
+      ]),
+    ]),
+  ])
+}

@@ -101,6 +101,7 @@ object Application extends Controller {
       GovUnits.listLgus,
       GovUnits.view,
       GovUnits.viewMeta,
+      GovUnits.viewPage,
       GovUnits.createAgency,
       GovUnits.createAgencyMeta,
       GovUnits.insertAgency,

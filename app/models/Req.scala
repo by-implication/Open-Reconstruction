@@ -11,6 +11,8 @@ import scala.language.existentials
 
 object Req extends ReqGen {
 
+  def PAGE_LIMIT = 20
+
   def assignByPsgc = DB.withConnection { implicit c =>
     SQL("SELECT DISTINCT req_location FROM reqs WHERE isnumeric(req_location)")
     .list(get[String]("req_location") map { loc =>
@@ -270,9 +272,9 @@ object Req extends ReqGen {
       OFFSET {offset}
       LIMIT {limit}
     """).on(
-    'id -> id,
-    'offset -> offset,
-    'limit -> limit
+      'id -> id,
+      'offset -> offset,
+      'limit -> limit
     )
 
     val parsed = sqlResult.list(simple)
