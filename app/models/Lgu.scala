@@ -80,7 +80,14 @@ case class Lgu(
 ) extends LguCCGen with Entity[Lgu]
 // GENERATED case class end
 {
-  def getChildren = Lgu.getChildren(psgc)
+  def children = Lgu.getChildren(psgc)
+  def ancestors = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT * FROM lgus LEFT JOIN gov_units ON gov_unit_id = lgu_id
+      WHERE lgu_psgc @> {psgc} and lgu_psgc != {psgc}
+      ORDER BY lgu_psgc ASC
+    """).on('psgc -> psgc).list(GovUnit.simple)
+  }
 }
 
 // GENERATED object start

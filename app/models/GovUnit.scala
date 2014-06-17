@@ -70,7 +70,7 @@ case class GovUnit(
 // GENERATED case class end
 {
 
-  def requests(p: Int) = DB.withConnection { implicit c =>
+  def requests(p: Int): (Seq[Req], Long) = DB.withConnection { implicit c =>
     
     val limit = Req.PAGE_LIMIT
 
@@ -86,7 +86,7 @@ case class GovUnit(
     )
 
     val list = r.list(Req.simple)
-    val count = r.list(get[Long]("count")).headOption.getOrElse(0)
+    val count: Long = r.list(get[Long]("count")).headOption.getOrElse(0)
 
     (list, count)
 

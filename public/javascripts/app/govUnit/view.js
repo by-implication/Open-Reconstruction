@@ -10,12 +10,19 @@ govUnit.view = function(ctrl){
 
   return app.template(ctrl.app, [
     common.banner([
+      ctrl.ancestors().length ?
+      ctrl.ancestors().map(function (c, i){
+        return m("span", [
+          m("a", {href: routes.controllers.GovUnits.view(c.id).url, config: m.route}, c.name),
+          " > "
+        ])
+      }): "",
       ctrl.govUnit().name,
       ctrl.govUnit().acronym ?
         m("span.acronym", [
           "(" + ctrl.govUnit().acronym + ")"
         ])
-      : "",
+      : ""
     ]),
     m("section", [
       m(".row", [

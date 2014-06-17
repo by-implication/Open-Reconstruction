@@ -17,6 +17,7 @@ govUnit.controller = function(){
     return Math.ceil(count / 20);
   };
   this.children = m.prop([]);
+  this.ancestors = m.prop([]);
 
   bi.ajax(routes.controllers.GovUnits.viewMeta(this.id, this.page)).then(function (r){
     self.govUnit(r.govUnit);
@@ -25,6 +26,7 @@ govUnit.controller = function(){
     self.totalReqs(r.totalReqs);
     if(r.lgu){
       self.children(r.lgu.children);
+      self.ancestors(r.lgu.ancestors);
     }
   }, function (r){    
     if(r.reason == "form error"){

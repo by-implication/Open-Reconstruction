@@ -18,22 +18,23 @@ object GovUnits extends Controller with Secured {
   def viewMeta(id: Int, p: Int): Action[AnyContent] = GenericAction(){ implicit user => implicit request =>
     GovUnit.findById(id) match {
       case Some(govUnit) => {
-        val (reqs, count: Long) = govUnit.requests(p)
+        val (reqs, count) = govUnit.requests(p)
         Rest.success(
           "govUnit" -> govUnit.toJson,
           "users" -> govUnit.users.map(_.infoJson),
           "requests" -> reqs.map(_.indexJson),
           "totalReqs" -> count,
           "lgu" -> Lgu.findById(id).map { lgu =>
-            
-            val children = lgu.getChildren.map { case (govUnit, lgu) => Json.obj(
-              "id" -> govUnit.id,
-              "name" -> govUnit.name
-            )}
+
+            def relativeJson(g: GovUnit) = Json.obj(
+              "id" -> g.id,
+              "name" -> g.name
+            )
 
             Json.obj(
               "level" -> lgu.level,
-              "children" -> children
+              "children" -> lgu.children.map { case (govUnit, lgu) => relativeJson(govUnit) },
+              "ancestors" -> lgu.ancestors.map(relativeJson)
             )
 
           }
