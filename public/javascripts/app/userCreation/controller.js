@@ -27,6 +27,6 @@ userCreation.controller = function(){
       } else {
         alert(r.reason);
       }
-    });
+    }.bind(this));
   }.bind(this)
 }

@@ -1,3 +1,4 @@
+polyfill.js
 # these are for IE 9 and 10
 ../bower_components/WeakMap/WeakMap.js
 ../bower_components/MutationObserver/MutationObserver.js

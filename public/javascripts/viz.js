@@ -62,7 +62,7 @@ viz.genYearMonth = function(start, end){
 viz.nextYearMonth = function nextYearMonth(yearMonth){
   var ym = yearMonth.split("-");
   var y = parseInt(ym[0]);
-  var m = parseInt(ym[1]);
+  var m = parseInt(ym[1], 10);
   m++;
   if(m > 12){
     m = 1;
