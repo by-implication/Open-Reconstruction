@@ -38,7 +38,8 @@ requestListing.controller = function(){
     this.onchange = function(v){
       this.value(v);
       var targetRoute = routes.controllers.Requests.indexPage(
-        self.tab, 1, self.projectTypeId, v
+        self.tab, 1, self.projectTypeId, v,
+        self.sort, self.sortDir
       ).url;
       m.route(targetRoute);
     }
