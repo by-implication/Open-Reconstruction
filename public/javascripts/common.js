@@ -1,6 +1,22 @@
 var common = {};
 
-common.stagnation = function(reqCtrl){
+common.dropzonePreviewTemplate = m(".dz-preview.dz-file-preview", [
+  m(".dz-details", [
+    m("img", {"data-dz-thumbnail": true}),
+    m(".dz-filename", [
+      m("span", {"data-dz-name": true}),
+    ]),
+    m(".dz-size", {"data-dz-size": true}),
+  ]),
+  m(".dz-progress", [
+    m("span.dz-upload", {"data-dz-uploadprogress": true}),
+  ]),
+  m(".dz-error-message", [
+    m("span", {"data-dz-errormessage": true})
+  ]),
+]);
+
+common.stagnation = function(reqCtrl, offset){
 
   function getDateRejected(history){
     var rejection = history.filter(function (h){
@@ -25,11 +41,11 @@ common.stagnation = function(reqCtrl){
   } else if(req.level > 3){
     current = getDateApproved(reqCtrl.history());
   } else {
-    current = new Date();
+    current = new Date(req.now).getTime();
   }
 
-  var dd = current - timestamp;
-  var ms = helper.pad(Math.floor((dd%1000)/10));
+  var dd = current + offset - timestamp;
+  // var ms = helper.pad(Math.floor((dd%1000)/10));
   dd/=1000;
   var s = helper.pad(Math.floor(dd%60));
   dd/=60;
@@ -38,7 +54,7 @@ common.stagnation = function(reqCtrl){
   var h = helper.pad(Math.floor(dd%24));
   dd/=24;
   var d = Math.floor(dd);
-  return d + " DAYS " + h + ":" + m + ":" + s + "." + ms;
+  return d + " DAYS " + h + ":" + m + ":" + s;
 }
 
 common.duration = function(ms){
@@ -142,20 +158,32 @@ common.banner = function(text){
   ]);
 }
 
-common.field = function(name, content, help){
-  return m("label", [
-    m("div.row", [
-      m("div.columns.medium-12", name)
+common.field = function(name, content, help, outsideLabel){
+
+  var label = m("div.row", [
+    m("div.columns.medium-12", name)
+  ]);
+  
+  var contents = m("div.row", [
+    m("div.columns.medium-8", [
+      content
     ]),
-    m("div.row", [
-      m("div.columns.medium-8", [
-        content
-      ]),
-      m("div.columns.medium-4.help-container", [
-        m("p.help", help)
-      ])
+    m("div.columns.medium-4.help-container", [
+      m("p.help", help)
     ])
-  ])
+  ]);
+
+  if(outsideLabel){
+    return m("div", [
+      m("label", [label]),
+      contents
+    ]);
+  } else {
+    return m("label", [
+      label,
+      contents
+    ]);
+  }
 }
 
 common.formSection = function(icon, content, i){
@@ -249,9 +277,14 @@ common.stickyTabs.menu = function(ctrl, options){
       }
     })
     .map(function (tab, i){
-      var options = { href: tab.href };
-      // console.log(ctrl.currentSection(), tab.href);
-      return m("dd", {class: (ctrl.currentSection() === tab.href) ? "active" : ""}, [
+      var options = { 
+        href: tab.href, 
+        onclick: function(e){
+          e.preventDefault();
+          $("html, body").animate({scrollTop: $(tab.href).position().top + "px"});
+        }
+      };
+      return m("dd", {class: (location.hash === tab.href) ? "active" : ""}, [
         m("a", options, tab.label())
       ]);
     })
@@ -260,24 +293,85 @@ common.stickyTabs.menu = function(ctrl, options){
 
 common.stickyTabs.controller = function(){
   this.tabs = m.prop([]);
-  this.currentTab = function() {
-    var item = _.find(this.tabs(), function(tab) {
-      if(window.location.hash){
-        return tab.href === window.location.hash;
-      } else {
-        return tab.href == m.route() 
-      }
-    });
-    if(item == undefined) {
-      item = _.head(this.tabs());
-    }
-    return item.identifier ? item.identifier : item.label();
+}
+
+common.stickyTabs.locHandler = function(hash){
+  if(history.replaceState) { 
+    history.replaceState({}, "", hash);
+  } else { 
+    scrollV = document.body.scrollTop;
+    scrollH = document.body.scrollLeft;
+    location.hash = hash;
+    document.body.scrollTop = scrollV;
+    document.body.scrollLeft = scrollH;
   }
-  this.currentSection = m.prop();
-  this.isActive = function(identifier){
-    console.log(this.currentSection(), identifier);
-    return this.currentSection() == identifier;
-  }.bind(this);
+}
+
+common.stickyTabs.config = function(ctrl){
+  return function(elem, isInit){
+    setTimeout(function(){
+      if (!isInit){
+        idPosDict = _.chain(ctrl.tabs())
+          .map(function(t){
+            var item = t.href;
+            // console.log($(item).position().top, $(item).height());
+            return [$(item).position().top + $(item).height(), item];
+          })
+          .object()
+          .value();
+
+        var poss = _.keys(idPosDict);
+        var windowPos = $(window).scrollTop();
+        var closestPos = _.find(poss, function(p){ return p >= windowPos });
+
+        $(window).on("scroll", function(e){
+          var windowPos = $(window).scrollTop();
+          var closestPos = _.find(poss, function(p){
+            return p >= windowPos
+          });
+          var hash = idPosDict[closestPos];
+          if ((location.hash != hash)){
+            // console.log(hash);
+            m.startComputation();
+            common.stickyTabs.locHandler(hash);
+            m.endComputation();
+          }
+        });
+      }
+    }, 100)
+    common.sticky.config(ctrl)(elem, isInit);
+  }
+}
+
+common.sticky = {};
+common.sticky.config = function(ctrl){
+  return function(elem, isInit){
+    var maxScrollRange = function(){
+      var parent = $(elem).parent();
+      return parent.height() + parent.position().top - $(elem).height();
+    }
+    var initialTop = function(elem){
+      var offset = parseInt($(elem).css("top")) || 0;
+      return $(elem).position().top - offset;
+    }
+    var adjustLayout = function(){
+      var scrollTop = $(window).scrollTop()
+      var top = 0;
+      if (scrollTop > initialTop(elem)) {
+        top = Math.min(scrollTop, maxScrollRange()) - initialTop(elem);
+      }
+      $(elem).css("top", top);
+    }
+    var posType = $(elem).css("position");
+    if (posType != "relative") {
+      $(elem).css("position", "relative")
+    };
+    if(!isInit){
+      $(window).on("scroll", function(e){
+        adjustLayout();
+      });
+    }
+  }
 }
 
 common.modal = {};
@@ -286,8 +380,6 @@ common.modal.controller = function(){
   this.show = function(){
     this.isVisible(true);
     this.height = helper.docHeight;
-    // console.log($("html, body"));
-    // $("html, body").animate({ scrollTop: "0px" });
   }
   this.close = function(){
     this.isVisible(false);

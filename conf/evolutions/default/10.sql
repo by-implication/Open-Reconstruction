@@ -2,7 +2,7 @@
 
 CREATE TABLE projects (
     project_id serial PRIMARY KEY,
-    req_id int NOT NULL REFERENCES reqs,
+    req_id int NOT NULL REFERENCES reqs ON DELETE CASCADE,
     project_source_id text NOT NULL,
     project_name text NOT NULL,
     project_amount numeric(12,2) NOT NULL,
@@ -12,10 +12,6 @@ CREATE TABLE projects (
     project_funded boolean NOT NULL DEFAULT FALSE
 );;
 
-ALTER TABLE reqs ADD COLUMN saro_no text;;
-
 # --- !Downs
-
-ALTER TABLE reqs DROP COLUMN IF EXISTS saro_no;;
 
 DROP TABLE IF EXISTS projects;;

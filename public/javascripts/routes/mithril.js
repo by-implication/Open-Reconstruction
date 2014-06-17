@@ -1,18 +1,19 @@
-
 ////////////////////////////////////////////////////
 // routes
 m.route.mode = "pathname";
-m.route(document, window.location.pathname == "/" ? "/welcome" : window.location.pathname, {
+m.route(document, window.location.pathname, {
+  "/": home,
   "/requests": requestListing,
-  "/requests/:tab/:page/:projectTypeId": requestListing,
+  "/requests/:tab/:page/:projectTypeId/:l": requestListing,
   "/requests/new": requestCreation,
   "/requests/:id": request,
   "/requests/:id/:tab": request,
-  "/visualizations/:v": visualization,
-  "/dashboard": dashboard,
+  "/viz/:v": viz,
+  "/viz": vizIndex,
   "/saro": saro,
-  "/welcome": welcome,
+  "/home": home,
   "/users/:id": user,
+  "/users/:id/:page": user,
   "/admin": admin,
   "/admin/lgus": admin,
   "/admin/agencies": admin,

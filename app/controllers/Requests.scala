@@ -23,7 +23,7 @@ object Requests extends Controller with Secured {
     Ok(Json.obj(
       "disasterTypes" -> DisasterType.jsonList,
       "projectTypes" -> ProjectType.jsonList,
-      "projectScopes" -> ProjectScope.jsonList
+      "bucketKey" -> Bucket.getAvailableKey
     ))
   }
 
@@ -37,15 +37,15 @@ object Requests extends Controller with Secured {
         "isInvolved" -> Json.toJson(user.isInvolvedWith(req)),
         "hasSignedoff" -> Json.toJson(user.hasSignedoff(req)),
         "canSignoff" -> Json.toJson(user.canSignoff(req)),
-        "author" -> User.findById(req.authorId).map(_.infoJson).getOrElse(JsNull),
+        "author" -> User.findById(req.authorId).map(_.infoJson),
         "assessingAgencies" -> Json.toJson(GovUnit.withPermission(Permission.VALIDATE_REQUESTS).map(_.toJson)),
         "implementingAgencies" -> Json.toJson(GovUnit.withPermission(Permission.IMPLEMENT_REQUESTS).map(_.toJson)),
         "assessingAgency" -> req.assessingAgencyId.map { aid =>
-          GovUnit.findById(aid).map(_.toJson).getOrElse(JsNull)
-        }.getOrElse(JsNull),
+          GovUnit.findById(aid).map(_.toJson)
+        },
         "implementingAgency" -> req.implementingAgencyId.map { aid =>
-          GovUnit.findById(aid).map(_.toJson).getOrElse(JsNull)
-        }.getOrElse(JsNull),
+          GovUnit.findById(aid).map(_.toJson)
+        },
         "attachments" -> {
           val (imgs, docs) = req.attachments.partition(_._1.isImage)
           val tf = (Attachment.insertJson _).tupled
@@ -64,7 +64,7 @@ object Requests extends Controller with Secured {
 
   def insert() = UserAction(){ implicit user => implicit request =>
 
-    val createForm: Form[Req] = Form(
+    val createForm: Form[(Req, String)] = Form(
       mapping(
         "amount" -> optional(projectAmount),
         "description" -> nonEmptyText,
@@ -73,21 +73,20 @@ object Requests extends Controller with Secured {
         "disasterTypeId" -> number,
         "location" -> nonEmptyText,
         "projectTypeId" -> number,
-        "scopeOfWork" -> nonEmptyText
+        "bucketKey" -> text
       )
       ((amount, description, 
         disasterDate, disasterName, disasterTypeId,
-        location, projectTypeId, scope) => {
-        Req(
+        location, projectTypeId, bucketKey) => {
+        (Req(
           amount = amount.getOrElse(0),
           description = description,
           disasterDate = new java.sql.Timestamp(disasterDate),
           disasterName = disasterName,
           disasterTypeId = disasterTypeId,
           projectTypeId = projectTypeId,
-          scope = ProjectScope.withName(scope),
           location = location
-        )
+        ), bucketKey)
       })
       (_ => None)
     )
@@ -95,15 +94,23 @@ object Requests extends Controller with Secured {
   	if(user.canCreateRequests){
   		createForm.bindFromRequest.fold(
   			Rest.formError(_),
-  			_.copy(authorId = user.id).save().map { implicit r =>
-          Event.newRequest().create().map { _ =>
-            Event.disaster().create().map { _ =>
-              Checkpoint.push(user).map { _ =>
-  				      Rest.success("id" -> r.insertJson)
+  			_ match {
+          case (r, bucketKey) => {
+            r.copy(authorId = user.id).save().map { implicit r =>
+            Event.newRequest().create().map { _ =>
+              Event.disaster().create().map { _ =>
+                Checkpoint.push(user).map { _ =>
+                  if(Bucket(bucketKey).dumpTo(r)){
+  				          Rest.success(r.insertSeq:_*)
+                  } else {
+                    Rest.serverError()
+                  }
+                }.getOrElse(Rest.serverError())
               }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())
-          }.getOrElse(Rest.serverError())
-  			}.getOrElse(Rest.serverError())
+    			}.getOrElse(Rest.serverError())
+        }
+      }
 			)
   	} else Rest.unauthorized()
 
@@ -174,17 +181,23 @@ object Requests extends Controller with Secured {
 
   def index = Application.index
 
-  def indexPage(tab: String, page: Int, projectTypeId: Int) = Application.index
+  def indexPage(tab: String, page: Int, projectTypeId: Int, locFilters: String) = Application.index
 
-  def indexMeta(tab: String, page: Int, projectTypeId: Int) = UserAction(){ implicit user => implicit request =>
+  def indexMeta(tab: String, page: Int, projectTypeId: Int, locFilters: String) = UserAction(){ implicit user => implicit request =>
 
     val limit = 20
-    val offset = page * limit
+    val offset = (page-1) * limit
     val projectTypeIdOption = if (projectTypeId == 0) None else Some(projectTypeId)
+
+    val psgc = if(locFilters == "-"){
+      PGLTree(List.empty[Int])
+    } else {
+      PGLTree.fromString(locFilters)
+    }
 
     val reqListOption = tab match {
       case "all" | "approval" | "assessor" | "implementation" | "mine" | "signoff" => {
-        Some(Req.indexList(tab, offset, limit, projectTypeIdOption))
+        Some(Req.indexList(tab, offset, limit, projectTypeIdOption, psgc))
       }
       case _ => None
     }
@@ -193,13 +206,14 @@ object Requests extends Controller with Secured {
       Ok(Json.obj(
         "list" -> reqList.map(_.indexJson),
         "filters" -> ProjectType.jsonList,
+        "locFilters" -> Lgu.getLocFilters(psgc),
         "counts" -> Json.obj(
-          "all" -> Req.indexCount("all", projectTypeIdOption),
-          "approval" -> Req.indexCount("approval", projectTypeIdOption),
-          "assessor" -> Req.indexCount("assessor", projectTypeIdOption),
-          "implementation" -> Req.indexCount("implementation", projectTypeIdOption),
-          "mine" -> Req.indexCount("mine", projectTypeIdOption),
-          "signoff" -> Req.indexCount("signoff", projectTypeIdOption)
+          "all" -> Req.indexCount("all", projectTypeIdOption, psgc),
+          "approval" -> Req.indexCount("approval", projectTypeIdOption, psgc),
+          "assessor" -> Req.indexCount("assessor", projectTypeIdOption, psgc),
+          "implementation" -> Req.indexCount("implementation", projectTypeIdOption, psgc),
+          "mine" -> Req.indexCount("mine", projectTypeIdOption, psgc),
+          "signoff" -> Req.indexCount("signoff", projectTypeIdOption, psgc)
         )
       ))
     }.getOrElse(Rest.error("invalid tab"))
@@ -266,7 +280,7 @@ object Requests extends Controller with Secured {
     case "implementingAgency" => {
       mapping(
         "input" -> number.verifying("Unauthorized",
-          id => user.isSuperAdmin && (id match {
+          id => (user.isSuperAdmin || user.isDBM) && (id match {
             case 0 => true
             case _ => GovUnit.findById(id).get.canImplement
           })
@@ -279,7 +293,6 @@ object Requests extends Controller with Secured {
     case "saroNo" => {
       mapping(
         "input" -> nonEmptyText.verifying("Unauthorized", _ => {
-          play.Logger.info("Checkingg: " + user.isDBM)
           user.isDBM
         })
       )(saroNo => req.copy(saroNo = Some(saroNo))
@@ -296,14 +309,18 @@ object Requests extends Controller with Secured {
   def assignSaro(id: Int) = UserAction(){ implicit user => implicit request =>
     if(!user.isAnon){
       Req.findById(id).map { implicit req =>
-        editForm("saroNo").bindFromRequest.fold(
-          Rest.formError(_),
-          _.save().map { implicit req =>
-            (Event.assignSaro()).create().map { e =>
-              Rest.success("event" -> e.listJson)
+        if (req.implementingAgencyId.isDefined){
+          editForm("saroNo").bindFromRequest.fold(
+            Rest.formError(_),
+            _.save().map { implicit req =>
+              (Event.assignSaro()).create().map { e =>
+                Rest.success("event" -> e.listJson)
+              }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())
-          }.getOrElse(Rest.serverError())
-        )
+          )
+        } else {
+          Rest.serverError()
+        }
       }.getOrElse(Rest.notFound())
     } else Rest.unauthorized()
   }
@@ -311,6 +328,7 @@ object Requests extends Controller with Secured {
   def editField(id: Int, field: String) = UserAction(){ implicit user => implicit request =>
     if(!user.isAnon){
       Req.findById(id).map { implicit req =>
+        play.Logger.info("canEdit: " + user.canEditRequest(req))
         if(user.canEditRequest(req)){
           editForm(field).bindFromRequest.fold(
             Rest.formError(_),

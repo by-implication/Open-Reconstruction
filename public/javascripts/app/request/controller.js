@@ -1,5 +1,4 @@
 request.controller = function(){
-  var map;
   var self = this;
   this.app = new app.controller();
   this.signoffModal = new common.modal.controller();
@@ -20,7 +19,7 @@ request.controller = function(){
     {label: m.prop("References"), href: "#references"},
     {label: m.prop("Activity"), href: "#activity"}
   ]);
-  this.requestTabs.currentSection("#summary");
+  // this.requestTabs.currentSection("#summary");
 
   this.id = m.route.param("id");
 
@@ -67,13 +66,11 @@ request.controller = function(){
         amount: self.addProjectModal.project.amount()
       }
     }).then(function (r){
-      if(r.success){
-        alert('Submitted!')
-        self.history().unshift(r.event);
-      } else {
-        alert("Your input was invalid.");
-      }
-    }.bind(this));
+      alert('Submitted!')
+      self.history().unshift(r.event);
+    }, function (r){
+      alert("Your input was invalid.");
+    });
   }
 
   this.unassignedAgency = {id: 0};
@@ -103,15 +100,14 @@ request.controller = function(){
       bi.ajax(routes.controllers.Requests.editField(ctrl.id, field), {
         data: {input: this.input}
       }).then(function (r){
-        if(r.success){
-          ctrl.request()[field] = this.input();
-          ctrl.history().unshift(r.event);
-          processResult(r);
-        } else {
-          alert("Your input was invalid.");
-        }
+        ctrl.request()[field] = this.input();
+        ctrl.history().unshift(r.event);
+        processResult(r);
         c();
-      }.bind(this));
+      }.bind(this), function (r){
+        alert("Your input was invalid.");
+        c();
+      });
     }
   }
 
@@ -147,7 +143,9 @@ request.controller = function(){
       }
     )),
 
-    implement: new deg(this.app.isSuperAdmin, edit("implementingAgency"), save("implementingAgency",
+    implement: new deg(function(){
+      return (self.app.isSuperAdmin() || self.app.isDBM());
+    }, edit("implementingAgency"), save("implementingAgency",
       function (r){
         var agency = extractAgency(r);
         if(agency.id){
@@ -173,29 +171,18 @@ request.controller = function(){
     degs.disaster.htmlDate(helper.toDateValue(newDate));
   }
 
-  var parseLocation = function(location){
-    var split = location.split(',').map(function(coord){return parseFloat(coord)});
-    if (_.contains(split, NaN) || (split.length % 2)) {
-      // display as plain string
-      return; 
-    } else {
-      this.coords(new L.LatLng(split[0], split[1]));
-      window.setTimeout(function(){
-        if(map) map.setView(this.coords(), 8);
-        L.marker(this.coords()).addTo(map);
-      }.bind(this), 200) // I'M SO SORRY
-    }
-  }.bind(this)
-
-  this.dropzone = null;
+  
 
   this.curUserCanUpload = function(){
+    return m.cookie().logged_in && (
     // if requester, you can only upload if the assessor hasn't approved it
-    return (this.currentUserIsAuthor() && this.request().level === 0) ||
+    (this.currentUserIsAuthor() && this.request().level < 2) ||
     // if assesor, can only upload if you haven't approved it
-    (this.currentUserBelongsToAssessingAgency() && this.request().level === 0) ||
+    (this.currentUserBelongsToAssessingAgency() && this.request().level === 1) ||
     // if OCD, can only upload if you haven't approved it
-    (this.app.isSuperAdmin() && this.request().level <= 1)
+    (this.app.isSuperAdmin() && this.request().level < 3) ||
+    // implementer can upload
+    (this.currentUserBelongsToImplementingAgency()))
   }
 
   this.currentUserBelongsToAssessingAgency = function(){
@@ -251,19 +238,25 @@ request.controller = function(){
     this.canEdit(data.canEdit);
     request.disasterTypes(data.disasterTypes);
 
+    this.request().stagnation = common.stagnation(this);
     if(data.request.level < 4 && !data.request.isRejected){
-      !function update(){
+      var baseTime = new Date().getTime();
+      !function update(offset){
         var element = document.getElementById("stagnation-" + this.id);
         if(element){
-          element.innerHTML = common.stagnation(this)
+          element.innerHTML = common.stagnation(this, offset);
         }
         if(m.route().startsWith(routes.controllers.Requests.view(requestId).url)){
-          setTimeout(update.bind(this), 40);
+          setTimeout(update.bind(this, (new Date().getTime() - baseTime)), 1000);
         }
-      }.bind(this)();
+      }.bind(this)(0);
     }
 
-    parseLocation(data.request.location);
+    this.location(data.request.location);
+    var split = self.location().split(',').map(function(coord){return parseFloat(coord)});
+    if(!_.contains(split, NaN) && !(split.length % 2)){
+      this.coords(new L.LatLng(split[0], split[1]));
+    }
 
   }.bind(this));
 
@@ -272,17 +265,15 @@ request.controller = function(){
     bi.ajax(routes.controllers.Requests.signoff(this.id), {
       data: {password: this.signoffModal.password}
     }).then(function (r){
-      if(r.success){
-        this.canSignoff(false);
-        this.hasSignedoff(true);
-        alert('Signoff successful!');
-        this.signoffModal.close();
-        this.history().unshift(r.event);
-        this.request().level++;
-      } else {
-        alert("Failed to signoff: " + r.messages.password);
-      }
-    }.bind(this));
+      this.canSignoff(false);
+      this.hasSignedoff(true);
+      alert('Signoff successful!');
+      this.signoffModal.close();
+      this.history().unshift(r.event);
+      this.request().level++;
+    }.bind(this), function (r){
+      alert("Failed to signoff: " + r.messages.password);
+    });
   }.bind(this);
 
   this.rejectModal.reject = function(e){
@@ -290,20 +281,18 @@ request.controller = function(){
     bi.ajax(routes.controllers.Requests.reject(this.id), {
       data: {password: this.rejectModal.password, content: this.rejectModal.content}
     }).then(function (r){
-      if(r.success){
-        this.canSignoff(false);
-        this.request().isRejected = true;
-        alert('Request rejected.');
-        this.rejectModal.close();
-        this.history().unshift(r.event);
-      } else {
-        var errors = [];
-        for(var field in r.messages){
-          errors.push([field, r.messages[field]]);
-        }
-        alert("Failed to reject:\n" + errors.join("\n"));
+      this.canSignoff(false);
+      this.request().isRejected = true;
+      alert('Request rejected.');
+      this.rejectModal.close();
+      this.history().unshift(r.event);
+    }.bind(this), function (r){
+      var errors = [];
+      for(var field in r.messages){
+        errors.push([field, r.messages[field]]);
       }
-    }.bind(this));
+      alert("Failed to reject:\n" + errors.join("\n"));
+    });
   }.bind(this);
 
   this.saroModal.submit = function(e){
@@ -311,29 +300,32 @@ request.controller = function(){
     bi.ajax(routes.controllers.Requests.assignSaro(ctrl.id), {
       data: {input: this.saroModal.content}
     }).then(function (r){
-      if(r.success){
-        ctrl.history().unshift(r.event);
-      } else {
-        alert("An error occurred.");
-      }
-    }.bind(this));
+      ctrl.history().unshift(r.event);
+      alert('SARO assigned.');
+      this.saroModal.close();
+    }.bind(this), function (r){
+      alert("An error occurred.");
+    });
   }.bind(this);
 
   this.initMap = function(elem, isInit){
-    if(!isInit){
-      window.setTimeout(function(){
-        map = L.map(elem, {scrollWheelZoom: false}).setView([11.3333, 123.0167], 5);
-        var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-        var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-        var osm = new L.TileLayer(osmUrl, {minZoom: 5, maxZoom: 19, attribution: osmAttrib}).addTo(map);   
+    if(!isInit && self.coords()){
 
-        var editableLayers = new L.FeatureGroup();
-        map.addLayer(editableLayers);
+      !function tryMap(){
+        if($(elem).height()){
+          var map = L.map(elem, {scrollWheelZoom: false}).setView([11.3333, 123.0167], 5);
+          var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+          var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+          var osm = new L.TileLayer(osmUrl, {minZoom: 5, maxZoom: 19, attribution: osmAttrib}).addTo(map);
+          map.setView(self.coords(), 8);
+          L.marker(self.coords()).addTo(map);
+        } else {
+          setTimeout(tryMap, 100);
+        }
+      }()
 
-        // Initialise the draw control and pass it the FeatureGroup of editable layers
-      }, 100) // I'M SO SORRY
     }
-  }.bind(this)
+  }
 
   this.refreshHistory = function(){
     bi.ajax(routes.controllers.Requests.viewMeta(this.id)).then(function(data){
@@ -351,34 +343,12 @@ request.controller = function(){
     }.bind(this));
   }.bind(this);
 
-  var dropzonePreviewTemplate = m(".dz-preview.dz-file-preview", [
-    m(".dz-details", [
-      m("img", {"data-dz-thumbnail": true}),
-      m(".dz-filename", [
-        m("span", {"data-dz-name": true}),
-      ]),
-      m(".dz-size", {"data-dz-size": true}),
-    ]),
-    m(".dz-progress", [
-      m("span.dz-upload", {"data-dz-uploadprogress": true}),
-    ]),
-    // m(".dz-success-mark", [
-    //   m("i.fa.fa-check"),
-    // ]),
-    // m(".dz-error-mark", [
-    //   m("i.fa.fa-times")
-    // ]),
-    m(".dz-error-message", [
-      m("span", {"data-dz-errormessage": true})
-    ]),
-  ]);
-
   this.initImageDropzone = function(elem, isInit){
     if(!isInit){
 
-      this.dropzone = new Dropzone(elem, {
+      var dz = new Dropzone(elem, {
         url: routes.controllers.Attachments.add(this.id, "img").url,
-        previewTemplate: m.stringify(dropzonePreviewTemplate), 
+        previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop photos here, or click to browse.",
         clickable: true,
         autoDiscover: false,
@@ -387,7 +357,7 @@ request.controller = function(){
         acceptedFiles: "image/*"
       })
 
-      this.dropzone.on("success", function (_, r){
+      dz.on("success", function (_, r){
         this.attachments().imgs.push(r.attachment);
         this.history().unshift(r.event);
         m.redraw();
@@ -399,15 +369,15 @@ request.controller = function(){
   this.initDocDropzone = function(elem, isInit){
     if(!isInit){
 
-      this.dropzone = new Dropzone(elem, {
+      var dz = new Dropzone(elem, {
         url: routes.controllers.Attachments.add(this.id, "doc").url,
-        previewTemplate: m.stringify(dropzonePreviewTemplate), 
+        previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
         dictDefaultMessage: "Drop documents here, or click to browse. We recommend pdfs and doc files.",
         clickable: true,
         autoDiscover: false
       });
 
-      this.dropzone.on("success", function (_, r){
+      dz.on("success", function (_, r){
         this.attachments().docs.push(r.attachment);
         this.history().unshift(r.event);
         m.redraw();
@@ -415,83 +385,4 @@ request.controller = function(){
 
     }
   }.bind(this);
-
-  var scrollInit = false;
-
-  this.scrollHandler = function(elem, isInit){
-    var boundary = function(elem){
-      var posType = $(elem).css("position");
-      var offset = 0;
-      if (posType === "relative") {
-        offset = parseInt($(elem).css("top"));
-      }
-      return $(elem).position().top - offset;
-    }
-    var updateTabMenuPos = function(){
-      if ($(window).scrollTop() > boundary(elem)) {
-        $(".tabs.vertical").css({
-          position: "relative",
-          top: ($(window).scrollTop()) - boundary(elem)
-        })
-      } else {
-        $(".tabs.vertical").removeAttr("style");
-      }
-    }
-    
-    var idPosDict;
-    var poss;
-
-    if (isInit) {
-      updateTabMenuPos();
-      idPosDict = _.chain(self.requestTabs.tabs())
-        .map(function(t){
-          return t.href;
-        })
-        .map(function(i){
-          return [$(i).position().top + $(i).height() - 20, i];
-        })
-        .object()
-        .value();
-      poss = _.chain(idPosDict).map(function(v, k){
-        return k;
-      }).value();
-
-      var windowPos = $(window).scrollTop();
-      var closestPos = _.find(poss, function(p){
-        return p >= windowPos
-      });
-
-      if (self.requestTabs.currentSection() != idPosDict[closestPos]) {
-        self.requestTabs.currentSection(idPosDict[closestPos]);
-        m.redraw();
-      }
-    }
-    $(window).on("scroll", function(e){
-      if (!scrollInit) {
-        m.redraw();
-        scrollInit = true;
-      } else {
-        updateTabMenuPos()
-        if (isInit) {
-          var windowPos = $(window).scrollTop();
-          var closestPos = _.find(poss, function(p){
-            return p >= windowPos
-          });
-          if (self.requestTabs.currentSection() != idPosDict[closestPos]) {
-            self.requestTabs.currentSection(idPosDict[closestPos]);
-            m.redraw();
-            // console.log(self.requestTabs.currentSection());
-          }
-        };
-        // if (isInit) {
-        //   var windowPos = $(window).scrollTop();
-        //   var closestPos = _.find(poss, function(p){
-        //     return p >= windowPos
-        //   });
-        //   var hash = idPosDict[closestPos];
-        //   window.location.hash = hash;
-        // };
-      }
-    })
-  }
 }

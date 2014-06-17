@@ -11,10 +11,10 @@ govUnit.controller = function(){
   this.users = m.prop([]);
 
   bi.ajax(routes.controllers.GovUnits.viewMeta(this.slug())).then(function (r){
-    if(r.success){
-      self.govUnit(r.govUnit)
-      self.users(r.users)
-    } else if(r.reason == "form error"){
+    self.govUnit(r.govUnit)
+    self.users(r.users)
+  }, function (r){    
+    if(r.reason == "form error"){
       alert("Agency not created!");
     } else {
       alert(r.reason);

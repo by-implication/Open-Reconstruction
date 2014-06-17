@@ -11,16 +11,21 @@ user.controller = function(){
   this.requestList = m.prop([]);
   this.currentFilter = {requests: function(){return null}};
   this.sortBy = m.prop("id");
+  this.page = parseInt(m.route.param("page")) || 1;
+  this.requestCount = m.prop();
+  this.maxPage = function(){
+    var count = parseInt(this.requestCount()) || 0;
+    return Math.ceil(count / 20);
+  };
 
-  bi.ajax(routes.controllers.Users.viewMeta(self.id)).then(function (r){
-    if(r.success){
-      this.user(r.user)
-      this.requestList(r.requests);
-      this.filteredList = function(){
-        return _.chain(this.requestList);
-      }
-    } else {
-      alert(r.reason);
+  bi.ajax(routes.controllers.Users.viewMeta(self.id, self.page)).then(function (r){
+    this.user(r.user)
+    this.requestList(r.requests);
+    this.requestCount(r.requestCount);
+    this.filteredList = function(){
+      return _.chain(this.requestList);
     }
-  }.bind(this))
+  }.bind(this), function (r){    
+    alert(r.reason);
+  })
 }

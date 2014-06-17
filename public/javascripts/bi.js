@@ -39,4 +39,5 @@ var bi = {
     });
     window[module].controller = ctrl.bind.apply(ctrl, [null].concat(args)); // returns a new constructor function with the args bound
   }
+
 }

@@ -73,8 +73,7 @@ object Application extends Controller with Secured {
   def index1(x: Int) = index
   def index2(x: Int, y: Int) = index
 
-  def dashboard = index
-  def welcome = index
+  def home = index
   def saro = index
   def admin = index
   def adminLgus = index
@@ -87,17 +86,10 @@ object Application extends Controller with Secured {
     Ok(views.html.js.process()).withHeaders("Content-Type" -> "text/javascript")
   }
 
-  def dashboardMeta() = Action {
-    Ok(Req.dashboardData)
-  }
-
   def populate() = Action { implicit request =>
-    play.Logger.info("Populating database:")
-    Req.createSampleRequests
-    play.Logger.info("* Requests created")
-    Project.createSampleProjects
-    play.Logger.info("* Projects created")
-    play.Logger.info("* Database population complete!")
+    play.Logger.info("  Processing PSGC migrations")
+    play.Logger.info(Req.assignByPsgc)
+    play.Logger.info("* PSGC processed")
     Redirect(routes.Application.index)
   }
 
@@ -107,10 +99,9 @@ object Application extends Controller with Secured {
       routes.javascript.Application.admin,
       routes.javascript.Application.adminLgus,
       routes.javascript.Application.adminAgencies,
-      routes.javascript.Application.dashboard,
+      routes.javascript.Application.index,
       routes.javascript.Application.saro,
-      routes.javascript.Application.welcome,
-      routes.javascript.Application.dashboardMeta,
+      routes.javascript.Application.home,
       routes.javascript.Application.process,
       Users.authenticate,
       Users.create,
@@ -119,6 +110,7 @@ object Application extends Controller with Secured {
       Users.meta,
       Users.insert,
       Users.view,
+      Users.viewPage,
       Users.viewMeta,
       Admin.insertType,
       Admin.updateType,
@@ -127,7 +119,11 @@ object Application extends Controller with Secured {
       Admin.disasterTypes,
       Admin.disasterTypesMeta,
       Attachments.add,
+      Attachments.addToBucket,
       Attachments.archive,
+      Attachments.bucketDownload,
+      Attachments.bucketPreview,
+      Attachments.bucketThumb,
       Attachments.unarchive,
       Attachments.preview,
       Attachments.download,
@@ -152,8 +148,10 @@ object Application extends Controller with Secured {
       Requests.viewActivity,
       Requests.viewReferences,
       Requests.viewMeta,
-      Visualizations.view,
-      Visualizations.getData,
+      Viz.index,
+      Viz.indexMeta,
+      Viz.view,
+      Viz.getData,
       GovUnits.edit,
       GovUnits.editMeta,
       GovUnits.update,

@@ -15,16 +15,13 @@
     <script src="/js/c3.js"></script>
     <script>
 
-      var chart, generate = function () { return c3.generate({
+      var padding = {}, types = {}, chart, generate = function () { return c3.generate({
         data: {
           columns: [
             ['data1'],
             ['data2'],
           ],
-          types: {
-            data2: 'area',
-            data3: 'bar',
-          },
+          types: types,
           labels: true
         },
         bar: {
@@ -32,10 +29,7 @@
         },
         axis: {
           x: {
-            padding: {
-              left: 0,
-              right: 0,
-            }
+            padding: padding
           },
           y: {
 /*
@@ -60,28 +54,31 @@
       });
       };
 
+    function run() {
+
       chart = generate();
 
       setTimeout(function () {
         // Load only one data
         chart.flow({
           columns: [
-            ['data1', 500],
-            ['data2', 100],
-            ['data3', 200],
+            ['data1', 500, 200, 100],
+            ['data2', 100, null, 50],
+            ['data3', 200, null, null],
           ],
           duration: 1500,
-          onend: function () {
+
+          done: function () {
             // Load 2 data without data2 and remove 1 data
             chart.flow({
               columns: [
                 ['data1', 200, 300],
                 ['data3', 100, 100]
               ],
-              length: 1,
+              length: 0,
               duration: 1500,
-              onend: function () {
 
+              done: function () {
                 chart.flow({
                   columns: [
                     ['data1', 200, 300],
@@ -90,7 +87,7 @@
                   ],
                   length: 2,
                   duration: 1500,
-                  onend: function () {
+                  done: function () {
 
                     chart.flow({
                       columns: [
@@ -104,10 +101,11 @@
                   }
 
                 });
+              }// done
 
-              }
             });
           },
+
         });
       }, 1000);
 
@@ -120,7 +118,7 @@
           ],
           length: 0
         });
-      }, 8000);
+      }, 9000);
 
       setTimeout(function () {
         chart.flow({
@@ -131,7 +129,7 @@
           ],
           length: 2
         });
-      }, 9000);
+      }, 10000);
 
       setTimeout(function () {
         chart.flow({
@@ -142,7 +140,7 @@
           ],
           to: 2,
         });
-      }, 10000);
+      }, 11000);
 
       setTimeout(function () {
         chart.flow({
@@ -152,11 +150,11 @@
             ['data3', 300]
           ]
         });
-      }, 11000);
+      }, 12000);
 
       setTimeout(function () {
         chart = generate();
-      }, 12000);
+      }, 13000);
 
       setTimeout(function () {
         chart.flow({
@@ -166,7 +164,7 @@
             ['data3', 200, 300],
           ],
           duration: 1500,
-          onend: function () {
+          done: function () {
             chart.flow({
               columns: [
                 ['data1', 200],
@@ -177,7 +175,7 @@
             });
           },
         });
-      }, 13000);
+      }, 14000);
 
       setTimeout(function () {
         chart.flow({
@@ -188,7 +186,7 @@
           ],
           to: 1,
         });
-      }, 16000);
+      }, 18000);
 
       setTimeout(function () {
         chart.flow({
@@ -198,7 +196,26 @@
             ['data3', 400]
           ]
         });
-      }, 17000);
+      }, 19000);
+
+    }
+
+    run();
+
+    // Test for no padding
+    setTimeout(function () {
+      padding = {left: 0, right: 0};
+      run();
+    }, 22000);
+
+    // Test for other chart types
+    setTimeout(function () {
+      types = {
+        data2: 'area',
+        data3: 'bar',
+      };
+      run();
+    }, 45000);
 
     </script>
   </body>

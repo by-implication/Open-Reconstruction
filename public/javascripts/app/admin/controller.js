@@ -16,12 +16,10 @@ admin.controller = function(){
   }
 
   bi.ajax(routes.controllers.GovUnits.listAgencies()).then(function (r){
-    if(r.success){
-      this.agencyList(r.agencies);
-    } else {
-      alert(r.reason);
-    }
-  }.bind(this));
+    this.agencyList(r.agencies);
+  }.bind(this), function (r){
+    alert(r.reason);
+  });
 
   bi.ajax(routes.controllers.GovUnits.listLgus()).then(function (r){
     var regions = [];
@@ -44,13 +42,12 @@ admin.controller = function(){
         bi.ajax(routes.controllers.Admin.updateType(type, t.id), {
           data: {name: this.input}
         }).then(function (r){
-          if(r.success){
-            this.value(r.type.name);
-          } else {
-            alert("Your input was invalid.");
-          }
+          this.value(r.type.name);
           c();
-        }.bind(this));
+        }.bind(this), function (r){
+          alert("Your input was invalid.");
+          c();
+        });
       }, null, {value: m.prop(t.name)});
       return deg;
     }
@@ -82,7 +79,7 @@ admin.controller = function(){
   this.toggleLguExpansion = function(lgu){
     var isExpanded = !lgu.isExpanded();
     if(isExpanded){
-      bi.ajax(routes.controllers.GovUnits.getChildren(lgu.level(), lgu.id())).then(function (r){
+      bi.ajax(routes.controllers.GovUnits.getChildren(lgu.psgc())).then(function (r){
         lgu.children(r.map(function (child){
           return new govUnit.LGU(child);
         }));

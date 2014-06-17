@@ -9,9 +9,9 @@ login.controller = function(){
   this.submit = function(e){
     e.preventDefault();
     bi.ajax(routes.controllers.Users.authenticate(), {data: self.input}).then(function (r){
-      if(r.success){
-        window.location = '/';
-      } else if(r.reason == "form error"){
+      m.route(routes.controllers.Application.index().url);
+    }, function (r){
+      if(r.reason == "form error"){
         alert("Invalid credentials.");
       } else {
         alert(r.reason);

@@ -9,12 +9,12 @@ requestListing.view = function(ctrl){
       var pageNum = ctrl.page;
       var pages = [];
       if(pageCount <= displayedPages) {
-        pages = _.range(0, pageCount);
+        pages = _.range(1, pageCount+1);
       }
       else {
-        pages.push(0);
+        pages.push(1);
         if(pageNum <= allowance) {
-          pages = pages.concat(_.range(1, displayedPages - 2));
+          pages = pages.concat(_.range(2, displayedPages - 2));
           pages.push("...");
         }
         else if(pageNum <= pageCount - allowance) {
@@ -34,7 +34,7 @@ requestListing.view = function(ctrl){
     return m("ul.pagination", [
       m("li.arrow",{className: ctrl.page === 0 ? "unavailable" : ""}, [
         m("a", {
-          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page - 1, ctrl.projectTypeId).url,
+          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page - 1, ctrl.projectTypeId, ctrl._queryLocFilters).url,
           config: m.route
         }, [
           "«"
@@ -48,18 +48,16 @@ requestListing.view = function(ctrl){
           else {
             return m("li", {className: page === ctrl.page ? "current" : ""}, [
               m("a", {
-                href: routes.controllers.Requests.indexPage(ctrl.tab, page, ctrl.projectTypeId).url,
+                href: routes.controllers.Requests.indexPage(ctrl.tab, page, ctrl.projectTypeId, ctrl._queryLocFilters).url,
                 config: m.route
-              }, [
-                page + 1
-              ])
+              }, page)
             ])
           }
         })
         .value(),
       m("li.arrow",{className: ctrl.page === ctrl.maxPage() ? "unavailable" : ""}, [
         m("a", {
-          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page + 1, ctrl.projectTypeId).url,
+          href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page + 1, ctrl.projectTypeId, ctrl._queryLocFilters).url,
           config: m.route
         },[
           "»"
@@ -68,28 +66,30 @@ requestListing.view = function(ctrl){
     ])
   }
   return app.template(ctrl.app, [
-    common.banner("List of Requested Projects"),
-    m("section", [
-
-      ctrl.app.currentUser() ?
+    common.banner("Requests"),
+    ctrl.app.isAuthorized(process.permissions.CREATE_REQUESTS) ?
+      m("section#new-request-banner", [
         m(".row", [
           m(".columns.medium-12", [
-            ctrl.app.isAuthorized(process.permissions.CREATE_REQUESTS) ?
-              m(
-                "a.button",
-                {href: routes.controllers.Requests.create().url, config: m.route},
-                "New Request"
-              )
-            : ""
+            m("h2.left", [
+              "Make a new request. We're here to help."
+            ]),
+            m(
+              "a.button.right",
+              {href: routes.controllers.Requests.create().url, config: m.route},
+              "New Request"
+            )
           ]),
-        ])
-      : "",
-
-      m(".row", [
-        m(".columns.medium-12", [
-          common.tabs.menu(ctrl.tabs, {className: "left", config: ctrl.setCurrentTab})
         ]),
-      ]),
+      ])
+    : "",
+    m("section", [
+      m.cookie().logged_in ?
+        m(".row", [
+          m(".columns.medium-12", [
+            common.tabs.menu(ctrl.tabs, {className: "left", config: ctrl.setCurrentTab})
+          ]),
+        ]) : "",
       m(".row", [
         m(".columns.medium-9", [
           pagination(),
@@ -98,6 +98,15 @@ requestListing.view = function(ctrl){
         ]),
         m(".columns.medium-3", [
           m("h4", [
+            "Filter by Location"
+          ]),
+          ctrl.locFilters.map(function (f){
+            return m("label", [
+              f.label,
+              select2.view({data: f.data, value: f.value(), onchange: f.onchange.bind(f)})
+            ])
+          }),
+          m("h4", [
             "Filter by Project Type"
           ]),
           m("ul.filters",
@@ -105,7 +114,7 @@ requestListing.view = function(ctrl){
             .map(function (filter){
               return m("li.filter",{className: (ctrl.projectTypeId == filter.id) ? "active" : ""}, [
                 m("a", {
-                  href: routes.controllers.Requests.indexPage(ctrl.tab, ctrl.page, filter.id).url,
+                  href: routes.controllers.Requests.indexPage(ctrl.tab, 1, filter.id, ctrl._queryLocFilters).url,
                   config: m.route
                 }, filter.name)
               ])

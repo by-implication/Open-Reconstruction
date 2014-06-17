@@ -81,7 +81,7 @@ request.view = function(ctrl){
             m(".section", [
               m("h3", "Reference a Project"),
               m("p", [
-                "Should be from the project management system of the implementing agency."
+                "Should be from the project monitoring system of the implementing agency."
               ]),
             ]),
             m("hr"),
@@ -111,7 +111,7 @@ request.view = function(ctrl){
       // actual content
       m("section", [
         m(".row", [
-          common.stickyTabs.menu(ctrl.requestTabs, {className: "vertical", config: ctrl.scrollHandler}),
+          common.stickyTabs.menu(ctrl.requestTabs, {className: "vertical", config: common.stickyTabs.config(ctrl.requestTabs)}),
           m(".tabs-content.vertical", [
             m(".card", [
               m(".big.section#summary", [
@@ -138,12 +138,12 @@ request.view = function(ctrl){
                     m(".columns.medium-6", [
                       m("p", [
                         "Processing Time",
-                        m("h4#stagnation-" + ctrl.id + ".value"), // actual content c/o recursive update function in controller
+                        m("h4#stagnation-" + ctrl.id + ".value", ctrl.request().stagnation), // actual content c/o recursive update function in controller
                       ]),
                       m("p", [
                         "Amount",
                         ctrl.degs.amount.view(
-                          function(){ return m("h4", [helper.commaize(ctrl.request().amount)]) },
+                          function(){ return m("h4", ["PHP " + helper.commaize(ctrl.request().amount)]) },
                           function(){
                             return m("div", [
                               m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),
@@ -159,9 +159,11 @@ request.view = function(ctrl){
                               return dt.id == ctrl.request().disaster.typeId;
                             })[0];
                             return m("h4", [
-                              disasterType.name + " "
-                              + ctrl.request().disaster.name + " in "
-                              + common.displayDate(ctrl.request().disaster.date)
+                              ctrl.request().disaster.name + " in "
+                              + common.displayDate(ctrl.request().disaster.date) + " ",
+                              m("span.label", [
+                                disasterType.name
+                              ])
                             ]
                           )},
                           function(){
@@ -283,7 +285,7 @@ request.view = function(ctrl){
                           }
                         ),
                         m("p.help", [
-                          "The Implementing Agency will be responsible for the handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
+                          "The Implementing Agency will be responsible for handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
                         ]),
                       ]),
                     ]),
@@ -309,7 +311,7 @@ request.view = function(ctrl){
                             img.filename
                           ]),
                         ]),
-                       
+
                         m(".uploader", [
                           "Uploaded by ",
                           m("a", {href: routes.controllers.Users.view(img.uploader.id).url, config: m.route},[
@@ -406,7 +408,7 @@ request.view = function(ctrl){
                     "No SARO has been referenced yet."
                   ]),
                   m("h4", ((ctrl.request().level > 4 && ctrl.currentUserBelongsToImplementingAgency()) ? [
-                    "Project Management",
+                    "Project Monitoring",
                     m("button.tiny.right", {type: "button", onclick: ctrl.addProjectModal.show.bind(ctrl.addProjectModal)}, [
                       "Reference a Project"
                     ]),
@@ -442,7 +444,7 @@ request.view = function(ctrl){
                               p.scope
                             ]),
                             m("td", [
-                              p.amount
+                              helper.commaize(p.amount)
                             ])
                           ])
                         })
@@ -464,13 +466,15 @@ request.view = function(ctrl){
                   })
                   .reverse()
                   ),
-                  ctrl.app.currentUser() ? m("hr") : "",
+                  // ctrl.app.currentUser() ? m("hr") : "",
                   ctrl.app.currentUser() ?
-                    m(".event", [
-                      m("form.details", {onsubmit: ctrl.submitComment}, [
+                    m(".event.new-comment", [
+                      m("form", {onsubmit: ctrl.submitComment}, [
                         m("label", [
-                          "Comment",
-                          m("input[type='text']", {onchange: m.withAttr("value", ctrl.input.comment)})
+                          m("h3", [
+                            "New Comment"
+                          ]),
+                          m("textarea", {onchange: m.withAttr("value", ctrl.input.comment)})
                         ]),
                         m("button", "Submit")
                       ])
@@ -484,106 +488,6 @@ request.view = function(ctrl){
       ]),
     ]
   )
-}
-
-request.summary = function(ctrl){
-  return m(".request-stub", [
-    m(".section.type", [
-      ctrl.request().projectType
-    ]),
-    m(".section", [
-      ctrl.degs.description.view(
-        function(){ return m("h4", ctrl.request().description) },
-        function(){
-          return m("div", [
-            m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),
-          ])
-        }
-      ),
-      m("p.meta", [
-        "Posted by ",
-        m("a",{href: routes.controllers.Users.view(ctrl.author().id).url, config: m.route}, ctrl.author().name),
-        m("br"),
-        " on "+(new Date(ctrl.request().date).toString()), // change this as people modify this. "Last edited by _____"
-      ]),
-    ]),
-    m("hr"),
-    m(".section", [
-      m("h5", [m("small", "Processing Time")]),
-      m("h5.display-edit-group#stagnation-" + ctrl.id + ".value"), // actual content c/o recursive update function in controller
-      m("h5", [m("small", "Amount")]),
-      ctrl.degs.amount.view(
-        function(){ return m("h5.value", [helper.commaize(ctrl.request().amount)]) },
-        function(){
-          return m("div", [
-            m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),
-          ])
-        }
-      ),
-      m("h5", [m("small", "Disaster")]),
-      ctrl.degs.disaster.view(
-        function(){
-          var disasterType = request.disasterTypes().filter(function (dt){
-            return dt.id == ctrl.request().disaster.typeId;
-          })[0];
-          return m("h5.value", [
-            disasterType.name + " "
-            + ctrl.request().disaster.name + " in "
-            + common.displayDate(ctrl.request().disaster.date)
-          ]
-        )},
-        function(){
-          return m("div", [
-            m("div", [
-              m("label", [
-                "Name",
-                m("input", {
-                  type: "text",
-                  value: this.input().name,
-                  onchange: m.withAttr("value", this.input.setName)
-                })
-              ]),
-              m("label", [
-                "Type",
-                m("select", {
-                  onchange: m.withAttr("value", this.input.setTypeId)
-                }, request.disasterTypes().map(function (dt){
-                  return m("option", {value: dt.id, selected: dt.id == this.input().typeId}, dt.name)
-                }.bind(this)))
-              ]),
-              m("label", [
-                "Date",
-                m("input", {
-                  type: "date",
-                  value: this.htmlDate() || helper.toDateValue(this.input().date),
-                  onchange: m.withAttr("value", this.input.setDate)
-                })
-              ])
-            ])
-          ])
-        }
-      ),
-      m("h5", [m("small", "Location")]),
-      ctrl.degs.location.view(
-        function(){ return m("h5.value", [ctrl.request().location]) },
-        function(){
-          return m("div", [
-            m("input", {type: "text", value: this.input(), onchange: m.withAttr("value", this.input)}),
-          ])
-        }
-      ),
-    ]),
-    m(".map-container", [
-      m("#detailMap", {config: ctrl.initMap}),
-      ctrl.coords() ?
-        ""
-      : m(".map-shroud", [
-          m("h3", [
-            "Map unavailable because requester did not supply coordinates"
-          ]),
-        ])
-    ]),
-  ])
 }
 
 request.approval = function(ctrl){
@@ -606,10 +510,6 @@ request.approval = function(ctrl){
                 m("i.fa.fa-fw.fa-check"),
                 "Sign off"
               ]),
-              m("button", {onclick: ctrl.saroModal.show.bind(ctrl.saroModal)}, [
-                m("i.fa.fa-fw.fa-check"),
-                "Assign SARO"
-              ]),
               m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
                 m("i.fa.fa-fw.fa-times"),
                 "Reject"
@@ -628,7 +528,10 @@ request.approval = function(ctrl){
                 ctrl.app.isSuperAdmin() ?
                   [
                     "Please ",
-                    m("a", {href: "#assignments"}, [
+                    m("a", {href: "#assignments", onclick: function(e){
+                      e.preventDefault();
+                      $("html, body").animate({scrollTop: $("#assignments").position().top + "px"})
+                    }}, [
                       "assign an agency"
                     ]),
                     " to assess this request."

@@ -52,14 +52,23 @@ object GovUnits extends Controller with Secured {
 
   def listLgus = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
-      "regions" -> Json.toJson(Lgu.REGIONS.toSeq.map {
-        case (id, name) => Json.obj("id" -> id, "name" -> name)
-      })
+      "regions" -> Lgu.regionsJson
     ))
   }
 
-  def getChildren(level: Int, id: Int) = UserAction(){ implicit user => implicit request =>
-    Ok(Json.toJson(Lgu.getChildren(level, id)))
+  def getChildren(psgc: String) = UserAction(){ implicit user => implicit request =>
+
+    def toJson(t: (GovUnit, Lgu)) = {
+      t match {
+        case (govUnit, lgu) => govUnit.toJson ++ Json.obj(
+          "level" -> lgu.level,
+          "psgc" -> lgu.psgc.toString
+        )
+      }
+    }
+
+    Ok(Json.toJson(Lgu.getChildren(PGLTree.fromString(psgc)).map(toJson)))
+
   }
 
   lazy val LGUroleId = {
@@ -97,13 +106,13 @@ object GovUnits extends Controller with Secured {
         Rest.formError(_),
         _.create().map { govUnit =>
           
-          val lgu = if (level > 0){
-            Lgu(govUnit.id, level + 1, parentLguId = Some(parentId))
+          val psgc = if(level == 0){
+            Seq(parentId)
           } else {
-            Lgu(govUnit.id, level + 1, parentRegionId = Some(parentId))
+            Lgu.findById(parentId).get.psgc.list :+ parentId
           }
 
-          lgu.create().map { _ =>
+          Lgu(govUnit.id, level + 1, psgc = psgc).create().map { _ =>
             Rest.success()
           }.getOrElse(Rest.serverError())
 

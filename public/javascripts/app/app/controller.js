@@ -18,10 +18,17 @@ app.controller = function(){
   this.currentUser = m.prop(anon);
 
   bi.ajax(routes.controllers.Users.meta()).then(function (r){
-    if(r && m.route() == "/welcome"){
-      m.route("/requests");
-    }
+    
     this.currentUser(r || anon);
+
+    if(m.route() == routes.controllers.Application.index().url){
+      if(m.cookie().logged_in){
+        m.route(routes.controllers.Requests.index().url);
+      } else {
+        m.route(routes.controllers.Application.home().url);
+      }
+    }
+
   }.bind(this));
 
   this.isAuthorized = function(permission){
@@ -34,6 +41,10 @@ app.controller = function(){
 
   this.isSuperAdmin = function(){
     return this.currentUser().isSuperAdmin;
+  }.bind(this);
+
+  this.isDBM = function(){
+    return (this.currentUser().govUnit.role == "DBM");
   }.bind(this);
 
   this.isGovUnitAdmin = function(govUnitId){

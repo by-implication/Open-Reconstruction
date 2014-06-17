@@ -1,5 +1,7 @@
 # --- !Ups
 
+SET datestyle = "ISO, MDY";;
+
 CREATE TABLE oparr_bohol (
     group_id text,
     project_id text,
@@ -11,12 +13,16 @@ CREATE TABLE oparr_bohol (
     scope text,
     amount text,
     disaster_name text,
+    disaster_date timestamp,
     implementing_agency text,
+    psgc text,
+    latitude decimal,
+    longitude decimal,
     scope_type text,
     source text
 );;
 
-COPY oparr_bohol FROM '140530 oparr_bohol.csv' CSV ENCODING 'ISO_8859_9';;
+COPY oparr_bohol FROM 'oparr_bohol.csv' CSV ENCODING 'ISO_8859_9';;
 
 INSERT INTO project_types VALUES
   (DEFAULT, 'Mixed'),
@@ -35,8 +41,8 @@ CREATE TABLE dpwh_eplc (
   contract_desc text,
   contract_cost decimal,
   project_cost decimal,
-  contract_start_date text,
-  contract_end_date text,
+  contract_start_date timestamp,
+  contract_end_date timestamp,
   contract_duration integer,
   gaa_id integer,
   budget_year integer,
@@ -104,7 +110,7 @@ CREATE TABLE dpwh_eplc (
   activity_9_start_date timestamp,
   activity_9_end_date timestamp,
   activity_10 text,
-  activity_10_start_date text,
+  activity_10_start_date timestamp,
   activity_10_end_date timestamp,
   activity_11 text,
   activity_11_start_date timestamp,
@@ -177,30 +183,80 @@ CREATE TABLE dpwh_eplc (
   financial_disbursement decimal,
   physical_planned decimal,
   physical_revised decimal,
-  physical_actual  decimal,
-  physical_slippage  decimal,
-  physical_performance_index decimal
+  physical_actual decimal,
+  physical_slippage decimal,
+  physical_performance_index decimal,
+  plan_nov_2013 decimal,
+  plan_dec_2013 decimal,
+  plan_jan_2014 decimal,
+  plan_feb_2014 decimal,
+  plan_mar_2014 decimal,
+  plan_apr_2014 decimal,
+  plan_may_2014 decimal,
+  plan_jun_2014 decimal,
+  plan_jul_2014 decimal,
+  plan_aug_2014 decimal,
+  plan_sep_2014 decimal,
+  plan_oct_2014 decimal,
+  plan_nov_2014 decimal,
+  plan_dec_2014 decimal,
+  revise_nov_2013 decimal,
+  revise_dec_2013 decimal,
+  revise_jan_2014 decimal,
+  revise_feb_2014 decimal,
+  revise_mar_2014 decimal,
+  revise_apr_2014 decimal,
+  revise_may_2014 decimal,
+  revise_jun_2014 decimal,
+  revise_jul_2014 decimal,
+  revise_aug_2014 decimal,
+  revise_sep_2014 decimal,
+  revise_oct_2014 decimal,
+  revise_nov_2014 decimal,
+  revise_dec_2014 decimal,
+  actual_nov_2013 decimal,
+  actual_dec_2013 decimal,
+  actual_jan_2014 decimal,
+  actual_feb_2014 decimal,
+  actual_mar_2014 decimal,
+  actual_apr_2014 decimal,
+  actual_may_2014 decimal,
+  actual_jun_2014 decimal,
+  actual_jul_2014 decimal,
+  actual_aug_2014 decimal,
+  actual_sep_2014 decimal,
+  actual_oct_2014 decimal,
+  actual_nov_2014 decimal,
+  actual_dec_2014 decimal,
+  latitude decimal,
+  longitude decimal,
+  allotment_date timestamp
 );;
 
-COPY dpwh_eplc FROM '140531 EPLC - Consolidated bohol yolanda - 2013-2014 dpwh.csv' CSV ENCODING 'ISO_8859_9';;
+COPY dpwh_eplc FROM 'dpwh_eplc.csv' CSV ENCODING 'ISO_8859_9';;
 
 CREATE TABLE saro_bureau_g (
     agency text,
     saro_number text,
     saro_date timestamp,
+    month text,
     year integer,
     amount decimal,
     project_quantity integer,
+    disaster text,
     remarks text
 );;
 
-COPY saro_bureau_g FROM '140531 Clean_SARO_BureauG.csv' CSV ENCODING 'ISO_8859_9';;
+COPY saro_bureau_g FROM 'Clean_SARO_BureauG.csv' CSV ENCODING 'ISO_8859_9';;
 
 # --- !Downs
 
 DROP TABLE IF EXISTS saro_bureau_g;;
 
 DROP TABLE IF EXISTS dpwh_eplc;;
+
+DELETE FROM reqs WHERE project_type_id IN
+    (SELECT project_type_id FROM project_types WHERE project_type_name = any('{Mixed, Health Facility, Power Restoration, Port, Public Tourism Facility}'));;
 
 DELETE FROM project_types
     WHERE project_type_name = any('{Mixed, Health Facility, Power Restoration, Port, Public Tourism Facility}');;
