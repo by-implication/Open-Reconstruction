@@ -10,6 +10,41 @@ import recon.support._
 
 object Attachments extends Controller with Secured {
 
+  def bucketThumb(key: String, typ: String, filename: String) = UserAction(){ implicit user => implicit request =>
+    val bf = Bucket(key).getFile(typ, filename)
+    if(bf.thumb.exists){
+      Ok.sendFile(bf.thumb, true, _ => bf.filename)
+    } else NotFound
+  }
+
+  private def bucketGet(inline: Boolean)(key: String, typ: String, filename: String) = Action {
+    val bf = Bucket(key).getFile(typ, filename)
+    if(bf.file.exists){      
+      Ok.sendFile(bf.file, inline, _ => bf.filename)
+    } else NotFound
+  }
+
+  def bucketPreview = bucketGet(true) _
+  def bucketDownload = bucketGet(false) _
+
+  def addToBucket(key: String, typ: String) = UserAction(parse.multipartFormData){ implicit user => implicit request =>
+    request.body.file("file").map { upload =>
+      if(Bucket(key).add(typ, upload)){
+        Rest.success(
+          "key" -> key,
+          "filename" -> upload.filename,
+          "dateUploaded" -> Time.now,
+          "uploader" -> Json.obj(
+            "id" -> user.id,
+            "name" -> user.name
+          )
+        )
+      } else {
+        Rest.serverError()
+      }
+    }.getOrElse(Rest.NO_FILE)
+  }
+
   def add(id: Int, typ: String) = UserAction(parse.multipartFormData){ implicit user => implicit request =>
     request.body.file("file").map { upload =>
       Req.findById(id).map { implicit req =>
@@ -18,7 +53,7 @@ object Attachments extends Controller with Secured {
               .create().map { a =>
             a.file.getParentFile().mkdirs()
             upload.ref.moveTo(a.file, true)
-            if (a.isImage) ImageHandling.generateThumbnail(a)
+            if (a.isImage) ImageHandling.generateAttachmentThumbnail(a)
             if(req.addToAttachments(a.id)){
               Event.attachment(a).create().map { e => Rest.success(
                 "attachment" -> Attachment.insertJson(a, user),

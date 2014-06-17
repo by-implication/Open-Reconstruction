@@ -1,12 +1,30 @@
 package recon
 
 import anorm._
+import java.io.File
 import java.sql.Timestamp
 import play.api.libs.json.{Json, JsValue, Writes}
 import play.api.mvc._
 import scala.language.implicitConversions
+import scala.util.Random
 
 package object support {
+
+	def deleteFile(file: File): Boolean = {
+	  if(!file.exists) true
+	  else if(!file.isDirectory){
+	    file.delete
+	  } else {
+	    file.listFiles.map(deleteFile(_)).fold(true)(_&&_) && file.delete
+	  }
+	}
+
+	def generateRandomString(length: Int, alphabet: Seq[Char]): String = {
+	  (1 to length).map { _ =>
+	    val index = Random.nextInt(alphabet.length)
+	    alphabet(index)
+	  }.mkString("")
+	}
 
 	implicit def pkToInt(id: Pk[Int]): Int = id.get
 

@@ -23,11 +23,57 @@ requestCreation.controller = function(){
 
   this.submitButtonDisabled = m.prop(false);
 
-  this.configShowForm = function(elem){
-    window.setTimeout(function(){
-      elem.classList.add("expand");
-    }, 0)
-  }
+  this.attachments = m.prop({
+    imgs: [],
+    docs: []
+  })
+
+  this.initImageDropzone = function(elem, isInit){
+    if(!isInit){
+
+      var dz = new Dropzone(elem, {
+        url: routes.controllers.Attachments.addToBucket(this.input.bucketKey, "img").url,
+        previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
+        dictDefaultMessage: "Drop photos here, or click to browse.",
+        clickable: true,
+        autoDiscover: false,
+        thumbnailWidth: 128,
+        thumbnailHeight: 128,
+        acceptedFiles: "image/*"
+      })
+
+      dz.on("success", function (_, r){
+        this.attachments().imgs.push(r);
+        m.redraw();
+      }.bind(this));
+
+    }
+  }.bind(this);
+
+  this.initDocDropzone = function(elem, isInit){
+    if(!isInit){
+
+      var dz = new Dropzone(elem, {
+        url: routes.controllers.Attachments.addToBucket(this.input.bucketKey, "doc").url,
+        previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
+        dictDefaultMessage: "Drop documents here, or click to browse. We recommend pdfs and doc files.",
+        clickable: true,
+        autoDiscover: false
+      });
+
+      dz.on("success", function (_, r){
+        this.attachments().docs.push(r);
+        m.redraw();
+      }.bind(this));
+
+    }
+  }.bind(this);
+
+  // this.configShowForm = function(elem){
+  //   window.setTimeout(function(){
+  //     elem.classList.add("expand");
+  //   }, 0)
+  // }
 
   this.initMap = function(elem, isInit){
     // this.app.initMap(elem, isInit, {scrollWheelZoom: false}, true);
@@ -82,6 +128,7 @@ requestCreation.controller = function(){
   bi.ajax(routes.controllers.Requests.createMeta()).then(function (data){
     this.info(data);
     this.input.disasterTypeId(data.disasterTypes[0].id);
+    this.input.bucketKey = data.bucketKey;
   }.bind(this));
 
   this.disasterDate = [2001, 1, 1];

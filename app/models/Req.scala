@@ -71,9 +71,10 @@ object Req extends ReqGen {
       SELECT req_disaster_name, COUNT(*), SUM(req_amount)
       FROM reqs GROUP BY req_disaster_name
     """).list(
-      get[String]("req_disaster_name") ~
+      get[Option[String]]("req_disaster_name") ~
       get[Long]("count") ~
-      get[Option[java.math.BigDecimal]]("sum") map { case name~count~amount =>
+      get[Option[java.math.BigDecimal]]("sum") map { case nameOpt~count~amount =>
+        val name: String = nameOpt.getOrElse("N/A")
         Json.obj(
           "name" -> name,
           "count" -> count,

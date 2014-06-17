@@ -22,7 +22,8 @@ object Requests extends Controller with Secured {
   def createMeta() = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
       "disasterTypes" -> DisasterType.jsonList,
-      "projectTypes" -> ProjectType.jsonList
+      "projectTypes" -> ProjectType.jsonList,
+      "bucketKey" -> Bucket.getAvailableKey
     ))
   }
 
@@ -63,7 +64,7 @@ object Requests extends Controller with Secured {
 
   def insert() = UserAction(){ implicit user => implicit request =>
 
-    val createForm: Form[Req] = Form(
+    val createForm: Form[(Req, String)] = Form(
       mapping(
         "amount" -> optional(projectAmount),
         "description" -> nonEmptyText,
@@ -71,12 +72,13 @@ object Requests extends Controller with Secured {
         "disasterName" -> optional(text),
         "disasterTypeId" -> number,
         "location" -> nonEmptyText,
-        "projectTypeId" -> number
+        "projectTypeId" -> number,
+        "bucketKey" -> text
       )
       ((amount, description, 
         disasterDate, disasterName, disasterTypeId,
-        location, projectTypeId) => {
-        Req(
+        location, projectTypeId, bucketKey) => {
+        (Req(
           amount = amount.getOrElse(0),
           description = description,
           disasterDate = new java.sql.Timestamp(disasterDate),
@@ -84,7 +86,7 @@ object Requests extends Controller with Secured {
           disasterTypeId = disasterTypeId,
           projectTypeId = projectTypeId,
           location = location
-        )
+        ), bucketKey)
       })
       (_ => None)
     )
@@ -92,15 +94,23 @@ object Requests extends Controller with Secured {
   	if(user.canCreateRequests){
   		createForm.bindFromRequest.fold(
   			Rest.formError(_),
-  			_.copy(authorId = user.id).save().map { implicit r =>
-          Event.newRequest().create().map { _ =>
-            Event.disaster().create().map { _ =>
-              Checkpoint.push(user).map { _ =>
-  				      Rest.success(r.insertSeq:_*)
+  			_ match {
+          case (r, bucketKey) => {
+            r.copy(authorId = user.id).save().map { implicit r =>
+            Event.newRequest().create().map { _ =>
+              Event.disaster().create().map { _ =>
+                Checkpoint.push(user).map { _ =>
+                  if(Bucket(bucketKey).dumpTo(r)){
+  				          Rest.success(r.insertSeq:_*)
+                  } else {
+                    Rest.serverError()
+                  }
+                }.getOrElse(Rest.serverError())
               }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())
-          }.getOrElse(Rest.serverError())
-  			}.getOrElse(Rest.serverError())
+    			}.getOrElse(Rest.serverError())
+        }
+      }
 			)
   	} else Rest.unauthorized()
 

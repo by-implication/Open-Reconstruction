@@ -25,9 +25,13 @@ object ImageHandling {
 
 	val identifyFormatOperation = (new IMOperation()).format("%m").addImage()
 
-	def generateThumbnail(a: Attachment) = {
-		exifRotate(a.path)
-		_resize(256, 256, a.path, Some(a.thumbPath))
+	def generateAttachmentThumbnail(a: Attachment) = {
+		generateThumbnail(a.path, a.thumbPath)
+	}
+
+	def generateThumbnail(src: String, dst: String) = {
+		exifRotate(src)
+		_resize(256, 256, src, Some(dst))
 	}
 
 	private def isValidFormat(path: String): Boolean = {

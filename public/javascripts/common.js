@@ -1,5 +1,21 @@
 var common = {};
 
+common.dropzonePreviewTemplate = m(".dz-preview.dz-file-preview", [
+  m(".dz-details", [
+    m("img", {"data-dz-thumbnail": true}),
+    m(".dz-filename", [
+      m("span", {"data-dz-name": true}),
+    ]),
+    m(".dz-size", {"data-dz-size": true}),
+  ]),
+  m(".dz-progress", [
+    m("span.dz-upload", {"data-dz-uploadprogress": true}),
+  ]),
+  m(".dz-error-message", [
+    m("span", {"data-dz-errormessage": true})
+  ]),
+]);
+
 common.stagnation = function(reqCtrl, offset){
 
   function getDateRejected(history){
