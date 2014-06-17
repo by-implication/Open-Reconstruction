@@ -15,7 +15,7 @@ govUnit.view = function(ctrl){
         m("span.acronym", [
           "(" + ctrl.govUnit().acronym + ")"
         ])
-      : ""
+      : "",
     ]),
     m("section", [
       m(".row", [
@@ -89,7 +89,18 @@ govUnit.view = function(ctrl){
           pagination,
           request.listView(ctrl.requests(), function(){ return m.route(); })
         ]),
-      ])
+      ]),
+      ctrl.children().length ?
+      m(".row", [
+        m("h1", "Sub-LGUs"),
+        m(".columns.medium-9", [
+          ctrl.children().map(function (c){
+            return m("div",
+              m("a", {href: routes.controllers.GovUnits.view(c.id).url, config: m.route}, c.name)
+            );
+          })
+        ]),
+      ]) : "",
     ]),
   ])
 }

@@ -16,12 +16,16 @@ govUnit.controller = function(){
     var count = parseInt(this.totalReqs()) || 0;
     return Math.ceil(count / 20);
   };
+  this.children = m.prop([]);
 
   bi.ajax(routes.controllers.GovUnits.viewMeta(this.id, this.page)).then(function (r){
     self.govUnit(r.govUnit);
     self.users(r.users);
     self.requests(r.requests);
     self.totalReqs(r.totalReqs);
+    if(r.lgu){
+      self.children(r.lgu.children);
+    }
   }, function (r){    
     if(r.reason == "form error"){
       alert("Agency not created!");

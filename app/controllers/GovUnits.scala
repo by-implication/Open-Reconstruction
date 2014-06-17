@@ -23,7 +23,20 @@ object GovUnits extends Controller with Secured {
           "govUnit" -> govUnit.toJson,
           "users" -> govUnit.users.map(_.infoJson),
           "requests" -> reqs.map(_.indexJson),
-          "totalReqs" -> count
+          "totalReqs" -> count,
+          "lgu" -> Lgu.findById(id).map { lgu =>
+            
+            val children = lgu.getChildren.map { case (govUnit, lgu) => Json.obj(
+              "id" -> govUnit.id,
+              "name" -> govUnit.name
+            )}
+
+            Json.obj(
+              "level" -> lgu.level,
+              "children" -> children
+            )
+
+          }
         )
       }
       case None => Rest.notFound()

@@ -79,6 +79,9 @@ case class Lgu(
   psgc: PGLTree = Nil
 ) extends LguCCGen with Entity[Lgu]
 // GENERATED case class end
+{
+  def getChildren = Lgu.getChildren(psgc)
+}
 
 // GENERATED object start
 trait LguGen extends EntityCompanion[Lgu] {
