@@ -20,6 +20,16 @@ object GovUnit extends GovUnitGen {
     ).singleOpt(simple)
   }
 
+  def findByAcronym(acronym: String): Option[GovUnit] = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT * FROM gov_units
+      WHERE gov_unit_acronym = {acronym}
+      LIMIT 1
+    """).on(
+      'acronym -> acronym
+    ).singleOpt(simple)
+  }
+
   def listAgencies = DB.withConnection { implicit c =>
     SQL("""
       SELECT * FROM gov_units g

@@ -68,15 +68,15 @@ object Users extends Controller with Secured {
   }
 
   def view = Application.index1 _
-  def viewPage = Application.index2 _
+  def viewPage(id: Int, page: Int, sort: String, sortDir: String) = Application.index
 
-  def viewMeta(id: Int, page: Int): Action[AnyContent] = GenericAction(){ implicit currentUser => implicit request =>
+  def viewMeta(id: Int, page: Int, sort: String, sortDir: String): Action[AnyContent] = GenericAction(){ implicit currentUser => implicit request =>
     User.findById(id) match {
       case Some(user) => {
 
         val limit = Req.PAGE_LIMIT
         val offset = (page - 1) * limit
-        val (requests, requestCount): (Seq[Req], Long) = user.authoredRequests(offset, limit)
+        val (requests, requestCount): (Seq[Req], Long) = user.authoredRequests(offset, limit, sort, sortDir)
 
         Rest.success(
           "user" -> user.infoJson,

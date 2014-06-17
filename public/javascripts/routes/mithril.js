@@ -4,7 +4,7 @@ m.route.mode = "pathname";
 m.route(document, window.location.pathname, {
   "/": home,
   "/requests": requestListing,
-  "/requests/:tab/:page/:projectTypeId/:l": requestListing,
+  "/requests/:tab/:page/:projectTypeId/:l/:sort/:sortDir": requestListing,
   "/requests/new": requestCreation,
   "/requests/:id": request,
   "/requests/:id/:tab": request,
@@ -13,7 +13,7 @@ m.route(document, window.location.pathname, {
   "/saro": saro,
   "/home": home,
   "/users/:id": user,
-  "/users/:id/:page": user,
+  "/users/:id/:page/:sort/:sortDir": user,
   "/admin": admin,
   "/admin/lgus": admin,
   "/admin/agencies": admin,

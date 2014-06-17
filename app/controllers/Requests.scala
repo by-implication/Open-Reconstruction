@@ -181,9 +181,9 @@ object Requests extends Controller with Secured {
 
   def index = Application.index
 
-  def indexPage(tab: String, page: Int, projectTypeId: Int, locFilters: String) = Application.index
+  def indexPage(tab: String, page: Int, projectTypeId: Int, locFilters: String, sort: String, sortDir: String) = Application.index
 
-  def indexMeta(tab: String, page: Int, projectTypeId: Int, locFilters: String) = UserAction(){ implicit user => implicit request =>
+  def indexMeta(tab: String, page: Int, projectTypeId: Int, locFilters: String, sort: String, sortDir: String) = UserAction(){ implicit user => implicit request =>
 
     val limit = Req.PAGE_LIMIT
     val offset = (page-1) * limit
@@ -197,7 +197,7 @@ object Requests extends Controller with Secured {
 
     val reqListOption = tab match {
       case "all" | "approval" | "assessor" | "implementation" | "mine" | "signoff" => {
-        Some(Req.indexList(tab, offset, limit, projectTypeIdOption, psgc))
+        Some(Req.indexList(tab, offset, limit, projectTypeIdOption, psgc, sort, sortDir))
       }
       case _ => None
     }

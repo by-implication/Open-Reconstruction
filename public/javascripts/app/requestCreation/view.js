@@ -129,8 +129,11 @@ requestCreation.view = function(ctrl){
       icon: "fa-paperclip",
       content: [
         m("h2", "Attachments"),
+        m("p", [
+          "Uploading attachments is optional. You can also add attachments later on if you like."
+        ]),
         m(".header", [
-          m("h1", ["Images"]),
+          m("h3", ["Images"]),
         ]),
         m(".content", [
           m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone}),
@@ -160,7 +163,7 @@ requestCreation.view = function(ctrl){
           ])
         ]),
         m(".header", [
-          m("h1", ["Documents"]),
+          m("h3", ["Documents"]),
         ]),
         m(".content", [
           m("div.dropzone", {config: ctrl.initDocDropzone}),
@@ -215,9 +218,9 @@ requestCreation.view = function(ctrl){
     common.banner("New Project Request"),
     m("form", {onsubmit: ctrl.submitNewRequest }, [
       common.formSection("fa-star", [
-        m("h2", ["Preamble"]),
+        m("h2", ["Terms of Agreement"]),
         common.field(
-          "Terms of Agreement",
+          "",
           m("div", [
             m("input", {type: "checkbox", onchange: m.withAttr("checked", ctrl.preamble)}),
             m("span", [

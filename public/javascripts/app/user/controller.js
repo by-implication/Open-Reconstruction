@@ -10,7 +10,15 @@ user.controller = function(){
   });
   this.requestList = m.prop([]);
   this.currentFilter = {requests: function(){return null}};
-  this.sortBy = m.prop("id");
+  this.page = parseInt(m.route.param("page")) || 1;
+  this.sort = m.route.param("sort") || "id";
+  this.sortDir = m.route.param("sortDir") || "asc";
+
+  this.sortBy = function(sort){
+    var sortDir = (self.sortDir == "asc" && sort == self.sort) ? "desc" : "asc";
+    return routes.controllers.Users.viewPage(self.id, self.page, sort, sortDir).url
+  }
+
   this.page = parseInt(m.route.param("page")) || 1;
   this.requestCount = m.prop();
   this.maxPage = function(){
@@ -18,7 +26,7 @@ user.controller = function(){
     return Math.ceil(count / 20);
   };
 
-  bi.ajax(routes.controllers.Users.viewMeta(self.id, self.page)).then(function (r){
+  bi.ajax(routes.controllers.Users.viewMeta(self.id, self.page, self.sort, self.sortDir)).then(function (r){
     this.user(r.user)
     this.requestList(r.requests);
     this.requestCount(r.requestCount);
