@@ -102,9 +102,6 @@ requestListing.controller = function(){
       return self.requestList
         .filter(function (r){ return tab.filter ? !r.isRejected : true })
         .filter(tab.filter || function(){ return true })
-        .sort(function (a, b){
-          return b[self.sortBy()] - a[self.sortBy()]
-        })
     }
     tab.label = function(){
       return [
