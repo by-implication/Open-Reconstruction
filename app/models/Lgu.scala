@@ -74,7 +74,6 @@ object Lgu extends LguGen {
 // GENERATED case class start
 case class Lgu(
   id: Pk[Int] = NA,
-  level: Int = 0,
   municipalityClass: Option[Int] = None,
   psgc: PGLTree = Nil,
   lat: Option[BigDecimal] = None,
@@ -82,6 +81,8 @@ case class Lgu(
 ) extends LguCCGen with Entity[Lgu]
 // GENERATED case class end
 {
+
+  lazy val level = psgc.list.length - 1
 
   private def getMeanCoord(coord: String) = DB.withConnection { implicit c =>
     SQL("SELECT AVG(lgu_" + coord + ") FROM lgus WHERE lgu_psgc <@ {psgc}")
@@ -106,13 +107,12 @@ case class Lgu(
 trait LguGen extends EntityCompanion[Lgu] {
   val simple = {
     get[Pk[Int]]("lgu_id") ~
-    get[Int]("lgu_level") ~
     get[Option[Int]]("lgu_municipality_class") ~
     get[PGLTree]("lgu_psgc") ~
     get[Option[BigDecimal]]("lgu_lat") ~
     get[Option[BigDecimal]]("lgu_lng") map {
-      case id~level~municipalityClass~psgc~lat~lng =>
-        Lgu(id, level, municipalityClass, psgc, lat, lng)
+      case id~municipalityClass~psgc~lat~lng =>
+        Lgu(id, municipalityClass, psgc, lat, lng)
     }
   }
 
@@ -142,14 +142,12 @@ trait LguGen extends EntityCompanion[Lgu] {
         val id = SQL("""
           insert into lgus (
             lgu_id,
-            lgu_level,
             lgu_municipality_class,
             lgu_psgc,
             lgu_lat,
             lgu_lng
           ) VALUES (
             DEFAULT,
-            {level},
             {municipalityClass},
             {psgc},
             {lat},
@@ -157,7 +155,6 @@ trait LguGen extends EntityCompanion[Lgu] {
           )
         """).on(
           'id -> o.id,
-          'level -> o.level,
           'municipalityClass -> o.municipalityClass,
           'psgc -> o.psgc,
           'lat -> o.lat,
@@ -169,14 +166,12 @@ trait LguGen extends EntityCompanion[Lgu] {
         SQL("""
           insert into lgus (
             lgu_id,
-            lgu_level,
             lgu_municipality_class,
             lgu_psgc,
             lgu_lat,
             lgu_lng
           ) VALUES (
             {id},
-            {level},
             {municipalityClass},
             {psgc},
             {lat},
@@ -184,7 +179,6 @@ trait LguGen extends EntityCompanion[Lgu] {
           )
         """).on(
           'id -> o.id,
-          'level -> o.level,
           'municipalityClass -> o.municipalityClass,
           'psgc -> o.psgc,
           'lat -> o.lat,
@@ -197,7 +191,6 @@ trait LguGen extends EntityCompanion[Lgu] {
   def update(o: Lgu): Boolean = DB.withConnection { implicit c =>
     SQL("""
       update lgus set
-        lgu_level={level},
         lgu_municipality_class={municipalityClass},
         lgu_psgc={psgc},
         lgu_lat={lat},
@@ -205,7 +198,6 @@ trait LguGen extends EntityCompanion[Lgu] {
       where lgu_id={id}
     """).on(
       'id -> o.id,
-      'level -> o.level,
       'municipalityClass -> o.municipalityClass,
       'psgc -> o.psgc,
       'lat -> o.lat,

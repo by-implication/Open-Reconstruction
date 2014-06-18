@@ -137,7 +137,7 @@ object GovUnits extends Controller with Secured {
             Lgu.findById(parentId).get.psgc.list :+ parentId
           }
 
-          Lgu(govUnit.id, level + 1, psgc = psgc).create().map { _ =>
+          Lgu(govUnit.id, psgc = psgc).create().map { _ =>
             Rest.success()
           }.getOrElse(Rest.serverError())
 

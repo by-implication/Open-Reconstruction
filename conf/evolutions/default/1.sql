@@ -19,7 +19,6 @@ CREATE TABLE gov_units (
 
 CREATE TABLE lgus (
     lgu_id serial PRIMARY KEY REFERENCES gov_units(gov_unit_id),
-    lgu_level int NOT NULL,
     lgu_municipality_class int,
     lgu_psgc ltree NOT NULL
 );;
