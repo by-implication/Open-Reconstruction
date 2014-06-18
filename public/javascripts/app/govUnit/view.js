@@ -52,8 +52,8 @@ govUnit.view = function(ctrl){
         ]),
       ]),
       m(".row", [
-        m("h1", "Users"),
         m(".columns.medium-9", [
+          m("h1", "Users"),
           m("table", [
             m("thead", [
               m("tr", [
@@ -91,16 +91,16 @@ govUnit.view = function(ctrl){
         ]),
       ]),
       m(".row", [
-        m("h1", "Requests"),
         m(".columns.medium-9", [
+          m("h1", "Requests"),
           pagination,
           request.listView(ctrl.requests(), function(){ return m.route(); })
         ]),
       ]),
       ctrl.children().length ?
       m(".row", [
-        m("h1", "Sub-LGUs"),
         m(".columns.medium-9", [
+          m("h1", "Sub-LGUs"),
           ctrl.children().map(function (c){
             return m("div",
               m("a", {href: routes.controllers.GovUnits.view(c.id).url, config: m.route}, c.name)
