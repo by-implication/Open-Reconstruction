@@ -44,6 +44,14 @@ package object support {
 	  })
 	}
 
+	implicit def rowToBigDecimal: Column[BigDecimal] = Column.nonNull { (value, meta) =>
+	  val MetaDataItem(qualified, nullable, clazz) = meta
+	  value match {
+	    case d: java.math.BigDecimal => Right(BigDecimal(d))
+	    case _ => Left(TypeDoesNotMatch("Cannot convert " + value + ":" + value.asInstanceOf[AnyRef].getClass + " to BigDecimal for column " + qualified))
+	  }
+	}
+
 	def redirect(newSession: Session = null)(implicit request: RequestHeader) = {
 	  val url = request.session.get("redirect")
 	    .orElse(request.headers.get("Referer"))
