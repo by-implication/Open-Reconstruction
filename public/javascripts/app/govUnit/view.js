@@ -9,20 +9,27 @@ govUnit.view = function(ctrl){
   );
 
   return app.template(ctrl.app, [
+    m(".section.breadcrumbs", [
+      m(".row", [
+        m(".columns.medium-12", [
+          ctrl.ancestors().length ?
+            ctrl.ancestors().map(function (c, i){
+              return m("span.crumb", [
+                m("a", {href: routes.controllers.GovUnits.view(c.id).url, config: m.route}, c.name),
+                m("i.fa.fa-angle-right.arrow")
+              ])
+            }): "",
+            ctrl.govUnit().name,
+            ctrl.govUnit().acronym ?
+              m("span.acronym", [
+                "(" + ctrl.govUnit().acronym + ")"
+              ])
+            : ""
+        ]),
+      ]),
+    ]),
     common.banner([
-      ctrl.ancestors().length ?
-      ctrl.ancestors().map(function (c, i){
-        return m("span", [
-          m("a", {href: routes.controllers.GovUnits.view(c.id).url, config: m.route}, c.name),
-          " > "
-        ])
-      }): "",
-      ctrl.govUnit().name,
-      ctrl.govUnit().acronym ?
-        m("span.acronym", [
-          "(" + ctrl.govUnit().acronym + ")"
-        ])
-      : ""
+      ctrl.govUnit().name
     ]),
     m("section", [
       m(".row", [
@@ -52,8 +59,8 @@ govUnit.view = function(ctrl){
         ]),
       ]),
       m(".row", [
-        m("h1", "Users"),
         m(".columns.medium-9", [
+          m("h1", "Users"),
           m("table", [
             m("thead", [
               m("tr", [
@@ -91,16 +98,16 @@ govUnit.view = function(ctrl){
         ]),
       ]),
       m(".row", [
-        m("h1", "Requests"),
         m(".columns.medium-9", [
+          m("h1", "Requests"),
           pagination,
           request.listView(ctrl.requests(), function(){ return m.route(); })
         ]),
       ]),
       ctrl.children().length ?
       m(".row", [
-        m("h1", "Sub-LGUs"),
         m(".columns.medium-9", [
+          m("h1", "Sub-LGUs"),
           ctrl.children().map(function (c){
             return m("div",
               m("a", {href: routes.controllers.GovUnits.view(c.id).url, config: m.route}, c.name)
@@ -108,6 +115,16 @@ govUnit.view = function(ctrl){
           })
         ]),
       ]) : "",
+      m(".map-container", [
+        m("#detailMap", {config: ctrl.initMap}),
+        ctrl.coords() ?
+          ""
+        : m(".map-shroud", [
+          m("h3", [
+            "Map unavailable because no coordinates are available"
+          ]),
+        ])
+      ]),
     ]),
   ])
 }

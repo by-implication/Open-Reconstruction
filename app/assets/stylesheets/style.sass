@@ -897,3 +897,18 @@ footer
   .button
     @include button-style(darken($orange, 10%))
     margin-bottom: 0
+
+.breadcrumbs
+  padding: 20px 0px
+  background-color: darken($accent, 5%)
+  color: white
+  // border-bottom: 1px solid rgba(white, 0.2)
+  a
+    color: rgba(white, 0.4)
+    &:hover
+      color: white
+  .crumb
+    display: inline-block
+    .arrow
+      margin: 0px 10px
+      color: rgba(white, 0.4)
