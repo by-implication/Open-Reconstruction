@@ -31,12 +31,15 @@ object GovUnits extends Controller with Secured {
               "name" -> g.name
             )
 
+            val lat: BigDecimal = lgu.lat.getOrElse(lgu.getMeanLat)
+            val lng: BigDecimal = lgu.lng.getOrElse(lgu.getMeanLng)
+
             Json.obj(
               "level" -> lgu.level,
               "children" -> lgu.children.map { case (govUnit, lgu) => relativeJson(govUnit) },
               "ancestors" -> lgu.ancestors.map(relativeJson),
-              "lat" -> lgu.lat,
-              "lng" -> lgu.lng
+              "lat" -> lat,
+              "lng" -> lng
             )
 
           }

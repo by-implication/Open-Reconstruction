@@ -82,6 +82,16 @@ case class Lgu(
 ) extends LguCCGen with Entity[Lgu]
 // GENERATED case class end
 {
+
+  private def getMeanCoord(coord: String) = DB.withConnection { implicit c =>
+    SQL("SELECT AVG(lgu_" + coord + ") FROM lgus WHERE lgu_psgc <@ {psgc}")
+    .on('psgc -> psgc)
+    .single(get[BigDecimal]("avg"))
+  }
+
+  def getMeanLat = getMeanCoord("lat")
+  def getMeanLng = getMeanCoord("lng")
+
   def children = Lgu.getChildren(psgc)
   def ancestors = DB.withConnection { implicit c =>
     SQL("""
