@@ -42,7 +42,8 @@ GROUP BY group_id, disaster_name, oparr_bohol.psgc, agencies.gov_unit_id;;
 
 INSERT INTO reqs (req_description, project_type_id, req_amount,
   author_id, req_location, disaster_type_id, 
-  req_disaster_date, req_date, req_disaster_name, req_remarks
+  req_disaster_date, req_date, req_disaster_name, req_remarks,
+  implementing_agency_id
   )
 SELECT project_description, 
   1 as project_type_id,
@@ -61,7 +62,11 @@ SELECT project_description,
     END as disaster_date,
   activity_1_start_date as req_date,
   disaster,
-  project_id
+  project_id,
+  (SELECT gov_unit_id FROM gov_units 
+    WHERE gov_unit_acronym ilike 'dpwh'
+    LIMIT 1
+  ) as implementing_agency_id
 FROM dpwh_eplc;;
 
 # --- !Downs
