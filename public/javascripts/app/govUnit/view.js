@@ -31,6 +31,16 @@ govUnit.view = function(ctrl){
     common.banner([
       ctrl.govUnit().name
     ]),
+    m("section.map-container", [
+      m("#detailMap", {config: ctrl.initMap}),
+      ctrl.coords() ?
+        ""
+      : m(".map-shroud", [
+        m("h3", [
+          "Map unavailable because no coordinates are available"
+        ]),
+      ])
+    ]),
     m("section", [
       m(".row", [
         m(".columns.medium-12", [
@@ -114,17 +124,7 @@ govUnit.view = function(ctrl){
             );
           })
         ]),
-      ]) : "",
-      m(".map-container", [
-        m("#detailMap", {config: ctrl.initMap}),
-        ctrl.coords() ?
-          ""
-        : m(".map-shroud", [
-          m("h3", [
-            "Map unavailable because no coordinates are available"
-          ]),
-        ])
-      ]),
+      ]) : ""
     ]),
   ])
 }
