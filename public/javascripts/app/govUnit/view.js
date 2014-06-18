@@ -9,20 +9,27 @@ govUnit.view = function(ctrl){
   );
 
   return app.template(ctrl.app, [
+    m(".section.breadcrumbs", [
+      m(".row", [
+        m(".columns.medium-12", [
+          ctrl.ancestors().length ?
+            ctrl.ancestors().map(function (c, i){
+              return m("span.crumb", [
+                m("a", {href: routes.controllers.GovUnits.view(c.id).url, config: m.route}, c.name),
+                m("i.fa.fa-angle-right.arrow")
+              ])
+            }): "",
+            ctrl.govUnit().name,
+            ctrl.govUnit().acronym ?
+              m("span.acronym", [
+                "(" + ctrl.govUnit().acronym + ")"
+              ])
+            : ""
+        ]),
+      ]),
+    ]),
     common.banner([
-      ctrl.ancestors().length ?
-      ctrl.ancestors().map(function (c, i){
-        return m("span", [
-          m("a", {href: routes.controllers.GovUnits.view(c.id).url, config: m.route}, c.name),
-          " > "
-        ])
-      }): "",
-      ctrl.govUnit().name,
-      ctrl.govUnit().acronym ?
-        m("span.acronym", [
-          "(" + ctrl.govUnit().acronym + ")"
-        ])
-      : ""
+      ctrl.govUnit().name
     ]),
     m("section", [
       m(".row", [
