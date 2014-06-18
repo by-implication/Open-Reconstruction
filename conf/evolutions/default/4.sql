@@ -21,6 +21,31 @@ INSERT INTO gov_units VALUES
 
 COPY gov_units FROM 'gov_units.csv' CSV ENCODING 'ISO_8859_9';;
 
+ALTER SEQUENCE gov_units_gov_unit_id_seq RESTART WITH 43822;;
+
+INSERT INTO gov_units VALUES
+  (DEFAULT, 'Commission on Higher Education', 'CHED', 6),
+  (DEFAULT, 'Department of Agrarian Reform', 'DAR', 6),
+  (DEFAULT, 'Department of Agriculture', 'DA', 6),
+  (DEFAULT, 'Department of Education', 'DepEd', 6),
+  (DEFAULT, 'Department of Energy', 'DOE', 6),
+  (DEFAULT, 'Department of Environment and Natural Resources', 'DENR', 6),
+  (DEFAULT, 'Department of Finance', 'DOF', 6),
+  (DEFAULT, 'Department of Health', 'DOH', 6),
+  (DEFAULT, 'Department of Justice', 'DOJ', 6),
+  (DEFAULT, 'Department of Labor and Employment', 'DOLE', 6),
+  (DEFAULT, 'Department of Science and Technology', 'DOST', 6),
+  (DEFAULT, 'Department of Social Welfare and Development', 'DSWD', 6),
+  (DEFAULT, 'Department of the Interior and Local Government', 'DILG', 6),
+  (DEFAULT, 'Department of Tourism', 'DOT', 6),
+  (DEFAULT, 'Department of Trade and Industry', 'DTI', 6),
+  (DEFAULT, 'Department of Transportation and Communications', 'DOTC', 6),
+  (DEFAULT, 'Local Water Utilities Administration', 'LWUA', 6),
+  (DEFAULT, 'National Irrigation Administration', 'NIA', 6),
+  (DEFAULT, 'National Telecommunications Commission', 'NTC', 6),
+  (DEFAULT, 'Office of the Presidential Assistant for Rehabilitation and Recovery', 'OPARR', 6),
+  (DEFAULT, 'Technical Education and Skills Development Authority', 'TESDA', 6);;
+
 COPY lgus FROM 'lgus.csv' CSV;;
 
 INSERT INTO users VALUES
