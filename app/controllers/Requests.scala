@@ -328,7 +328,6 @@ object Requests extends Controller with Secured {
   def editField(id: Int, field: String) = UserAction(){ implicit user => implicit request =>
     if(!user.isAnon){
       Req.findById(id).map { implicit req =>
-        play.Logger.info("canEdit: " + user.canEditRequest(req))
         if(user.canEditRequest(req)){
           editForm(field).bindFromRequest.fold(
             Rest.formError(_),
