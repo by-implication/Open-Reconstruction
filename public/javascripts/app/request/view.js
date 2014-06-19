@@ -20,6 +20,9 @@ request.view = function(ctrl){
                 type: "text",
                 onchange: m.withAttr("value", ctrl.content)
               })),
+              common.field("Password", m("input[type='password']", {
+                onchange: m.withAttr("value", ctrl.password)
+              })),
               m("button", [
                 "Submit"
               ]),
@@ -375,12 +378,7 @@ request.view = function(ctrl){
                   ]),
                 ]),
                 m(".content", [
-                  m("h4", [
-                    "SARO",
-                    (ctrl.request().level > 3 && ctrl.currentUserCanAssignFunding() ? m("button.tiny.right", {type: "button", onclick: ctrl.saroModal.show.bind(ctrl.saroModal)}, [
-                      "Assign a SARO"
-                    ]): "")
-                  ]),
+                  m("h4", "SARO"),
                   ctrl.request().isSaroAssigned ?
                     m("table", [
                       m("thead", [
@@ -502,19 +500,34 @@ request.approval = function(ctrl){
           ])
         : (
           ctrl.canSignoff() ?
-            m("div", [
-              m("h4", [
-                "Sign off on this request only if you feel the information is complete for your step in the approval process."
-              ]),
-              m("button", {onclick: ctrl.signoffModal.show.bind(ctrl.signoffModal)}, [
-                m("i.fa.fa-fw.fa-check"),
-                "Sign off"
-              ]),
-              m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
-                m("i.fa.fa-fw.fa-times"),
-                "Reject"
+            (ctrl.app.isDBM() ?
+              m("div", [
+                m("h4", [
+                  "Please assign a SARO to this request."
+                ]),
+                m("button", {onclick: ctrl.saroModal.show.bind(ctrl.saroModal)}, [
+                  m("i.fa.fa-fw.fa-check"),
+                  "Assign SARO"
+                ]),
+                m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
+                  m("i.fa.fa-fw.fa-times"),
+                  "Reject"
+                ])
+              ]) :
+              m("div", [
+                m("h4", [
+                  "Sign off on this request only if you feel the information is complete for your step in the approval process."
+                ]),
+                m("button", {onclick: ctrl.signoffModal.show.bind(ctrl.signoffModal)}, [
+                  m("i.fa.fa-fw.fa-check"),
+                  "Sign off"
+                ]),
+                m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
+                  m("i.fa.fa-fw.fa-times"),
+                  "Reject"
+                ])
               ])
-            ])
+            )
           : ctrl.hasSignedoff() ?
             m("div", [
               m("h4", [
