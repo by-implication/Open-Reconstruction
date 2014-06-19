@@ -1,5 +1,36 @@
 request.view = function(ctrl){
 
+  var requirementList = {
+    "Agency Validation": [
+      "[LGU] Sangguniang Resolution declaring the area under a State of Calamity / Imminent Danger and appropriating local counterpart for the project",
+      "[LGU] Certification by Local Chief Executive (LCE) concerned thru a Sangguniang Resolution assuring that whatever amount will be provided by the Office of the President (OP), the project will be completed/finished",
+      "[LGU] Certification and justification by the LCE concerned that funding requests chargeable against Calamity Fund are of an emergency in character",
+      "[LGU] Certification by the Local Accountant or Finance Officer that their Local Calamity Fund is already depleted/exhausted and/or non – availability of funding source other than the Calamity Fund",
+      "[LGU] Certification that the infrastructures being requested for funding support are not covered by insurance",
+      "[NGA] Work and financial program/plan of the agency",
+      "[NGA] Endorsement of the Department Secretary or Head of Agency requesting for funding assistance"
+    ],
+    "OCD Validation": [
+      "[LGU] Certification by the DPWH that the concerned LGU is capable of implementing the project;",
+      "[LGU] Other pertinent documents which may be required by the Council such as an independent validation of the project by the DPWH Regional Director/District Engineer;",
+      "[LGU] Validation/recommendation from the Secretary DPWH",
+      "[NGA] Validation/evaluation of appropriate agency to whom the NDRRMC referred the request; and"
+    ]
+  }
+
+  function requirements(level) {
+    return m("div", [
+      level,
+      m("ul", 
+        requirementList[level].map(function(li){
+          return m("li", [
+            li
+          ]);
+        })
+      ),
+    ])
+  }
+
   return app.template(
     ctrl.app,
     {className: "detail"},
@@ -293,79 +324,83 @@ request.view = function(ctrl){
                 ]),
               ]),
               m("hr"),
-              m(".big.section#images", [
-                m(".header", [
-                  m("h1", ["Images"]),
-                ]),
-                m(".content", [
-                  ctrl.curUserCanUpload() ?
-                    m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
-                  : "",
+              common.field("", [
+                  m(".big.section#images", [
+                    m(".header", [
+                      m("h1", ["Images"]),
+                    ]),
+                    m(".content", [
+                      ctrl.curUserCanUpload() ?
+                        m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
+                      : "",
 
-                  ctrl.attachments().imgs.length ?
-                    m("ul.attachments-images.small-block-grid-4", ctrl.attachments().imgs.map(function (img){
-                      return m("li", [
-                        m("img", {src: routes.controllers.Attachments.thumb(img.id).url}),
-                        m(".filename", [
-                          m("a", {title: "Preview", href: routes.controllers.Attachments.preview(img.id).url, target: "_blank"}, [
-                            img.filename
-                          ]),
-                        ]),
-
-                        m(".uploader", [
-                          "Uploaded by ",
-                          m("a", {href: routes.controllers.Users.view(img.uploader.id).url, config: m.route},[
-                            img.uploader.name
-                          ]),
-                          m(".date", [
-                            helper.timeago(new Date(img.dateUploaded)),
-                          ]),
-                        ])
-                      ]);
-                    }))
-                  : m("h3.empty", [
-                    "No images have been uploaded yet."
-                  ])
-                ]),
-              ]),
-              m("hr"),
-              m(".big.section#documents", [
-                m(".header", [
-                  m("h1", ["Documents"]),
-                ]),
-                m(".content", [
-                  ctrl.curUserCanUpload() ?
-                    m("div.dropzone", {config: ctrl.initDocDropzone})
-                  : "",
-
-                  ctrl.attachments().docs.length ?
-                    m("table.doc-list", [
-                      m("thead", [
-                        m("tr", [
-                          m("td", "Filename"),
-                          m("td", "Date Uploaded"),
-                          m("td", "Uploader"),
-                          m("td", "Actions")
-                        ])
-                      ]),
-                      m("tbody", [
-                        ctrl.attachments().docs.map(function (doc){
-                          return m("tr", [
-                            m("td", doc.filename),
-                            m("td", common.displayDate(doc.dateUploaded)),
-                            m("td", [
-                              m("a", {href: routes.controllers.Users.view(doc.uploader.id).url, config: m.route}, doc.uploader.name)
+                      ctrl.attachments().imgs.length ?
+                        m("ul.attachments-images.small-block-grid-4", ctrl.attachments().imgs.map(function (img){
+                          return m("li", [
+                            m("img", {src: routes.controllers.Attachments.thumb(img.id).url}),
+                            m(".filename", [
+                              m("a", {title: "Preview", href: routes.controllers.Attachments.preview(img.id).url, target: "_blank"}, [
+                                img.filename
+                              ]),
                             ]),
-                            m("td", common.attachmentActions.bind(ctrl)(doc))
-                          ])
-                        })
+
+                            m(".uploader", [
+                              "Uploaded by ",
+                              m("a", {href: routes.controllers.Users.view(img.uploader.id).url, config: m.route},[
+                                img.uploader.name
+                              ]),
+                              m(".date", [
+                                helper.timeago(new Date(img.dateUploaded)),
+                              ]),
+                            ])
+                          ]);
+                        }))
+                      : m("h3.empty", [
+                        "No images have been uploaded yet."
                       ])
-                    ])
-                  : m("h3.empty", [
-                    "No documents have been uploaded yet."
+                    ]),
+                  ]),
+                  m("hr"),
+                  m(".big.section#documents", [
+                    m(".header", [
+                      m("h1", ["Documents"]),
+                    ]),
+                    m(".content", [
+                      ctrl.curUserCanUpload() ?
+                        m("div.dropzone", {config: ctrl.initDocDropzone})
+                      : "",
+
+                      ctrl.attachments().docs.length ?
+                        m("table.doc-list", [
+                          m("thead", [
+                            m("tr", [
+                              m("td", "Filename"),
+                              m("td", "Date Uploaded"),
+                              m("td", "Uploader"),
+                              m("td", "Actions")
+                            ])
+                          ]),
+                          m("tbody", [
+                            ctrl.attachments().docs.map(function (doc){
+                              return m("tr", [
+                                m("td", doc.filename),
+                                m("td", common.displayDate(doc.dateUploaded)),
+                                m("td", [
+                                  m("a", {href: routes.controllers.Users.view(doc.uploader.id).url, config: m.route}, doc.uploader.name)
+                                ]),
+                                m("td", common.attachmentActions.bind(ctrl)(doc))
+                              ])
+                            })
+                          ])
+                        ])
+                      : m("h3.empty", [
+                        "No documents have been uploaded yet."
+                      ])
+                    ]),
                   ])
-                ]),
-              ]),
+                ],
+                requirements("Agency Validation")
+              ),
               m("hr"),
               m(".big.section#references", [
                 m(".header", [

@@ -18,38 +18,18 @@ requestCreation.view = function(ctrl){
     });
   }
 
-  var requirementList = {
-    "Submission": [
-      "[LGU] Sangguniang Resolution declaring the area under a State of Calamity / Imminent Danger and appropriating local counterpart for the project;",
-      "[LGU] Certification by Local Chief Executive (LCE) concerned thru a Sangguniang Resolution assuring that whatever amount will be provided by the Office of the President (OP), the project will be completed/finished;",
-      "[LGU] Certification and justification by the LCE concerned that funding requests chargeable against Calamity Fund are of an emergency in character;",
-      "[LGU] Certification by the Local Accountant or Finance Officer that their Local Calamity Fund is already depleted/exhausted and/or non – availability of funding source other than the Calamity Fund;",
-      "[LGU] Certification that the infrastructures being requested for funding support are not covered by insurance;",
-      "[NGA] Work and financial program/plan of the agency;",
-      "[NGA] Endorsement of the Department Secretary or Head of Agency requesting for funding assistance;",
-    ],
-    "Agency Validation": [
-      "[LGU] Sangguniang Resolution declaring the area under a State of Calamity / Imminent Danger and appropriating local counterpart for the project",
-      "[LGU] Certification by Local Chief Executive (LCE) concerned thru a Sangguniang Resolution assuring that whatever amount will be provided by the Office of the President (OP), the project will be completed/finished",
-      "[LGU] Certification and justification by the LCE concerned that funding requests chargeable against Calamity Fund are of an emergency in character",
-      "[LGU] Certification by the Local Accountant or Finance Officer that their Local Calamity Fund is already depleted/exhausted and/or non – availability of funding source other than the Calamity Fund",
-      "[LGU] Certification that the infrastructures being requested for funding support are not covered by insurance",
-      "[NGA] Work and financial program/plan of the agency",
-      "[NGA] Endorsement of the Department Secretary or Head of Agency requesting for funding assistance"
-    ],
-    "OCD Validation": [
-      "[LGU] Certification by the DPWH that the concerned LGU is capable of implementing the project;",
-      "[LGU] Other pertinent documents which may be required by the Council such as an independent validation of the project by the DPWH Regional Director/District Engineer;",
-      "[LGU] Validation/recommendation from the Secretary DPWH",
-      "[NGA] Validation/evaluation of appropriate agency to whom the NDRRMC referred the request; and"
-    ]
-  }
-
   function requirements(level) {
     return m("div", [
-      level,
-      m("ul", 
-        requirementList[level].map(function(li){
+      "Submission",
+      m("ul", [
+          "[LGU] Sangguniang Resolution declaring the area under a State of Calamity / Imminent Danger and appropriating local counterpart for the project;",
+          "[LGU] Certification by Local Chief Executive (LCE) concerned thru a Sangguniang Resolution assuring that whatever amount will be provided by the Office of the President (OP), the project will be completed/finished;",
+          "[LGU] Certification and justification by the LCE concerned that funding requests chargeable against Calamity Fund are of an emergency in character;",
+          "[LGU] Certification by the Local Accountant or Finance Officer that their Local Calamity Fund is already depleted/exhausted and/or non – availability of funding source other than the Calamity Fund;",
+          "[LGU] Certification that the infrastructures being requested for funding support are not covered by insurance;",
+          "[NGA] Work and financial program/plan of the agency;",
+          "[NGA] Endorsement of the Department Secretary or Head of Agency requesting for funding assistance;",
+        ].map(function(li){
           return m("li", [
             li
           ]);
