@@ -566,20 +566,17 @@ request.approval = function(ctrl){
 }
 
 request.progress = function(ctrl){
-  var steps = _.range(6);
   return m("section", [
     m(".row", [
       m(".columns.medium-12", [
         m(".progress", [
-          _.chain(steps)
-            .map(function(step){
+          _.chain(process.levelDict)
+            .map(function (step, level, steps){
               return m(".step", {
                 style: {width: (100/steps.length + '%')},
-                className: (ctrl.request().level >= step ? 'done ' : '') +
-                  (ctrl.request().level === (step - 1) ? 'pending' : '')
-              }, [
-                process.levelDict[step]
-              ])
+                className: (ctrl.request().level >= level ? 'done ' : '') +
+                  (ctrl.request().level === (level - 1) ? 'pending' : '')
+              }, step)
             })
             .value()
         ]),
