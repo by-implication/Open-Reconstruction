@@ -121,14 +121,28 @@ object Requests extends Controller with Secured {
 
       if(user.canSignoff(r)){
 
-        val signoffForm: Form[Req] = Form(
-          mapping("password" -> nonEmptyText.verifying(
-            "Incorrect password",
-            User.authenticate(user.handle, _).isDefined
-          ))
-          (_ => r)
-          (_ => None)
-        )
+        val signoffForm: Form[Req] = if(user.isDBM){
+          Form(
+            mapping(
+              "content" -> nonEmptyText,
+              "password" -> nonEmptyText.verifying(
+                "Incorrect password",
+                User.authenticate(user.handle, _).isDefined
+              )
+            )
+            ((saroNo, _) => r.copy(saroNo = Some(saroNo)))
+            (_ => None)
+          )
+        } else {
+          Form(
+            mapping("password" -> nonEmptyText.verifying(
+              "Incorrect password",
+              User.authenticate(user.handle, _).isDefined
+            ))
+            (_ => r)
+            (_ => None)
+          )
+        }
 
         signoffForm.bindFromRequest.fold(
           Rest.formError(_),
@@ -290,14 +304,6 @@ object Requests extends Controller with Secured {
           case _ => Some(govUnitId)
       }))(_ => None)
     }
-    case "saroNo" => {
-      mapping(
-        "input" -> nonEmptyText.verifying("Unauthorized", _ => {
-          user.isDBM
-        })
-      )(saroNo => req.copy(saroNo = Some(saroNo))
-      )(_ => None)
-    }
     case _ => {
       mapping(
         "input" -> text.verifying("Invalid field", _ => false)
@@ -305,25 +311,6 @@ object Requests extends Controller with Secured {
       )(_ => None)
     }
   })
-
-  def assignSaro(id: Int) = UserAction(){ implicit user => implicit request =>
-    if(!user.isAnon){
-      Req.findById(id).map { implicit req =>
-        if (req.implementingAgencyId.isDefined){
-          editForm("saroNo").bindFromRequest.fold(
-            Rest.formError(_),
-            _.save().map { implicit req =>
-              (Event.assignSaro()).create().map { e =>
-                Rest.success("event" -> e.listJson)
-              }.getOrElse(Rest.serverError())
-            }.getOrElse(Rest.serverError())
-          )
-        } else {
-          Rest.serverError()
-        }
-      }.getOrElse(Rest.notFound())
-    } else Rest.unauthorized()
-  }
 
   def editField(id: Int, field: String) = UserAction(){ implicit user => implicit request =>
     if(!user.isAnon){

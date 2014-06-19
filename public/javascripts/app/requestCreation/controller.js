@@ -144,16 +144,7 @@ requestCreation.controller = function(){
       bi.ajax(routes.controllers.Requests.insert(), {data: this.input}).then(function (r){
         m.route(routes.controllers.Requests.view(r.id).url);
       }, function (r){
-        if(r.reason == "form error"){
-          var msg = "Request not created because of the following:";
-          for(var field in r.messages){
-            var message = r.messages[field];
-            msg += "\n" + field + " - " + message;
-          }
-          alert(msg);
-        } else {
-          alert(r.reason);
-        }
+        common.formErrorHandler(r);
         this.submitButtonDisabled(false);
       });
       

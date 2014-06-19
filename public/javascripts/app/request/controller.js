@@ -196,7 +196,8 @@ request.controller = function(){
   }
 
   this.currentUserCanAssignFunding = function(){
-    return this.app.getCurrentUserProp("govUnit") && this.app.getCurrentUserProp("govUnit").role == "DBM"
+    var govUnit = this.app.getCurrentUserProp("govUnit");
+    return govUnit && govUnit.role == "DBM";
   }
 
   this.currentUserIsAuthor = function(){
@@ -260,19 +261,23 @@ request.controller = function(){
 
   }.bind(this));
 
+  var signoffActions = function(r){
+    ctrl.history().unshift(r.event);
+    ctrl.canSignoff(false);
+    ctrl.hasSignedoff(true);
+    ctrl.request().level++;
+  }
+
   this.signoffModal.signoff = function(e){
     e.preventDefault();
     bi.ajax(routes.controllers.Requests.signoff(this.id), {
       data: {password: this.signoffModal.password}
     }).then(function (r){
-      this.canSignoff(false);
-      this.hasSignedoff(true);
+      signoffActions(r);
       alert('Signoff successful!');
       this.signoffModal.close();
-      this.history().unshift(r.event);
-      this.request().level++;
     }.bind(this), function (r){
-      alert("Failed to signoff: " + r.messages.password);
+      common.formErrorHandler(r);
     });
   }.bind(this);
 
@@ -297,14 +302,15 @@ request.controller = function(){
 
   this.saroModal.submit = function(e){
     e.preventDefault();
-    bi.ajax(routes.controllers.Requests.assignSaro(ctrl.id), {
-      data: {input: this.saroModal.content}
+    bi.ajax(routes.controllers.Requests.signoff(ctrl.id), {
+      data: {password: this.saroModal.password, content: this.saroModal.content}
     }).then(function (r){
-      ctrl.history().unshift(r.event);
-      alert('SARO assigned.');
+      signoffActions(r);
+      ctrl.request().isSaroAssigned = true;
       this.saroModal.close();
+      alert('SARO assigned.');
     }.bind(this), function (r){
-      alert("An error occurred.");
+      common.formErrorHandler(r);
     });
   }.bind(this);
 

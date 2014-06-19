@@ -27,7 +27,7 @@ historyEvent.reject = function(data){
       m("h3", "Rejected"),
       m("p", [
         m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
-        " rejected this project."
+        " rejected this request."
       ]),
       historyEvent.meta("Rejected", data, date),
     ])
@@ -73,7 +73,7 @@ historyEvent.editField = function(data){
       m("i.fa.fa-lg.fa-fw.fa-edit")
     ]),
     m(".details", [
-      m("p", "Project " + field + " was set to \"" + value + "\""),
+      m("p", "Request " + field + " was set to \"" + value + "\""),
       historyEvent.meta("Modified", data, date)
     ]),
   ]);
@@ -130,7 +130,7 @@ historyEvent.assign = function(data){
     m(".details", [
       m("p", isAssign ? [
         m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
-        " was assigned" + prepPhrase + " this project."
+        " was assigned" + prepPhrase + " this request."
       ] : duty.capitalize() + "ing agency was unassigned."),
       historyEvent.meta(isAssign ? "Assigned" : "Unassigned", data, date)
     ])
@@ -142,15 +142,16 @@ historyEvent.signoff = function(data){
   var c = data.content.split(" ");
   var govUnitId = c.pop();
   var govUnitName = c.join(" ");
+  var isDBM = govUnitName == "Department of Budget and Management";
   return m(".event", [
     m(".type.request", [
-      m("i.fa.fa-lg.fa-fw.fa-check")
+      isDBM ? m("i.fa.fa-lg.fa-fw.fa-money") : m("i.fa.fa-lg.fa-fw.fa-check")
     ]),
     m(".details", [
       m("h3", "Sign off"),
       m("p", [
         m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
-        " signed off on this project."
+        (isDBM ? " assigned a SARO to and" : "") + " signed off on this request."
       ]),
       historyEvent.meta("Signed off", data, date)
     ])
@@ -186,22 +187,6 @@ historyEvent.comment = function(data){
     m(".details", [
       m("p", data.content),
       historyEvent.meta("Posted", data, date)
-    ])
-  ])
-}
-
-historyEvent.assignSaro = function(data){
-  var date = new Date(data.date);
-  return m(".event", [
-    m(".type.edit", [
-      m("i.fa.fa-lg.fa-fw.fa-money")
-    ]),
-    m(".details", [
-      m("h3", "SARO assignment"),
-      m("p", [
-        "A SARO has been assigned to this request."
-      ]),
-      historyEvent.meta("Assigned", data, date)
     ])
   ])
 }
