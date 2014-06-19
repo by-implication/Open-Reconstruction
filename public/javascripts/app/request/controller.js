@@ -309,7 +309,7 @@ request.controller = function(){
   }.bind(this);
 
   this.initMap = function(elem, isInit){
-    if(!isInit && self.coords()){
+    if(self.coords()){
 
       !function tryMap(){
         if($(elem).height()){
