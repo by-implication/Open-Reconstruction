@@ -85,9 +85,9 @@ case class Lgu(
   lazy val level = psgc.list.length - 1
 
   private def getMeanCoord(coord: String) = DB.withConnection { implicit c =>
-    SQL("SELECT AVG(lgu_" + coord + ") FROM lgus WHERE lgu_psgc <@ {psgc}")
+    SQL("SELECT COALESCE(AVG(lgu_" + coord + "), 0) FROM lgus WHERE lgu_psgc <@ {psgc}")
     .on('psgc -> psgc)
-    .single(get[BigDecimal]("avg"))
+    .single(get[BigDecimal]("coalesce"))
   }
 
   def getMeanLat = getMeanCoord("lat")
