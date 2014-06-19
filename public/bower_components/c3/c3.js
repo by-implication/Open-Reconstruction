@@ -172,7 +172,7 @@
 
         // configuration for no plot-able data supplied.
         var __data_empty_label_text = getConfig(['data', 'empty', 'label', 'text'], "");
-        
+
         // subchart
         var __subchart_show = getConfig(['subchart', 'show'], false),
             __subchart_size_height = getConfig(['subchart', 'size', 'height'], 60);
@@ -594,7 +594,16 @@
         function getParentRectValue(key) {
             var parent = selectChart.node(), v;
             while (parent && parent.tagName !== 'BODY') {
-                v = parent.getBoundingClientRect()[key];
+
+                var box = null;
+                try {
+                   box = parent.getBoundingClientRect();
+                } catch(e) {
+                   box = { top : parent.offsetTop, left : parent.offsetLeft };
+                }
+
+                v = box[key];
+                
                 if (v) {
                     break;
                 }
