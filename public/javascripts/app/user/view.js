@@ -8,7 +8,7 @@ user.view = function(ctrl){
     }
   );
 
-  return app.template(ctrl.app, [
+  return app.template(ctrl.app, "User", [
     common.banner(ctrl.user().name),
     m("section", [
       m(".row", [

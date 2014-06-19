@@ -72,7 +72,7 @@ admin.view = function(ctrl){
     )
   }
 
-  return app.template(ctrl.app, [
+  return app.template(ctrl.app, "Admin", [
     common.banner("Administrative Interface"),
     ctrl.app.isSuperAdmin()?
       m("section", [

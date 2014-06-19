@@ -8,7 +8,7 @@ requestListing.view = function(ctrl){
     }
   );
 
-  return app.template(ctrl.app, [
+  return app.template(ctrl.app, "Requests", [
     common.banner("Requests"),
     ctrl.app.isAuthorized(process.permissions.CREATE_REQUESTS) ?
       m("section#new-request-banner", [

@@ -2,6 +2,7 @@ request.view = function(ctrl){
 
   return app.template(
     ctrl.app,
+    "Request",
     {className: "detail"},
     [ // modals
       common.modal.view(

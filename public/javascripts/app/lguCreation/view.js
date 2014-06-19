@@ -1,5 +1,5 @@
 lguCreation.view = function(ctrl){
-  return app.template(ctrl.app, [
+  return app.template(ctrl.app, "New LGU", [
     common.banner("New " + ctrl.lguType() + " under " + ctrl.parentName()),
     ctrl.app.isSuperAdmin() ? m("form", {onsubmit: ctrl.submit}, [
       common.formSection(

@@ -1,6 +1,6 @@
 govUnitEdit.view = function(ctrl){
 
-  return app.template(ctrl.app, [
+  return app.template(ctrl.app, "Edit Agency", [
     common.banner("Edit " + ctrl.govUnitType()),
     m("form", {onsubmit: ctrl.submit}, [
       common.formSection(

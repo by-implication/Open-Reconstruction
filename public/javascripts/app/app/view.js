@@ -1,31 +1,17 @@
-app.template = function(a, b, c, d){
-  var ctrl, attrs, content, modals;
+app.template = function(){
 
-  switch(arguments.length){
-    case 2:
-      ctrl = arguments[0];
-      content = arguments[1];
-      attrs = {className: ""};
-      modals = [];
-      break;
-    case 3:
-      ctrl = arguments[0];
-      attrs = arguments[1];
-      content = arguments[2];
-      modals = [];
-      break;
-    case 4:
-      ctrl = arguments[0];
-      attrs = arguments[1];
-      modals = arguments[2];
-      content = arguments[3];
-      break;
-  }
+  var args = Array.prototype.slice.call(arguments, 0);
+  var content = args.pop();
+  var ctrl = args.shift();
+  var title = args.shift();
+  title = "Open Reconstruction" + (title ? " — " + title : "");
+  var attrs = args.shift() || {className: ""};
+  var modals = args.shift() || [];
 
   return m("html", [
     m("head", [
       m("meta", {charset: "utf-8"}),
-      m("title", [ "Open Reconstruction" ]),
+      m("title", title),
       m("meta", {name: "google", value: "notranslate"}),
       m("link[href='/assets/bower_components/nprogress/nprogress.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/stylesheets/style.css'][rel='stylesheet'][type='text/css']"),

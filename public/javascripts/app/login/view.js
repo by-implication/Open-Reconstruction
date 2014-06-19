@@ -1,5 +1,5 @@
 login.view = function(ctrl){
-  return app.template(ctrl.app, {className: "detail"}, [
+  return app.template(ctrl.app, "Login", {className: "detail"}, [
     common.banner("Open Reconstruction"),
     m("section", [
       m(".row", [

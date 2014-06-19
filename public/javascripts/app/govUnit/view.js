@@ -8,7 +8,7 @@ govUnit.view = function(ctrl){
     }
   );
 
-  return app.template(ctrl.app, [
+  return app.template(ctrl.app, "Agency / LGU", [
     m(".section.breadcrumbs", [
       m(".row", [
         m(".columns.medium-12", [
