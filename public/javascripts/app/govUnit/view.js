@@ -31,13 +31,29 @@ govUnit.view = function(ctrl){
     common.banner([
       ctrl.govUnit().name
     ]),
+    m("section.map-container", [
+      m("#detailMap", {config: ctrl.initMap}),
+      ctrl.coords() ?
+        ""
+      : m(".map-shroud", [
+        m("h3", [
+          "Map unavailable because no coordinates are available"
+        ]),
+      ])
+    ]),
     m("section", [
+      // m(".row", [
+      //   m(".columns.medium-12", [
+          
+      //   ]),
+      // ]),
       m(".row", [
-        m(".columns.medium-12", [
+        m(".columns.medium-9", [
+          m("h1", "Users"),
           m("ul.button-group", [
             ctrl.app.isGovUnitAdmin(ctrl.govUnit().id) ?
               m("li", [
-                m("a.button", 
+                m("a.button.small", 
                   {
                     href: routes.controllers.Users.create(ctrl.govUnit().id).url,
                     config: m.route
@@ -49,18 +65,13 @@ govUnit.view = function(ctrl){
             ctrl.app.isSuperAdmin() ?
               m("li", [
                 m(
-                  "a.button", 
+                  "a.button.small", 
                   {href: routes.controllers.GovUnits.edit(ctrl.govUnit().id).url, config: m.route}, 
                   "Edit"
                 )
               ])
             : ""
           ]),
-        ]),
-      ]),
-      m(".row", [
-        m(".columns.medium-9", [
-          m("h1", "Users"),
           m("table", [
             m("thead", [
               m("tr", [
@@ -76,23 +87,29 @@ govUnit.view = function(ctrl){
               ])
             ]),
             m("tbody", [
-              ctrl.users().map(function(u){
-                return m("tr", [
-                  m("td", [
-                    m("a", {href: routes.controllers.Users.view(u.id).url, config: m.route}, [
-                      u.name
+              ctrl.users().length ?
+                ctrl.users().map(function(u){
+                  return m("tr", [
+                    m("td", [
+                      m("a", {href: routes.controllers.Users.view(u.id).url, config: m.route}, [
+                        u.name
+                      ]),
                     ]),
-                  ]),
+                    m("td", [
+                      u.handle
+                    ]),
+                    m("td", [
+                      u.isAdmin ?
+                        "Admin"
+                      : "Normal"
+                    ]),
+                  ])
+                })
+              : m("tr", [
                   m("td", [
-                    u.handle
+                    "No users are currently registered under this government unit."
                   ]),
-                  m("td", [
-                    u.isAdmin ?
-                      "Admin"
-                    : "Normal"
-                  ]),
-                ])
-              })
+                ]),
             ]),
           ]),
         ]),
@@ -114,17 +131,7 @@ govUnit.view = function(ctrl){
             );
           })
         ]),
-      ]) : "",
-      m(".map-container", [
-        m("#detailMap", {config: ctrl.initMap}),
-        ctrl.coords() ?
-          ""
-        : m(".map-shroud", [
-          m("h3", [
-            "Map unavailable because no coordinates are available"
-          ]),
-        ])
-      ]),
+      ]) : ""
     ]),
   ])
 }
