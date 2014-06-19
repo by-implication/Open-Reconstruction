@@ -163,7 +163,7 @@ app.navbar = function(ctrl){
             // console.log(ctrl.currentUser().id),
             ctrl.currentUser().id ?
               m("li", [
-                m("a", {href: "users/" + ctrl.currentUser().id, config: m.route}, "My Profile"),
+                m("a", {href: routes.controllers.Users.view(ctrl.currentUser().id).url, config: m.route}, "My Profile"),
               ])
             : "",
             ctrl.currentUser().govUnit.id ?
