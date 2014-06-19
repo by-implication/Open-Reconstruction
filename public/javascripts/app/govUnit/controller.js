@@ -48,11 +48,6 @@ govUnit.controller = function(){
         self.coords(new L.LatLng(r.lgu.lat, r.lgu.lng));
       }
     }
-  }, function (r){    
-    if(r.reason == "form error"){
-      alert("Agency not created!");
-    } else {
-      alert(r.reason);
-    }
-  })
+  });
+
 }

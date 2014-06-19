@@ -68,9 +68,7 @@ request.controller = function(){
     }).then(function (r){
       alert('Submitted!')
       self.history().unshift(r.event);
-    }, function (r){
-      alert("Your input was invalid.");
-    });
+    }, common.formErrorHandler);
   }
 
   this.unassignedAgency = {id: 0};
@@ -105,7 +103,7 @@ request.controller = function(){
         processResult(r);
         c();
       }.bind(this), function (r){
-        alert("Your input was invalid.");
+        common.formErrorHandler(r);
         c();
       });
     }
@@ -276,9 +274,7 @@ request.controller = function(){
       signoffActions(r);
       alert('Signoff successful!');
       this.signoffModal.close();
-    }.bind(this), function (r){
-      common.formErrorHandler(r);
-    });
+    }.bind(this), common.formErrorHandler);
   }.bind(this);
 
   this.rejectModal.reject = function(e){
@@ -291,13 +287,7 @@ request.controller = function(){
       alert('Request rejected.');
       this.rejectModal.close();
       this.history().unshift(r.event);
-    }.bind(this), function (r){
-      var errors = [];
-      for(var field in r.messages){
-        errors.push([field, r.messages[field]]);
-      }
-      alert("Failed to reject:\n" + errors.join("\n"));
-    });
+    }.bind(this), common.formErrorHandler);
   }.bind(this);
 
   this.saroModal.submit = function(e){
@@ -309,9 +299,7 @@ request.controller = function(){
       ctrl.request().isSaroAssigned = true;
       this.saroModal.close();
       alert('SARO assigned.');
-    }.bind(this), function (r){
-      common.formErrorHandler(r);
-    });
+    }.bind(this), common.formErrorHandler);
   }.bind(this);
 
   this.initMap = function(elem, isInit){

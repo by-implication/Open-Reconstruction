@@ -17,9 +17,7 @@ admin.controller = function(){
 
   bi.ajax(routes.controllers.GovUnits.listAgencies()).then(function (r){
     this.agencyList(r.agencies);
-  }.bind(this), function (r){
-    alert(r.reason);
-  });
+  }.bind(this));
 
   bi.ajax(routes.controllers.GovUnits.listLgus()).then(function (r){
     var regions = [];
@@ -45,7 +43,7 @@ admin.controller = function(){
           this.value(r.type.name);
           c();
         }.bind(this), function (r){
-          alert("Your input was invalid.");
+          common.formErrorHandler(r);
           c();
         });
       }, null, {value: m.prop(t.name)});

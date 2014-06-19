@@ -10,12 +10,6 @@ login.controller = function(){
     e.preventDefault();
     bi.ajax(routes.controllers.Users.authenticate(), {data: self.input}).then(function (r){
       m.route(routes.controllers.Application.index().url);
-    }, function (r){
-      if(r.reason == "form error"){
-        alert("Invalid credentials.");
-      } else {
-        alert(r.reason);
-      }
-    })
+    }, common.formErrorHandler)
   }
 }

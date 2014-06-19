@@ -511,7 +511,7 @@ common.leaflet = {
 
 common.formErrorHandler = function(r){
   if(r.reason == "form error"){
-    var msg = "Request not created because of the following:";
+    var msg = "Form submission failed because of the following:";
     for(var field in r.messages){
       var message = r.messages[field];
       msg += "\n" + field + " - " + message;
