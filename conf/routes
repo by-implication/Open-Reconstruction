@@ -7,7 +7,6 @@
 GET     /                                         controllers.Application.index
 GET     /home                                     controllers.Application.home
 GET     /populate                                 controllers.Application.populate
-GET     /saro                                     controllers.Application.saro
 GET     /process                                  controllers.Application.process
 GET     /assets/javascripts/routes/play.js        controllers.Application.jsRoutes
 GET     /csvParser                                controllers.Application.csvParser

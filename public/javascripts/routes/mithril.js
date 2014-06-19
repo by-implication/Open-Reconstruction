@@ -10,7 +10,6 @@ m.route(document, window.location.pathname, {
   "/requests/:id/:tab": request,
   "/viz/:v": viz,
   "/viz": vizIndex,
-  "/saro": saro,
   "/home": home,
   "/users/:id": user,
   "/users/:id/:page/:sort/:sortDir": user,

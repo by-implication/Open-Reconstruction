@@ -74,7 +74,6 @@ object Application extends Controller with Secured {
   def index2(x: Int, y: Int) = index
 
   def home = index
-  def saro = index
   def admin = index
   def adminLgus = index
   def adminAgencies = index
@@ -100,7 +99,6 @@ object Application extends Controller with Secured {
       routes.javascript.Application.adminLgus,
       routes.javascript.Application.adminAgencies,
       routes.javascript.Application.index,
-      routes.javascript.Application.saro,
       routes.javascript.Application.home,
       routes.javascript.Application.process,
       Users.authenticate,
