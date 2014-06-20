@@ -13,6 +13,7 @@ app.template = function(){
       m("meta", {charset: "utf-8"}),
       m("title", title),
       m("meta", {name: "google", value: "notranslate"}),
+      m("link[href='/assets/images/favicon.png'][rel='icon'][type='image/png']"),
       m("link[href='/assets/bower_components/nprogress/nprogress.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/stylesheets/style.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/stylesheets/fonts.css'][rel='stylesheet'][type='text/css']"),
@@ -100,7 +101,7 @@ app.navbar = function(ctrl){
         m("li.name", [
           m("h1", [
             m("a", {
-              href: routes.controllers.Application.home().url, 
+              href: routes.controllers.Application.home().url,
               config: m.route,
               className: (routes.controllers.Application.home().url === m.route() ? "active" : "")
             }, "Open Reconstruction")
