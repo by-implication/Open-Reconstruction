@@ -165,12 +165,12 @@ common.field = function(name, content, help, outsideLabel){
   ]);
   
   var contents = m("div.row", [
-    m("div.columns.medium-8", [
+    m("div.columns.medium-12", [
       content
     ]),
-    m("div.columns.medium-4.help-container", [
-      m("p.help", help)
-    ])
+    // m("div.columns.medium-4.help-container", [
+    //   m("p.help", help)
+    // ])
   ]);
 
   if(outsideLabel){

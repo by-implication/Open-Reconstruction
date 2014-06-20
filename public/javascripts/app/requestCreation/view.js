@@ -128,46 +128,18 @@ requestCreation.view = function(ctrl){
     {
       icon: "fa-paperclip",
       content: [
-        common.field(
-          "", [
-            m("h2", "Attachments"),
-            m("p", [
-              "Uploading attachments is optional. You can also add attachments later on if you like."
+        m(".header", [
+          m("h2", ["Documents"]),
+        ]),
+        m(".content", [
+          m(".row", [
+            m(".columns.medium-4", [
+              m("h4", [
+                "What documents do I need?"
+              ]),
+              request.requirements(ctrl)
             ]),
-            m(".header", [
-              m("h3", ["Images"]),
-            ]),
-            m(".content", [
-              m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone}),
-              ctrl.attachments().imgs.length ?
-                m("ul.attachments-images.small-block-grid-4", ctrl.attachments().imgs.map(function (img){
-                  return m("li", [
-                    m("img", {src: routes.controllers.Attachments.bucketThumb(img.key, "img", img.filename).url}),
-                    m(".filename", [
-                      m("a", {title: "Preview", href: routes.controllers.Attachments.bucketPreview(img.key, "img", img.filename).url, target: "_blank"}, [
-                        img.filename
-                      ]),
-                    ]),
-
-                    m(".uploader", [
-                      "Uploaded by ",
-                      m("a", {href: routes.controllers.Users.view(img.uploader.id).url, config: m.route},[
-                        img.uploader.name
-                      ]),
-                      m(".date", [
-                        helper.timeago(new Date(img.dateUploaded)),
-                      ]),
-                    ])
-                  ]);
-                }))
-              : m("h3.empty", [
-                "No images have been uploaded yet."
-              ])
-            ]),
-            m(".header", [
-              m("h3", ["Documents"]),
-            ]),
-            m(".content", [
+            m(".columns.medium-8", [
               m("div.dropzone", {config: ctrl.initDocDropzone}),
               ctrl.attachments().docs.length ?
                 m("table.doc-list", [
@@ -199,13 +171,12 @@ requestCreation.view = function(ctrl){
                     })
                   ])
                 ])
-              : m("h3.empty", [
+              : m("h2.empty", [
                 "No documents have been uploaded yet."
               ])
-            ])
-          ],
-          request.requirements(ctrl)
-        ),
+            ]),
+          ]),
+        ])
       ]
     },
     {
