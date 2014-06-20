@@ -297,52 +297,22 @@ request.view = function(ctrl){
                 ]),
               ]),
               m("hr"),
-              common.field("", [
-                  m(".big.section#images", [
-                    m(".header", [
-                      m("h1", ["Images"]),
+              m(".big.section#documents", [
+                m(".header", [
+                  m("h1", ["Documents"]),
+                ]),
+                m(".content", [
+                  m(".row", [
+                    m(".columns.medium-4", [
+                      m("h4", [
+                        "What documents are needed?"
+                      ]),
+                      request.requirements(ctrl),
                     ]),
-                    m(".content", [
-                      ctrl.curUserCanUpload() ?
-                        m("div#imageDropzone.dropzone", {config: ctrl.initImageDropzone})
-                      : "",
-
-                      ctrl.attachments().imgs.length ?
-                        m("ul.attachments-images.small-block-grid-4", ctrl.attachments().imgs.map(function (img){
-                          return m("li", [
-                            m("img", {src: routes.controllers.Attachments.thumb(img.id).url}),
-                            m(".filename", [
-                              m("a", {title: "Preview", href: routes.controllers.Attachments.preview(img.id).url, target: "_blank"}, [
-                                img.filename
-                              ]),
-                            ]),
-
-                            m(".uploader", [
-                              "Uploaded by ",
-                              m("a", {href: routes.controllers.Users.view(img.uploader.id).url, config: m.route},[
-                                img.uploader.name
-                              ]),
-                              m(".date", [
-                                helper.timeago(new Date(img.dateUploaded)),
-                              ]),
-                            ])
-                          ]);
-                        }))
-                      : m("h3.empty", [
-                        "No images have been uploaded yet."
-                      ])
-                    ]),
-                  ]),
-                  m("hr"),
-                  m(".big.section#documents", [
-                    m(".header", [
-                      m("h1", ["Documents"]),
-                    ]),
-                    m(".content", [
+                    m(".columns.medium-8", [
                       ctrl.curUserCanUpload() ?
                         m("div.dropzone", {config: ctrl.initDocDropzone})
                       : "",
-
                       ctrl.attachments().docs.length ?
                         m("table.doc-list", [
                           m("thead", [
@@ -370,10 +340,9 @@ request.view = function(ctrl){
                         "No documents have been uploaded yet."
                       ])
                     ]),
-                  ])
-                ],
-                request.requirements(ctrl)
-              ),
+                  ]),
+                ]),
+              ]),
               m("hr"),
               m(".big.section#references", [
                 m(".header", [
@@ -585,26 +554,38 @@ request.approval = function(ctrl){
 
 request.requirements = function(ctrl){
   var list = {
-    "Submission": [
-      "[LGU] Sangguniang Resolution declaring the area under a State of Calamity / Imminent Danger and appropriating local counterpart for the project;",
-      "[LGU] Certification by Local Chief Executive (LCE) concerned thru a Sangguniang Resolution assuring that whatever amount will be provided by the Office of the President (OP), the project will be completed/finished;",
-      "[LGU] Certification and justification by the LCE concerned that funding requests chargeable against Calamity Fund are of an emergency in character;",
-      "[LGU] Certification by the Local Accountant or Finance Officer that their Local Calamity Fund is already depleted/exhausted and/or non – availability of funding source other than the Calamity Fund;",
-      "[LGU] Certification that the infrastructures being requested for funding support are not covered by insurance;",
-      "[NGA] Work and financial program/plan of the agency;",
-      "[NGA] Endorsement of the Department Secretary or Head of Agency requesting for funding assistance;"
-    ],
-    "Agency Validation": [
-      "[LGU] Certification by the DPWH that the concerned LGU is capable of implementing the project",
-      "[LGU] Other pertinent documents which may be required by the Council such as an independent validation of the project by the DPWH Regional Director/District Engineer",
-      "[LGU] Validation/recommendation from the Secretary DPWH",
-      "[NGA] Validation/evaluation of appropriate agency to whom the NDRRMC referred the request"
-    ],
-    "OCD Validation": [
-      "[LGU] Local Disaster Risk reduction and Management Council (DRRMC) Damage Report/ Calamity Impact Assessment Report/ Work and financial Plan (to include colored pictures)",
-      "[LGU] Endorsement of RDRRMC Chairperson (OCD Regional Director)",
-      "[NGA] Other pertinent documents which may be required by the Council such as an independent evaluation of the project from the concerned agencies/departments (additional documents may be requested by OCD via comments)"
-    ]
+    "Submission": {
+      "LGU": [
+        "Sangguniang Resolution declaring the area under a State of Calamity / Imminent Danger and appropriating local counterpart for the project;",
+        "Certification by Local Chief Executive (LCE) concerned thru a Sangguniang Resolution assuring that whatever amount will be provided by the Office of the President (OP), the project will be completed/finished;",
+        "Certification and justification by the LCE concerned that funding requests chargeable against Calamity Fund are of an emergency in character;",
+        "Certification by the Local Accountant or Finance Officer that their Local Calamity Fund is already depleted/exhausted and/or non – availability of funding source other than the Calamity Fund;",
+        "Certification that the infrastructures being requested for funding support are not covered by insurance;"
+      ],
+      "NGA": [
+        "Work and financial program/plan of the agency;",
+        "Endorsement of the Department Secretary or Head of Agency requesting for funding assistance;"
+      ]
+    },
+    "Agency Validation": {
+      "LGU": [
+        "Certification by the DPWH that the concerned LGU is capable of implementing the project",
+        "Other pertinent documents which may be required by the Council such as an independent validation of the project by the DPWH Regional Director/District Engineer",
+        "Validation/recommendation from the Secretary DPWH"
+      ],
+      "NGA": [
+        "Validation/evaluation of appropriate agency to whom the NDRRMC referred the request"
+      ]
+    },
+    "OCD Validation": {
+      "LGU": [
+        "Local Disaster Risk reduction and Management Council (DRRMC) Damage Report/ Calamity Impact Assessment Report/ Work and financial Plan (to include colored pictures)",
+        "Endorsement of RDRRMC Chairperson (OCD Regional Director)"
+      ],
+      "NGA": [
+        "Other pertinent documents which may be required by the Council such as an independent evaluation of the project from the concerned agencies/departments (additional documents may be requested by OCD via comments)"
+      ]
+    }
   }
 
   return m("div", [
@@ -613,10 +594,17 @@ request.requirements = function(ctrl){
         return m("option" + (ctrl.requirementLevel() == k ? '[selected="true"]' : ""), k)
       })
     ),
-    m("ul", 
-      list[ctrl.requirementLevel()].map(function(li){
-        return m("li", [
-          li
+    m("div", 
+      _.map(list[ctrl.requirementLevel()], function(docs, party){
+        return m("div", [
+          m("h4", [
+            party
+          ]),
+          m("ol", docs.map(function(doc){
+            return m("li", [
+              doc
+            ])
+          })),
         ]);
       })
     ),
