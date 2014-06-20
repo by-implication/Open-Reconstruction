@@ -13,20 +13,12 @@ userCreation.controller = function(){
   bi.ajax(routes.controllers.GovUnits.viewMeta(this.slug())).then(function (r){
     this.govUnit(r.govUnit);
     this.input.govUnitId(r.govUnit.id);
-  }.bind(this), function (r){
-    alert(r.reason);
-  })
+  }.bind(this));
 
   this.submit = function(e){
     e.preventDefault();
     bi.ajax(routes.controllers.Users.insert(this.slug()), {data: this.input}).then(function (r){
       m.route(routes.controllers.GovUnits.view(this.slug()).url);
-    }.bind(this), function (r){
-      if(r.reason == "form error"){
-        alert("User not created!");
-      } else {
-        alert(r.reason);
-      }
-    }.bind(this));
+    }.bind(this), common.formErrorHandler);
   }.bind(this)
 }

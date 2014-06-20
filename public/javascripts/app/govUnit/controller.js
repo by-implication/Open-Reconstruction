@@ -21,16 +21,13 @@ govUnit.controller = function(){
   this.coords = m.prop();
 
   this.initMap = function(elem, isInit){
-    if(!isInit && self.coords()){
+    if(self.coords()){
 
       !function tryMap(){
         if($(elem).height()){
-          var map = L.map(elem, {scrollWheelZoom: false}).setView([11.3333, 123.0167], 5);
-          var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-          var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-          var osm = new L.TileLayer(osmUrl, {minZoom: 5, maxZoom: 19, attribution: osmAttrib}).addTo(map);
+          var map = common.leaflet.map(elem);
           map.setView(self.coords(), 8);
-          L.marker(self.coords()).addTo(map);
+          common.leaflet.addMarker(self.coords());
         } else {
           setTimeout(tryMap, 100);
         }
@@ -51,11 +48,6 @@ govUnit.controller = function(){
         self.coords(new L.LatLng(r.lgu.lat, r.lgu.lng));
       }
     }
-  }, function (r){    
-    if(r.reason == "form error"){
-      alert("Agency not created!");
-    } else {
-      alert(r.reason);
-    }
-  })
+  });
+
 }

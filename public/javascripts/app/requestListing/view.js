@@ -4,11 +4,11 @@ requestListing.view = function(ctrl){
     ctrl.page,
     ctrl.maxPage(),
     function (p){
-      return routes.controllers.Requests.indexPage(ctrl.tab, p, ctrl.projectTypeId, ctrl._queryLocFilters).url;
+      return routes.controllers.Requests.indexPage(ctrl.tab, p, ctrl.projectTypeId, ctrl._queryLocFilters, ctrl.sort, ctrl.sortDir).url;
     }
   );
 
-  return app.template(ctrl.app, [
+  return app.template(ctrl.app, "Requests", [
     common.banner("Requests"),
     ctrl.app.isAuthorized(process.permissions.CREATE_REQUESTS) ?
       m("section#new-request-banner", [

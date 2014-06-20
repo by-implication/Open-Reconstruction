@@ -68,9 +68,7 @@ request.controller = function(){
     }).then(function (r){
       alert('Submitted!')
       self.history().unshift(r.event);
-    }, function (r){
-      alert("Your input was invalid.");
-    });
+    }, common.formErrorHandler);
   }
 
   this.unassignedAgency = {id: 0};
@@ -105,7 +103,7 @@ request.controller = function(){
         processResult(r);
         c();
       }.bind(this), function (r){
-        alert("Your input was invalid.");
+        common.formErrorHandler(r);
         c();
       });
     }
@@ -196,7 +194,8 @@ request.controller = function(){
   }
 
   this.currentUserCanAssignFunding = function(){
-    return this.app.getCurrentUserProp("govUnit") && this.app.getCurrentUserProp("govUnit").role == "DBM"
+    var govUnit = this.app.getCurrentUserProp("govUnit");
+    return govUnit && govUnit.role == "DBM";
   }
 
   this.currentUserIsAuthor = function(){
@@ -260,20 +259,22 @@ request.controller = function(){
 
   }.bind(this));
 
+  var signoffActions = function(r){
+    ctrl.history().unshift(r.event);
+    ctrl.canSignoff(false);
+    ctrl.hasSignedoff(true);
+    ctrl.request().level++;
+  }
+
   this.signoffModal.signoff = function(e){
     e.preventDefault();
     bi.ajax(routes.controllers.Requests.signoff(this.id), {
       data: {password: this.signoffModal.password}
     }).then(function (r){
-      this.canSignoff(false);
-      this.hasSignedoff(true);
+      signoffActions(r);
       alert('Signoff successful!');
       this.signoffModal.close();
-      this.history().unshift(r.event);
-      this.request().level++;
-    }.bind(this), function (r){
-      alert("Failed to signoff: " + r.messages.password);
-    });
+    }.bind(this), common.formErrorHandler);
   }.bind(this);
 
   this.rejectModal.reject = function(e){
@@ -286,39 +287,29 @@ request.controller = function(){
       alert('Request rejected.');
       this.rejectModal.close();
       this.history().unshift(r.event);
-    }.bind(this), function (r){
-      var errors = [];
-      for(var field in r.messages){
-        errors.push([field, r.messages[field]]);
-      }
-      alert("Failed to reject:\n" + errors.join("\n"));
-    });
+    }.bind(this), common.formErrorHandler);
   }.bind(this);
 
   this.saroModal.submit = function(e){
     e.preventDefault();
-    bi.ajax(routes.controllers.Requests.assignSaro(ctrl.id), {
-      data: {input: this.saroModal.content}
+    bi.ajax(routes.controllers.Requests.signoff(ctrl.id), {
+      data: {password: this.saroModal.password, content: this.saroModal.content}
     }).then(function (r){
-      ctrl.history().unshift(r.event);
-      alert('SARO assigned.');
+      signoffActions(r);
+      ctrl.request().isSaroAssigned = true;
       this.saroModal.close();
-    }.bind(this), function (r){
-      alert("An error occurred.");
-    });
+      alert('SARO assigned.');
+    }.bind(this), common.formErrorHandler);
   }.bind(this);
 
   this.initMap = function(elem, isInit){
-    if(!isInit && self.coords()){
+    if(self.coords()){
 
       !function tryMap(){
         if($(elem).height()){
-          var map = L.map(elem, {scrollWheelZoom: false}).setView([11.3333, 123.0167], 5);
-          var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-          var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-          var osm = new L.TileLayer(osmUrl, {minZoom: 5, maxZoom: 19, attribution: osmAttrib}).addTo(map);
+          var map = common.leaflet.map(elem);
           map.setView(self.coords(), 8);
-          L.marker(self.coords()).addTo(map);
+          common.leaflet.addMarker(self.coords());
         } else {
           setTimeout(tryMap, 100);
         }

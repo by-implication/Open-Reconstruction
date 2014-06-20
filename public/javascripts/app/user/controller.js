@@ -33,7 +33,6 @@ user.controller = function(){
     this.filteredList = function(){
       return _.chain(this.requestList);
     }
-  }.bind(this), function (r){    
-    alert(r.reason);
-  })
+  });
+  
 }

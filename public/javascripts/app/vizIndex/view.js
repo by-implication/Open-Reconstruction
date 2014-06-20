@@ -61,7 +61,7 @@ vizIndex.view = function(ctrl){
       })),
     ])
   }
-  return app.template(ctrl.app, [
+  return app.template(ctrl.app, "Visualizations", [
     m("div", [
       common.banner("Visualizations"),
       m("section", [

@@ -37,7 +37,7 @@ object Application extends Controller with Secured {
       if(prerenderEnabled){
         if(!doNotPrerender){
           if(!prerenderBotsOnly || isBot){
-            play.Logger.info("prerender!")
+            // play.Logger.info("prerender!")
             val port = Play.configuration.getString("http.port")
             val url = String.format("http://localhost:%s%s", port.getOrElse("9000"), request.uri)
             prerender(url).map { content =>
@@ -74,13 +74,9 @@ object Application extends Controller with Secured {
   def index2(x: Int, y: Int) = index
 
   def home = index
-  def saro = index
   def admin = index
   def adminLgus = index
   def adminAgencies = index
-
-  def csvParser() = Action { Ok(views.html.csvParser()) }
-  def lguParser() = Action { Ok(views.html.lguParser()) }
 
   def process() = Action {
     Ok(views.html.js.process()).withHeaders("Content-Type" -> "text/javascript")
@@ -100,7 +96,6 @@ object Application extends Controller with Secured {
       routes.javascript.Application.adminLgus,
       routes.javascript.Application.adminAgencies,
       routes.javascript.Application.index,
-      routes.javascript.Application.saro,
       routes.javascript.Application.home,
       routes.javascript.Application.process,
       Users.authenticate,
@@ -130,7 +125,6 @@ object Application extends Controller with Secured {
       Attachments.thumb,
       Assets.at,
       Projects.insert,
-      Requests.assignSaro,
       Requests.comment,
       Requests.create,
       Requests.createMeta,

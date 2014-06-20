@@ -26,13 +26,7 @@ lguCreation.controller = function(){
     e.preventDefault();
     bi.ajax(routes.controllers.GovUnits.insertLgu(this.level, this.parentId), {data: this.input}).then(function (r){
       m.route(routes.controllers.Application.adminLgus().url);
-    }, function (r){
-      if(r.reason == "form error"){
-        alert("Agency not created!");
-      } else {
-        alert(r.reason);
-      }
-    })
+    }, common.formErrorHandler)
   }.bind(this)
   
 }

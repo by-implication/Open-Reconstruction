@@ -239,7 +239,7 @@ requestCreation.view = function(ctrl){
     }
   ]
 
-  return app.template(ctrl.app, [
+  return app.template(ctrl.app, "New Request", [
     common.banner("New Project Request"),
     m("form", {onsubmit: ctrl.submitNewRequest }, [
       common.formSection("fa-star", [

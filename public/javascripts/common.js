@@ -479,3 +479,45 @@ common.pagination = function(pageNum, pageCount, p2link){
     ]),
   ])
 }
+
+common.leaflet = {
+
+  _map: null,
+  markers: [],
+
+  map: function(elem){
+
+    if(this._map) this._map.remove();
+    var map = L.map(elem, {scrollWheelZoom: false}).setView([11.3333, 123.0167], 5);
+    var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+    new L.TileLayer(osmUrl, {minZoom: 5, maxZoom: 19, attribution: osmAttrib}).addTo(map);
+    return this._map = map;
+
+  },
+
+  addMarker: function(coords, noClear){
+    if(!noClear) this.clearMarkers()
+    this.markers.push(L.marker(coords).addTo(this._map));
+  },
+
+  clearMarkers: function(){
+    this.markers.forEach(function (m){
+      this._map.removeLayer(m);
+    }.bind(this));
+  }
+
+}
+
+common.formErrorHandler = function(r){
+  if(r.reason == "form error"){
+    var msg = "Form submission failed because of the following:";
+    for(var field in r.messages){
+      var message = r.messages[field];
+      msg += "\n" + field + " - " + message;
+    }
+    alert(msg);
+  } else {
+    alert(r.reason);
+  }
+}

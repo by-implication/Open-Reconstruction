@@ -7,8 +7,6 @@ agencyCreation.controller = function(){
 
   bi.ajax(routes.controllers.GovUnits.createAgencyMeta()).then(function (r){
     self.roles(r.roles);
-  }, function (r){
-    alert(r.reason);
   });
 
   this.input = {
@@ -21,12 +19,6 @@ agencyCreation.controller = function(){
     e.preventDefault();
     bi.ajax(routes.controllers.GovUnits.insertAgency(), {data: self.input}).then(function (r){
       m.route(routes.controllers.GovUnits.view(r.id).url);
-    }, function (r){      
-      if(r.reason == "form error"){
-        alert("Agency not created!");
-      } else {
-        alert(r.reason);
-      }
-    })
+    }, common.formErrorHandler)
   }
 }

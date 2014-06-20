@@ -76,16 +76,10 @@ requestCreation.controller = function(){
   // }
 
   this.initMap = function(elem, isInit){
-    // this.app.initMap(elem, isInit, {scrollWheelZoom: false}, true);
 
     if(!isInit){
       window.setTimeout(function(){
-        var map = L.map(elem, {scrollWheelZoom: false}).setView([11.3333, 123.0167], 5);
-
-        // create the tile layer with correct attribution
-        var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-        var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-        var osm = new L.TileLayer(osmUrl, {minZoom: 5, maxZoom: 19, attribution: osmAttrib}).addTo(map);
+        var map = common.leaflet.map(elem);
 
         var editableLayers = new L.FeatureGroup();
         map.addLayer(editableLayers);
@@ -150,16 +144,7 @@ requestCreation.controller = function(){
       bi.ajax(routes.controllers.Requests.insert(), {data: this.input}).then(function (r){
         m.route(routes.controllers.Requests.view(r.id).url);
       }, function (r){
-        if(r.reason == "form error"){
-          var msg = "Request not created because of the following:";
-          for(var field in r.messages){
-            var message = r.messages[field];
-            msg += "\n" + field + " - " + message;
-          }
-          alert(msg);
-        } else {
-          alert(r.reason);
-        }
+        common.formErrorHandler(r);
         this.submitButtonDisabled(false);
       });
       

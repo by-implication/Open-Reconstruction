@@ -1,5 +1,5 @@
 home.view = function(ctrl){
-  return app.template(ctrl.app, [
+  return app.template(ctrl.app, "Home", [
     m("div#home", [
       m("section.banner", [
         m(".row", [
