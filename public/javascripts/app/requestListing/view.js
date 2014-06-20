@@ -4,7 +4,7 @@ requestListing.view = function(ctrl){
     ctrl.page,
     ctrl.maxPage(),
     function (p){
-      return routes.controllers.Requests.indexPage(ctrl.tab, p, ctrl.projectTypeId, ctrl._queryLocFilters, ctrl.sort, ctrl.sortDir).url;
+      return routes.controllers.Requests.indexPage(ctrl.tab, p, ctrl.projectTypeId, ctrl._queryLocFilters, ctrl.sort, ctrl.sortDir, ctrl.disaster).url;
     }
   );
 
@@ -41,6 +41,25 @@ requestListing.view = function(ctrl){
         ]),
         m(".columns.medium-3", [
           m("h4", [
+            "Filter by Disaster"
+          ]),
+          m("ul.filters",
+            ctrl.disasters.map(function (d, i){
+              return m("li.filter", {className: (i == ctrl.disaster) ? "active" : ""}, [
+                m("a", {
+                  href: routes.controllers.Requests.indexPage(
+                  ctrl.tab,
+                  1,
+                  ctrl.projectTypeId,
+                  ctrl._queryLocFilters,
+                  ctrl.sort,
+                  ctrl.sortDir,
+                  i
+                ).url, config: m.route}, d)
+              ]);
+            })
+          ),
+          m("h4", [
             "Filter by Location"
           ]),
           ctrl.locFilters.map(function (f){
@@ -57,7 +76,7 @@ requestListing.view = function(ctrl){
             .map(function (filter){
               return m("li.filter",{className: (ctrl.projectTypeId == filter.id) ? "active" : ""}, [
                 m("a", {
-                  href: routes.controllers.Requests.indexPage(ctrl.tab, 1, filter.id, ctrl._queryLocFilters, ctrl.sort, ctrl.sortDir).url,
+                  href: routes.controllers.Requests.indexPage(ctrl.tab, 1, filter.id, ctrl._queryLocFilters, ctrl.sort, ctrl.sortDir, ctrl.disaster).url,
                   config: m.route
                 }, filter.name)
               ])

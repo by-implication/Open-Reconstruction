@@ -13,6 +13,10 @@ object Req extends ReqGen {
 
   def PAGE_LIMIT = 20
 
+  def disasters = DB.withConnection { implicit c =>
+    SQL("SELECT DISTINCT req_disaster_name FROM reqs").list(get[String]("req_disaster_name"))
+  }
+
   def assignByPsgc = DB.withConnection { implicit c =>
     SQL("SELECT DISTINCT req_location FROM reqs WHERE isnumeric(req_location)")
     .list(get[String]("req_location") map { loc =>
@@ -177,11 +181,22 @@ object Req extends ReqGen {
     )
   }
 
-  private def getSqlParams(tab: String, projectTypeId: Option[Int], psgc: PGLTree)(implicit user: User) = {
+  case class VarMap(vars: (Any, anorm.ParameterValue[_])*){
+    var list: Seq[(Any, anorm.ParameterValue[_])] = vars.toSeq
+    def add(vars: (Any, anorm.ParameterValue[_])*) = list = list ++ vars.toSeq
+  }
+
+  private def getSqlParams(tab: String, projectTypeId: Option[Int], psgc: PGLTree, disaster: Int)(implicit user: User) = {
 
     var table = "reqs"
-    var whereClauses = List.empty[String]
+    var whereClauses = Seq.empty[String]
+    var varMap = VarMap('projectTypeId -> projectTypeId, 'psgc -> psgc)
     def addWhereClause(clause: String) = whereClauses = whereClauses :+ clause
+
+    if(disaster > 0){
+      addWhereClause("req_disaster_name = {disaster}")
+      varMap.add('disaster -> disasters(disaster-1))
+    }
 
     projectTypeId.map(_ => addWhereClause("project_type_id = {projectTypeId}"))
 
@@ -228,26 +243,23 @@ object Req extends ReqGen {
       addWhereClause("lgu_psgc <@ {psgc}")
     }
 
-    (table, whereClauses)
+    (table, whereClauses, varMap)
 
   }
 
-  def indexCount(tab: String, projectTypeId: Option[Int], psgc: PGLTree)(implicit user: User): Long = {
-    val (table, whereClauses) = getSqlParams(tab, projectTypeId, psgc)
+  def indexCount(tab: String, projectTypeId: Option[Int], psgc: PGLTree, disaster: Int)(implicit user: User): Long = {
+    val (table, whereClauses, varMap) = getSqlParams(tab, projectTypeId, psgc, disaster)
     DB.withConnection { implicit c =>
       SQL("SELECT COUNT(*) FROM " + table + {
         if (!whereClauses.isEmpty) " WHERE " + whereClauses.mkString(" AND ")
         else ""
       })
-      .on(
-        'projectTypeId -> projectTypeId,
-        'psgc -> psgc
-      ).as(scalar[Long].single)
+      .on(varMap.list:_*).as(scalar[Long].single)
     }
   }
 
-  def indexList(tab: String, offset: Int, limit: Int, projectTypeId: Option[Int], psgc: PGLTree, sort: String, sortDir: String)(implicit user: User): Seq[Req] = {
-    val (table, whereClauses) = getSqlParams(tab, projectTypeId, psgc)
+  def indexList(tab: String, offset: Int, limit: Int, projectTypeId: Option[Int], psgc: PGLTree, sort: String, sortDir: String, disaster: Int)(implicit user: User): Seq[Req] = {
+    var (table, whereClauses, varMap) = getSqlParams(tab, projectTypeId, psgc, disaster)
     val sortColumn = (sort match {
       case "id" => "req_id"
       case "status" => "req_level"
@@ -260,6 +272,8 @@ object Req extends ReqGen {
       case _ => "DESC"
     })
 
+    varMap.add('offset -> offset, 'limit -> limit)
+
     DB.withConnection { implicit c =>
       SQL("SELECT * FROM " + table + {
         if (!whereClauses.isEmpty) " WHERE " + whereClauses.mkString(" AND ")
@@ -268,12 +282,7 @@ object Req extends ReqGen {
         ORDER BY """ + sortColumn  + " " + sortColumnDir + """
         OFFSET {offset}
         LIMIT {limit}
-      """).on(
-        'projectTypeId -> projectTypeId,
-        'offset -> offset,
-        'limit -> limit,
-        'psgc -> psgc
-      ).list(simple)
+      """).on(varMap.list:_*).list(simple)
     }
   }
 
