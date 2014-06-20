@@ -21,13 +21,12 @@ var bi = {
     }
   },
 
-  ajax: function(route, options){ // accepts a resolved play route
+  ajax: function(route, options){ // can accept a resolved play route
     var updateLoader = bi.loader.decrement;
     bi.loader.increment();
-
     options = options || {};
-    options.method = options.method || route.method;
-    options.url = options.url || route.url;
+    options.method = options.method || route.method || "GET";
+    options.url = options.url || route.url || route;
     options.config = options.config || options.data ? function (xhr){
       xhr.setRequestHeader("Content-Type", "application/json");
     } : null;

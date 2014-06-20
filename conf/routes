@@ -25,6 +25,7 @@ POST    /admin/types/:k/:id                       controllers.Admin.updateType(k
 # Map static resources from the /public folder to the /assets URL path
 
 GET     /assets/*file                             controllers.Assets.at(path="/public", file)
+GET     /favicon.ico                              controllers.Assets.at(path="/public", file="images/favicon.ico")
 
 GET     /login                                    controllers.Users.login
 POST    /login                                    controllers.Users.authenticate
@@ -36,8 +37,8 @@ GET     /users/:id/:page/:s/:sD                   controllers.Users.viewPage(id:
 GET     /users/:id/:page/:s/:sD/meta              controllers.Users.viewMeta(id: Int, page: Int, s: String, sD: String)
 
 GET     /requests                                 controllers.Requests.index
-GET     /requests/:t/:p/:pid/:l/:s/:sD            controllers.Requests.indexPage(t: String, p: Int, pid: Int, l: String, s: String, sD: String)
-GET     /requests/:t/:p/:pid/:l/:s/:sD/meta       controllers.Requests.indexMeta(t: String, p: Int, pid: Int, l: String, s: String, sD: String)
+GET     /requests/:t/:p/:pid/:l/:s/:sD/:d         controllers.Requests.indexPage(t: String, p: Int, pid: Int, l: String, s: String, sD: String, d: Int)
+GET     /requests/:t/:p/:pid/:l/:s/:sD/:d/meta    controllers.Requests.indexMeta(t: String, p: Int, pid: Int, l: String, s: String, sD: String, d: Int)
 
 GET     /requests/new                             controllers.Requests.create
 GET     /requests/new/meta                        controllers.Requests.createMeta
