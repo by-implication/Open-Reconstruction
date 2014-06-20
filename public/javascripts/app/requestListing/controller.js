@@ -20,7 +20,7 @@ requestListing.controller = function(){
   this.sortDir = m.route.param("sortDir") || "asc";
   this.disaster = m.route.param("disaster") || 0;
 
-  var nav = this.nav = function(params){
+  var nav = this.nav = function(params, meta){
     var keys = ["tab", "page", "projectTypeId", "_queryLocFilters", "sort", "sortDir", "disaster"];
     var p = {};
     keys.forEach(function (k){
@@ -33,8 +33,9 @@ requestListing.controller = function(){
       }
     }
     _.extend(p, params);
-    var r = routes.controllers.Requests.indexPage.apply(null, keys.map(function (k){ return p[k]; })).url;
-    return r;
+    return routes.controllers.Requests[meta ? "indexMeta" : "indexPage"].apply(
+      null, keys.map(function (k){ return p[k]; })
+    ).url;
   }
   
   this.sortBy = function(sort){
@@ -138,7 +139,7 @@ requestListing.controller = function(){
     return Math.ceil(count / 20);
   };
 
-  bi.ajax(routes.controllers.Requests.indexMeta(this.tab, this.page, this.projectTypeId, this._queryLocFilters, this.sort, this.sortDir, this.disaster)).then(function (r){
+  bi.ajax(nav(null, true)).then(function (r){
 
     if(m.route() == routes.controllers.Requests.index().url){
 
