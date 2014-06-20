@@ -30,7 +30,6 @@ request.view = function(ctrl){
         m("option[selected='']", "Agency Validation"),
         m("option", "OCD Validation")
       ]),
-      ctrl.requirementLevel(),
       m("ul", 
         requirementList[ctrl.requirementLevel()].map(function(li){
           return m("li", [
