@@ -181,6 +181,9 @@ common.field = function(name, content, help, outsideLabel){
   } else {
     return m("label", [
       label,
+      help ? 
+        m("div.help", help)
+      : "",
       contents
     ]);
   }
