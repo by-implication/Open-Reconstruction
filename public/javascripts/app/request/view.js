@@ -1,28 +1,38 @@
 request.view = function(ctrl){
 
   var requirementList = {
+    "Submission": [
+      "[LGU] Sangguniang Resolution declaring the area under a State of Calamity / Imminent Danger and appropriating local counterpart for the project;",
+      "[LGU] Certification by Local Chief Executive (LCE) concerned thru a Sangguniang Resolution assuring that whatever amount will be provided by the Office of the President (OP), the project will be completed/finished;",
+      "[LGU] Certification and justification by the LCE concerned that funding requests chargeable against Calamity Fund are of an emergency in character;",
+      "[LGU] Certification by the Local Accountant or Finance Officer that their Local Calamity Fund is already depleted/exhausted and/or non – availability of funding source other than the Calamity Fund;",
+      "[LGU] Certification that the infrastructures being requested for funding support are not covered by insurance;",
+      "[NGA] Work and financial program/plan of the agency;",
+      "[NGA] Endorsement of the Department Secretary or Head of Agency requesting for funding assistance;"
+    ],
     "Agency Validation": [
-      "[LGU] Sangguniang Resolution declaring the area under a State of Calamity / Imminent Danger and appropriating local counterpart for the project",
-      "[LGU] Certification by Local Chief Executive (LCE) concerned thru a Sangguniang Resolution assuring that whatever amount will be provided by the Office of the President (OP), the project will be completed/finished",
-      "[LGU] Certification and justification by the LCE concerned that funding requests chargeable against Calamity Fund are of an emergency in character",
-      "[LGU] Certification by the Local Accountant or Finance Officer that their Local Calamity Fund is already depleted/exhausted and/or non – availability of funding source other than the Calamity Fund",
-      "[LGU] Certification that the infrastructures being requested for funding support are not covered by insurance",
-      "[NGA] Work and financial program/plan of the agency",
-      "[NGA] Endorsement of the Department Secretary or Head of Agency requesting for funding assistance"
+      "[LGU] Certification by the DPWH that the concerned LGU is capable of implementing the project",
+      "[LGU] Other pertinent documents which may be required by the Council such as an independent validation of the project by the DPWH Regional Director/District Engineer",
+      "[LGU] Validation/recommendation from the Secretary DPWH",
+      "[NGA] Validation/evaluation of appropriate agency to whom the NDRRMC referred the request"
     ],
     "OCD Validation": [
-      "[LGU] Certification by the DPWH that the concerned LGU is capable of implementing the project;",
-      "[LGU] Other pertinent documents which may be required by the Council such as an independent validation of the project by the DPWH Regional Director/District Engineer;",
-      "[LGU] Validation/recommendation from the Secretary DPWH",
-      "[NGA] Validation/evaluation of appropriate agency to whom the NDRRMC referred the request; and"
+      "[LGU] Local Disaster Risk reduction and Management Council (DRRMC) Damage Report/ Calamity Impact Assessment Report/ Work and financial Plan (to include colored pictures)",
+      "[LGU] Endorsement of RDRRMC Chairperson (OCD Regional Director)",
+      "[NGA] Other pertinent documents which may be required by the Council such as an independent evaluation of the project from the concerned agencies/departments (additional documents may be requested by OCD via comments)"
     ]
   }
 
-  function requirements(level) {
+  function requirements() {
     return m("div", [
-      level,
+      m('select', {onchange: m.withAttr("value", ctrl.requirementLevel)}, [
+        m("option", "Submission"),
+        m("option[selected='']", "Agency Validation"),
+        m("option", "OCD Validation")
+      ]),
+      ctrl.requirementLevel(),
       m("ul", 
-        requirementList[level].map(function(li){
+        requirementList[ctrl.requirementLevel()].map(function(li){
           return m("li", [
             li
           ]);
@@ -403,7 +413,7 @@ request.view = function(ctrl){
                     ]),
                   ])
                 ],
-                requirements("Agency Validation")
+                requirements()
               ),
               m("hr"),
               m(".big.section#references", [

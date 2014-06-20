@@ -9,6 +9,9 @@ request.controller = function(){
     name: m.prop(),
     amount: m.prop()
   }
+
+  this.requirementLevel = m.prop("Agency Validation");
+
   var requestId = m.route.param('id');
   this.requestTabs = new common.stickyTabs.controller();
   this.requestTabs.tabs([

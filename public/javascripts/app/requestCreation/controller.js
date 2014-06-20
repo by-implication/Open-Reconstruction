@@ -7,6 +7,8 @@ requestCreation.controller = function(){
     projectScopes: []
   });
 
+  this.requestLevel = m.prop("Submission");
+
   this.preamble = m.prop(false);
   this.input = {
     amount: m.prop(0),
