@@ -25,6 +25,7 @@ POST    /admin/types/:k/:id                       controllers.Admin.updateType(k
 # Map static resources from the /public folder to the /assets URL path
 
 GET     /assets/*file                             controllers.Assets.at(path="/public", file)
+GET     /favicon.ico                              controllers.Assets.at(path="/public", file="images/favicon.ico")
 
 GET     /login                                    controllers.Users.login
 POST    /login                                    controllers.Users.authenticate
