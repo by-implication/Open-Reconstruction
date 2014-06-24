@@ -159,9 +159,7 @@ request.view = function(ctrl){
                         "Disaster",
                         ctrl.degs.disaster.view(
                           function(){
-                            var disasterType = request.disasterTypes().filter(function (dt){
-                              return dt.id == ctrl.request().disaster.typeId;
-                            })[0];
+                            var disasterType = request.getDTbyId(ctrl.request().disaster.typeId);
                             return m("h4", [
                               ctrl.request().disaster.name + " in "
                               + common.displayDate(ctrl.request().disaster.date) + " ",

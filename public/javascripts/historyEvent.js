@@ -63,7 +63,8 @@ historyEvent.editField = function(data){
       var ddate = parseInt(c.pop());
       var typeId = c.pop();
       var name = c.join(" ");
-      value = name + " (" + request.disasterTypes()[typeId].name + ") on " + common.displayDate(ddate);
+      var disasterType = request.getDTbyId(typeId);
+      value = name + " (" + disasterType.name + ") on " + common.displayDate(ddate);
       break;
     }
     default: value = c.join(" ");
@@ -82,9 +83,10 @@ historyEvent.editField = function(data){
 historyEvent.disaster = function(data){
   var date = new Date(data.date);
   var c = data.content.split(":");
-  var disasterType = c.pop();
+  var disasterTypeId = c.pop();
+  var disasterType = request.getDTbyId(disasterTypeId);
   var disasterName = c.join(":");
-  var title = disasterName ? (disasterName + " (" + disasterType + ")") : disasterType
+  var title = disasterName ? (disasterName + " (" + disasterType.name + ")") : disasterType.name
   return m(".event", [
     m(".type.disaster", [
       m("i.fa.fa-lg.fa-fw.fa-warning")

@@ -1,5 +1,10 @@
 var request = {
-	disasterTypes: m.prop([])
+	disasterTypes: m.prop([]),
+	getDTbyId: function(id){
+		return request.disasterTypes().filter(function (dt){
+      return dt.id == id;
+    })[0];
+	}
 };
 
 request.Request = function(data){
