@@ -18,7 +18,8 @@ object Req extends ReqGen {
   }
 
   def assignByPsgc = DB.withConnection { implicit c =>
-    SQL("SELECT DISTINCT req_location FROM reqs WHERE isnumeric(req_location)")
+    
+    val r = SQL("SELECT DISTINCT req_location FROM reqs WHERE isnumeric(req_location)")
     .list(get[String]("req_location") map { loc =>
 
       val psgc = padLeft(loc, 6, "0").grouped(2).toList.map(_.toInt).filter(_ > 0)
@@ -35,7 +36,6 @@ object Req extends ReqGen {
           User(
             name = "Legacy Data",
             handle = "legacy" + lguId,
-            password = "legacy" + lguId + "getsupport",
             govUnitId = lguId
           ).create().map { u =>
 
@@ -50,8 +50,17 @@ object Req extends ReqGen {
         case _ => Some("No government unit matching PSGC " + loc)
       }
 
-
     }).flatten.mkString("\n")
+
+    // set the passwords
+    SQL("""
+      UPDATE users SET user_password = CRYPT(CONCAT('legacy', gov_unit_id, 'getsupport'), GEN_SALT('bf'))
+      WHERE user_handle ILIKE 'legacy%'
+      AND user_name = 'Legacy Data'
+    """).execute()
+
+    r
+
   }
 
   private def byProjectType = DB.withConnection { implicit c =>
