@@ -256,6 +256,11 @@ request.controller = function(){
     var split = self.location().split(',').map(function(coord){return parseFloat(coord)});
     if(!_.contains(split, NaN) && !(split.length % 2)){
       this.coords(new L.LatLng(split[0], split[1]));
+    } else if(data.author.govUnit.coords){
+      var c = data.author.govUnit.coords;
+      var latlng = new L.LatLng(c.lat, c.lng);
+      this.coords(latlng);
+      common.leaflet.addPopup(latlng, "No location defined but<br/>the requesting LGU is here.")
     }
 
   }.bind(this));

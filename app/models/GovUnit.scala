@@ -70,6 +70,24 @@ case class GovUnit(
 // GENERATED case class end
 {
 
+  def coords: Option[Map[String, BigDecimal]] = DB.withConnection { implicit c =>
+    
+    val lguOpt = SQL("SELECT * FROM lgus WHERE lgu_id = {id}")
+      .on('id -> id).singleOpt(Lgu.simple)
+
+    for {
+      lgu <- lguOpt
+      lat <- Some(lgu.lat.getOrElse(lgu.getMeanLat))
+      lng <- Some(lgu.lng.getOrElse(lgu.getMeanLng))
+    } yield {
+      Map(
+        "lat" -> lat,
+        "lng" -> lng
+      )
+    }
+
+  }
+
   def requests(p: Int): (Seq[Req], Long) = DB.withConnection { implicit c =>
     
     val limit = Req.PAGE_LIMIT

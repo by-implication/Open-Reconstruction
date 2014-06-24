@@ -508,6 +508,19 @@ common.leaflet = {
     this.markers.forEach(function (m){
       this._map.removeLayer(m);
     }.bind(this));
+  },
+
+  addPopup: function(coords, content){
+    if(this._map){
+      L.popup()
+        .setLatLng(coords)
+        .setContent(content)
+        .openOn(this._map);
+    } else {
+      setTimeout(function(){
+        this.addPopup(coords, content);
+      }.bind(this), 100);
+    }
   }
 
 }
