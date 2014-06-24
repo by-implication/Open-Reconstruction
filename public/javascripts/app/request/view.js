@@ -436,8 +436,7 @@ request.view = function(ctrl){
                   })
                   .reverse()
                   ),
-                  // ctrl.app.currentUser() ? m("hr") : "",
-                  ctrl.app.currentUser() ?
+                  m.cookie().logged_in ?
                     m(".event.new-comment", [
                       m("form", {onsubmit: ctrl.submitComment}, [
                         m("label", [
