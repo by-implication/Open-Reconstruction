@@ -7,8 +7,10 @@ import scala.language.implicitConversions
 
 package object models {
 
-  lazy val analyticsEnabled = current.configuration.getBoolean("analytics.enabled").getOrElse(false)
-  lazy val analyticsTracker = current.configuration.getString("analytics.tracker").getOrElse("UA-52262569-1")
+  object Analytics {
+    lazy val enabled = current.configuration.getBoolean("analytics.enabled").getOrElse(false)
+    lazy val tracker = current.configuration.getString("analytics.tracker").getOrElse("UA-52262569-1")
+  }
 
   def NA = anorm.NotAssigned
 
