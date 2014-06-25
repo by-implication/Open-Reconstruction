@@ -165,7 +165,7 @@ requestListing.controller = function(){
     this.requestList = r.list;
     this.counts = r.counts;
     this.projectFilters = this.projectFilters.concat(r.filters);
-    this.disasters = ["All"].concat(r.disasters);
+    this.disasters = [{id: 0, name: "All"}].concat(r.disasters);
     for(var i in r.locFilters){
       this.locFilters[i].data = [{id: '-', name: 'All'}].concat(r.locFilters[i].sort(function (a, b){
         return a.id - b.id;

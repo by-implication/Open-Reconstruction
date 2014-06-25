@@ -13,10 +13,6 @@ object Req extends ReqGen {
 
   def PAGE_LIMIT = 20
 
-  def disasters = DB.withConnection { implicit c =>
-    SQL("SELECT DISTINCT req_disaster_name FROM reqs").list(get[String]("req_disaster_name"))
-  }
-
   def assignByPsgc = DB.withConnection { implicit c =>
     
     val r = SQL("SELECT DISTINCT req_location FROM reqs WHERE isnumeric(req_location)")
@@ -83,10 +79,10 @@ object Req extends ReqGen {
 
   private def byNamedDisaster = DB.withConnection { implicit c =>
     SQL("""
-      SELECT req_disaster_name, COUNT(*), SUM(req_amount)
-      FROM reqs GROUP BY req_disaster_name
+      SELECT disaster_name, COUNT(*), SUM(req_amount)
+      FROM reqs NATURAL JOIN disasters GROUP BY disaster_name
     """).list(
-      get[Option[String]]("req_disaster_name") ~
+      get[Option[String]]("disaster_name") ~
       get[Long]("count") ~
       get[Option[java.math.BigDecimal]]("sum") map { case nameOpt~count~amount =>
         val name: String = nameOpt.getOrElse("N/A")
@@ -106,7 +102,7 @@ object Req extends ReqGen {
         EXTRACT(MONTH FROM req_date) AS month,
         disaster_type_name,
         COUNT(req_id)
-      FROM reqs NATURAL JOIN disaster_types
+      FROM reqs NATURAL JOIN disasters NATURAL JOIN disaster_types
       GROUP BY disaster_type_name, year, month
       ORDER BY disaster_type_name, year, month
     """).list(
@@ -147,7 +143,11 @@ object Req extends ReqGen {
   }
 
   private def mostCommonDisasterType = DB.withConnection { implicit c =>
-    val list = SQL("SELECT COUNT(*) FROM reqs GROUP BY disaster_type_id ORDER BY COUNT(*) DESC")
+    val list = SQL("""
+      SELECT COUNT(*) FROM reqs NATURAL JOIN disasters
+      GROUP BY disaster_type_id
+      ORDER BY COUNT(*) DESC
+    """)
     .list(scalar[Long])
     list(0)
   }
@@ -195,16 +195,16 @@ object Req extends ReqGen {
     def add(vars: (Any, anorm.ParameterValue[_])*) = list = list ++ vars.toSeq
   }
 
-  private def getSqlParams(tab: String, projectTypeId: Option[Int], psgc: PGLTree, disaster: Int)(implicit user: User) = {
+  private def getSqlParams(tab: String, projectTypeId: Option[Int], psgc: PGLTree, disasterId: Option[Int])(implicit user: User) = {
 
     var table = "reqs"
     var whereClauses = Seq.empty[String]
     var varMap = VarMap('projectTypeId -> projectTypeId, 'psgc -> psgc)
     def addWhereClause(clause: String) = whereClauses = whereClauses :+ clause
 
-    if(disaster > 0){
-      addWhereClause("req_disaster_name = {disaster}")
-      varMap.add('disaster -> disasters(disaster-1))
+    disasterId.map { id =>
+      addWhereClause("disaster_id = {disasterId}")
+      varMap.add('disasterId -> id)
     }
 
     projectTypeId.map(_ => addWhereClause("project_type_id = {projectTypeId}"))
@@ -256,8 +256,8 @@ object Req extends ReqGen {
 
   }
 
-  def indexCount(tab: String, projectTypeId: Option[Int], psgc: PGLTree, disaster: Int)(implicit user: User): Long = {
-    val (table, whereClauses, varMap) = getSqlParams(tab, projectTypeId, psgc, disaster)
+  def indexCount(tab: String, projectTypeId: Option[Int], psgc: PGLTree, disasterId: Int)(implicit user: User): Long = {
+    val (table, whereClauses, varMap) = getSqlParams(tab, projectTypeId, psgc, if (disasterId == 0) None else Some(disasterId) )
     DB.withConnection { implicit c =>
       SQL("SELECT COUNT(*) FROM " + table + {
         if (!whereClauses.isEmpty) " WHERE " + whereClauses.mkString(" AND ")
@@ -267,8 +267,8 @@ object Req extends ReqGen {
     }
   }
 
-  def indexList(tab: String, offset: Int, limit: Int, projectTypeId: Option[Int], psgc: PGLTree, sort: String, sortDir: String, disaster: Int)(implicit user: User): Seq[Req] = {
-    var (table, whereClauses, varMap) = getSqlParams(tab, projectTypeId, psgc, disaster)
+  def indexList(tab: String, offset: Int, limit: Int, projectTypeId: Option[Int], psgc: PGLTree, sort: String, sortDir: String, disasterId: Int)(implicit user: User): Seq[Req] = {
+    var (table, whereClauses, varMap) = getSqlParams(tab, projectTypeId, psgc, if (disasterId == 0) None else Some(disasterId) )
     val sortColumn = (sort match {
       case "id" => "req_id"
       case "status" => "req_level"

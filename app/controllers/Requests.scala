@@ -68,7 +68,9 @@ object Requests extends Controller with Secured {
       mapping(
         "amount" -> optional(projectAmount),
         "description" -> nonEmptyText,
-        "disasterId" -> number,
+        "disasterId" -> number.verifying("No such disaster",
+          id => Disaster.findById(id).isDefined
+        ),
         "location" -> nonEmptyText,
         "projectTypeId" -> number,
         "bucketKey" -> text
@@ -216,7 +218,7 @@ object Requests extends Controller with Secured {
         "list" -> reqList.map(_.indexJson),
         "filters" -> ProjectType.jsonList,
         "locFilters" -> Lgu.getLocFilters(psgc),
-        "disasters" -> Req.disasters,
+        "disasters" -> Disaster.list.map(_.toJson),
         "counts" -> Json.obj(
           "all" -> Req.indexCount("all", projectTypeIdOption, psgc, disaster),
           "approval" -> Req.indexCount("approval", projectTypeIdOption, psgc, disaster),

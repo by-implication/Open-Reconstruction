@@ -21,13 +21,13 @@ object Visualization {
 
   def getLanding = DB.withConnection { implicit c =>
 
-    def disasterProjects(disaster: String): Seq[(Long, BigDecimal)] = {
+    def disasterProjects(disasterName: String): Seq[(Long, BigDecimal)] = {
       SQL("""
         SELECT project_funded, count(*), coalesce(sum(project_amount),0) as sum
-        FROM projects LEFT JOIN reqs on projects.req_id = reqs.req_id
-        WHERE req_disaster_name ILIKE '%""" + disaster + """%'
+        FROM projects LEFT JOIN reqs on projects.req_id = reqs.req_id NATURAL JOIN disasters
+        WHERE disaster_name = {disasterName}
         GROUP BY project_funded ORDER BY project_funded ASC
-      """).list(
+      """).on('disasterName -> disasterName).list(
         get[Long]("count") ~
         get[java.math.BigDecimal]("sum") map {
           case count~sum => (count, BigDecimal(sum))
@@ -44,13 +44,13 @@ object Visualization {
         saro_bohol.sum as bohol_saro_amt
       FROM (
         SELECT count(*), sum(req_amount)
-        FROM reqs
-        WHERE req_disaster_name ILIKE '%yolanda%'
+        FROM reqs NATURAL JOIN disasters
+        WHERE disaster_name = 'Typhoon Yolanda'
       ) as yolanda,
       (
         SELECT count(*), sum(req_amount)
-        FROM reqs
-        WHERE req_disaster_name ILIKE '%bohol%'
+        FROM reqs NATURAL JOIN disasters
+        WHERE disaster_name = 'Bohol Earthquake'
       ) as bohol,
       (
         SELECT count(*), sum(amount) FROM saro_bureau_g
@@ -75,8 +75,8 @@ object Visualization {
           yolanda_saro_qty ~ yolanda_saro_amt ~
           bohol_saro_qty ~ bohol_saro_amt => {
 
-          val List(bohol_unfunded, bohol_funded) = disasterProjects("bohol")
-          val List(yolanda_unfunded, yolanda_funded) = disasterProjects("yolanda")
+          val List(bohol_unfunded, bohol_funded) = disasterProjects("Bohol Earthquake")
+          val List(yolanda_unfunded, yolanda_funded) = disasterProjects("Typhoon Yolanda")
 
           def qtyAmt(qty: Long, amt: BigDecimal) = Json.obj(
             "qty" -> qty,

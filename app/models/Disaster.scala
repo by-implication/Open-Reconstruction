@@ -9,6 +9,11 @@ import play.api.Play.current
 import recon.support._
 
 object Disaster extends DisasterGen {
+
+  def list = DB.withConnection { implicit c =>
+    SQL("SELECT * FROM disasters").list(simple)
+  }
+
 }
 
 // GENERATED case class start
