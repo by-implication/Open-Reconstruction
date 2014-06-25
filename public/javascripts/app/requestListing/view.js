@@ -26,7 +26,7 @@ requestListing.view = function(ctrl){
         ]),
       ])
     : "",
-    m("section", [
+    m("section#loc-filters", [
       m(".row", [
         ctrl.locFilters.map(function (f){
           var locFilterId = "lf"+f.label.replace(/ /g, "-")
