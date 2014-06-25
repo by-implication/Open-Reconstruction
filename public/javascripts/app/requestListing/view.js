@@ -27,6 +27,19 @@ requestListing.view = function(ctrl){
       ])
     : "",
     m("section", [
+      m(".row", [
+        ctrl.locFilters.map(function (f){
+          var locFilterId = "lf"+f.label.replace(/ /g, "-")
+          return m(".columns.medium-3", [
+            m("label", [
+              f.label,
+              select2.view({data: f.data, value: f.value(), onchange: f.onchange.bind(f), id: locFilterId})
+            ]),
+          ])
+        }),
+      ]),
+    ]),
+    m("section", [
       m.cookie().logged_in ?
         m(".row", [
           m(".columns.medium-12", [
@@ -50,15 +63,6 @@ requestListing.view = function(ctrl){
               ]);
             })
           ),
-          m("h4", [
-            "Filter by Location"
-          ]),
-          ctrl.locFilters.map(function (f){
-            return m("label", [
-              f.label,
-              select2.view({data: f.data, value: f.value(), onchange: f.onchange.bind(f)})
-            ])
-          }),
           m("h4", [
             "Filter by Project Type"
           ]),
