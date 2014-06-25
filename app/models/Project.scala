@@ -26,8 +26,6 @@ case class Project(
 {
   lazy val req: Req = Req.findById(reqId).get
 
-  lazy val disasterName: Option[String] = req.disasterName
-
   def requestViewJson: JsObject = Json.obj(
     "id" -> id,
     "name" -> name,

@@ -49,7 +49,7 @@ object Event extends EventGen {
   }
 
   def disaster()(implicit req: Req, user: User) = {
-    generate("disaster", req.disasterName.getOrElse("") + ":" + req.disasterTypeId).copy(date = req.disasterDate)
+    generate("disaster", req.disaster.name.getOrElse("") + ":" + req.disaster.disasterTypeId).copy(date = req.disaster.date)
   }
 
   def archiveAttachment(a: Attachment)(implicit req: Req, user: User) = {
@@ -71,9 +71,9 @@ object Event extends EventGen {
       case "description" => req.description
       case "location" => req.location
       case "disaster" => List(
-        req.disasterName.getOrElse(""),
-        req.disasterTypeId,
-        req.disasterDate.getTime()
+        req.disaster.name.getOrElse(""),
+        req.disaster.disasterTypeId,
+        req.disaster.date.getTime()
       ).mkString(" ")
     }
     generate("editField", fieldValue + " " + field)

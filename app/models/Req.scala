@@ -354,8 +354,8 @@ case class Req(
 // GENERATED case class end
 {
 
+  lazy val disaster = Disaster.findById(disasterId).get
   lazy val projectType = ProjectType.findById(projectTypeId).get
-  lazy val disasterType = DisasterType.findById(disasterTypeId).get
 
   def assignAssessor(id: Int): Req = {
     if(id == 0){
@@ -445,11 +445,7 @@ case class Req(
     "implementingAgencyId" -> implementingAgencyId,
     "location" -> location,
     "remarks" -> (remarks.getOrElse(""):String),
-    "disaster" -> Json.obj(
-      "typeId" -> disasterTypeId,
-      "date" -> disasterDate,
-      "name" -> (disasterName.getOrElse(""):String)
-    )
+    "disaster" -> disaster.toJson
   )
   
 }

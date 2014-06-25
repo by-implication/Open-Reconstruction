@@ -19,6 +19,14 @@ case class Disaster(
   name: Option[String] = None
 ) extends DisasterCCGen with Entity[Disaster]
 // GENERATED case class end
+{
+  def toJson = Json.obj(
+    "id" -> id,
+    "typeId" -> disasterTypeId,
+    "date" -> date,
+    "name" -> (name.getOrElse(""):String)
+  )
+}
 
 // GENERATED object start
 trait DisasterGen extends EntityCompanion[Disaster] {
