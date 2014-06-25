@@ -348,10 +348,8 @@ case class Req(
   location: String = "",
   remarks: Option[String] = None,
   attachmentIds: PGIntList = Nil,
-  disasterTypeId: Int = 1,
-  disasterDate: Timestamp = Time.now,
-  disasterName: Option[String] = None,
-  saroNo: Option[String] = None
+  saroNo: Option[String] = None,
+  disasterId: Int = 0
 ) extends ReqCCGen with Entity[Req]
 // GENERATED case class end
 {
@@ -473,12 +471,10 @@ trait ReqGen extends EntityCompanion[Req] {
     get[String]("req_location") ~
     get[Option[String]]("req_remarks") ~
     get[PGIntList]("req_attachment_ids") ~
-    get[Int]("disaster_type_id") ~
-    get[Timestamp]("req_disaster_date") ~
-    get[Option[String]]("req_disaster_name") ~
-    get[Option[String]]("saro_no") map {
-      case id~description~projectTypeId~amount~date~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachmentIds~disasterTypeId~disasterDate~disasterName~saroNo =>
-        Req(id, description, projectTypeId, amount, date, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachmentIds, disasterTypeId, disasterDate, disasterName, saroNo)
+    get[Option[String]]("saro_no") ~
+    get[Int]("disaster_id") map {
+      case id~description~projectTypeId~amount~date~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachmentIds~saroNo~disasterId =>
+        Req(id, description, projectTypeId, amount, date, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachmentIds, saroNo, disasterId)
     }
   }
 
@@ -521,10 +517,8 @@ trait ReqGen extends EntityCompanion[Req] {
             req_location,
             req_remarks,
             req_attachment_ids,
-            disaster_type_id,
-            req_disaster_date,
-            req_disaster_name,
-            saro_no
+            saro_no,
+            disaster_id
           ) VALUES (
             DEFAULT,
             {description},
@@ -540,10 +534,8 @@ trait ReqGen extends EntityCompanion[Req] {
             {location},
             {remarks},
             {attachmentIds},
-            {disasterTypeId},
-            {disasterDate},
-            {disasterName},
-            {saroNo}
+            {saroNo},
+            {disasterId}
           )
         """).on(
           'id -> o.id,
@@ -560,10 +552,8 @@ trait ReqGen extends EntityCompanion[Req] {
           'location -> o.location,
           'remarks -> o.remarks,
           'attachmentIds -> o.attachmentIds,
-          'disasterTypeId -> o.disasterTypeId,
-          'disasterDate -> o.disasterDate,
-          'disasterName -> o.disasterName,
-          'saroNo -> o.saroNo
+          'saroNo -> o.saroNo,
+          'disasterId -> o.disasterId
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -584,10 +574,8 @@ trait ReqGen extends EntityCompanion[Req] {
             req_location,
             req_remarks,
             req_attachment_ids,
-            disaster_type_id,
-            req_disaster_date,
-            req_disaster_name,
-            saro_no
+            saro_no,
+            disaster_id
           ) VALUES (
             {id},
             {description},
@@ -603,10 +591,8 @@ trait ReqGen extends EntityCompanion[Req] {
             {location},
             {remarks},
             {attachmentIds},
-            {disasterTypeId},
-            {disasterDate},
-            {disasterName},
-            {saroNo}
+            {saroNo},
+            {disasterId}
           )
         """).on(
           'id -> o.id,
@@ -623,10 +609,8 @@ trait ReqGen extends EntityCompanion[Req] {
           'location -> o.location,
           'remarks -> o.remarks,
           'attachmentIds -> o.attachmentIds,
-          'disasterTypeId -> o.disasterTypeId,
-          'disasterDate -> o.disasterDate,
-          'disasterName -> o.disasterName,
-          'saroNo -> o.saroNo
+          'saroNo -> o.saroNo,
+          'disasterId -> o.disasterId
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -648,10 +632,8 @@ trait ReqGen extends EntityCompanion[Req] {
         req_location={location},
         req_remarks={remarks},
         req_attachment_ids={attachmentIds},
-        disaster_type_id={disasterTypeId},
-        req_disaster_date={disasterDate},
-        req_disaster_name={disasterName},
-        saro_no={saroNo}
+        saro_no={saroNo},
+        disaster_id={disasterId}
       where req_id={id}
     """).on(
       'id -> o.id,
@@ -668,10 +650,8 @@ trait ReqGen extends EntityCompanion[Req] {
       'location -> o.location,
       'remarks -> o.remarks,
       'attachmentIds -> o.attachmentIds,
-      'disasterTypeId -> o.disasterTypeId,
-      'disasterDate -> o.disasterDate,
-      'disasterName -> o.disasterName,
-      'saroNo -> o.saroNo
+      'saroNo -> o.saroNo,
+      'disasterId -> o.disasterId
     ).executeUpdate() > 0
   }
 
