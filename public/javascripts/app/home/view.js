@@ -28,290 +28,186 @@ home.view = function(ctrl){
       ]),
       m("section.proposals", [
         m(".row", [
-        m("ul.medium-block-grid-5#derp", [
-          m("li", [
-              m("img", {src:"/assets/images/landing/1-time since.svg"}),
-              m("h2.title", "Time since Disaster"),
-              m("table.val-group", [
-                m("tr", [
-                  m("td", [
-                    m(".caption", "Typhoon Yolanda"),
-                  ]),
-                  m("td", [
-                    m("h2", [
-                      ctrl.daysSinceYolanda,
-                      m("span", " days")
+          m("ul.medium-block-grid-5#derp", [
+            m("li", [
+                m("img", {src:"/assets/images/landing/1-time since.svg"}),
+                m("h2.title", "Time since Disaster"),
+                m("table.val-group", [
+                  m("tr", [
+                    m("td", [
+                      m(".caption", "Typhoon Yolanda"),
                     ]),
+                    m("td", [
+                      m("h2", [
+                        ctrl.daysSinceYolanda,
+                        m("span", " days")
+                      ]),
+                    ])
+                  ])
+                ]),
+                m("table.val-group", [
+                  m("tr", [
+                    m("td", [
+                      m(".caption", "Bohol Quake"),
+                    ]),
+                    m("td", [
+                      m("h2", [
+                        ctrl.daysSinceBohol,
+                        m("span", " days")
+                      ]),
+                    ])
+                  ])
+                ]),
+            ]),
+            m("li", [
+              m("a", {
+                href:"/requests",
+                config:m.route
+              }, [
+                m("img", {src:"/assets/images/landing/2-projects requested.svg"}),
+                m("h2.title", "Requested Projects"),
+                m("table.val-group", [
+                  m("tr", [
+                    m("td", [
+                      m(".caption", "Typhoon Yolanda"),
+                    ]),
+                    m("td", [
+                      m("h2", [
+                        helper.commaize(ctrl.vizData().yolanda.projects.qty),
+                        m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.projects.amt, 2) + "")
+                      ]),
+                    ])
+                  ])
+                ]),
+                m("table.val-group", [
+                  m("tr", [
+                    m("td", [
+                      m(".caption", "Bohol Quake"),
+                    ]),
+                    m("td", [
+                      m("h2", [
+                        helper.commaize(ctrl.vizData().bohol.projects.qty),
+                        m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.projects.amt, 2) + "")
+                      ]),
+                    ])
                   ])
                 ])
-              ]),
-              m("table.val-group", [
-                m("tr", [
-                  m("td", [
-                    m(".caption", "Bohol Quake"),
-                  ]),
-                  m("td", [
-                    m("h2", [
-                      ctrl.daysSinceBohol,
-                      m("span", " days")
+              ])
+            ]),
+            m("li", [
+              m("a", {
+                href: routes.controllers.Viz.index().url,
+                config:m.route
+              }, [
+                m("img", {src:"/assets/images/landing/3-budget releases.svg"}),
+                m("h2.title", "Budget Releases"),
+                m("table.val-group", [
+                  m("tr", [
+                    m("td", [
+                      m(".caption", "Typhoon Yolanda"),
                     ]),
+                    m("td", [
+                      m("h2", [
+                        ctrl.vizData().yolanda.saro.qty + " ",
+                        m("span", "SAROs"),
+                        m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.saro.amt, 2) )
+                      ]),
+                    ])
                   ])
-                ])
-              ]),
-          ]),
-          m("li", [
-            m("a", {
-              href:"/requests",
-              config:m.route
-            }, [
-              m("img", {src:"/assets/images/landing/2-projects requested.svg"}),
-              m("h2.title", "Requested Projects"),
-              m("table.val-group", [
-                m("tr", [
-                  m("td", [
-                    m(".caption", "Typhoon Yolanda"),
-                  ]),
-                  m("td", [
-                    m("h2", [
-                      helper.commaize(ctrl.vizData().yolanda.projects.qty),
-                      m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.projects.amt, 2) + "")
+                ]),
+                m("table.val-group", [
+                  m("tr", [
+                    m("td", [
+                      m(".caption", "Bohol Quake"),
                     ]),
+                    m("td", [
+                      m("h2", [
+                        ctrl.vizData().bohol.saro.qty + " ",
+                        m("span", "SAROs"),
+                        m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.saro.amt, 2) )
+                      ]),
+                    ])
                   ])
-                ])
-              ]),
-              m("table.val-group", [
-                m("tr", [
-                  m("td", [
-                    m(".caption", "Bohol Quake"),
-                  ]),
-                  m("td", [
-                    m("h2", [
-                      helper.commaize(ctrl.vizData().bohol.projects.qty),
-                      m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.projects.amt, 2) + "")
+                ]),
+              ])
+            ]),
+            m("li", [
+              m("a", {
+                href: routes.controllers.Viz.index().url,
+                config:m.route
+              }, [
+                m("img", {src:"/assets/images/landing/3-budget releases.svg"}),
+                m("h2.title", "DPWH Budget Releases"),
+                m("table.val-group", [
+                  m("tr", [
+                    m("td", [
+                      m(".caption", "Typhoon Yolanda"),
                     ]),
+                    m("td", [
+                      m("h2", [
+                        "13 ",
+                        m("span", "SAROs"),
+                        m("h6", "PHP " + helper.truncate(2161379935, 2) )
+                      ]),
+                    ])
+                  ])
+                ]),
+                m("table.val-group", [
+                  m("tr", [
+                    m("td", [
+                      m(".caption", "Bohol Quake"),
+                    ]),
+                    m("td", [
+                      m("h2", [
+                        "3 ",
+                        m("span", "SAROs"),
+                        m("h6", "PHP " + helper.truncate(201597043, 2) )
+                      ]),
+                    ])
+                  ])
+                ]),
+              ])
+            ]),
+            m("li", [
+              m("a", {
+                href:"/requests",
+                config:m.route
+              }, [
+                m("img", {src:"/assets/images/landing/4-ongoing projects.svg"}),
+                m("h2.title", [
+                  "DPWH Ongoing Projects",
+                ]),
+                m("table.val-group", [
+                  m("tr", [
+                    m("td", [
+                      m(".caption", "Typhoon Yolanda"),
+                    ]),
+                    m("td", [
+                      m("h2", [
+                        ctrl.vizData().yolanda.fundedProjects.qty,
+                        m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.fundedProjects.amt, 2) + "")
+                      ]),
+                    ])
+                  ])
+                ]),
+                m("table.val-group", [
+                  m("tr", [
+                    m("td", [
+                      m(".caption", "Bohol Quake"),
+                    ]),
+                    m("td", [
+                      m("h2", [
+                        ctrl.vizData().bohol.fundedProjects.qty,
+                        m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.fundedProjects.amt, 2) + "")
+                      ]),
+                    ])
                   ])
                 ])
               ])
             ])
           ]),
-          m("li", [
-            m("a", {
-              href: routes.controllers.Viz.index().url,
-              config:m.route
-            }, [
-              m("img", {src:"/assets/images/landing/3-budget releases.svg"}),
-              m("h2.title", "Budget Releases"),
-              m("table.val-group", [
-                m("tr", [
-                  m("td", [
-                    m(".caption", "Typhoon Yolanda"),
-                  ]),
-                  m("td", [
-                    m("h2", [
-                      ctrl.vizData().yolanda.saro.qty + " ",
-                      m("span", "SAROs"),
-                      m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.saro.amt, 2) )
-                    ]),
-                  ])
-                ])
-              ]),
-              m("table.val-group", [
-                m("tr", [
-                  m("td", [
-                    m(".caption", "Bohol Quake"),
-                  ]),
-                  m("td", [
-                    m("h2", [
-                      ctrl.vizData().bohol.saro.qty + " ",
-                      m("span", "SAROs"),
-                      m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.saro.amt, 2) )
-                    ]),
-                  ])
-                ])
-              ]),
-            ])
-          ]),
-          m("li", [
-            m("a", {
-              href: routes.controllers.Viz.index().url,
-              config:m.route
-            }, [
-              m("img", {src:"/assets/images/landing/3-budget releases.svg"}),
-              m("h2.title", "DPWH Budget Releases"),
-              m("table.val-group", [
-                m("tr", [
-                  m("td", [
-                    m(".caption", "Typhoon Yolanda"),
-                  ]),
-                  m("td", [
-                    m("h2", [
-                      "13 ",
-                      m("span", "SAROs"),
-                      m("h6", "PHP " + helper.truncate(2161379935, 2) )
-                    ]),
-                  ])
-                ])
-              ]),
-              m("table.val-group", [
-                m("tr", [
-                  m("td", [
-                    m(".caption", "Bohol Quake"),
-                  ]),
-                  m("td", [
-                    m("h2", [
-                      "3 ",
-                      m("span", "SAROs"),
-                      m("h6", "PHP " + helper.truncate(201597043, 2) )
-                    ]),
-                  ])
-                ])
-              ]),
-            ])
-          ]),
-          m("li", [
-            m("a", {
-              href:"/requests",
-              config:m.route
-            }, [
-              m("img", {src:"/assets/images/landing/4-ongoing projects.svg"}),
-              m("h2.title", [
-                "DPWH Ongoing Projects",
-              ]),
-              m("table.val-group", [
-                m("tr", [
-                  m("td", [
-                    m(".caption", "Typhoon Yolanda"),
-                  ]),
-                  m("td", [
-                    m("h2", [
-                      ctrl.vizData().yolanda.fundedProjects.qty,
-                      m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.fundedProjects.amt, 2) + "")
-                    ]),
-                  ])
-                ])
-              ]),
-              m("table.val-group", [
-                m("tr", [
-                  m("td", [
-                    m(".caption", "Bohol Quake"),
-                  ]),
-                  m("td", [
-                    m("h2", [
-                      ctrl.vizData().bohol.fundedProjects.qty,
-                      m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.fundedProjects.amt, 2) + "")
-                    ]),
-                  ])
-                ])
-              ])
-            ])
-          ])
         ]),
-        ]),
-        // m(".row.tickets",[
-        //   m("span", "eTickets tracked in System"),
-        //   " — ",
-        //   m("strong",
-        //     ctrl.vizData().yolanda.Proposals.qty + ctrl.vizData().bohol.EPLCProjects.qty
-        //   ),
-        //   " (total)  /  PHP ",
-        //   m("strong",
-        //     helper.truncate(( ctrl.vizData().yolanda.Proposals.amt + ctrl.vizData().bohol.projects.amt ), 2)
-        //   ),
-        //   " "
-
-        // ])
       ]),
-//    m("section.proposals", [
-//        m(".row", [
-//          m(".columns.medium-3", [
-//            m("img",{src:"/assets/images/landing/1.svg"}),
-//            m(".val-group", [
-//              m("h2", ctrl.byLevel()[0].count),
-//              m(".caption", "Proposals Submitted"),
-//            ]),
-//            m(".val-group#wut", [
-//              m("h2", helper.truncate(ctrl.byLevel()[0].amount)),
-//              m(".caption", "Total Cost (PHP)")
-//            ]),
-//          ]),
-//          m(".columns.medium-3", [
-//            m("img",{src:"/assets/images/landing/2.svg"}),
-//            m(".val-group", [
-//              m("h2", [ctrl.byLevel()[1].count+ " ",
-//                m("span", "(n%)")
-//              ]),
-//              m("span", "Proposals for Assessment"),
-//            ]),
-//            m(".val-group", [
-//              m("h2", helper.truncate(
-//                parseFloat(ctrl.byLevel()[1].amount) +
-//                parseFloat(ctrl.byLevel()[2].amount)
-//              )),
-//              m("span", "Cost of pending projects (PHP)")
-//            ]),
-//          ]),
-//          m(".columns.medium-3", [
-//            m("img",{src:"/assets/images/landing/3.svg"}),
-//            m(".val-group", [
-//              m("h2", [ctrl.byLevel()[3].count+ " ",
-//                m("span", "(n%)")
-//              ]),
-//              m("span", "Proposals for Approval"),
-//            ]),
-//            m(".val-group", [
-//              m("h2", helper.truncate(
-//                parseFloat(ctrl.byLevel()[4].amount) +
-//                parseFloat(ctrl.byLevel()[5].amount)
-//              )),
-//              m("span", "Total Approved Cost")
-//            ]),
-//          ]),
-//          m(".columns.medium-3", [
-//            m("img",{src:"/assets/images/landing/4.svg"}),
-//            m(".val-group", [
-//              m("h2", [ctrl.byLevel()[4].count + " ",
-//                m("span", "(" + helper.percent(ctrl.percentApproved()) + ")")
-//              ]),
-//              m("span", "Projects for funding"),
-//            ]),
-//            m(".val-group", [
-//              m("h2", ctrl.byLevel()[5].amount),
-//              m("span", "Amount for disbursal")
-//            ]),
-//          ])
-//        ])
-//     ]),
-      // m("section.alt.agencies", [
-      //   m(".row.info", [
-      //     m(".columns.medium-12", [
-      //       m("h2",["One Stop Shop"]),
-      //       m("p", "Open Reconstruction streamlines the whole process from end to end, tracking a project throughout its lifecycle.")
-      //     ])
-      //   ]),
-      //   m(".row.info", [
-      //     m(".columns.medium-4", [
-      //       m("figure.small", [
-      //         m("img",{src:"/assets/images/landing/5.svg"})
-      //       ]),
-      //       m("h4", "Requests"),
-      //       m("p","Physical forms, endorsements and documents have been replaced by an organized, efficient electronic database.")
-      //     ]),
-      //     m(".columns.medium-4", [
-      //       m("figure.small", [
-      //         m("img",{src:"/assets/images/landing/6.svg"}),
-      //       ]),
-      //       m("h4", "Approval"),
-      //       m("p","Project approval now occurs digitally, without the need for physical mailing time or the risk of document loss.")
-      //     ]),
-      //     m(".columns.medium-4", [
-      //       m("figure.small", [
-      //         m("img",{src:"/assets/images/landing/7.svg"}),
-      //       ]),
-      //       m("h4", "Tracking"),
-      //       m("p","Agencies and the public can keep track of requests and projects' overall progress.")
-      //     ])
-      //   ])
-      // ]),
       m("section.alt.for-everyone",[
         m(".row.info", [
           m(".columns.medium-12", [
@@ -327,7 +223,7 @@ home.view = function(ctrl){
         ]),
         m(".row.details", [
           m(".columns.medium-6.large-gutters", [
-            m("h3.ruled", "Agencies"),
+            m("h3.ruled", "Government Units"),
             m(".row", [
               m(".columns.medium-3", [
                 m("figure.small", [
