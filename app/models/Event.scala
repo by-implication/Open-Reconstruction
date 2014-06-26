@@ -48,10 +48,6 @@ object Event extends EventGen {
     generate("newRequest", req.description)
   }
 
-  def disaster()(implicit req: Req, user: User) = {
-    generate("disaster", req.disasterName.getOrElse("") + ":" + req.disasterTypeId).copy(date = req.disasterDate)
-  }
-
   def archiveAttachment(a: Attachment)(implicit req: Req, user: User) = {
     generate("archiveAttachment", asContent(a))
   }
@@ -71,19 +67,31 @@ object Event extends EventGen {
       case "description" => req.description
       case "location" => req.location
       case "disaster" => List(
-        req.disasterName.getOrElse(""),
-        req.disasterTypeId,
-        req.disasterDate.getTime()
+        req.disaster.name.getOrElse(""),
+        req.disaster.disasterTypeId,
+        req.disaster.date.getTime()
       ).mkString(" ")
     }
     generate("editField", fieldValue + " " + field)
   }
 
   def findForRequest(id: Int)(implicit user: User): Seq[Event] = DB.withConnection { implicit c =>
-    SQL("SELECT * FROM events WHERE req_id = {reqId}" +
+    
+    val r = SQL("SELECT * FROM events WHERE req_id = {reqId}" +
     (if(user.isAnon) " AND event_kind != 'comment' " else "") +
     "ORDER BY event_date DESC"
     ).on('reqId -> id).list(simple)
+
+    val req = Req.findById(id).get
+    val disasterEvent = Event(
+      kind = "disaster",
+      date = req.disaster.date,
+      content = Some(req.disaster.name.getOrElse("") + " " + req.disaster.disasterTypeId),
+      reqId = id
+    )
+
+    r :+ disasterEvent
+
   }
 
 }

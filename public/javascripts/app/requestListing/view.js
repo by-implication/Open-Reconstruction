@@ -10,7 +10,7 @@ requestListing.view = function(ctrl){
 
   return app.template(ctrl.app, "Requests", [
     common.banner("Requests"),
-    ctrl.app.isAuthorized(process.permissions.CREATE_REQUESTS) ?
+    ctrl.app.isAuthorized(process.permissions.CREATE_REQUESTS) && (m.cookie().logged_in.indexOf("legacy") != 0) ?
       m("section#new-request-banner", [
         m(".row", [
           m(".columns.medium-12", [
@@ -57,9 +57,9 @@ requestListing.view = function(ctrl){
             "Filter by Disaster"
           ]),
           m("ul.filters",
-            ctrl.disasters.map(function (d, i){
-              return m("li.filter", {className: (i == ctrl.disaster) ? "active" : ""}, [
-                m("a", {href: ctrl.nav({disaster: i}), config: m.route}, d)
+            ctrl.disasters.map(function (d){
+              return m("li.filter", {className: (d.id == ctrl.disaster) ? "active" : ""}, [
+                m("a", {href: ctrl.nav({disaster: d.id}), config: m.route}, d.name)
               ]);
             })
           ),

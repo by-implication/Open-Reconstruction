@@ -21,9 +21,9 @@ object Requests extends Controller with Secured {
 
   def createMeta() = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
-      "disasterTypes" -> DisasterType.jsonList,
       "projectTypes" -> ProjectType.jsonList,
-      "bucketKey" -> Bucket.getAvailableKey
+      "bucketKey" -> Bucket.getAvailableKey,
+      "disasters" -> Disaster.jsonList
     ))
   }
 
@@ -68,22 +68,19 @@ object Requests extends Controller with Secured {
       mapping(
         "amount" -> optional(projectAmount),
         "description" -> nonEmptyText,
-        "disasterDate" -> longNumber,
-        "disasterName" -> optional(text),
-        "disasterTypeId" -> number,
+        "disasterId" -> number.verifying("No such disaster",
+          id => Disaster.findById(id).isDefined
+        ),
         "location" -> nonEmptyText,
         "projectTypeId" -> number,
         "bucketKey" -> text
       )
-      ((amount, description, 
-        disasterDate, disasterName, disasterTypeId,
+      ((amount, description, disasterId,
         location, projectTypeId, bucketKey) => {
         (Req(
           amount = amount.getOrElse(0),
           description = description,
-          disasterDate = new java.sql.Timestamp(disasterDate),
-          disasterName = disasterName,
-          disasterTypeId = disasterTypeId,
+          disasterId = disasterId,
           projectTypeId = projectTypeId,
           location = location
         ), bucketKey)
@@ -97,8 +94,7 @@ object Requests extends Controller with Secured {
   			_ match {
           case (r, bucketKey) => {
             r.copy(authorId = user.id).save().map { implicit r =>
-            Event.newRequest().create().map { _ =>
-              Event.disaster().create().map { _ =>
+              Event.newRequest().create().map { _ =>
                 Checkpoint.push(user).map { _ =>
                   if(Bucket(bucketKey).dumpTo(r)){
   				          Rest.success(r.insertSeq:_*)
@@ -107,10 +103,9 @@ object Requests extends Controller with Secured {
                   }
                 }.getOrElse(Rest.serverError())
               }.getOrElse(Rest.serverError())
-            }.getOrElse(Rest.serverError())
-    			}.getOrElse(Rest.serverError())
+      			}.getOrElse(Rest.serverError())
+          }
         }
-      }
 			)
   	} else Rest.unauthorized()
 
@@ -195,9 +190,9 @@ object Requests extends Controller with Secured {
 
   def index = Application.index
 
-  def indexPage(tab: String, page: Int, projectTypeId: Int, locFilters: String, sort: String, sortDir: String, disaster: Int) = Application.index
+  def indexPage(tab: String, page: Int, projectTypeId: Int, locFilters: String, sort: String, sortDir: String, disasterId: Int) = Application.index
 
-  def indexMeta(tab: String, page: Int, projectTypeId: Int, locFilters: String, sort: String, sortDir: String, disaster: Int) = UserAction(){ implicit user => implicit request =>
+  def indexMeta(tab: String, page: Int, projectTypeId: Int, locFilters: String, sort: String, sortDir: String, disasterId: Int) = UserAction(){ implicit user => implicit request =>
 
     val limit = Req.PAGE_LIMIT
     val offset = (page-1) * limit
@@ -211,7 +206,7 @@ object Requests extends Controller with Secured {
 
     val reqListOption = tab match {
       case "all" | "approval" | "assessor" | "implementation" | "mine" | "signoff" => {
-        Some(Req.indexList(tab, offset, limit, projectTypeIdOption, psgc, sort, sortDir, disaster))
+        Some(Req.indexList(tab, offset, limit, projectTypeIdOption, psgc, sort, sortDir, disasterId))
       }
       case _ => None
     }
@@ -221,14 +216,14 @@ object Requests extends Controller with Secured {
         "list" -> reqList.map(_.indexJson),
         "filters" -> ProjectType.jsonList,
         "locFilters" -> Lgu.getLocFilters(psgc),
-        "disasters" -> Req.disasters,
+        "disasters" -> Disaster.jsonList,
         "counts" -> Json.obj(
-          "all" -> Req.indexCount("all", projectTypeIdOption, psgc, disaster),
-          "approval" -> Req.indexCount("approval", projectTypeIdOption, psgc, disaster),
-          "assessor" -> Req.indexCount("assessor", projectTypeIdOption, psgc, disaster),
-          "implementation" -> Req.indexCount("implementation", projectTypeIdOption, psgc, disaster),
-          "mine" -> Req.indexCount("mine", projectTypeIdOption, psgc, disaster),
-          "signoff" -> Req.indexCount("signoff", projectTypeIdOption, psgc, disaster)
+          "all" -> Req.indexCount("all", projectTypeIdOption, psgc, disasterId),
+          "approval" -> Req.indexCount("approval", projectTypeIdOption, psgc, disasterId),
+          "assessor" -> Req.indexCount("assessor", projectTypeIdOption, psgc, disasterId),
+          "implementation" -> Req.indexCount("implementation", projectTypeIdOption, psgc, disasterId),
+          "mine" -> Req.indexCount("mine", projectTypeIdOption, psgc, disasterId),
+          "signoff" -> Req.indexCount("signoff", projectTypeIdOption, psgc, disasterId)
         )
       ))
     }.getOrElse(Rest.error("invalid tab"))
@@ -267,19 +262,6 @@ object Requests extends Controller with Secured {
         "input" -> nonEmptyText
       )(v => req.copy(location = v)
       )(_ => None)
-    }
-    case "disaster" => {
-      mapping(
-        "input" -> tuple(
-          "name" -> optional(text),
-          "typeId" -> number,
-          "date" -> longNumber
-        )
-      )({ case (name, typeId, date) => req.copy(
-        disasterName = name,
-        disasterTypeId = typeId,
-        disasterDate = new java.sql.Timestamp(date)
-      )})(_ => None)
     }
     case "assessingAgency" => {
       mapping(

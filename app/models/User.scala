@@ -215,7 +215,9 @@ case class User(
     }
   }
 
-  def canCreateRequests = canDo(Permission.CREATE_REQUESTS)
+  def canCreateRequests = {
+    canDo(Permission.CREATE_REQUESTS) && !handle.startsWith("legacy")
+  }
   def canAssignFunding = canDo(Permission.ASSIGN_FUNDING)
 
   def canSignoff(r: Req): Boolean = {

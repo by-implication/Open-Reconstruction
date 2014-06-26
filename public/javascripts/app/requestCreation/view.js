@@ -23,49 +23,12 @@ requestCreation.view = function(ctrl){
       icon: "fa-cloud",
       content: [
         m("h2", "Disaster"),
-        common.field(
-          "Type",
-          m("select", {onchange: m.withAttr("value", ctrl.input.disasterTypeId)},
-            ctrl.info().disasterTypes.map(function (e){
-              return m("option", {value: e.id}, e.name);
-            })
-          )
-        ),
-        common.field(
-          "Date",
-          m("div.row", [
-            m("div.columns.medium-4", [
-              m("select#disaster-month", {onchange: ctrl.updateDateField}, [
-                _.range(0, 12).map(function(month){
-                  return m("option", {value: month+1}, helper.monthArray[month]);
-                })
-              ])
-            ]),
-            m("div.columns.medium-4", [
-              m("select#disaster-day", {onchange: ctrl.updateDateField}, [
-                _.range(1, 32).map(function(day){
-                  return m("option", day);
-                })
-              ])
-            ]),
-            m("div.columns.medium-4", [
-              m("select#disaster-year", {onchange: ctrl.updateDateField}, [
-                _.range(2001, 2015).map(function(year){
-                  return m("option", year);
-                })
-              ])
-            ])
-          ]),
-          null,
-          true
-        ),
-        common.field(
-          "Name",
-          m("input", {onchange: m.withAttr("value", ctrl.input.disasterName), type: 'text', placeholder: 'Yolanda, Pepeng, Piping, Popong, etc...'}),
-          "Only if it applies. Please be careful with spelling."
+        m("select", {onchange: m.withAttr("value", ctrl.input.disasterId)},
+          ctrl.info().disasters.map(function (d){
+            return m("option", {value: d.id}, d.name);
+          })
         )
-      ],
-      // help: "Specify the disaster to give everyone context about your request. Insert all these other details etc..."
+      ]
     },
     {
       icon: "fa-briefcase",

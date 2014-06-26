@@ -156,21 +156,7 @@ request.controller = function(){
     ))
 
   };
-  this.degs = degs;
-
-  degs.disaster.input.setName = function(v){
-    degs.disaster.input().name = v;
-  }
-  degs.disaster.input.setTypeId = function(v){
-    degs.disaster.input().typeId = v;
-  }
-  degs.disaster.input.setDate = function(v){
-    var newDate = (new Date(v)).getTime();
-    degs.disaster.input().date = newDate;
-    degs.disaster.htmlDate(helper.toDateValue(newDate));
-  }
-
-  
+  this.degs = degs;  
 
   this.curUserCanUpload = function(){
     return m.cookie().logged_in && (
@@ -220,9 +206,6 @@ request.controller = function(){
 
     this.request(data.request);
     this.projects(data.projects);
-    degs.disaster.input.name = data.request.disaster.name;
-    degs.disaster.input.typeId = data.request.disaster.typeId;
-    degs.disaster.input.date = data.request.disaster.date;
 
     this.author(data.author);
     this.attachments(data.attachments);
@@ -260,7 +243,9 @@ request.controller = function(){
       var c = data.author.govUnit.coords;
       var latlng = new L.LatLng(c.lat, c.lng);
       this.coords(latlng);
-      common.leaflet.addPopup(latlng, "No location defined but<br/>the requesting LGU is here.")
+      setTimeout(function(){
+        common.leaflet.addPopup(latlng, "No location defined but<br/>the requesting LGU is here.")
+      }, 100);
     }
 
   }.bind(this));

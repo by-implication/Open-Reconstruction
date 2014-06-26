@@ -157,48 +157,13 @@ request.view = function(ctrl){
                       ]),
                       m("p", [
                         "Disaster",
-                        ctrl.degs.disaster.view(
-                          function(){
-                            var disasterType = request.getDTbyId(ctrl.request().disaster.typeId);
-                            return m("h4", [
-                              ctrl.request().disaster.name + " in "
-                              + common.displayDate(ctrl.request().disaster.date) + " ",
-                              m("span.label", [
-                                disasterType.name
-                              ])
-                            ]
-                          )},
-                          function(){
-                            return m("div", [
-                              m("div", [
-                                m("label", [
-                                  "Name",
-                                  m("input", {
-                                    type: "text",
-                                    value: this.input().name,
-                                    onchange: m.withAttr("value", this.input.setName)
-                                  })
-                                ]),
-                                m("label", [
-                                  "Type",
-                                  m("select", {
-                                    onchange: m.withAttr("value", this.input.setTypeId)
-                                  }, request.disasterTypes().map(function (dt){
-                                    return m("option", {value: dt.id, selected: dt.id == this.input().typeId}, dt.name)
-                                  }.bind(this)))
-                                ]),
-                                m("label", [
-                                  "Date",
-                                  m("input", {
-                                    type: "date",
-                                    value: this.htmlDate() || helper.toDateValue(this.input().date),
-                                    onchange: m.withAttr("value", this.input.setDate)
-                                  })
-                                ])
-                              ])
-                            ])
-                          }
-                        ),
+                        m("h4", [
+                          ctrl.request().disaster.name + " in "
+                          + common.displayDate(ctrl.request().disaster.date) + " ",
+                          m("span.label", [
+                            request.getDTbyId(ctrl.request().disaster.typeId).name
+                          ])
+                        ]),
                       ]),
                       m("p", [
                         "Location",
