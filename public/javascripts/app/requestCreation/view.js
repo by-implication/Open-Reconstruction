@@ -20,20 +20,18 @@ requestCreation.view = function(ctrl){
 
   var sections = [
     {
-      icon: "fa-cloud",
-      content: [
-        m("h2", "Disaster"),
-        m("select", {onchange: m.withAttr("value", ctrl.input.disasterId)},
-          ctrl.info().disasters.map(function (d){
-            return m("option", {value: d.id}, d.name);
-          })
-        )
-      ]
-    },
-    {
       icon: "fa-briefcase",
       content: [
         m("h2", "Basic Information"),
+        // m("h2", "Disaster"),
+        common.field(
+          "Disaster",
+          m("select", {onchange: m.withAttr("value", ctrl.input.disasterId)},
+            ctrl.info().disasters.map(function (d){
+              return m("option", {value: d.id}, d.name);
+            })
+          )
+        ),
         common.field(
           "Description",
           m("input", {onchange: m.withAttr("value", ctrl.input.description), type: "text", placeholder: "e.g. Reconstruction of a seawall for barangay A"}),

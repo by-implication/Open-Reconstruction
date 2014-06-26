@@ -158,7 +158,7 @@ request.view = function(ctrl){
                       m("p", [
                         "Disaster",
                         m("h4", [
-                          ctrl.request().disaster.name + " in "
+                          ctrl.request().disaster.name + " on "
                           + common.displayDate(ctrl.request().disaster.date) + " ",
                           m("span.label", [
                             request.getDTbyId(ctrl.request().disaster.typeId).name

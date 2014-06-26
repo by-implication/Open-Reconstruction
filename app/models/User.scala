@@ -14,7 +14,8 @@ object User extends UserGen {
 
   def generateSamples() = {
     List(
-      User(NA, "oparr", "OPARR Admin", "oparr", 7, true).create()
+      User(NA, "oparr", "OPARR Admin", "oparr", 7, true).create(),
+      User(NA, "herp", "herpy", "derp", 1, false).create()
     ).flatten.size.toString
   }
 
