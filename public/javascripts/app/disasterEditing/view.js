@@ -20,7 +20,7 @@ disasterEditing.view = function(ctrl){
           ),
           common.field(
             "Date",
-            m("input", {type: "date", value: ctrl.htmlDate(), onchange: m.withAttr("value", ctrl.htmlDate)})
+            m("input", {type: "date", value: ctrl.htmlDate(), onchange: m.withAttr("value", ctrl.setDate)})
           )
         ]
       ),

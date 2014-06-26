@@ -21,9 +21,9 @@ object Requests extends Controller with Secured {
 
   def createMeta() = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
-      "disasterTypes" -> DisasterType.jsonList,
       "projectTypes" -> ProjectType.jsonList,
-      "bucketKey" -> Bucket.getAvailableKey
+      "bucketKey" -> Bucket.getAvailableKey,
+      "disasters" -> Disaster.jsonList
     ))
   }
 
@@ -94,8 +94,7 @@ object Requests extends Controller with Secured {
   			_ match {
           case (r, bucketKey) => {
             r.copy(authorId = user.id).save().map { implicit r =>
-            Event.newRequest().create().map { _ =>
-              Event.disaster().create().map { _ =>
+              Event.newRequest().create().map { _ =>
                 Checkpoint.push(user).map { _ =>
                   if(Bucket(bucketKey).dumpTo(r)){
   				          Rest.success(r.insertSeq:_*)
@@ -104,10 +103,9 @@ object Requests extends Controller with Secured {
                   }
                 }.getOrElse(Rest.serverError())
               }.getOrElse(Rest.serverError())
-            }.getOrElse(Rest.serverError())
-    			}.getOrElse(Rest.serverError())
+      			}.getOrElse(Rest.serverError())
+          }
         }
-      }
 			)
   	} else Rest.unauthorized()
 
@@ -218,7 +216,7 @@ object Requests extends Controller with Secured {
         "list" -> reqList.map(_.indexJson),
         "filters" -> ProjectType.jsonList,
         "locFilters" -> Lgu.getLocFilters(psgc),
-        "disasters" -> Disaster.list.map(_.toJson),
+        "disasters" -> Disaster.jsonList,
         "counts" -> Json.obj(
           "all" -> Req.indexCount("all", projectTypeIdOption, psgc, disaster),
           "approval" -> Req.indexCount("approval", projectTypeIdOption, psgc, disaster),

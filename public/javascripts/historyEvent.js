@@ -57,18 +57,7 @@ historyEvent.editField = function(data){
   var date = new Date(data.date);
   var c = data.content.split(" ");
   var field = c.pop();
-  var value;
-  switch(field){
-    case "disaster": {
-      var ddate = parseInt(c.pop());
-      var typeId = c.pop();
-      var name = c.join(" ");
-      var disasterType = request.getDTbyId(typeId);
-      value = name + " (" + disasterType.name + ") on " + common.displayDate(ddate);
-      break;
-    }
-    default: value = c.join(" ");
-  }
+  var value = c.join(" ");
   return m(".event", [
     m(".type.edit", [
       m("i.fa.fa-lg.fa-fw.fa-edit")
@@ -82,10 +71,10 @@ historyEvent.editField = function(data){
 
 historyEvent.disaster = function(data){
   var date = new Date(data.date);
-  var c = data.content.split(":");
+  var c = data.content.split(" ");
   var disasterTypeId = c.pop();
   var disasterType = request.getDTbyId(disasterTypeId);
-  var disasterName = c.join(":");
+  var disasterName = c.join(" ");
   var title = disasterName ? (disasterName + " (" + disasterType.name + ")") : disasterType.name
   return m(".event", [
     m(".type.disaster", [

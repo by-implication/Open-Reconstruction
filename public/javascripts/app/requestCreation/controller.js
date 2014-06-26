@@ -2,9 +2,9 @@ requestCreation.controller = function(){
   var self = this;
   this.app = new app.controller();
   this.info = new m.prop({
-    disasterTypes: [],
     projectTypes: [],
-    projectScopes: []
+    projectScopes: [],
+    disasters: []
   });
 
   this.requirementLevel = m.prop("Submission");
@@ -13,11 +13,8 @@ requestCreation.controller = function(){
   this.input = {
     amount: m.prop(0),
     attachments: m.prop([]),
-    date: m.prop(""),
     description: m.prop(""),
-    disasterDate: m.prop("2001-1-1"),
-    disasterName: m.prop(""),
-    disasterTypeId: m.prop(1),
+    disasterId: m.prop(1),
     location: m.prop(""),
     projectTypeId: m.prop(1),
     scopeOfWork: m.prop("Reconstruction")
@@ -123,25 +120,12 @@ requestCreation.controller = function(){
 
   bi.ajax(routes.controllers.Requests.createMeta()).then(function (data){
     this.info(data);
-    this.input.disasterTypeId(data.disasterTypes[0].id);
     this.input.bucketKey = data.bucketKey;
   }.bind(this));
-
-  this.disasterDate = [2001, 1, 1];
-  this.updateDateField = function(e){
-    var i = ["disaster-year", "disaster-month", "disaster-day"].indexOf(e.srcElement.id);
-    this.disasterDate[i] = e.srcElement.value;
-    this.input.disasterDate(this.disasterDate.join("-"));
-  }.bind(this);
 
   this.submitNewRequest = function(e){;
     e.preventDefault();
     if(this.preamble()) {
-
-      // transmit disasterDate as a timestamp
-      var oldDate = this.input.disasterDate();
-      var newDate = (new Date(oldDate)).getTime();
-      this.input.disasterDate(newDate);
 
       bi.ajax(routes.controllers.Requests.insert(), {data: this.input}).then(function (r){
         m.route(routes.controllers.Requests.view(r.id).url);

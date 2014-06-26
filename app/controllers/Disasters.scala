@@ -19,8 +19,8 @@ object Disasters extends Controller with Secured {
     mapping(
       "name" -> optional(text),
       "typeId" -> number,
-      "date" -> date
-    )((name, typeId, date) => Disaster(id, typeId, date, name)
+      "date" -> longNumber
+    )((name, typeId, date) => Disaster(id, typeId, new java.sql.Timestamp(date), name)
     )(_ => None)
   )
 
@@ -50,7 +50,7 @@ object Disasters extends Controller with Secured {
   }
   
   def indexMeta = Action {
-    Ok(Json.toJson(Disaster.list.map(_.toJson)))
+    Ok(Disaster.jsonList)
   }
 
 }

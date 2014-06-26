@@ -10,9 +10,7 @@ import recon.support._
 
 object Disaster extends DisasterGen {
 
-  def list = DB.withConnection { implicit c =>
-    SQL("SELECT * FROM disasters").list(simple)
-  }
+  def jsonList = Json.toJson(listAll.map(_.toJson))
 
 }
 
@@ -25,12 +23,14 @@ case class Disaster(
 ) extends DisasterCCGen with Entity[Disaster]
 // GENERATED case class end
 {
+
   def toJson = Json.obj(
     "id" -> id,
     "typeId" -> disasterTypeId,
     "date" -> date,
     "name" -> (name.getOrElse(""):String)
   )
+
 }
 
 // GENERATED object start

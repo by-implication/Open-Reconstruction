@@ -23,9 +23,12 @@ requestCreation.view = function(ctrl){
       icon: "fa-cloud",
       content: [
         m("h2", "Disaster"),
-        "[insert id selection here]"
-      ],
-      // help: "Specify the disaster to give everyone context about your request. Insert all these other details etc..."
+        m("select", {onchange: m.withAttr("value", ctrl.input.disasterId)},
+          ctrl.info().disasters.map(function (d){
+            return m("option", {value: d.id}, d.name);
+          })
+        )
+      ]
     },
     {
       icon: "fa-briefcase",
