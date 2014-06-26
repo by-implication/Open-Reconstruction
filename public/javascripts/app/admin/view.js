@@ -187,6 +187,44 @@ admin.view = function(ctrl){
                 ]),
               ])
             })
+            .case("Disasters", function(){
+              return m(".tabs-content.vertical", [
+                m("a.button", {href: routes.controllers.Disasters.create().url, config: m.route}, [
+                  "New disaster"
+                ]),
+                m("table", [
+                  m("thead", [
+                    m("tr", [
+                      m("td", [
+                        "Name"
+                      ]),
+                      m("td", [
+                        "Type"
+                      ]),
+                      m("td", [
+                        "Date"
+                      ])
+                    ]),
+                  ]),
+                  m("tbody", [
+                    ctrl.disasters().map(function (d){
+                      return m("tr", [
+                        m("td", [
+                          m("a", {
+                            href: routes.controllers.Disasters.edit(d.id).url,
+                            config: m.route
+                          }, d.name),
+                        ]),
+                        m("td", ctrl.disasterTypes().filter(function (dt){
+                          return dt.id == d.typeId;
+                        })[0].name),
+                        m("td", new Date(d.date).toDateString())
+                      ]);
+                    }),
+                  ]),
+                ]),
+              ])
+            })
             .render()
         ]),
       ])

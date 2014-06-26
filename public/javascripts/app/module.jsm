@@ -15,3 +15,4 @@ app/module.jsm
 visPanel/module.jsm
 viz/module.jsm
 select2/module.jsm
+disasterEditing/module.jsm
