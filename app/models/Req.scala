@@ -15,7 +15,7 @@ object Req extends ReqGen {
 
   def assignByPsgc = DB.withConnection { implicit c =>
     
-    val r = SQL("SELECT DISTINCT req_location FROM reqs WHERE isnumeric(req_location)")
+    SQL("SELECT DISTINCT req_location FROM reqs WHERE isnumeric(req_location)")
     .list(get[String]("req_location") map { loc =>
 
       val psgc = padLeft(loc, 6, "0").grouped(2).toList.map(_.toInt).filter(_ > 0)
@@ -31,6 +31,7 @@ object Req extends ReqGen {
         case Some(lguId) => {
           User(
             name = "Legacy Data",
+            password = "legacy" + lguId + "getsupport",
             handle = "legacy" + lguId,
             govUnitId = lguId
           ).create().map { u =>
@@ -47,15 +48,6 @@ object Req extends ReqGen {
       }
 
     }).flatten.mkString("\n")
-
-    // set the passwords
-    SQL("""
-      UPDATE users SET user_password = CRYPT(CONCAT('legacy', gov_unit_id, 'getsupport'), GEN_SALT('bf'))
-      WHERE user_handle ILIKE 'legacy%'
-      AND user_name = 'Legacy Data'
-    """).execute()
-
-    r
 
   }
 
