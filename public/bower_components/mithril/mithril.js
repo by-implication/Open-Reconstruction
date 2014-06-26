@@ -361,7 +361,6 @@ Mithril = m = new function app(window) {
 				if (!routeByValue(root, router, path)) {
 					m.route(defaultRoute, true)
 				}
-				ga('send', 'pageview', { page: currentRoute });
 			}
 			var listener = m.route.mode == "hash" ? "onhashchange" : "onpopstate"
 			window[listener] = function() {

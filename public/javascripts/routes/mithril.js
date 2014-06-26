@@ -1,7 +1,26 @@
 ////////////////////////////////////////////////////
 // routes
+
+var GATrackedController = function(controller) {
+  return function() {
+    ga("send", "pageview", {page: m.route()});
+    return controller.apply(this, arguments);
+  };
+};
+
+function GATrackedRoutes(routes) {
+  var map = {};
+  for (var key in routes) {
+    map[key] = {
+      controller: GATrackedController(routes[key].controller),
+      view: routes[key].view
+    };
+  };
+  return map;
+};
+
 m.route.mode = "pathname";
-m.route(document, window.location.pathname, {
+m.route(document, window.location.pathname, GATrackedRoutes({
   "/": home,
   "/requests": requestListing,
   "/requests/:tab/:page/:projectTypeId/:l/:sort/:sortDir/:disaster": requestListing,
@@ -26,4 +45,4 @@ m.route(document, window.location.pathname, {
   "/gov-units/:id/:page": govUnit,
   "/gov-units/:id/edit": govUnitEdit,
   "/login": login
-});
+}));

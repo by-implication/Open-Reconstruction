@@ -12,6 +12,12 @@ import recon.support._
 
 object User extends UserGen {
 
+  def generateSamples() = {
+    List(
+      User(NA, "oparr", "OPARR Admin", "oparr", 7, true).create()
+    ).flatten.size.toString
+  }
+
   override def insert(o: User): Option[User] = DB.withConnection { implicit c =>
     o.id match {
       case NotAssigned => {
