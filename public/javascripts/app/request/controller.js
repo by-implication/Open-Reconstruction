@@ -243,7 +243,9 @@ request.controller = function(){
       var c = data.author.govUnit.coords;
       var latlng = new L.LatLng(c.lat, c.lng);
       this.coords(latlng);
-      common.leaflet.addPopup(latlng, "No location defined but<br/>the requesting LGU is here.")
+      setTimeout(function(){
+        common.leaflet.addPopup(latlng, "No location defined but<br/>the requesting LGU is here.")
+      }, 100);
     }
 
   }.bind(this));

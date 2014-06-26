@@ -10,7 +10,7 @@ requestListing.view = function(ctrl){
 
   return app.template(ctrl.app, "Requests", [
     common.banner("Requests"),
-    ctrl.app.isAuthorized(process.permissions.CREATE_REQUESTS) ?
+    ctrl.app.isAuthorized(process.permissions.CREATE_REQUESTS) && (m.cookie().logged_in.indexOf("legacy") != 0) ?
       m("section#new-request-banner", [
         m(".row", [
           m(".columns.medium-12", [
