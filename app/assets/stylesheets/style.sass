@@ -928,3 +928,24 @@ body .select2-container
   
   background-position: 97% center
   font-size: 0.875rem
+
+#relevance
+  display: inline-block
+  border: 1px solid $accent
+  overflow: hidden
+  .active
+    a
+      color: white
+      background-color: $accent
+      &:hover
+        background-color: darken($accent, 10%)
+    .label
+      color: white
+      border-color: white
+  .label
+    // border: 0
+    color: $accent
+    border-color: $accent
+  dd > a
+    border: 0
+    color: $accent

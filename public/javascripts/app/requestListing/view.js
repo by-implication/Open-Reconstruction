@@ -42,8 +42,8 @@ requestListing.view = function(ctrl){
     m("section", [
       m.cookie().logged_in ?
         m(".row", [
-          m(".columns.medium-12", [
-            common.tabs.menu(ctrl.tabs, {className: "left", config: ctrl.setCurrentTab})
+          m(".columns.medium-12.text-center", [
+            common.tabs.menu(ctrl.tabs, {id: "relevance", config: ctrl.setCurrentTab})
           ]),
         ]) : "",
       m(".row", [
