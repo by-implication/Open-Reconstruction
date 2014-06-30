@@ -341,7 +341,9 @@ case class Req(
   remarks: Option[String] = None,
   attachmentIds: PGIntList = Nil,
   saroNo: Option[String] = None,
-  disasterId: Int = 0
+  disasterId: Int = 0,
+  govUnitId: Int = 0,
+  isLegacy: Boolean = false
 ) extends ReqCCGen with Entity[Req]
 // GENERATED case class end
 {
@@ -460,9 +462,11 @@ trait ReqGen extends EntityCompanion[Req] {
     get[Option[String]]("req_remarks") ~
     get[PGIntList]("req_attachment_ids") ~
     get[Option[String]]("saro_no") ~
-    get[Int]("disaster_id") map {
-      case id~description~projectTypeId~amount~date~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachmentIds~saroNo~disasterId =>
-        Req(id, description, projectTypeId, amount, date, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachmentIds, saroNo, disasterId)
+    get[Int]("disaster_id") ~
+    get[Int]("gov_unit_id") ~
+    get[Boolean]("req_legacy") map {
+      case id~description~projectTypeId~amount~date~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachmentIds~saroNo~disasterId~govUnitId~isLegacy =>
+        Req(id, description, projectTypeId, amount, date, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachmentIds, saroNo, disasterId, govUnitId, isLegacy)
     }
   }
 
@@ -506,7 +510,9 @@ trait ReqGen extends EntityCompanion[Req] {
             req_remarks,
             req_attachment_ids,
             saro_no,
-            disaster_id
+            disaster_id,
+            gov_unit_id,
+            req_legacy
           ) VALUES (
             DEFAULT,
             {description},
@@ -523,7 +529,9 @@ trait ReqGen extends EntityCompanion[Req] {
             {remarks},
             {attachmentIds},
             {saroNo},
-            {disasterId}
+            {disasterId},
+            {govUnitId},
+            {isLegacy}
           )
         """).on(
           'id -> o.id,
@@ -541,7 +549,9 @@ trait ReqGen extends EntityCompanion[Req] {
           'remarks -> o.remarks,
           'attachmentIds -> o.attachmentIds,
           'saroNo -> o.saroNo,
-          'disasterId -> o.disasterId
+          'disasterId -> o.disasterId,
+          'govUnitId -> o.govUnitId,
+          'isLegacy -> o.isLegacy
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -563,7 +573,9 @@ trait ReqGen extends EntityCompanion[Req] {
             req_remarks,
             req_attachment_ids,
             saro_no,
-            disaster_id
+            disaster_id,
+            gov_unit_id,
+            req_legacy
           ) VALUES (
             {id},
             {description},
@@ -580,7 +592,9 @@ trait ReqGen extends EntityCompanion[Req] {
             {remarks},
             {attachmentIds},
             {saroNo},
-            {disasterId}
+            {disasterId},
+            {govUnitId},
+            {isLegacy}
           )
         """).on(
           'id -> o.id,
@@ -598,7 +612,9 @@ trait ReqGen extends EntityCompanion[Req] {
           'remarks -> o.remarks,
           'attachmentIds -> o.attachmentIds,
           'saroNo -> o.saroNo,
-          'disasterId -> o.disasterId
+          'disasterId -> o.disasterId,
+          'govUnitId -> o.govUnitId,
+          'isLegacy -> o.isLegacy
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -621,7 +637,9 @@ trait ReqGen extends EntityCompanion[Req] {
         req_remarks={remarks},
         req_attachment_ids={attachmentIds},
         saro_no={saroNo},
-        disaster_id={disasterId}
+        disaster_id={disasterId},
+        gov_unit_id={govUnitId},
+        req_legacy={isLegacy}
       where req_id={id}
     """).on(
       'id -> o.id,
@@ -639,7 +657,9 @@ trait ReqGen extends EntityCompanion[Req] {
       'remarks -> o.remarks,
       'attachmentIds -> o.attachmentIds,
       'saroNo -> o.saroNo,
-      'disasterId -> o.disasterId
+      'disasterId -> o.disasterId,
+      'govUnitId -> o.govUnitId,
+      'isLegacy -> o.isLegacy
     ).executeUpdate() > 0
   }
 

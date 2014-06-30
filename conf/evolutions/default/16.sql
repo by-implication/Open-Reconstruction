@@ -1,0 +1,18 @@
+# --- !Ups
+
+ALTER TABLE reqs
+	ADD COLUMN gov_unit_id int REFERENCES gov_units,
+	ADD COLUMN req_legacy boolean NOT NULL DEFAULT FALSE;
+
+UPDATE reqs
+	SET gov_unit_id = users.gov_unit_id
+	FROM users WHERE author_id = user_id;
+
+ALTER TABLE reqs
+	ALTER COLUMN gov_unit_id SET NOT NULL;
+
+# --- !Downs
+
+ALTER TABLE reqs
+	DROP COLUMN gov_unit_id,
+	DROP COLUMN req_legacy;
