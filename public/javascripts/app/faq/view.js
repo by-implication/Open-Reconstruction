@@ -5,9 +5,9 @@ faq.view = function(ctrl){
         m(".row", [
           m(".columns.medium-12", [
             m("div#logo"),
-            m("h1", "Open Reconstruction"),
+            m("h1", "FAQ"),
             m("p", [
-              "Tracking post-disaster reconstruction spending. Rebuilding a better Philippines, for all to see."
+              "Frequently Asked Questions"
             ])
           ]),
         ])
