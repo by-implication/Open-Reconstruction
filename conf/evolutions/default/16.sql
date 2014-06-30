@@ -11,7 +11,14 @@ UPDATE reqs
 ALTER TABLE reqs
 	ALTER COLUMN gov_unit_id SET NOT NULL;
 
+UPDATE roles
+	SET role_permissions = array_append(role_permissions, 7)
+	WHERE role_name = ANY(ARRAY['NGA', 'OCD']);
+
 # --- !Downs
+
+UPDATE roles
+	SET role_permissions = array_remove(role_permissions, 7);
 
 ALTER TABLE reqs
 	DROP COLUMN gov_unit_id,

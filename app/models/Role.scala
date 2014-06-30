@@ -136,6 +136,7 @@ object Permission {
   val IMPLEMENT_REQUESTS = Permission(4)
   val SIGNOFF = Permission(5)
   val ASSIGN_FUNDING = Permission(6)
+  val CREATE_LEGACY_REQUESTS = Permission(7)
 
   def json = Json.obj(
     "CREATE_REQUESTS" -> CREATE_REQUESTS.value,
@@ -143,6 +144,7 @@ object Permission {
     "EDIT_REQUESTS" -> EDIT_REQUESTS.value,
     "IMPLEMENT_REQUESTS" -> IMPLEMENT_REQUESTS.value,
     "SIGNOFF" -> SIGNOFF.value,
-    "ASSIGN_FUNDING" ->ASSIGN_FUNDING.value 
+    "ASSIGN_FUNDING" -> ASSIGN_FUNDING.value,
+    "CREATE_LEGACY_REQUESTS" -> CREATE_LEGACY_REQUESTS.value
   )
 }
