@@ -29,7 +29,6 @@ requestListing.view = function(ctrl){
     m("section#loc-filters", [
       m(".row", [
         ctrl.locFilters.map(function (f){
-          var locFilterId = "lf"+f.label.replace(/ /g, "-")
           return m(".columns.medium-3", [
             m("label", [
               f.label,

@@ -56,8 +56,10 @@ requestListing.controller = function(){
     this.data = [];
     this.value = m.prop(value);
     this.onchange = function(v){
+      var _qlf = self._queryLocFilters;
+      var qlf = v == '-' ? _qlf.slice(0, _qlf.lastIndexOf('.')) : v;
       this.value(v);
-      var targetRoute = nav({_queryLocFilters: v});
+      var targetRoute = nav({_queryLocFilters: qlf});
       m.route(targetRoute);
     }
   };
