@@ -29,20 +29,10 @@ object Req extends ReqGen {
 
       lguId match {
         case Some(lguId) => {
-          User(
-            name = "Legacy Data",
-            password = "legacy" + lguId + "getsupport",
-            handle = "legacy" + lguId,
-            govUnitId = lguId
-          ).create().map { u =>
-
-            SQL("""
-              UPDATE reqs SET author_id = {userId} WHERE req_location = {loc}
-            """).on('userId -> u.id, 'loc -> loc).executeUpdate()
-
-            None
-
-          }.getOrElse(Some("Failed to create user for" + lguId))
+          SQL("""
+            UPDATE reqs SET gov_unit_id = {lguId} WHERE req_location = {loc}
+          """).on('lguId -> lguId, 'loc -> loc).executeUpdate()
+          None
         }
         case _ => Some("No government unit matching PSGC " + loc)
       }
@@ -224,7 +214,6 @@ object Req extends ReqGen {
       }
       case "mine" => {
         if (!user.isAnon){
-          table = "reqs LEFT JOIN users ON author_id = user_id"
           addWhereClause("gov_unit_id = " + user.govUnit.id)
         }
       }
@@ -238,8 +227,7 @@ object Req extends ReqGen {
 
     if(!psgc.list.isEmpty){
       table = """
-        reqs LEFT JOIN users ON author_id = user_id
-        LEFT JOIN lgus ON lgus.lgu_id = users.gov_unit_id
+        reqs LEFT JOIN lgus ON lgus.lgu_id = gov_unit_id
       """
       addWhereClause("lgu_psgc <@ {psgc}")
     }
@@ -401,6 +389,7 @@ case class Req(
   }
 
   lazy val author = User.findById(authorId).get
+  lazy val govUnit = GovUnit.findById(govUnitId).get
 
   def projects: Seq[Project] = Req.projects(id)
 
@@ -414,8 +403,8 @@ case class Req(
     "author" -> Json.obj(
       "id" -> authorId,
       "govUnit" -> Json.obj(
-        "name" -> author.govUnit.name,
-        "id" -> author.govUnit.id
+        "name" -> govUnit.name,
+        "id" -> govUnit.id
       )
     ),
     "assessingAgencyId" -> assessingAgencyId,
@@ -434,7 +423,6 @@ case class Req(
     "isValidated" -> isValidated,
     "isRejected" -> isRejected,
     "isSaroAssigned" -> isSaroAssigned,
-    "authorId" -> authorId,
     "assessingAgencyId" -> assessingAgencyId,
     "implementingAgencyId" -> implementingAgencyId,
     "location" -> location,

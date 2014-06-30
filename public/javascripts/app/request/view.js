@@ -135,6 +135,8 @@ request.view = function(ctrl){
                   m("p.meta", [
                     "Posted by ",
                     m("a",{href: routes.controllers.Users.view(ctrl.author().id).url, config: m.route}, ctrl.author().name),
+                    " on behalf of ",
+                    m("a",{href: routes.controllers.GovUnits.view(ctrl.govUnit().id).url, config: m.route}, ctrl.govUnit().name),
                     m("br"),
                     " on "+(new Date(ctrl.request().date).toString()), // change this as people modify this. "Last edited by _____"
                   ]),

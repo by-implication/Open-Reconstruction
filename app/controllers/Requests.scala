@@ -37,7 +37,8 @@ object Requests extends Controller with Secured {
         "isInvolved" -> Json.toJson(user.isInvolvedWith(req)),
         "hasSignedoff" -> Json.toJson(user.hasSignedoff(req)),
         "canSignoff" -> Json.toJson(user.canSignoff(req)),
-        "author" -> User.findById(req.authorId).map(_.infoJson),
+        "author" -> req.author.infoJson,
+        "govUnit" -> req.govUnit.toJson,
         "assessingAgencies" -> Json.toJson(GovUnit.withPermission(Permission.VALIDATE_REQUESTS).map(_.toJson)),
         "implementingAgencies" -> Json.toJson(GovUnit.withPermission(Permission.IMPLEMENT_REQUESTS).map(_.toJson)),
         "assessingAgency" -> req.assessingAgencyId.map { aid =>

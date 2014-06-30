@@ -46,6 +46,11 @@ request.controller = function(){
     name: ""
   });
 
+  this.govUnit = m.prop({
+    id: 0,
+    name: ""
+  });
+
   this.attachments = m.prop({
     imgs: [],
     docs: []
@@ -208,6 +213,7 @@ request.controller = function(){
     this.projects(data.projects);
 
     this.author(data.author);
+    this.govUnit(data.govUnit);
     this.attachments(data.attachments);
     this.history(data.history);
     this.assessingAgencies(data.assessingAgencies);
