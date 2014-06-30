@@ -131,6 +131,13 @@ app.navbar = function(ctrl){
             className: (m.route().startsWith(routes.controllers.Requests.index().url) ? "active" : "")
           }, "Requests")
         ]),
+        m("li", [
+          m("a", {
+            href: routes.controllers.Application.faq().url,
+            config: m.route,
+            className: (m.route().startsWith(routes.controllers.Application.faq().url) ? "active" : "")
+          }, "FAQ")
+        ]),
         ctrl.currentUser().isSuperAdmin ?
           m("li", [
             m("a", {
