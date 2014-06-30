@@ -330,7 +330,10 @@ home.view = function(ctrl){
               m("a", {href:"http://byimplication.com"}, "By Implication"),
               "."
               ]),
-            m("a.button.micro", "Learn more about this project")
+            m("a.button.micro", {
+              href:"/faq",
+              config:m.route
+            }, "Learn more about this project")
           ]),
           m(".columns.medium-4", [
             m("figure.small", [
