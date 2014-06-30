@@ -938,14 +938,21 @@ body .select2-container
       color: white
       background-color: $accent
       &:hover
+        color: white
         background-color: darken($accent, 10%)
     .label
       color: white
       border-color: white
-  .label
-    // border: 0
-    color: $accent
-    border-color: $accent
   dd > a
     border: 0
     color: $accent
+    &:hover
+      background-color: lighten($accent, 50%)
+      // color: darken($accent, 10%)
+      // .label
+      //   color: darken($accent, 10%)
+      //   border-color: darken($accent, 10%)
+    .label
+      color: $accent
+      border-color: $accent
+
