@@ -84,17 +84,12 @@ object Application extends Controller with Secured {
   }
 
   def populate() = Action { implicit request =>
-
     if(Play.mode == Mode.Dev) {
       play.Logger.info("  Generating Sample Users")
       play.Logger.info(User.generateSamples())
       play.Logger.info("* Sample users generated")
-    }
-
-    play.Logger.info("  Processing PSGC migrations")
-    play.Logger.info(Req.assignByPsgc)
-    play.Logger.info("* PSGC processed")
-    Redirect(routes.Application.index)
+      Redirect(routes.Application.index)
+    } else NotFound
   }
 
   def jsRoutes = Action { implicit request =>

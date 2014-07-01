@@ -13,34 +13,6 @@ object Req extends ReqGen {
 
   def PAGE_LIMIT = 20
 
-  def assignByPsgc = DB.withConnection { implicit c =>
-    
-    SQL("SELECT DISTINCT req_location FROM reqs WHERE isnumeric(req_location)")
-    .list(get[String]("req_location") map { loc =>
-
-      val psgc = padLeft(loc, 6, "0").grouped(2).toList.map(_.toInt).filter(_ > 0)
-
-      val lguId = SQL("""
-        SELECT lgu_id FROM lgus
-        WHERE lgu_psgc = {psgc}
-      """).on(
-        'psgc -> PGLTree(psgc)
-      ).singleOpt(get[Int]("lgu_id"))
-
-      lguId match {
-        case Some(lguId) => {
-          SQL("""
-            UPDATE reqs SET gov_unit_id = {lguId} WHERE req_location = {loc}
-          """).on('lguId -> lguId, 'loc -> loc).executeUpdate()
-          None
-        }
-        case _ => Some("No government unit matching PSGC " + loc)
-      }
-
-    }).flatten.mkString("\n")
-
-  }
-
   private def byProjectType = DB.withConnection { implicit c =>
     SQL("""
       SELECT project_type_name, COUNT(*), SUM(req_amount)
