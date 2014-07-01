@@ -1,31 +1,57 @@
 # --- !Ups
 
-ALTER TABLE lgus ADD UNIQUE(lgu_psgc);
-
-CREATE OR REPLACE FUNCTION filter_zeros(int[]) RETURNS int[] AS $$
-	BEGIN
-		RETURN ARRAY(SELECT a.e FROM unnest($1) AS a(e) WHERE a.e != 0 );;
-	END;;
-$$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION psgcify(text) RETURNS ltree AS $$
-	BEGIN
-		RETURN text2ltree(array_to_string(
-			filter_zeros(regexp_matches(lpad($1, 6, '0'), '(\d{2})(\d{2})(\d{2})')::int[]), '.'
-		));;
-	END;;
-$$ LANGUAGE plpgsql;
+ALTER TABLE reqs
+	ADD COLUMN gov_unit_id int REFERENCES gov_units,
+	ADD COLUMN req_legacy boolean NOT NULL DEFAULT FALSE;
 
 UPDATE reqs
-	SET req_location = psgcify(req_location)
-	WHERE isnumeric(req_location);
+	SET gov_unit_id = users.gov_unit_id
+	FROM users WHERE author_id = user_id;
+
+ALTER TABLE reqs
+	ALTER COLUMN gov_unit_id SET NOT NULL;
+
+UPDATE roles
+	SET role_permissions = array_append(role_permissions, 7)
+	WHERE role_name = ANY(ARRAY['NGA', 'OCD']);
 
 UPDATE reqs
 	SET gov_unit_id = lgu_id
 	FROM lgus
 	WHERE req_location = ltree2text(lgu_psgc);
 
+UPDATE reqs
+	SET req_legacy = true
+	WHERE author_id = 1;
+
+UPDATE users
+	SET gov_unit_id = 2 -- OCD
+	WHERE user_id = 1; -- Legacy Data
+
+ALTER TABLE projects
+	DROP COLUMN gov_unit_id;
+
+UPDATE reqs
+	SET gov_unit_id = 2 -- OCD
+	WHERE gov_unit_id = 1; -- Legacy Data
+
+DELETE FROM gov_units
+	WHERE gov_unit_id = 1; -- Legacy Data
+
 # --- !Downs
 
-DROP FUNCTION psgcify;
-DROP FUNCTION filter_zeros;
+INSERT INTO gov_units VALUES (1, 'Legacy Data', null, 1);
+
+ALTER TABLE projects
+	ADD COLUMN gov_unit_id int NOT NULL REFERENCES gov_units DEFAULT 1;
+
+UPDATE users
+	SET gov_unit_id = 1 -- Legacy Data
+	WHERE user_id = 1; -- Legacy Data
+
+UPDATE roles
+	SET role_permissions = array_remove(role_permissions, 7);
+
+ALTER TABLE reqs
+	DROP COLUMN gov_unit_id,
+	DROP COLUMN req_legacy;

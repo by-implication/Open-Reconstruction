@@ -1,21 +1,26 @@
 # --- !Ups
 
-UPDATE lgus SET lgu_psgc = '17.40' WHERE lgu_id = 61;
-UPDATE lgus SET lgu_psgc = '2.50' WHERE lgu_id = 6934;
-UPDATE lgus SET lgu_psgc = '4.10' WHERE lgu_id = 10639;
-UPDATE lgus SET lgu_psgc = '5.20' WHERE lgu_id = 16193;
-UPDATE lgus SET lgu_psgc = '12.80' WHERE lgu_id = 22785;
-UPDATE lgus SET lgu_psgc = '6.30' WHERE lgu_id = 23464;
-UPDATE lgus SET lgu_psgc = '8.60' WHERE lgu_id = 33202;
-UPDATE lgus SET lgu_psgc = '15.70' WHERE lgu_id = 41995;
+ALTER TABLE lgus ADD UNIQUE(lgu_psgc);
+
+CREATE OR REPLACE FUNCTION filter_zeros(int[]) RETURNS int[] AS $$
+	BEGIN
+		RETURN ARRAY(SELECT a.e FROM unnest($1) AS a(e) WHERE a.e != 0 );;
+	END;;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION psgcify(text) RETURNS ltree AS $$
+	BEGIN
+		RETURN text2ltree(array_to_string(
+			filter_zeros(regexp_matches(lpad($1, 6, '0'), '(\d{2})(\d{2})(\d{2})')::int[]), '.'
+		));;
+	END;;
+$$ LANGUAGE plpgsql;
+
+UPDATE reqs
+	SET req_location = psgcify(req_location)
+	WHERE isnumeric(req_location);
 
 # --- !Downs
 
-UPDATE lgus SET lgu_psgc = '17.4' WHERE lgu_id = 61;
-UPDATE lgus SET lgu_psgc = '2.5' WHERE lgu_id = 6934;
-UPDATE lgus SET lgu_psgc = '4.1' WHERE lgu_id = 10639;
-UPDATE lgus SET lgu_psgc = '5.2' WHERE lgu_id = 16193;
-UPDATE lgus SET lgu_psgc = '12.8' WHERE lgu_id = 22785;
-UPDATE lgus SET lgu_psgc = '6.3' WHERE lgu_id = 23464;
-UPDATE lgus SET lgu_psgc = '8.6' WHERE lgu_id = 33202;
-UPDATE lgus SET lgu_psgc = '15.7' WHERE lgu_id = 41995;
+DROP FUNCTION psgcify;
+DROP FUNCTION filter_zeros;

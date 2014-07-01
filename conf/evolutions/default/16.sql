@@ -1,29 +1,21 @@
 # --- !Ups
 
-ALTER TABLE reqs
-	ADD COLUMN gov_unit_id int REFERENCES gov_units,
-	ADD COLUMN req_legacy boolean NOT NULL DEFAULT FALSE;
-
-UPDATE reqs
-	SET gov_unit_id = users.gov_unit_id
-	FROM users WHERE author_id = user_id;
-
-ALTER TABLE reqs
-	ALTER COLUMN gov_unit_id SET NOT NULL;
-
-UPDATE roles
-	SET role_permissions = array_append(role_permissions, 7)
-	WHERE role_name = ANY(ARRAY['NGA', 'OCD']);
-
-UPDATE reqs
-	SET req_legacy = true
-	WHERE author_id = 1;
+UPDATE lgus SET lgu_psgc = '17.40' WHERE lgu_id = 61;
+UPDATE lgus SET lgu_psgc = '2.50' WHERE lgu_id = 6934;
+UPDATE lgus SET lgu_psgc = '4.10' WHERE lgu_id = 10639;
+UPDATE lgus SET lgu_psgc = '5.20' WHERE lgu_id = 16193;
+UPDATE lgus SET lgu_psgc = '12.80' WHERE lgu_id = 22785;
+UPDATE lgus SET lgu_psgc = '6.30' WHERE lgu_id = 23464;
+UPDATE lgus SET lgu_psgc = '8.60' WHERE lgu_id = 33202;
+UPDATE lgus SET lgu_psgc = '15.70' WHERE lgu_id = 41995;
 
 # --- !Downs
 
-UPDATE roles
-	SET role_permissions = array_remove(role_permissions, 7);
-
-ALTER TABLE reqs
-	DROP COLUMN gov_unit_id,
-	DROP COLUMN req_legacy;
+UPDATE lgus SET lgu_psgc = '17.4' WHERE lgu_id = 61;
+UPDATE lgus SET lgu_psgc = '2.5' WHERE lgu_id = 6934;
+UPDATE lgus SET lgu_psgc = '4.1' WHERE lgu_id = 10639;
+UPDATE lgus SET lgu_psgc = '5.2' WHERE lgu_id = 16193;
+UPDATE lgus SET lgu_psgc = '12.8' WHERE lgu_id = 22785;
+UPDATE lgus SET lgu_psgc = '6.3' WHERE lgu_id = 23464;
+UPDATE lgus SET lgu_psgc = '8.6' WHERE lgu_id = 33202;
+UPDATE lgus SET lgu_psgc = '15.7' WHERE lgu_id = 41995;
