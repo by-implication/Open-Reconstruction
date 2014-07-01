@@ -15,6 +15,10 @@ UPDATE roles
 	SET role_permissions = array_append(role_permissions, 7)
 	WHERE role_name = ANY(ARRAY['NGA', 'OCD']);
 
+UPDATE reqs
+	SET req_legacy = true
+	WHERE author_id = 1;
+
 # --- !Downs
 
 UPDATE roles
