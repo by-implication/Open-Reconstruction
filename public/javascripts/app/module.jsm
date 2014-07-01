@@ -6,6 +6,7 @@ requestListing/module.jsm
 requestCreation/module.jsm
 vizIndex/module.jsm
 home/module.jsm
+faq/module.jsm
 admin/module.jsm
 lguCreation/module.jsm
 agencyCreation/module.jsm
