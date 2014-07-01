@@ -360,6 +360,7 @@ case class Req(
 
   lazy val assessingAgency = assessingAgencyId.map(GovUnit.findById(_).get)
   lazy val implementingAgency = implementingAgencyId.map(GovUnit.findById(_).get)
+  lazy val executingAgency = executingAgencyId.map(GovUnit.findById(_).get)
 
   lazy val isSaroAssigned: Boolean = saroNo.isDefined
 
