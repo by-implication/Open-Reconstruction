@@ -46,6 +46,9 @@ object Requests extends Controller with Secured {
         "implementingAgency" -> req.implementingAgencyId.map { aid =>
           GovUnit.findById(aid).map(_.toJson)
         },
+        "executingAgency" -> req.executingAgencyId.map { aid =>
+          GovUnit.findById(aid).map(_.toJson)
+        },
         "attachments" -> {
           val (imgs, docs) = req.attachments.partition(_._1.isImage)
           val tf = (Attachment.insertJson _).tupled
@@ -293,8 +296,14 @@ object Requests extends Controller with Secured {
           id => (user.govUnitId == req.implementingAgencyId || user.isSuperAdmin || user.isDBM)
         )
       )(govUnitId => req.copy(executingAgencyId = govUnitId match {
-          case 0 => None
-          case _ => Some(govUnitId)
+          case 0 => {
+            play.Logger.info("heh " + None)
+            None
+          }
+          case _ => {
+            play.Logger.info("Test! " + govUnitId)
+            Some(govUnitId)
+          }
       }))(_ => None)
     }
     case _ => {
@@ -315,6 +324,7 @@ object Requests extends Controller with Secured {
               (field match {
                 case "assessingAgency" => Event.assign("assess", req.assessingAgency)
                 case "implementingAgency" => Event.assign("implement", req.implementingAgency)
+                case "executingAgency" => Event.assign("execute", req.implementingAgency)
                 case _ => Event.editField(field)
               }).create().map { e =>
                 Rest.success("event" -> e.listJson)

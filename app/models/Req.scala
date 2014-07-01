@@ -437,6 +437,7 @@ case class Req(
     "authorId" -> authorId,
     "assessingAgencyId" -> assessingAgencyId,
     "implementingAgencyId" -> implementingAgencyId,
+    "executingAgencyId" -> executingAgencyId,
     "location" -> location,
     "remarks" -> (remarks.getOrElse(""):String),
     "disaster" -> disaster.toJson

@@ -75,10 +75,12 @@ request.controller = function(){
   this.unassignedAgency = {id: 0};
   this.assessingAgency = m.prop(this.unassignedAgency);
   this.implementingAgency = m.prop(this.unassignedAgency);
+  this.executingAgency = m.prop(this.unassignedAgency);
   this.coords = m.prop();
   
   this.assessingAgencies = m.prop([]);
   this.implementingAgencies = m.prop([]);
+  this.executingAgencies = m.prop([]);
 
   // displayEditGroups
   var deg = displayEditGroup;
@@ -153,6 +155,19 @@ request.controller = function(){
           ctrl.implementingAgency(ctrl.unassignedAgency);
         }
       }
+    )),
+
+    execute: new deg(function(){
+      return (self.app.isSuperAdmin() || self.app.isDBM()); // add check for if implementing agency
+    }, edit("executingAgency"), save("executingAgency",
+      function (r){
+        var agency = extractAgency(r);
+        if(agency.id){
+          ctrl.executingAgency(agency);
+        } else {
+          ctrl.executingAgency(ctrl.unassignedAgency);
+        }
+      }
     ))
 
   };
@@ -212,8 +227,10 @@ request.controller = function(){
     this.history(data.history);
     this.assessingAgencies(data.assessingAgencies);
     this.implementingAgencies(data.implementingAgencies);
+    this.executingAgencies(data.implementingAgencies); // Make a new list that includes even LGUs.
     this.assessingAgency(data.assessingAgency || this.unassignedAgency);
     this.implementingAgency(data.implementingAgency || this.unassignedAgency);
+    this.executingAgency(data.executingAgency || this.unassignedAgency);
 
     this.isInvolved(data.isInvolved);
     this.hasSignedoff(data.hasSignedoff)

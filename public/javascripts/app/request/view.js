@@ -256,6 +256,33 @@ request.view = function(ctrl){
                         ]),
                       ]),
                     ]),
+                    m(".columns.medium-6", [
+                      m("p", [
+                        "Executing Agency",
+                        ctrl.degs.execute.view(
+                          function(){
+                            return ctrl.executingAgency().id ?
+                              m("h4", [
+                                m("a", {href: routes.controllers.GovUnits.view(ctrl.executingAgency().id).url, config: m.route}, [
+                                  ctrl.executingAgency().name
+                                ])
+                              ])
+                            : m("h4", "Unassigned");
+                          },
+                          function(){
+                            return m("select", {onchange: m.withAttr("value", this.input)},
+                              [m("option", {value: 0, selected: ctrl.executingAgency().id == 0}, "None")]
+                              .concat(ctrl.executingAgencies().map(function(agency){
+                                return m("option", {value: agency.id, selected: ctrl.executingAgency().id == agency.id}, agency.name)
+                              }
+                            )));
+                          }
+                        ),
+                        m("p.help", [
+                          "The Executing Agency will be in charge of execution."
+                        ]),
+                      ]),
+                    ]),
                   ]),
                 ]),
               ]),
