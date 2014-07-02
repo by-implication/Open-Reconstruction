@@ -72,6 +72,8 @@ POST    /requests/:id/comment                     controllers.Requests.comment(i
 POST    /requests/:id/edit/:f                     controllers.Requests.editField(id: Int, f: String)
 POST    /requests/:id/attach/:type                controllers.Attachments.add(id: Int, type: String)
 
+GET			/requests/:id/edit												controllers.Requests.edit(id: Int)
+
 GET     /viz                                      controllers.Viz.index
 GET     /viz/meta                                 controllers.Viz.indexMeta
 GET     /viz/data/:v                              controllers.Viz.getData(v: String)

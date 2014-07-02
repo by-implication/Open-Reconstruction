@@ -399,7 +399,8 @@ case class Req(
     "implementingAgencyId" -> implementingAgencyId,
     "location" -> location,
     "remarks" -> (remarks.getOrElse(""):String),
-    "disaster" -> disaster.toJson
+    "disaster" -> disaster.toJson,
+    "isLegacy" -> isLegacy
   )
   
 }

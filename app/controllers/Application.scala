@@ -140,6 +140,7 @@ object Application extends Controller with Secured {
       Requests.comment,
       Requests.create,
       Requests.createMeta,
+      Requests.edit,
       Requests.editField,
       Requests.index,
       Requests.indexPage,
