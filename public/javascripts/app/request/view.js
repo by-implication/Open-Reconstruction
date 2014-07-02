@@ -256,7 +256,7 @@ request.view = function(ctrl){
                         ]),
                       ]),
                     ]),
-                    m(".columns.medium-6", [
+                    m(".columns.medium-12", [
                       m("p", [
                         "Executing Agency",
                         ctrl.degs.execute.view(
