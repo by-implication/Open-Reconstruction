@@ -141,6 +141,7 @@ object Application extends Controller with Secured {
       Requests.create,
       Requests.createMeta,
       Requests.edit,
+      Requests.editMeta,
       Requests.editField,
       Requests.index,
       Requests.indexPage,

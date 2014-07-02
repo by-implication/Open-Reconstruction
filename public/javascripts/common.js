@@ -537,3 +537,13 @@ common.formErrorHandler = function(r){
     alert(r.reason);
   }
 }
+
+common.dateField = function(label, timestampProp, htmlProp){
+  return common.field(
+    label,
+    m("input", {type: "date", value: htmlProp(), onchange: m.withAttr("value", function (v){
+      htmlProp(v);
+      timestampProp((new Date(v)).getTime());
+    })})
+  );
+}

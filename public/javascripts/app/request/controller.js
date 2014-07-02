@@ -129,10 +129,6 @@ request.controller = function(){
     description: new deg(this.canEdit, edit("description"), save("description")),
     amount: new deg(this.canEdit, edit("amount"), save("amount")),
     location: new deg(this.canEdit, edit("location"), save("location")),
-    disaster: new deg(this.canEdit, edit("disaster"), save("disaster"), function (c){
-      this.htmlDate("");
-      c();
-    }, {htmlDate: m.prop("")}),
 
     assess: new deg(this.app.isSuperAdmin, edit("assessingAgency"), save("assessingAgency",
       function (r){

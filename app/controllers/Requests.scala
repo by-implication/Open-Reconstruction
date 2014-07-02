@@ -318,4 +318,16 @@ object Requests extends Controller with Secured {
     } else Rest.unauthorized()
   }
 
+  def editMeta(id: Int) = UserAction(){ implicit user => implicit request =>
+    if(user.canCreateLegacy){
+      Req.findById(id).map { req =>
+        Rest.success(
+          "status" -> req.level,
+          "date" -> req.date,
+          "saroNo" -> req.saroNo
+        )
+      }.getOrElse(Rest.notFound())
+    } else Rest.unauthorized()
+  }
+
 }

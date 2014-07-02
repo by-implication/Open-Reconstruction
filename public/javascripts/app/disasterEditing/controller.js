@@ -9,10 +9,6 @@ disasterEditing.controller = function(){
   this.date = m.prop();
   this.htmlDate = m.prop("");
   this.disasterTypes = m.prop([]);
-  this.setDate = function(v){
-    ctrl.htmlDate(v);
-    ctrl.date((new Date(v)).getTime());
-  }
 
   if(ctrl.id){
     bi.ajax(routes.controllers.Disasters.editMeta(ctrl.id)).then(function (r){
