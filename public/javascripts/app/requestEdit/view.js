@@ -16,7 +16,8 @@ requestEdit.view = function(ctrl){
 	    	common.field("SARO No.",
 	    		m("input", {value: ctrl.saroNo()})
 	  		),
-	  		m("button", "Submit")
+	  		m("button", "Submit"),
+	  		m("a.alert.button", {href: routes.controllers.Requests.view(ctrl.id).url}, "Cancel")
   		])
     ]
   );
