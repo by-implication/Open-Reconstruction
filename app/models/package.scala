@@ -4,6 +4,8 @@ import anorm._
 import com.redis.RedisClient
 import play.api.Play.current
 import scala.language.implicitConversions
+import java.sql.Timestamp
+import recon.support.Time
 
 package object models {
 
@@ -34,6 +36,6 @@ package object models {
     }
   }
 
-  implicit def dateToTimestamp(date: java.util.Date): java.sql.Timestamp = new java.sql.Timestamp(date.getTime())
+  implicit def longToTimestamp(t: Long): Timestamp = Time(t)
  
 }

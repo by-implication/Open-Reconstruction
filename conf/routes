@@ -74,6 +74,7 @@ POST    /requests/:id/attach/:type                controllers.Attachments.add(id
 
 GET			/requests/:id/edit												controllers.Requests.edit(id: Int)
 GET			/requests/:id/edit/meta										controllers.Requests.editMeta(id: Int)
+POST		/requests/:id/edit												controllers.Requests.update(id: Int)
 
 GET     /viz                                      controllers.Viz.index
 GET     /viz/meta                                 controllers.Viz.indexMeta

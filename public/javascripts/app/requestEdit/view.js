@@ -10,11 +10,11 @@ requestEdit.view = function(ctrl){
 	    	common.field("Status",
 	    		select2.view({data: process.levelDict.map(function (l, i){
 	    			return {id: i, name: l};
-	    		}), value: (ctrl.status()+1), onchange: m.withAttr("value", ctrl.status)})
+	    		}), value: ctrl.status(), onchange: ctrl.status})
 	  		),
 	    	common.dateField("Date Received", ctrl.date, ctrl.htmlDate),
 	    	common.field("SARO No.",
-	    		m("input", {value: ctrl.saroNo()})
+	    		m("input", {value: ctrl.saroNo(), onchange: m.withAttr("value", ctrl.saroNo)})
 	  		),
 	  		m("button", "Submit"),
 	  		m("a.alert.button", {href: routes.controllers.Requests.view(ctrl.id).url}, "Cancel")

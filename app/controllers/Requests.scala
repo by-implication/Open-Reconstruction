@@ -330,4 +330,36 @@ object Requests extends Controller with Secured {
     } else Rest.unauthorized()
   }
 
+  def update(id: Int) = UserAction(){ implicit user => implicit request =>
+    if(user.canCreateLegacy){
+
+      def updateForm(id: Int): Form[Option[Req]] = Form(
+        mapping(
+          "status" -> number,
+          "date" -> longNumber,
+          "saroNo" -> optional(text)
+        )
+        ((status, date, saroNo) =>
+          Req.findById(id).map(_.copy(
+            level = status,
+            date = date,
+            saroNo = saroNo
+          ))
+        )(_ => None)
+      )
+
+      updateForm(id).bindFromRequest.fold(
+        Rest.formError(_),
+        _.map {
+          _.save().map { implicit req =>
+            Event.legacyEdit().create().map { _ =>
+              Rest.success()
+            }.getOrElse(Rest.serverError())
+          }.getOrElse(Rest.serverError())
+        }.getOrElse(Rest.notFound())
+      )
+
+    } else Rest.unauthorized()
+  }
+
 }

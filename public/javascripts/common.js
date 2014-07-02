@@ -18,6 +18,9 @@ common.dropzonePreviewTemplate = m(".dz-preview.dz-file-preview", [
 
 common.stagnation = function(reqCtrl, offset){
 
+  var req = reqCtrl.request();
+  if(req.isLegacy) return "UNKNOWN [Legacy Data]";
+
   function getDateRejected(history){
     var rejection = history.filter(function (h){
       return h.kind == "reject";
@@ -32,7 +35,6 @@ common.stagnation = function(reqCtrl, offset){
     return new Date(approval.date);
   }
 
-  var req = reqCtrl.request();
   var timestamp = req.date;
 
   var current;
