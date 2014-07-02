@@ -296,14 +296,8 @@ object Requests extends Controller with Secured {
           id => (user.govUnitId == req.implementingAgencyId || user.isSuperAdmin || user.isDBM)
         )
       )(govUnitId => req.copy(executingAgencyId = govUnitId match {
-          case 0 => {
-            play.Logger.info("heh " + None)
-            None
-          }
-          case _ => {
-            play.Logger.info("Test! " + govUnitId)
-            Some(govUnitId)
-          }
+          case 0 => None
+          case _ => Some(govUnitId)
       }))(_ => None)
     }
     case _ => {
