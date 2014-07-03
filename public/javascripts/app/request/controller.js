@@ -158,7 +158,7 @@ request.controller = function(){
     )),
 
     execute: new deg(function(){
-      return (self.app.isSuperAdmin() || self.app.isDBM()); // add check for if implementing agency
+      return (self.app.isSuperAdmin() || self.app.isDBM() || self.currentUserBelongsToImplementingAgency())
     }, edit("executingAgency"), save("executingAgency",
       function (r){
         var agency = extractAgency(r);

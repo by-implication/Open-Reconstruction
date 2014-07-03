@@ -491,7 +491,7 @@ request.approval = function(ctrl){
                 ])
               ])
             )
-          : ctrl.hasSignedoff() ?
+          : (ctrl.hasSignedoff() && (!ctrl.currentUserBelongsToImplementingAgency() || ctrl.executingAgency())) ?
             m("div", [
               m("h4", [
                 m("div", [m("i.fa.fa-thumbs-up.fa-2x")]),
@@ -501,7 +501,7 @@ request.approval = function(ctrl){
           : m("div", [
             m("h4",
               ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
-                ctrl.app.isSuperAdmin() ?
+                (ctrl.app.isSuperAdmin() || ctrl.currentUserBelongsToImplementingAgency()) ?
                   [
                     "Please ",
                     m("a", {href: "#assignments", onclick: function(e){
@@ -510,9 +510,11 @@ request.approval = function(ctrl){
                     }}, [
                       "assign an agency"
                     ]),
-                    " to assess this request."
+                    " to " + ((ctrl.request().level <=  1 ) ? "assess" : "execute") + " this request."
                   ]
-                : "Waiting for the Office of Civil Defense to assign an agency to assess this request."
+                : ((ctrl.request().level == 0) ? 
+                  "Waiting for the Office of Civil Defense to assign an agency to assess this request."
+                  : "Waiting for " + ctrl.implementingAgency().name + " to assign an executing agency.")
               : "Waiting for " + ctrl.getBlockingAgency() + " approval."
             ),
             m("div",

@@ -300,7 +300,7 @@ object Requests extends Controller with Secured {
     case "executingAgency" => {
       mapping(
         "input" -> number.verifying("Unauthorized",
-          id => (user.govUnitId == req.implementingAgencyId || user.isSuperAdmin || user.isDBM)
+          id => (Some(user.govUnitId) == req.implementingAgencyId || user.isSuperAdmin || user.isDBM)
         )
       )(govUnitId => req.copy(executingAgencyId = govUnitId match {
           case 0 => None
@@ -329,7 +329,7 @@ object Requests extends Controller with Secured {
               (field match {
                 case "assessingAgency" => Event.assign("assess", req.assessingAgency)
                 case "implementingAgency" => Event.assign("implement", req.implementingAgency)
-                case "executingAgency" => Event.assign("execute", req.implementingAgency)
+                case "executingAgency" => Event.assign("execute", req.executingAgency)
                 case _ => Event.editField(field)
               }).create().map { e =>
                 Rest.success("event" -> e.listJson)
