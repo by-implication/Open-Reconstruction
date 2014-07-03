@@ -9,6 +9,16 @@ import play.api.Play.current
 import recon.support._
 
 object Requirement extends RequirementGen {
+
+  def getFor(req: Req) = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT * FROM requirements
+      NATURAL JOIN gov_units
+      WHERE gov_unit_id = {govUnitId}
+      ORDER BY req_level ASC
+    """).on('govUnitId -> req.govUnitId).list(simple)
+  }
+
 }
 
 // GENERATED case class start
@@ -20,6 +30,14 @@ case class Requirement(
   roleId: Int = 0
 ) extends RequirementCCGen with Entity[Requirement]
 // GENERATED case class end
+{
+  def toJson = Json.obj(
+    "id" -> id,
+    "name" -> name,
+    "description" -> description,
+    "level" -> reqLevel
+  )
+}
 
 // GENERATED object start
 trait RequirementGen extends EntityCompanion[Requirement] {

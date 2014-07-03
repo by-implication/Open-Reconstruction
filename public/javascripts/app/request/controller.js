@@ -10,8 +10,6 @@ request.controller = function(){
     amount: m.prop()
   }
 
-  this.requirementLevel = m.prop("Agency Validation");
-
   var requestId = m.route.param('id');
   this.requestTabs = new common.stickyTabs.controller();
   this.requestTabs.tabs([
@@ -51,6 +49,7 @@ request.controller = function(){
     name: ""
   });
 
+  this.requirements = m.prop([]);
   this.attachments = m.prop({
     imgs: [],
     docs: []
@@ -210,6 +209,16 @@ request.controller = function(){
 
     this.author(data.author);
     this.govUnit(data.govUnit);
+
+    var _reqs = [];
+    data.requirements.forEach(function (r){
+      if(!_reqs[r.level]){
+        _reqs[r.level] = [];
+      }
+      _reqs[r.level].push(r);
+    })
+    this.requirements(_reqs);
+
     this.attachments(data.attachments);
     this.history(data.history);
     this.assessingAgencies(data.assessingAgencies);

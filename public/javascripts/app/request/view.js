@@ -275,38 +275,29 @@ request.view = function(ctrl){
                       m("h4", [
                         "What documents are needed?"
                       ]),
-                      request.requirements(ctrl),
-                    ]),
-                    m(".columns.medium-8", [
-                      ctrl.curUserCanUpload() ?
-                        m("div.dropzone", {config: ctrl.initDocDropzone})
-                      : "",
-                      ctrl.attachments().docs.length ?
-                        m("table.doc-list", [
-                          m("thead", [
-                            m("tr", [
-                              m("td", "Filename"),
-                              m("td", "Date Uploaded"),
-                              m("td", "Uploader"),
-                              m("td", "Actions")
-                            ])
-                          ]),
-                          m("tbody", [
-                            ctrl.attachments().docs.map(function (doc){
-                              return m("tr", [
-                                m("td", doc.filename),
-                                m("td", common.displayDate(doc.dateUploaded)),
-                                m("td", [
-                                  m("a", {href: routes.controllers.Users.view(doc.uploader.id).url, config: m.route}, doc.uploader.name)
-                                ]),
-                                m("td", common.attachmentActions.bind(ctrl)(doc))
-                              ])
-                            })
-                          ])
-                        ])
-                      : m("h3.empty", [
-                        "No documents have been uploaded yet."
-                      ])
+                      ctrl.requirements().map(function (reqs, level){
+
+                        var levelDict = [
+                          "Submission",
+                          "Agency Validation",
+                          "OCD Validation"
+                        ];
+
+                        return m("div", {class: level == (ctrl.request().level+1) ? "current" : ""},
+                          [
+                            m("h2", levelDict[level]),
+                            m("ul", [reqs.map(function (req){
+                              return m("li", [
+                                req.name,
+                                ctrl.curUserCanUpload() ?
+                                  m("div.dropzone", {config: ctrl.initDocDropzone})
+                                : "No documents have been uploaded yet."
+                              ]);
+                            })])
+                          ]
+                        );
+
+                      })
                     ]),
                   ]),
                 ]),
@@ -517,66 +508,6 @@ request.approval = function(ctrl){
       ]),
     ])
   ])
-}
-
-request.requirements = function(ctrl){
-  var list = {
-    "Submission": {
-      "LGU": [
-        "Sangguniang Resolution declaring the area under a State of Calamity / Imminent Danger and appropriating local counterpart for the project;",
-        "Certification by Local Chief Executive (LCE) concerned thru a Sangguniang Resolution assuring that whatever amount will be provided by the Office of the President (OP), the project will be completed/finished;",
-        "Certification and justification by the LCE concerned that funding requests chargeable against Calamity Fund are of an emergency in character;",
-        "Certification by the Local Accountant or Finance Officer that their Local Calamity Fund is already depleted/exhausted and/or non – availability of funding source other than the Calamity Fund;",
-        "Certification that the infrastructures being requested for funding support are not covered by insurance;"
-      ],
-      "NGA": [
-        "Work and financial program/plan of the agency;",
-        "Endorsement of the Department Secretary or Head of Agency requesting for funding assistance;"
-      ]
-    },
-    "Agency Validation": {
-      "LGU": [
-        "Certification by the DPWH that the concerned LGU is capable of implementing the project",
-        "Other pertinent documents which may be required by the Council such as an independent validation of the project by the DPWH Regional Director/District Engineer",
-        "Validation/recommendation from the Secretary DPWH"
-      ],
-      "NGA": [
-        "Validation/evaluation of appropriate agency to whom the NDRRMC referred the request"
-      ]
-    },
-    "OCD Validation": {
-      "LGU": [
-        "Local Disaster Risk reduction and Management Council (DRRMC) Damage Report/ Calamity Impact Assessment Report/ Work and financial Plan (to include colored pictures)",
-        "Endorsement of RDRRMC Chairperson (OCD Regional Director)"
-      ],
-      "NGA": [
-        "Other pertinent documents which may be required by the Council such as an independent evaluation of the project from the concerned agencies/departments (additional documents may be requested by OCD via comments)"
-      ]
-    }
-  }
-
-  return m("div", [
-    m('select', {onchange: m.withAttr("value", ctrl.requirementLevel)}, 
-      Object.keys(list).map(function(k){
-        return m("option" + (ctrl.requirementLevel() == k ? '[selected="true"]' : ""), k)
-      })
-    ),
-    m("div", 
-      _.map(list[ctrl.requirementLevel()], function(docs, party){
-        return m("div", [
-          m("h4", [
-            party
-          ]),
-          m("ol", docs.map(function(doc){
-            return m("li", [
-              doc
-            ])
-          })),
-        ]);
-      })
-    ),
-  ])
-
 }
 
 request.progress = function(ctrl){

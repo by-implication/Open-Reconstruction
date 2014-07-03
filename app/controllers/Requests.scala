@@ -58,7 +58,8 @@ object Requests extends Controller with Secured {
         },
         "history" -> Json.toJson(Event.findForRequest(id).map(_.listJson)),
         "projects" -> Json.toJson(req.projects.map(_.requestViewJson)),
-        "disasterTypes" -> DisasterType.jsonList
+        "disasterTypes" -> DisasterType.jsonList,
+        "requirements" -> Requirement.getFor(req).map(_.toJson)
       )
     }.getOrElse(Rest.notFound())
     
