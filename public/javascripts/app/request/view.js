@@ -585,7 +585,10 @@ request.progress = function(ctrl){
                 style: {width: (100/steps.length + '%')},
                 className: (ctrl.request().level >= level ? 'done ' : '') +
                   (ctrl.request().level === (level - 1) ? 'pending' : '')
-              }, step)
+              }, [
+                step,
+                common.help("wut")
+              ])
             })
             .value()
         ]),

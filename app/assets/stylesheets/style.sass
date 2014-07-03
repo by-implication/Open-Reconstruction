@@ -549,8 +549,8 @@ nav
   // +clearfix
   width: 100%
   background-color: rgba(black, 0.05)
-  border-radius: 3px
-  overflow: hidden
+  // border-radius: 3px
+  // overflow: hidden
   &.mini
     height: 4px
     border-radius: 0px
@@ -568,6 +568,10 @@ nav
     &.pending
       background-color: darken($accent, 10%)
       color: rgba(white, 0.4)
+    &:first-child
+      +border-left-radius(3px)
+    &:last-child
+      +border-right-radius(3px)
 
 .filters
   .filter
