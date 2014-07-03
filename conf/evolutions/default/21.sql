@@ -5,7 +5,8 @@ CREATE TABLE requirements (
 	requirement_name text NOT NULL,
 	requirement_description text NOT NULL,
 	req_level int NOT NULL,
-	role_id int NOT NULL REFERENCES roles
+	role_id int NOT NULL REFERENCES roles,
+	requirement_image boolean NOT NULL DEFAULT false
 );
 
 INSERT INTO requirements (requirement_name, requirement_description, req_level, role_id) VALUES
@@ -24,6 +25,14 @@ INSERT INTO requirements (requirement_name, requirement_description, req_level, 
 	('RDRRMC Endorsement', 'Endorsement of RDRRMC Chairperson (OCD Regional Director)', 2, 1),
 	('Others', 'Other pertinent documents which may be required by the Council such as an independent evaluation of the project from the concerned agencies/departments (additional documents may be requested by OCD via comments)', 2, 6);
 
+ALTER TABLE attachments
+	ADD COLUMN requirement_id int NOT NULL REFERENCES requirements,
+	DROP COLUMN attachment_image;
+
 # --- !Downs
+
+ALTER TABLE attachments
+	ADD COLUMN attachment_image boolean NOT NULL,
+	DROP COLUMN requirement_id;
 
 DROP TABLE requirements;

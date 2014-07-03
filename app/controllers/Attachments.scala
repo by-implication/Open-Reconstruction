@@ -10,57 +10,65 @@ import recon.support._
 
 object Attachments extends Controller with Secured {
 
-  def bucketThumb(key: String, typ: String, filename: String) = UserAction(){ implicit user => implicit request =>
-    val bf = Bucket(key).getFile(typ, filename)
-    if(bf.thumb.exists){
-      Ok.sendFile(bf.thumb, true, _ => bf.filename)
-    } else NotFound
+  def bucketThumb(key: String, requirementId: Int, filename: String) = UserAction(){ implicit user => implicit request =>
+    Requirement.findById(requirementId).map { requirement =>
+      val bf = Bucket(key).getFile(requirement, filename)
+      if(bf.thumb.exists){
+        Ok.sendFile(bf.thumb, true, _ => bf.filename)
+      } else NotFound
+    }.getOrElse(NotFound)
   }
 
-  private def bucketGet(inline: Boolean)(key: String, typ: String, filename: String) = Action {
-    val bf = Bucket(key).getFile(typ, filename)
-    if(bf.file.exists){      
-      Ok.sendFile(bf.file, inline, _ => bf.filename)
-    } else NotFound
+  private def bucketGet(inline: Boolean)(key: String, requirementId: Int, filename: String) = Action {
+    Requirement.findById(requirementId).map { requirement =>
+      val bf = Bucket(key).getFile(requirement, filename)
+      if(bf.file.exists){      
+        Ok.sendFile(bf.file, inline, _ => bf.filename)
+      } else NotFound
+    }.getOrElse(NotFound)
   }
 
   def bucketPreview = bucketGet(true) _
   def bucketDownload = bucketGet(false) _
 
-  def addToBucket(key: String, typ: String) = UserAction(parse.multipartFormData){ implicit user => implicit request =>
+  def addToBucket(key: String, requirementId: Int) = UserAction(parse.multipartFormData){ implicit user => implicit request =>
     request.body.file("file").map { upload =>
-      if(Bucket(key).add(typ, upload)){
-        Rest.success(
-          "key" -> key,
-          "filename" -> upload.filename,
-          "dateUploaded" -> Time.now,
-          "uploader" -> Json.obj(
-            "id" -> user.id,
-            "name" -> user.name
+      Requirement.findById(requirementId).map { requirement =>
+        if(Bucket(key).add(requirement, upload)){
+          Rest.success(
+            "key" -> key,
+            "filename" -> upload.filename,
+            "dateUploaded" -> Time.now,
+            "uploader" -> Json.obj(
+              "id" -> user.id,
+              "name" -> user.name
+            )
           )
-        )
-      } else {
-        Rest.serverError()
-      }
+        } else {
+          Rest.serverError()
+        }
+      }.getOrElse(Rest.notFound())
     }.getOrElse(Rest.NO_FILE)
   }
 
-  def add(id: Int, typ: String) = UserAction(parse.multipartFormData){ implicit user => implicit request =>
+  def add(id: Int, requirementId: Int) = UserAction(parse.multipartFormData){ implicit user => implicit request =>
     request.body.file("file").map { upload =>
       Req.findById(id).map { implicit req =>
         if(user.canEditRequest(req)){
-          Attachment(filename = upload.filename, uploaderId = user.id, isImage = typ == "img", reqId = id)
-              .create().map { a =>
-            a.file.getParentFile().mkdirs()
-            upload.ref.moveTo(a.file, true)
-            if (a.isImage) ImageHandling.generateAttachmentThumbnail(a)
-            if(req.addToAttachments(a.id)){
-              Event.attachment(a).create().map { e => Rest.success(
-                "attachment" -> Attachment.insertJson(a, user),
-                "event" -> e.listJson
-              )}.getOrElse(Rest.serverError())
-            } else Rest.serverError()
-          }.getOrElse(Rest.serverError())
+          Requirement.findById(requirementId).map { requirement =>
+            Attachment(filename = upload.filename, uploaderId = user.id, reqId = id, requirementId = requirementId)
+                .create().map { a =>
+              a.file.getParentFile().mkdirs()
+              upload.ref.moveTo(a.file, true)
+              if (requirement.isImage) ImageHandling.generateAttachmentThumbnail(a)
+              if(req.addToAttachments(a.id)){
+                Event.attachment(a).create().map { e => Rest.success(
+                  "attachment" -> Attachment.insertJson(a, user),
+                  "event" -> e.listJson
+                )}.getOrElse(Rest.serverError())
+              } else Rest.serverError()
+            }.getOrElse(Rest.serverError())
+          }.getOrElse(Rest.notFound())
         } else Rest.unauthorized()
       }.getOrElse(Rest.notFound())
     }.getOrElse(Rest.NO_FILE)

@@ -27,7 +27,8 @@ case class Requirement(
   name: String = "",
   description: String = "",
   reqLevel: Int = 0,
-  roleId: Int = 0
+  roleId: Int = 0,
+  isImage: Boolean = false
 ) extends RequirementCCGen with Entity[Requirement]
 // GENERATED case class end
 {
@@ -46,9 +47,10 @@ trait RequirementGen extends EntityCompanion[Requirement] {
     get[String]("requirement_name") ~
     get[String]("requirement_description") ~
     get[Int]("req_level") ~
-    get[Int]("role_id") map {
-      case id~name~description~reqLevel~roleId =>
-        Requirement(id, name, description, reqLevel, roleId)
+    get[Int]("role_id") ~
+    get[Boolean]("requirement_image") map {
+      case id~name~description~reqLevel~roleId~isImage =>
+        Requirement(id, name, description, reqLevel, roleId, isImage)
     }
   }
 
@@ -81,20 +83,23 @@ trait RequirementGen extends EntityCompanion[Requirement] {
             requirement_name,
             requirement_description,
             req_level,
-            role_id
+            role_id,
+            requirement_image
           ) VALUES (
             DEFAULT,
             {name},
             {description},
             {reqLevel},
-            {roleId}
+            {roleId},
+            {isImage}
           )
         """).on(
           'id -> o.id,
           'name -> o.name,
           'description -> o.description,
           'reqLevel -> o.reqLevel,
-          'roleId -> o.roleId
+          'roleId -> o.roleId,
+          'isImage -> o.isImage
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -105,20 +110,23 @@ trait RequirementGen extends EntityCompanion[Requirement] {
             requirement_name,
             requirement_description,
             req_level,
-            role_id
+            role_id,
+            requirement_image
           ) VALUES (
             {id},
             {name},
             {description},
             {reqLevel},
-            {roleId}
+            {roleId},
+            {isImage}
           )
         """).on(
           'id -> o.id,
           'name -> o.name,
           'description -> o.description,
           'reqLevel -> o.reqLevel,
-          'roleId -> o.roleId
+          'roleId -> o.roleId,
+          'isImage -> o.isImage
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -130,14 +138,16 @@ trait RequirementGen extends EntityCompanion[Requirement] {
         requirement_name={name},
         requirement_description={description},
         req_level={reqLevel},
-        role_id={roleId}
+        role_id={roleId},
+        requirement_image={isImage}
       where requirement_id={id}
     """).on(
       'id -> o.id,
       'name -> o.name,
       'description -> o.description,
       'reqLevel -> o.reqLevel,
-      'roleId -> o.roleId
+      'roleId -> o.roleId,
+      'isImage -> o.isImage
     ).executeUpdate() > 0
   }
 
