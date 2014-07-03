@@ -3,12 +3,11 @@ requestEdit.view = function(ctrl){
   return app.template(
     ctrl.app,
     "Edit Legacy Request — " + ctrl.request().description,
-    {className: "detail"},
     [
+      common.banner("Editing Legacy Request"),
       m("section", [
         m(".row", [
           m(".columns.medium-12", [
-            m("h1", "Editing Legacy Request"),
             m("form", {onsubmit: ctrl.submit}, [
               common.field("Status",
                 select2.view({data: process.levelDict.map(function (l, i){
