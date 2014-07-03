@@ -11,6 +11,17 @@ import scala.language.existentials
 
 object Req extends ReqGen {
 
+  lazy val levels = List(
+    "RECEIVED",
+    "ASSESSOR_ASSIGNMENT",
+    "ASSESSOR_SIGNOFF",
+    "OCD_SIGNOFF",
+    "OP_SIGNOFF",
+    "SARO_ASSIGNMENT",
+    "EXECUTOR_ASSIGNMENT",
+    "IMPLEMENTATION"
+  )
+
   def PAGE_LIMIT = 20
 
   def assignByPsgc = DB.withConnection { implicit c =>

@@ -205,15 +205,23 @@ request.controller = function(){
   }
 
   this.getBlockingAgency = function(){
-    var agency = process.levelToAgencyName()[this.request().level]
-    if(agency === "ASSESSING_AGENCY"){
-      if (this.assessingAgency().id){
-        return this.assessingAgency().name;
-      } else {
-        return "AWAITING_ASSIGNMENT";
+    var agency = process.levelToAgencyName()[this.request().level];
+    switch (agency) {
+      case "ASSESSING_AGENCY": {
+        if (this.assessingAgency().id){
+          return this.assessingAgency().name;
+        } else {
+          return "AWAITING_ASSIGNMENT";
+        }
       }
-    } else {
-      return agency;
+      case "IMPLEMENTING_AGENCY": {
+        if (this.executingAgency().id){
+          return this.executingAgency().name;
+        } else {
+          return "AWAITING_ASSIGNMENT";
+        }
+      }
+      default: return agency;
     }
   }
 
