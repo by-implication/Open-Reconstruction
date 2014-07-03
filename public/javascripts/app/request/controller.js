@@ -46,6 +46,11 @@ request.controller = function(){
     name: ""
   });
 
+  this.govUnit = m.prop({
+    id: 0,
+    name: ""
+  });
+
   this.attachments = m.prop({
     imgs: [],
     docs: []
@@ -124,10 +129,6 @@ request.controller = function(){
     description: new deg(this.canEdit, edit("description"), save("description")),
     amount: new deg(this.canEdit, edit("amount"), save("amount")),
     location: new deg(this.canEdit, edit("location"), save("location")),
-    disaster: new deg(this.canEdit, edit("disaster"), save("disaster"), function (c){
-      this.htmlDate("");
-      c();
-    }, {htmlDate: m.prop("")}),
 
     assess: new deg(this.app.isSuperAdmin, edit("assessingAgency"), save("assessingAgency",
       function (r){
@@ -208,6 +209,7 @@ request.controller = function(){
     this.projects(data.projects);
 
     this.author(data.author);
+    this.govUnit(data.govUnit);
     this.attachments(data.attachments);
     this.history(data.history);
     this.assessingAgencies(data.assessingAgencies);

@@ -20,7 +20,7 @@ object Disasters extends Controller with Secured {
       "name" -> optional(text),
       "typeId" -> number,
       "date" -> longNumber
-    )((name, typeId, date) => Disaster(id, typeId, new java.sql.Timestamp(date), name)
+    )((name, typeId, date) => Disaster(id, typeId, date, name)
     )(_ => None)
   )
 

@@ -4,6 +4,7 @@ user/module.jsm
 request/module.jsm
 requestListing/module.jsm
 requestCreation/module.jsm
+requestEdit/module.jsm
 vizIndex/module.jsm
 home/module.jsm
 faq/module.jsm

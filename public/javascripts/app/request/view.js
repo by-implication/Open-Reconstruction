@@ -121,6 +121,9 @@ request.view = function(ctrl){
               m(".big.section#summary", [
                 m(".header", [
                   m("h1", ["Summary"]),
+                  ctrl.request().isLegacy ? "This is a LEGACY request. " : "",
+                  ctrl.app.isAuthorized(process.permissions.CREATE_LEGACY_REQUESTS) ?
+                    m("a", {href: routes.controllers.Requests.edit(ctrl.id).url}, "Click here to edit special fields.") : ""
                 ]),
                 m(".content", [
                   request.progress(ctrl),
@@ -135,6 +138,8 @@ request.view = function(ctrl){
                   m("p.meta", [
                     "Posted by ",
                     m("a",{href: routes.controllers.Users.view(ctrl.author().id).url, config: m.route}, ctrl.author().name),
+                    " on behalf of ",
+                    m("a",{href: routes.controllers.GovUnits.view(ctrl.govUnit().id).url, config: m.route}, ctrl.govUnit().name),
                     m("br"),
                     " on "+(new Date(ctrl.request().date).toString()), // change this as people modify this. "Last edited by _____"
                   ]),

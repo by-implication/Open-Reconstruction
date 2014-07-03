@@ -17,7 +17,6 @@ case class Project(
   projectSourceId: String = "",
   name: String = "",
   amount: BigDecimal = 0,
-  govUnitId: Int = 0,
   projectTypeId: Int = 0,
   scope: ProjectScope = ProjectScope.REPAIR,
   isFunded: Boolean = false
@@ -41,12 +40,11 @@ trait ProjectGen extends EntityCompanion[Project] {
     get[String]("project_source_id") ~
     get[String]("project_name") ~
     get[java.math.BigDecimal]("project_amount") ~
-    get[Int]("gov_unit_id") ~
     get[Int]("project_type_id") ~
     get[ProjectScope]("project_scope") ~
     get[Boolean]("project_funded") map {
-      case id~reqId~projectSourceId~name~amount~govUnitId~projectTypeId~scope~isFunded =>
-        Project(id, reqId, projectSourceId, name, amount, govUnitId, projectTypeId, scope, isFunded)
+      case id~reqId~projectSourceId~name~amount~projectTypeId~scope~isFunded =>
+        Project(id, reqId, projectSourceId, name, amount, projectTypeId, scope, isFunded)
     }
   }
 
@@ -80,7 +78,6 @@ trait ProjectGen extends EntityCompanion[Project] {
             project_source_id,
             project_name,
             project_amount,
-            gov_unit_id,
             project_type_id,
             project_scope,
             project_funded
@@ -90,7 +87,6 @@ trait ProjectGen extends EntityCompanion[Project] {
             {projectSourceId},
             {name},
             {amount},
-            {govUnitId},
             {projectTypeId},
             {scope},
             {isFunded}
@@ -101,7 +97,6 @@ trait ProjectGen extends EntityCompanion[Project] {
           'projectSourceId -> o.projectSourceId,
           'name -> o.name,
           'amount -> o.amount.bigDecimal,
-          'govUnitId -> o.govUnitId,
           'projectTypeId -> o.projectTypeId,
           'scope -> o.scope,
           'isFunded -> o.isFunded
@@ -116,7 +111,6 @@ trait ProjectGen extends EntityCompanion[Project] {
             project_source_id,
             project_name,
             project_amount,
-            gov_unit_id,
             project_type_id,
             project_scope,
             project_funded
@@ -126,7 +120,6 @@ trait ProjectGen extends EntityCompanion[Project] {
             {projectSourceId},
             {name},
             {amount},
-            {govUnitId},
             {projectTypeId},
             {scope},
             {isFunded}
@@ -137,7 +130,6 @@ trait ProjectGen extends EntityCompanion[Project] {
           'projectSourceId -> o.projectSourceId,
           'name -> o.name,
           'amount -> o.amount.bigDecimal,
-          'govUnitId -> o.govUnitId,
           'projectTypeId -> o.projectTypeId,
           'scope -> o.scope,
           'isFunded -> o.isFunded
@@ -153,7 +145,6 @@ trait ProjectGen extends EntityCompanion[Project] {
         project_source_id={projectSourceId},
         project_name={name},
         project_amount={amount},
-        gov_unit_id={govUnitId},
         project_type_id={projectTypeId},
         project_scope={scope},
         project_funded={isFunded}
@@ -164,7 +155,6 @@ trait ProjectGen extends EntityCompanion[Project] {
       'projectSourceId -> o.projectSourceId,
       'name -> o.name,
       'amount -> o.amount.bigDecimal,
-      'govUnitId -> o.govUnitId,
       'projectTypeId -> o.projectTypeId,
       'scope -> o.scope,
       'isFunded -> o.isFunded

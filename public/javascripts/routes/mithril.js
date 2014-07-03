@@ -26,6 +26,7 @@ m.route(document, window.location.pathname, GATrackedRoutes({
   "/requests/:tab/:page/:projectTypeId/:l/:sort/:sortDir/:disaster": requestListing,
   "/requests/new": requestCreation,
   "/requests/:id": request,
+  "/requests/:id/edit": requestEdit,
   "/requests/:id/:tab": request,
   "/viz/:v": viz,
   "/viz": vizIndex,
