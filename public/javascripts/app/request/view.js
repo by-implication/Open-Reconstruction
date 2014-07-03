@@ -202,7 +202,7 @@ request.view = function(ctrl){
                 ]),
                 m(".content", [
                   m(".row", [
-                    m(".columns.medium-6", [
+                    m(".columns.large-4", [
                       m("p", [
                         "Assessing Agency",
                         ctrl.degs.assess.view(
@@ -229,7 +229,7 @@ request.view = function(ctrl){
                         ]),
                       ]),
                     ]),
-                    m(".columns.medium-6", [
+                    m(".columns.large-4", [
                       m("p", [
                         "Implementing Agency",
                         ctrl.degs.implement.view(
@@ -256,7 +256,7 @@ request.view = function(ctrl){
                         ]),
                       ]),
                     ]),
-                    m(".columns.medium-12", [
+                    m(".columns.large-4", [
                       m("p", [
                         "Executing Agency",
                         ctrl.degs.execute.view(
