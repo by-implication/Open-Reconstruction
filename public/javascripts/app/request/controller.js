@@ -164,6 +164,9 @@ request.controller = function(){
         var agency = extractAgency(r);
         if(agency.id){
           ctrl.executingAgency(agency);
+          if(process.levelDict[ctrl.request().level + 1] == "EXECUTOR_ASSIGNMENT") {
+            ctrl.request().level++;
+          }
         } else {
           ctrl.executingAgency(ctrl.unassignedAgency);
         }
@@ -279,7 +282,13 @@ request.controller = function(){
     ctrl.history().unshift(r.event);
     ctrl.canSignoff(false);
     ctrl.hasSignedoff(true);
-    ctrl.request().level++;
+    if((process.levelDict[(ctrl.request().level) + 1] == "SARO_ASSIGNMENT") &&
+      ctrl.executingAgency() != ctrl.unassignedAgency
+    ){
+      ctrl.request().level += 2;
+    } else {
+      ctrl.request().level++;
+    }
   }
 
   this.signoffModal.signoff = function(e){
