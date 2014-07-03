@@ -271,10 +271,7 @@ request.view = function(ctrl){
                 ]),
                 m(".content", [
                   m(".row", [
-                    m(".columns.medium-4", [
-                      m("h4", [
-                        "What documents are needed?"
-                      ]),
+                    m(".columns.medium-12", [
                       ctrl.requirements().map(function (reqs, level){
 
                         var levelDict = [
@@ -286,9 +283,10 @@ request.view = function(ctrl){
                         return m("div", {class: level == (ctrl.request().level+1) ? "current" : ""},
                           [
                             m("h2", levelDict[level]),
-                            m("ul", [reqs.map(function (req){
+                            m("ul.large-block-grid-3.medium-block-grid-2", [reqs.map(function (req){
                               return m("li", [
                                 req.name,
+
                                 ctrl.curUserCanUpload() ?
                                   m("div.dropzone", {config: ctrl.initDocDropzone})
                                 : "No documents have been uploaded yet."
