@@ -158,6 +158,17 @@ common.banner = function(text){
   ]);
 }
 
+common.help = function(text){
+  return m(".common-help", [
+    m("a.hoverthing", [
+      m("i.fa.fa-question-circle"),
+    ]),
+    m(".explanation", [
+      text
+    ]),
+  ])
+}
+
 common.field = function(name, content, help, outsideLabel){
 
   var label = m("div.row", [

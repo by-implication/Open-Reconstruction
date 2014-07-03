@@ -960,3 +960,41 @@ body .select2-container
 #faq
   &>li
     padding: 50px 40px
+
+thead
+  th
+    white-space: nowrap
+
+.common-help
+  $activeColor: $orange
+  position: relative
+  display: inline-block
+  .explanation
+    $width: 300px
+    display: none
+    position: absolute
+    top: 100%
+    width: $width
+    left: 50%
+    // margin-left: -$width/2
+    background-color: $activeColor
+    margin-top: 14px
+    color: white
+    padding: 20px
+    box-shadow: 0px 10px 10px rgba(black, 0.3)
+    &:before
+      display: block
+      content: ""
+      @include triangle(12px, $activeColor, down-left)
+      position: absolute
+      top: -12px
+      left: 0px
+  .hoverthing
+    display: inline-block
+    color: #333
+    margin-left: 4px
+    &:hover
+      color: $activeColor
+      & + .explanation
+        display: block
+

@@ -612,7 +612,10 @@ request.listView = function(reqs, sortBy){
               "Id "
             ]),
           ]),
-          m("th", "Stagnation"),
+          m("th", [
+            "Stagnation",
+            common.help("yo")
+          ]),
           m("th", "Name"),
           m("th", "Gov Unit"),
           m("th", "Status"),
