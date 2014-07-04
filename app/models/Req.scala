@@ -292,13 +292,11 @@ case class Req(
   amount: BigDecimal = 0,
   date: Timestamp = Time.now,
   level: Int = 0,
-  isValidated: Boolean = false,
   isRejected: Boolean = false,
   authorId: Int = 0,
   assessingAgencyId: Option[Int] = None,
   implementingAgencyId: Option[Int] = None,
   location: String = "",
-  remarks: Option[String] = None,
   attachmentIds: PGIntList = Nil,
   saroNo: Option[String] = None,
   disasterId: Int = 0,
@@ -392,13 +390,11 @@ case class Req(
     "date" -> date,
     "now" -> Time.now.getTime,
     "level" -> level,
-    "isValidated" -> isValidated,
     "isRejected" -> isRejected,
     "isSaroAssigned" -> isSaroAssigned,
     "assessingAgencyId" -> assessingAgencyId,
     "implementingAgencyId" -> implementingAgencyId,
     "location" -> location,
-    "remarks" -> (remarks.getOrElse(""):String),
     "disaster" -> disaster.toJson,
     "isLegacy" -> isLegacy
   )
@@ -414,20 +410,18 @@ trait ReqGen extends EntityCompanion[Req] {
     get[java.math.BigDecimal]("req_amount") ~
     get[Timestamp]("req_date") ~
     get[Int]("req_level") ~
-    get[Boolean]("req_validated") ~
     get[Boolean]("req_rejected") ~
     get[Int]("author_id") ~
     get[Option[Int]]("assessing_agency_id") ~
     get[Option[Int]]("implementing_agency_id") ~
     get[String]("req_location") ~
-    get[Option[String]]("req_remarks") ~
     get[PGIntList]("req_attachment_ids") ~
     get[Option[String]]("saro_no") ~
     get[Int]("disaster_id") ~
     get[Int]("gov_unit_id") ~
     get[Boolean]("req_legacy") map {
-      case id~description~projectTypeId~amount~date~level~isValidated~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~remarks~attachmentIds~saroNo~disasterId~govUnitId~isLegacy =>
-        Req(id, description, projectTypeId, amount, date, level, isValidated, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, remarks, attachmentIds, saroNo, disasterId, govUnitId, isLegacy)
+      case id~description~projectTypeId~amount~date~level~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~attachmentIds~saroNo~disasterId~govUnitId~isLegacy =>
+        Req(id, description, projectTypeId, amount, date, level, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, attachmentIds, saroNo, disasterId, govUnitId, isLegacy)
     }
   }
 
@@ -462,13 +456,11 @@ trait ReqGen extends EntityCompanion[Req] {
             req_amount,
             req_date,
             req_level,
-            req_validated,
             req_rejected,
             author_id,
             assessing_agency_id,
             implementing_agency_id,
             req_location,
-            req_remarks,
             req_attachment_ids,
             saro_no,
             disaster_id,
@@ -481,13 +473,11 @@ trait ReqGen extends EntityCompanion[Req] {
             {amount},
             {date},
             {level},
-            {isValidated},
             {isRejected},
             {authorId},
             {assessingAgencyId},
             {implementingAgencyId},
             {location},
-            {remarks},
             {attachmentIds},
             {saroNo},
             {disasterId},
@@ -501,13 +491,11 @@ trait ReqGen extends EntityCompanion[Req] {
           'amount -> o.amount.bigDecimal,
           'date -> o.date,
           'level -> o.level,
-          'isValidated -> o.isValidated,
           'isRejected -> o.isRejected,
           'authorId -> o.authorId,
           'assessingAgencyId -> o.assessingAgencyId,
           'implementingAgencyId -> o.implementingAgencyId,
           'location -> o.location,
-          'remarks -> o.remarks,
           'attachmentIds -> o.attachmentIds,
           'saroNo -> o.saroNo,
           'disasterId -> o.disasterId,
@@ -525,13 +513,11 @@ trait ReqGen extends EntityCompanion[Req] {
             req_amount,
             req_date,
             req_level,
-            req_validated,
             req_rejected,
             author_id,
             assessing_agency_id,
             implementing_agency_id,
             req_location,
-            req_remarks,
             req_attachment_ids,
             saro_no,
             disaster_id,
@@ -544,13 +530,11 @@ trait ReqGen extends EntityCompanion[Req] {
             {amount},
             {date},
             {level},
-            {isValidated},
             {isRejected},
             {authorId},
             {assessingAgencyId},
             {implementingAgencyId},
             {location},
-            {remarks},
             {attachmentIds},
             {saroNo},
             {disasterId},
@@ -564,13 +548,11 @@ trait ReqGen extends EntityCompanion[Req] {
           'amount -> o.amount.bigDecimal,
           'date -> o.date,
           'level -> o.level,
-          'isValidated -> o.isValidated,
           'isRejected -> o.isRejected,
           'authorId -> o.authorId,
           'assessingAgencyId -> o.assessingAgencyId,
           'implementingAgencyId -> o.implementingAgencyId,
           'location -> o.location,
-          'remarks -> o.remarks,
           'attachmentIds -> o.attachmentIds,
           'saroNo -> o.saroNo,
           'disasterId -> o.disasterId,
@@ -589,13 +571,11 @@ trait ReqGen extends EntityCompanion[Req] {
         req_amount={amount},
         req_date={date},
         req_level={level},
-        req_validated={isValidated},
         req_rejected={isRejected},
         author_id={authorId},
         assessing_agency_id={assessingAgencyId},
         implementing_agency_id={implementingAgencyId},
         req_location={location},
-        req_remarks={remarks},
         req_attachment_ids={attachmentIds},
         saro_no={saroNo},
         disaster_id={disasterId},
@@ -609,13 +589,11 @@ trait ReqGen extends EntityCompanion[Req] {
       'amount -> o.amount.bigDecimal,
       'date -> o.date,
       'level -> o.level,
-      'isValidated -> o.isValidated,
       'isRejected -> o.isRejected,
       'authorId -> o.authorId,
       'assessingAgencyId -> o.assessingAgencyId,
       'implementingAgencyId -> o.implementingAgencyId,
       'location -> o.location,
-      'remarks -> o.remarks,
       'attachmentIds -> o.attachmentIds,
       'saroNo -> o.saroNo,
       'disasterId -> o.disasterId,
