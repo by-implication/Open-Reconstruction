@@ -94,7 +94,6 @@ case class GovUnit(
 
     val r = SQL("""
       SELECT *, COUNT(*) OVER() FROM reqs
-      LEFT JOIN users ON user_id = author_id
       WHERE gov_unit_id = {id}
       LIMIT {limit} OFFSET {offset}
     """).on(

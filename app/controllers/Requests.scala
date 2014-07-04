@@ -18,6 +18,7 @@ object Requests extends Controller with Secured {
   def viewDocuments = Application.index1 _
   def viewActivity = Application.index1 _
   def viewReferences = Application.index1 _
+  def edit = Application.index1 _
 
   def createMeta() = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
@@ -37,7 +38,8 @@ object Requests extends Controller with Secured {
         "isInvolved" -> Json.toJson(user.isInvolvedWith(req)),
         "hasSignedoff" -> Json.toJson(user.hasSignedoff(req)),
         "canSignoff" -> Json.toJson(user.canSignoff(req)),
-        "author" -> User.findById(req.authorId).map(_.infoJson),
+        "author" -> req.author.infoJson,
+        "govUnit" -> req.govUnit.toJson,
         "assessingAgencies" -> Json.toJson(GovUnit.withPermission(Permission.VALIDATE_REQUESTS).map(_.toJson)),
         "implementingAgencies" -> Json.toJson(GovUnit.withPermission(Permission.IMPLEMENT_REQUESTS).map(_.toJson)),
         "assessingAgency" -> req.assessingAgencyId.map { aid =>
@@ -338,6 +340,50 @@ object Requests extends Controller with Secured {
           )
         } else Rest.unauthorized()
       }.getOrElse(Rest.notFound())
+    } else Rest.unauthorized()
+  }
+
+  def editMeta(id: Int) = UserAction(){ implicit user => implicit request =>
+    if(user.canCreateLegacy){
+      Req.findById(id).map { req =>
+        Rest.success(
+          "status" -> req.level,
+          "date" -> req.date,
+          "saroNo" -> req.saroNo
+        )
+      }.getOrElse(Rest.notFound())
+    } else Rest.unauthorized()
+  }
+
+  def update(id: Int) = UserAction(){ implicit user => implicit request =>
+    if(user.canCreateLegacy){
+
+      def updateForm(id: Int): Form[Option[Req]] = Form(
+        mapping(
+          "status" -> number,
+          "date" -> longNumber,
+          "saroNo" -> optional(text)
+        )
+        ((status, date, saroNo) =>
+          Req.findById(id).map(_.copy(
+            level = status,
+            date = date,
+            saroNo = saroNo
+          ))
+        )(_ => None)
+      )
+
+      updateForm(id).bindFromRequest.fold(
+        Rest.formError(_),
+        _.map {
+          _.save().map { implicit req =>
+            Event.legacyEdit().create().map { _ =>
+              Rest.success()
+            }.getOrElse(Rest.serverError())
+          }.getOrElse(Rest.serverError())
+        }.getOrElse(Rest.notFound())
+      )
+
     } else Rest.unauthorized()
   }
 

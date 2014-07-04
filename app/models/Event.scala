@@ -10,14 +10,19 @@ import recon.support._
 
 object Event extends EventGen {
 
-  private def generate(kind: String, content: String)(implicit req: Req, user: User) = Event(
+  private def generate(kind: String, content: String, legacy: Boolean = false)(implicit req: Req, user: User) = Event(
     kind = kind,
     content = Some(content),
     reqId = req.id,
-    userId = user.id.toOption
+    userId = user.id.toOption,
+    isLegacy = legacy
   )
 
   private def asContent(a: Attachment) = Seq(a.filename, if(a.isImage) 1 else 0, a.id).mkString(" ")
+
+  def legacyEdit()(implicit req: Req, user: User) = {
+    generate("legacyEdit", Seq(req.level, req.date.getTime(), req.saroNo.getOrElse("")).mkString(" "), true)
+  }
 
   def signoff(govUnit: GovUnit)(implicit req: Req, user: User) = {
     generate("signoff", govUnit.name + " " + govUnit.id)
@@ -79,7 +84,10 @@ object Event extends EventGen {
     
     val r = SQL("SELECT * FROM events WHERE req_id = {reqId}" +
     (if(user.isAnon) " AND event_kind != 'comment' " else "") +
-    "ORDER BY event_date DESC"
+    """
+      AND NOT event_legacy
+      ORDER BY event_date DESC
+    """
     ).on('reqId -> id).list(simple)
 
     val req = Req.findById(id).get
@@ -103,7 +111,8 @@ case class Event(
   date: Timestamp = Time.now,
   content: Option[String] = None,
   reqId: Int = 0,
-  userId: Option[Int] = None
+  userId: Option[Int] = None,
+  isLegacy: Boolean = false
 ) extends EventCCGen with Entity[Event]
 // GENERATED case class end
 {
@@ -132,9 +141,10 @@ trait EventGen extends EntityCompanion[Event] {
     get[Timestamp]("event_date") ~
     get[Option[String]]("event_content") ~
     get[Int]("req_id") ~
-    get[Option[Int]]("user_id") map {
-      case id~kind~date~content~reqId~userId =>
-        Event(id, kind, date, content, reqId, userId)
+    get[Option[Int]]("user_id") ~
+    get[Boolean]("event_legacy") map {
+      case id~kind~date~content~reqId~userId~isLegacy =>
+        Event(id, kind, date, content, reqId, userId, isLegacy)
     }
   }
 
@@ -168,14 +178,16 @@ trait EventGen extends EntityCompanion[Event] {
             event_date,
             event_content,
             req_id,
-            user_id
+            user_id,
+            event_legacy
           ) VALUES (
             DEFAULT,
             {kind},
             {date},
             {content},
             {reqId},
-            {userId}
+            {userId},
+            {isLegacy}
           )
         """).on(
           'id -> o.id,
@@ -183,7 +195,8 @@ trait EventGen extends EntityCompanion[Event] {
           'date -> o.date,
           'content -> o.content,
           'reqId -> o.reqId,
-          'userId -> o.userId
+          'userId -> o.userId,
+          'isLegacy -> o.isLegacy
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -195,14 +208,16 @@ trait EventGen extends EntityCompanion[Event] {
             event_date,
             event_content,
             req_id,
-            user_id
+            user_id,
+            event_legacy
           ) VALUES (
             {id},
             {kind},
             {date},
             {content},
             {reqId},
-            {userId}
+            {userId},
+            {isLegacy}
           )
         """).on(
           'id -> o.id,
@@ -210,7 +225,8 @@ trait EventGen extends EntityCompanion[Event] {
           'date -> o.date,
           'content -> o.content,
           'reqId -> o.reqId,
-          'userId -> o.userId
+          'userId -> o.userId,
+          'isLegacy -> o.isLegacy
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -223,7 +239,8 @@ trait EventGen extends EntityCompanion[Event] {
         event_date={date},
         event_content={content},
         req_id={reqId},
-        user_id={userId}
+        user_id={userId},
+        event_legacy={isLegacy}
       where event_id={id}
     """).on(
       'id -> o.id,
@@ -231,7 +248,8 @@ trait EventGen extends EntityCompanion[Event] {
       'date -> o.date,
       'content -> o.content,
       'reqId -> o.reqId,
-      'userId -> o.userId
+      'userId -> o.userId,
+      'isLegacy -> o.isLegacy
     ).executeUpdate() > 0
   }
 

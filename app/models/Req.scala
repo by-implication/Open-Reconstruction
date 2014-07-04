@@ -24,44 +24,6 @@ object Req extends ReqGen {
 
   def PAGE_LIMIT = 20
 
-  def assignByPsgc = DB.withConnection { implicit c =>
-    
-    SQL("SELECT DISTINCT req_location FROM reqs WHERE isnumeric(req_location)")
-    .list(get[String]("req_location") map { loc =>
-
-      val psgc = padLeft(loc, 6, "0").grouped(2).toList.map(_.toInt).filter(_ > 0)
-
-      val lguId = SQL("""
-        SELECT lgu_id FROM lgus
-        WHERE lgu_psgc = {psgc}
-      """).on(
-        'psgc -> PGLTree(psgc)
-      ).singleOpt(get[Int]("lgu_id"))
-
-      lguId match {
-        case Some(lguId) => {
-          User(
-            name = "Legacy Data",
-            password = "legacy" + lguId + "getsupport",
-            handle = "legacy" + lguId,
-            govUnitId = lguId
-          ).create().map { u =>
-
-            SQL("""
-              UPDATE reqs SET author_id = {userId} WHERE req_location = {loc}
-            """).on('userId -> u.id, 'loc -> loc).executeUpdate()
-
-            None
-
-          }.getOrElse(Some("Failed to create user for" + lguId))
-        }
-        case _ => Some("No government unit matching PSGC " + loc)
-      }
-
-    }).flatten.mkString("\n")
-
-  }
-
   private def byProjectType = DB.withConnection { implicit c =>
     SQL("""
       SELECT project_type_name, COUNT(*), SUM(req_amount)
@@ -235,7 +197,6 @@ object Req extends ReqGen {
       }
       case "mine" => {
         if (!user.isAnon){
-          table = "reqs LEFT JOIN users ON author_id = user_id"
           addWhereClause("gov_unit_id = " + user.govUnit.id)
         }
       }
@@ -249,8 +210,7 @@ object Req extends ReqGen {
 
     if(!psgc.list.isEmpty){
       table = """
-        reqs LEFT JOIN users ON author_id = user_id
-        LEFT JOIN lgus ON lgus.lgu_id = users.gov_unit_id
+        reqs LEFT JOIN lgus ON lgus.lgu_id = gov_unit_id
       """
       addWhereClause("lgu_psgc <@ {psgc}")
     }
@@ -351,6 +311,8 @@ case class Req(
   attachmentIds: PGIntList = Nil,
   saroNo: Option[String] = None,
   disasterId: Int = 0,
+  govUnitId: Int = 0,
+  isLegacy: Boolean = false,
   executingAgencyId: Option[Int] = None
 ) extends ReqCCGen with Entity[Req]
 // GENERATED case class end
@@ -410,6 +372,7 @@ case class Req(
   }
 
   lazy val author = User.findById(authorId).get
+  lazy val govUnit = GovUnit.findById(govUnitId).get
 
   def projects: Seq[Project] = Req.projects(id)
 
@@ -423,8 +386,8 @@ case class Req(
     "author" -> Json.obj(
       "id" -> authorId,
       "govUnit" -> Json.obj(
-        "name" -> author.govUnit.name,
-        "id" -> author.govUnit.id
+        "name" -> govUnit.name,
+        "id" -> govUnit.id
       )
     ),
     "assessingAgencyId" -> assessingAgencyId,
@@ -442,12 +405,12 @@ case class Req(
     "level" -> level,
     "isRejected" -> isRejected,
     "isSaroAssigned" -> isSaroAssigned,
-    "authorId" -> authorId,
     "assessingAgencyId" -> assessingAgencyId,
     "implementingAgencyId" -> implementingAgencyId,
     "executingAgencyId" -> executingAgencyId,
     "location" -> location,
-    "disaster" -> disaster.toJson
+    "disaster" -> disaster.toJson,
+    "isLegacy" -> isLegacy
   )
   
 }
@@ -469,9 +432,11 @@ trait ReqGen extends EntityCompanion[Req] {
     get[PGIntList]("req_attachment_ids") ~
     get[Option[String]]("saro_no") ~
     get[Int]("disaster_id") ~
+    get[Int]("gov_unit_id") ~
+    get[Boolean]("req_legacy") ~
     get[Option[Int]]("executing_agency_id") map {
-      case id~description~projectTypeId~amount~date~level~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~attachmentIds~saroNo~disasterId~executingAgencyId =>
-        Req(id, description, projectTypeId, amount, date, level, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, attachmentIds, saroNo, disasterId, executingAgencyId)
+      case id~description~projectTypeId~amount~date~level~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~attachmentIds~saroNo~disasterId~govUnitId~isLegacy~executingAgencyId =>
+        Req(id, description, projectTypeId, amount, date, level, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, attachmentIds, saroNo, disasterId, govUnitId, isLegacy, executingAgencyId)
     }
   }
 
@@ -514,6 +479,8 @@ trait ReqGen extends EntityCompanion[Req] {
             req_attachment_ids,
             saro_no,
             disaster_id,
+            gov_unit_id,
+            req_legacy,
             executing_agency_id
           ) VALUES (
             DEFAULT,
@@ -530,6 +497,8 @@ trait ReqGen extends EntityCompanion[Req] {
             {attachmentIds},
             {saroNo},
             {disasterId},
+            {govUnitId},
+            {isLegacy},
             {executingAgencyId}
           )
         """).on(
@@ -547,6 +516,8 @@ trait ReqGen extends EntityCompanion[Req] {
           'attachmentIds -> o.attachmentIds,
           'saroNo -> o.saroNo,
           'disasterId -> o.disasterId,
+          'govUnitId -> o.govUnitId,
+          'isLegacy -> o.isLegacy,
           'executingAgencyId -> o.executingAgencyId
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
@@ -568,6 +539,8 @@ trait ReqGen extends EntityCompanion[Req] {
             req_attachment_ids,
             saro_no,
             disaster_id,
+            gov_unit_id,
+            req_legacy,
             executing_agency_id
           ) VALUES (
             {id},
@@ -584,6 +557,8 @@ trait ReqGen extends EntityCompanion[Req] {
             {attachmentIds},
             {saroNo},
             {disasterId},
+            {govUnitId},
+            {isLegacy},
             {executingAgencyId}
           )
         """).on(
@@ -601,6 +576,8 @@ trait ReqGen extends EntityCompanion[Req] {
           'attachmentIds -> o.attachmentIds,
           'saroNo -> o.saroNo,
           'disasterId -> o.disasterId,
+          'govUnitId -> o.govUnitId,
+          'isLegacy -> o.isLegacy,
           'executingAgencyId -> o.executingAgencyId
         ).executeInsert().flatMap(x => Some(o))
       }
@@ -623,6 +600,8 @@ trait ReqGen extends EntityCompanion[Req] {
         req_attachment_ids={attachmentIds},
         saro_no={saroNo},
         disaster_id={disasterId},
+        gov_unit_id={govUnitId},
+        req_legacy={isLegacy},
         executing_agency_id={executingAgencyId}
       where req_id={id}
     """).on(
@@ -640,6 +619,8 @@ trait ReqGen extends EntityCompanion[Req] {
       'attachmentIds -> o.attachmentIds,
       'saroNo -> o.saroNo,
       'disasterId -> o.disasterId,
+      'govUnitId -> o.govUnitId,
+      'isLegacy -> o.isLegacy,
       'executingAgencyId -> o.executingAgencyId
     ).executeUpdate() > 0
   }
