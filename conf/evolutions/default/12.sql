@@ -3,7 +3,7 @@
 -- create OPARR-Bohol requests
 
 INSERT INTO reqs (req_description, project_type_id, req_disaster_name, 
-  req_amount, author_id, req_location, req_disaster_date,
+  req_amount, author_id, req_location, req_disaster_date, req_date,
   disaster_type_id, assessing_agency_id, implementing_agency_id)
 SELECT group_id,
   CASE 
@@ -24,6 +24,7 @@ SELECT group_id,
     WHEN disaster_name ilike '%yolanda%' THEN '2013-11-8'::date
     ELSE now()
     END as disaster_date,
+  '2014-5-18'::date as req_date,
   CASE 
     WHEN disaster_name ilike '%bohol%' THEN 2
     WHEN disaster_name ilike '%yolanda%' THEN 1
