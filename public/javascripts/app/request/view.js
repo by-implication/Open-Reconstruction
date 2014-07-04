@@ -287,8 +287,10 @@ request.view = function(ctrl){
                               var att = ctrl.attachmentFor(reqt);
                               var uploadDate = att && new Date(att.dateUploaded);
                               var canUpload = ctrl.curUserCanUpload();
-                              return m("li", [
-                                reqt.name,
+                              return m("li.document", [
+                                m("h4", [
+                                  reqt.name
+                                ]),
                                 att ? m(
                                   "div", [
                                     m("a", {href: routes.controllers.Attachments.download(att.id).url}, att.filename),
@@ -297,6 +299,7 @@ request.view = function(ctrl){
                                     " by ",
                                     m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
                                     m("a", {href: routes.controllers.Attachments.preview(att.id).url}, "[PREVIEW]"),
+                                    canUpload ? m("a", {onclick: function(){ ctrl.archive(att); }}, "[ARCHIVE]") : ""
                                   ]
                                 ) : (
                                   canUpload ?

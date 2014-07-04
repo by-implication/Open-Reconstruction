@@ -364,4 +364,12 @@ request.controller = function(){
     }
   }
 
+  this.archive = function(att){
+    bi.ajax(routes.controllers.Attachments.archive(att.id)).then(function (r){
+      var a = ctrl.attachments();
+      a.splice(a.indexOf(att), 1);
+      ctrl.history().unshift(r.event);
+    });
+  }
+
 }

@@ -99,7 +99,7 @@ object Attachments extends Controller with Secured {
               Rest.success("event" -> e.listJson)
             }.getOrElse(Rest.serverError())
           } else if(Event.unarchiveAttachment(a)){
-            Rest.success("doc" -> a.insertJson)
+            Rest.success("attachment" -> a.insertJson)
           } else Rest.serverError()
         } else Rest.serverError()
       } else Rest.unauthorized()
