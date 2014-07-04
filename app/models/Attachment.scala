@@ -19,6 +19,7 @@ object Attachment extends AttachmentGen {
     "id" -> attachment.id,
     "filename" -> attachment.filename,
     "dateUploaded" -> attachment.dateUploaded,
+    "requirementId" -> attachment.requirementId,
     "uploader" -> Json.obj(
       "id" -> uploader.id,
       "name" -> uploader.name
@@ -38,9 +39,6 @@ case class Attachment(
 ) extends AttachmentCCGen with Entity[Attachment]
 // GENERATED case class end
 {
-
-  lazy val isImage = requirement.isImage
-  lazy val requirement = Requirement.findById(requirementId).get
 
   lazy val uploader = User.findById(uploaderId).get
 

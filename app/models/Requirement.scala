@@ -36,7 +36,8 @@ case class Requirement(
     "id" -> id,
     "name" -> name,
     "description" -> description,
-    "level" -> reqLevel
+    "level" -> reqLevel,
+    "isImage" -> isImage
   )
 }
 
