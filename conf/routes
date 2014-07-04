@@ -51,10 +51,10 @@ GET     /requests/:t/:p/:pid/:l/:s/:sD/:d/meta    controllers.Requests.indexMeta
 
 GET     /requests/new                             controllers.Requests.create
 GET     /requests/new/meta                        controllers.Requests.createMeta
-POST    /requests/new/attach/:k/:t                controllers.Attachments.addToBucket(k: String, t: String)
-GET     /requests/new/thumb/:k/:t/:f              controllers.Attachments.bucketThumb(k: String, t: String, f: String)
-GET     /requests/new/preview/:k/:t/:f            controllers.Attachments.bucketPreview(k: String, t: String, f: String)
-GET     /requests/new/download/:k/:t/:f           controllers.Attachments.bucketDownload(k: String, t: String, f: String)
+POST    /requests/new/attach/:k/:rId              controllers.Attachments.addToBucket(k: String, rId: Int)
+GET     /requests/new/thumb/:k/:rId/:f            controllers.Attachments.bucketThumb(k: String, rId: Int, f: String)
+GET     /requests/new/preview/:k/:rId/:f          controllers.Attachments.bucketPreview(k: String, rId: Int, f: String)
+GET     /requests/new/download/:k/:rId/:f         controllers.Attachments.bucketDownload(k: String, rId: Int, f: String)
 POST    /requests/new                             controllers.Requests.insert
 
 GET     /requests/:id                             controllers.Requests.view(id: Int)
@@ -70,7 +70,7 @@ POST    /requests/:id/signoff                     controllers.Requests.signoff(i
 POST    /requests/:id/reject                      controllers.Requests.reject(id: Int)
 POST    /requests/:id/comment                     controllers.Requests.comment(id: Int)
 POST    /requests/:id/edit/:f                     controllers.Requests.editField(id: Int, f: String)
-POST    /requests/:id/attach/:type                controllers.Attachments.add(id: Int, type: String)
+POST    /requests/:id/attach/:rId                 controllers.Attachments.add(id: Int, rId: Int)
 
 GET			/requests/:id/edit												controllers.Requests.edit(id: Int)
 GET			/requests/:id/edit/meta										controllers.Requests.editMeta(id: Int)

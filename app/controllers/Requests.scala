@@ -48,14 +48,7 @@ object Requests extends Controller with Secured {
         "implementingAgency" -> req.implementingAgencyId.map { aid =>
           GovUnit.findById(aid).map(_.toJson)
         },
-        "attachments" -> {
-          val (imgs, docs) = req.attachments.partition(_._1.isImage)
-          val tf = (Attachment.insertJson _).tupled
-          Json.obj(
-            "imgs" -> imgs.map(tf),
-            "docs" -> docs.map(tf)
-          )
-        },
+        "attachments" -> req.attachments.map((Attachment.insertJson _).tupled),
         "history" -> Json.toJson(Event.findForRequest(id).map(_.listJson)),
         "projects" -> Json.toJson(req.projects.map(_.requestViewJson)),
         "disasterTypes" -> DisasterType.jsonList,

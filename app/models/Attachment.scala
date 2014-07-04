@@ -19,6 +19,7 @@ object Attachment extends AttachmentGen {
     "id" -> attachment.id,
     "filename" -> attachment.filename,
     "dateUploaded" -> attachment.dateUploaded,
+    "requirementId" -> attachment.requirementId,
     "uploader" -> Json.obj(
       "id" -> uploader.id,
       "name" -> uploader.name
@@ -33,8 +34,8 @@ case class Attachment(
   dateUploaded: Timestamp = Time.now,
   filename: String = "",
   uploaderId: Int = 0,
-  isImage: Boolean = true,
-  reqId: Int = 0
+  reqId: Int = 0,
+  requirementId: Int = 0
 ) extends AttachmentCCGen with Entity[Attachment]
 // GENERATED case class end
 {
@@ -75,10 +76,10 @@ trait AttachmentGen extends EntityCompanion[Attachment] {
     get[Timestamp]("attachment_date_uploaded") ~
     get[String]("attachment_filename") ~
     get[Int]("uploader_id") ~
-    get[Boolean]("attachment_image") ~
-    get[Int]("req_id") map {
-      case id~dateUploaded~filename~uploaderId~isImage~reqId =>
-        Attachment(id, dateUploaded, filename, uploaderId, isImage, reqId)
+    get[Int]("req_id") ~
+    get[Int]("requirement_id") map {
+      case id~dateUploaded~filename~uploaderId~reqId~requirementId =>
+        Attachment(id, dateUploaded, filename, uploaderId, reqId, requirementId)
     }
   }
 
@@ -111,23 +112,23 @@ trait AttachmentGen extends EntityCompanion[Attachment] {
             attachment_date_uploaded,
             attachment_filename,
             uploader_id,
-            attachment_image,
-            req_id
+            req_id,
+            requirement_id
           ) VALUES (
             DEFAULT,
             {dateUploaded},
             {filename},
             {uploaderId},
-            {isImage},
-            {reqId}
+            {reqId},
+            {requirementId}
           )
         """).on(
           'id -> o.id,
           'dateUploaded -> o.dateUploaded,
           'filename -> o.filename,
           'uploaderId -> o.uploaderId,
-          'isImage -> o.isImage,
-          'reqId -> o.reqId
+          'reqId -> o.reqId,
+          'requirementId -> o.requirementId
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -138,23 +139,23 @@ trait AttachmentGen extends EntityCompanion[Attachment] {
             attachment_date_uploaded,
             attachment_filename,
             uploader_id,
-            attachment_image,
-            req_id
+            req_id,
+            requirement_id
           ) VALUES (
             {id},
             {dateUploaded},
             {filename},
             {uploaderId},
-            {isImage},
-            {reqId}
+            {reqId},
+            {requirementId}
           )
         """).on(
           'id -> o.id,
           'dateUploaded -> o.dateUploaded,
           'filename -> o.filename,
           'uploaderId -> o.uploaderId,
-          'isImage -> o.isImage,
-          'reqId -> o.reqId
+          'reqId -> o.reqId,
+          'requirementId -> o.requirementId
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -166,16 +167,16 @@ trait AttachmentGen extends EntityCompanion[Attachment] {
         attachment_date_uploaded={dateUploaded},
         attachment_filename={filename},
         uploader_id={uploaderId},
-        attachment_image={isImage},
-        req_id={reqId}
+        req_id={reqId},
+        requirement_id={requirementId}
       where attachment_id={id}
     """).on(
       'id -> o.id,
       'dateUploaded -> o.dateUploaded,
       'filename -> o.filename,
       'uploaderId -> o.uploaderId,
-      'isImage -> o.isImage,
-      'reqId -> o.reqId
+      'reqId -> o.reqId,
+      'requirementId -> o.requirementId
     ).executeUpdate() > 0
   }
 
@@ -191,8 +192,8 @@ trait AttachmentCCGen {
 
 case class Bucket(key: String){
 
-  case class BFile(typ: String, filename: String){
-    private lazy val folderPath = bucketFolderPath :+ typ
+  case class BFile(requirement: Requirement, filename: String){
+    private lazy val folderPath = bucketFolderPath :+ requirement.id
     lazy val path = (folderPath :+ filename).mkString(File.separator)
     lazy val file = new File(path)
     lazy val thumbPath = (folderPath.dropRight(1) ++ Seq("thumbs", filename)).mkString(File.separator)
@@ -200,14 +201,15 @@ case class Bucket(key: String){
   }
 
   lazy val bucketFolderPath = Seq(Bucket.FOLDER, key)
+  lazy val bucketDir = new File(bucketFolderPath.mkString(File.separator))
 
-  def getFile(typ: String, filename: String) = BFile(typ, filename)
+  def getFile(requirement: Requirement, filename: String) = BFile(requirement, filename)
 
-  def add(typ: String, upload: FilePart[TemporaryFile]): Boolean = {
+  def add(requirement: Requirement, upload: FilePart[TemporaryFile]): Boolean = {
     try {
-      val bf = getFile(typ, upload.filename)
+      val bf = getFile(requirement, upload.filename)
       upload.ref.moveTo(bf.file, true)
-      if(typ == "img"){
+      if(requirement.isImage){
         bf.thumb.getParentFile().mkdirs()
         ImageHandling.generateThumbnail(bf.path, bf.thumbPath)
       }
@@ -220,10 +222,10 @@ case class Bucket(key: String){
     }
   }
 
-  private def files(typ: String): Seq[BFile] = {
-    val dir = new File((bucketFolderPath :+ typ).mkString(File.separator))
+  private def files(requirement: Requirement): Seq[BFile] = {
+    val dir = new File((bucketFolderPath :+ requirement.id).mkString(File.separator))
     if(dir.exists){
-      dir.list().map(f => BFile(typ, f))
+      dir.list().map(f => BFile(requirement, f))
     } else {
       Seq.empty[BFile]
     }
@@ -231,7 +233,7 @@ case class Bucket(key: String){
 
   private def delete = Redis.xaction { r =>
     r.del(key)
-    deleteFile(new File(bucketFolderPath.mkString(File.separator)))
+    deleteFile(bucketDir)
   }
 
   def dumpTo(req: Req): Boolean = {
@@ -243,22 +245,28 @@ case class Bucket(key: String){
       }
     }
 
-    val attachmentIds: Seq[Int] = Seq("img", "doc").map { typ =>
-      files(typ).map { f =>
-        val isImage = typ == "img"
-        Attachment(filename = f.filename, uploaderId = req.authorId, isImage = isImage, reqId = req.id)
-            .create().map { a =>
+    val attachmentIds: Seq[Int] = bucketDir.listFiles().map { subDir =>
+      try {
+        val requirementId = subDir.getName.toInt
+        Requirement.findById(requirementId).map { requirement =>
+          files(requirement).map { f =>
+            Attachment(filename = f.filename, uploaderId = req.authorId, reqId = req.id, requirementId = requirementId)
+                .create().map { a =>
 
-          moveFile(f.file, a.file)
-          if(isImage) moveFile(f.thumb, a.thumb)
+              moveFile(f.file, a.file)
+              if(requirement.isImage) moveFile(f.thumb, a.thumb)
 
-          Event.attachment(a)(req, req.author).create().getOrElse(Rest.serverError())
+              Event.attachment(a)(req, req.author).create().getOrElse(Rest.serverError())
 
-          a.id
+              a.id
 
+            }
+          }
         }
+      } catch {
+        case t: Throwable => None
       }
-    }.flatten.flatten.map(pkToInt)
+    }.flatten.flatten.flatten.map(pkToInt)
 
     req.copy(attachmentIds = attachmentIds).save()
 

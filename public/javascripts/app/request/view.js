@@ -272,7 +272,7 @@ request.view = function(ctrl){
                 m(".content", [
                   m(".row", [
                     m(".columns.medium-12", [
-                      ctrl.requirements().map(function (reqs, level){
+                      ctrl.requirements().map(function (reqts, level){
 
                         var levelDict = [
                           "Submission",
@@ -283,15 +283,36 @@ request.view = function(ctrl){
                         return m("div", {class: level == (ctrl.request().level+1) ? "current" : ""},
                           [
                             m("h2", levelDict[level]),
-                            m("ul.large-block-grid-3.medium-block-grid-2", [reqs.map(function (req){
+                            m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
+                              var att = ctrl.attachmentFor(reqt);
+                              var uploadDate = att && new Date(att.dateUploaded);
+                              var canUpload = ctrl.curUserCanUpload();
                               return m("li.document", [
                                 m("h4", [
-                                  req.name,
+                                  reqt.name
                                 ]),
+// <<<<<<< HEAD
 
-                                ctrl.curUserCanUpload() ?
-                                  m(".dropzone", {config: ctrl.initDocDropzone})
-                                : "No documents have been uploaded yet."
+//                                 ctrl.curUserCanUpload() ?
+//                                   m(".dropzone", {config: ctrl.initDocDropzone})
+//                                 : "No documents have been uploaded yet."
+// =======
+                                att ? m(
+                                  "div", [
+                                    m("a", {href: routes.controllers.Attachments.download(att.id).url}, att.filename),
+                                    " uploaded ",
+                                    m("span", {title: uploadDate}, helper.timeago(uploadDate)),
+                                    " by ",
+                                    m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
+                                    m("a", {href: routes.controllers.Attachments.preview(att.id).url}, "[PREVIEW]"),
+                                    canUpload ? m("a", {onclick: function(){ ctrl.archive(att); }}, "[ARCHIVE]") : ""
+                                  ]
+                                ) : (
+                                  canUpload ?
+                                  m("div.dropzone", {config: ctrl.initAttachmentDropzone(reqt)})
+                                  : "No documents have been uploaded yet."
+                                )
+// >>>>>>> 78d994facdd137a5e84689ff30db63f27596a819
                               ]);
                             })])
                           ]

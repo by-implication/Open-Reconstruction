@@ -50,10 +50,7 @@ request.controller = function(){
   });
 
   this.requirements = m.prop([]);
-  this.attachments = m.prop({
-    imgs: [],
-    docs: []
-  });
+  this.attachments = m.prop([]);
 
   this.history = m.prop([]);
   this.location = m.prop("");
@@ -335,46 +332,54 @@ request.controller = function(){
     }.bind(this));
   }.bind(this);
 
-  this.initImageDropzone = function(elem, isInit){
-    if(!isInit){
+  this.initAttachmentDropzone = function(reqt){
+    return function(elem, isInit){
+      if(!isInit){
 
-      var dz = new Dropzone(elem, {
-        url: routes.controllers.Attachments.add(this.id, "img").url,
-        previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
-        dictDefaultMessage: "Drop photos here, or click to browse.",
-        clickable: true,
-        autoDiscover: false,
-        thumbnailWidth: 128,
-        thumbnailHeight: 128,
-        acceptedFiles: "image/*"
-      })
+        var dz = new Dropzone(elem, {
+          url: routes.controllers.Attachments.add(this.id, reqt.id).url,
+          previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
+          dictDefaultMessage: "Drop documents here, or click to browse.",
+          clickable: true,
+          autoDiscover: false,
+          acceptedFiles: reqt.isImage ? "image/*" : ""
+        });
 
-      dz.on("success", function (_, r){
-        this.attachments().imgs.push(r.attachment);
-        this.history().unshift(r.event);
-        m.redraw();
-      }.bind(this));
+        dz.on("success", function (_, r){
+          this.attachments().push(r.attachment);
+          this.history().unshift(r.event);
+          m.redraw();
+        }.bind(this));
 
+      }
+    }.bind(this);
+  }
+
+// <<<<<<< HEAD
+//       var dz = new Dropzone(elem, {
+//         url: routes.controllers.Attachments.add(this.id, "doc").url,
+//         previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
+//         dictDefaultMessage: "Drop documents here or click to browse.",
+//         clickable: true,
+//         autoDiscover: false
+//       });
+// =======
+  this.attachmentFor = function(reqt){
+    var a = this.attachments();
+    for(var i in a){
+      if(a[i].requirementId == reqt.id){
+        return a[i];
+      }
     }
-  }.bind(this);
+  }
+// >>>>>>> 78d994facdd137a5e84689ff30db63f27596a819
 
-  this.initDocDropzone = function(elem, isInit){
-    if(!isInit){
+  this.archive = function(att){
+    bi.ajax(routes.controllers.Attachments.archive(att.id)).then(function (r){
+      var a = ctrl.attachments();
+      a.splice(a.indexOf(att), 1);
+      ctrl.history().unshift(r.event);
+    });
+  }
 
-      var dz = new Dropzone(elem, {
-        url: routes.controllers.Attachments.add(this.id, "doc").url,
-        previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
-        dictDefaultMessage: "Drop documents here or click to browse.",
-        clickable: true,
-        autoDiscover: false
-      });
-
-      dz.on("success", function (_, r){
-        this.attachments().docs.push(r.attachment);
-        this.history().unshift(r.event);
-        m.redraw();
-      }.bind(this));
-
-    }
-  }.bind(this);
 }

@@ -18,7 +18,7 @@ object Event extends EventGen {
     isLegacy = legacy
   )
 
-  private def asContent(a: Attachment) = Seq(a.filename, if(a.isImage) 1 else 0, a.id).mkString(" ")
+  private def asContent(a: Attachment) = Seq(a.filename, a.requirementId, a.id).mkString(" ")
 
   def legacyEdit()(implicit req: Req, user: User) = {
     generate("legacyEdit", Seq(req.level, req.date.getTime(), req.saroNo.getOrElse("")).mkString(" "), true)

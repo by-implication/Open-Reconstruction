@@ -38,14 +38,13 @@ historyEvent.archiveAttachment = function(data){
   var date = new Date(data.date);
   var c = data.content.split(" ");
   var attachmentId = c.pop();
-  var isImage = parseInt(c.pop());
   var filename = c.join(" ");
   return m(".event", [
     m(".type.edit", [
       m("i.fa.fa-lg.fa-fw.fa-archive")
     ]),
     m(".details", [
-      m("p", [(isImage ? "Image" : "Document") + " archived: " + filename].concat(
+      m("p", ["Attachment archived: " + filename].concat(
         common.attachmentActions.bind(this)({id: attachmentId, isArchived: true})
       )),
       historyEvent.meta("Archived", data, date)
@@ -153,7 +152,6 @@ historyEvent.attachment = function(data){
   var date = new Date(data.date);
   var c = data.content.split(" ");
   var attachmentId = c.pop();
-  var isImage = parseInt(c.pop());
   var filename = c.join(" ");
   return m(".event", [
     m(".type.edit", [
@@ -161,7 +159,7 @@ historyEvent.attachment = function(data){
     ]),
     m(".details", [
       m("p", [
-        (isImage ? "Image" : "Document") + " uploaded: " + filename,
+        "Attachment uploaded: " + filename,
         common.attachmentActions.bind(this)({id: attachmentId})
       ]),
       historyEvent.meta("Attached", data, date)

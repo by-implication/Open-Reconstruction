@@ -125,7 +125,7 @@ common.attachmentActions = function(attachment){
       m("a", {title: "Unarchive", onclick: function(){
         bi.ajax(routes.controllers.Attachments.unarchive(attachment.id)).then(function (r){
           alert("Succesfully unarchived document.");
-          this.attachments().docs.push(r.doc);
+          this.attachments().push(r.attachment);
           this.history(this.history().filter(function (e){
             var attachmentId = e.content.split(" ").pop();
             return !(e.kind == 'archiveAttachment' && attachmentId == attachment.id);
@@ -136,8 +136,8 @@ common.attachmentActions = function(attachment){
       ]) : m("a", {title: "Archive", onclick: function(){
         bi.ajax(routes.controllers.Attachments.archive(attachment.id)).then(function (r){
           alert("Succesfully archived document.");
-          var docs = this.attachments().docs;
-          docs.splice(docs.indexOf(attachment), 1);
+          var a = this.attachments();
+          a.splice(a.indexOf(attachment), 1);
           this.history().unshift(r.event);
         }.bind(this))
       }.bind(this) }, [
