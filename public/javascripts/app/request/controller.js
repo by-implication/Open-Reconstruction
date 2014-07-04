@@ -364,7 +364,7 @@ request.controller = function(){
       var dz = new Dropzone(elem, {
         url: routes.controllers.Attachments.add(this.id, "doc").url,
         previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
-        dictDefaultMessage: "Drop documents here, or click to browse. We recommend pdfs and doc files.",
+        dictDefaultMessage: "Drop documents here or click to browse.",
         clickable: true,
         autoDiscover: false
       });

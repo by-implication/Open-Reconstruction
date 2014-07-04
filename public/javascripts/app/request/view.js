@@ -290,7 +290,7 @@ request.view = function(ctrl){
                                 ]),
 
                                 ctrl.curUserCanUpload() ?
-                                  m("div.dropzone", {config: ctrl.initDocDropzone})
+                                  m(".dropzone", {config: ctrl.initDocDropzone})
                                 : "No documents have been uploaded yet."
                               ]);
                             })])
