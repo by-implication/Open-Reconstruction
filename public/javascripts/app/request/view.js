@@ -284,8 +284,10 @@ request.view = function(ctrl){
                           [
                             m("h2", levelDict[level]),
                             m("ul.large-block-grid-3.medium-block-grid-2", [reqs.map(function (req){
-                              return m("li", [
-                                req.name,
+                              return m("li.document", [
+                                m("h4", [
+                                  req.name,
+                                ]),
 
                                 ctrl.curUserCanUpload() ?
                                   m("div.dropzone", {config: ctrl.initDocDropzone})
