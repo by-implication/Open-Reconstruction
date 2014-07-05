@@ -339,7 +339,7 @@ request.controller = function(){
         var dz = new Dropzone(elem, {
           url: routes.controllers.Attachments.add(this.id, reqt.id).url,
           previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
-          dictDefaultMessage: "Drop documents here, or click to browse.",
+          dictDefaultMessage: "Drop documents here or click to browse.",
           clickable: true,
           autoDiscover: false,
           acceptedFiles: reqt.isImage ? "image/*" : ""
@@ -354,16 +354,6 @@ request.controller = function(){
       }
     }.bind(this);
   }
-
-// <<<<<<< HEAD
-//       var dz = new Dropzone(elem, {
-//         url: routes.controllers.Attachments.add(this.id, "doc").url,
-//         previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
-//         dictDefaultMessage: "Drop documents here or click to browse.",
-//         clickable: true,
-//         autoDiscover: false
-//       });
-// =======
   this.attachmentFor = function(reqt){
     var a = this.attachments();
     for(var i in a){
@@ -372,7 +362,6 @@ request.controller = function(){
       }
     }
   }
-// >>>>>>> 78d994facdd137a5e84689ff30db63f27596a819
 
   this.archive = function(att){
     bi.ajax(routes.controllers.Attachments.archive(att.id)).then(function (r){
