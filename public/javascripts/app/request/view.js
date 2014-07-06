@@ -303,7 +303,9 @@ request.view = function(ctrl){
                                   ]
                                 ) : (
                                   canUpload ?
-                                  m("div.dropzone", {config: ctrl.initAttachmentDropzone(reqt)})
+                                  m(".dropzone", {config: ctrl.initAttachmentDropzone(reqt)}, [
+                                    m(".dz-message", "Drop documents here or click to browse")
+                                  ])
                                   : "No documents have been uploaded yet."
                                 )
                               ]);
