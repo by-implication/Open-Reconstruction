@@ -292,14 +292,30 @@ request.view = function(ctrl){
                                   reqt.name
                                 ]),
                                 att ? m(
-                                  "div", [
-                                    m("a", {href: routes.controllers.Attachments.download(att.id).url}, att.filename),
-                                    " uploaded ",
-                                    m("span", {title: uploadDate}, helper.timeago(uploadDate)),
-                                    " by ",
-                                    m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
-                                    m("a", {href: routes.controllers.Attachments.preview(att.id).url}, "[PREVIEW]"),
-                                    canUpload ? m("a", {onclick: function(){ ctrl.archive(att); }}, "[ARCHIVE]") : ""
+                                  ".file", [
+                                    m(".info", [
+                                      m("a", {href: routes.controllers.Attachments.download(att.id).url}, att.filename),
+                                      " uploaded ",
+                                      m("span", {title: uploadDate}, helper.timeago(uploadDate)),
+                                      " by ",
+                                      m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
+                                    ]),
+                                    m("ul.button-group.round", [
+                                      m("li", [
+                                        m("a.button.tiny", {href: routes.controllers.Attachments.preview(att.id).url, title: "preview"}, [
+                                          m("i.fa.fa-fw.fa-lg.fa-eye")
+                                        ]),
+                                      ]),
+                                      canUpload ? 
+                                        m("li", [
+                                          m("a.button.tiny", {onclick: function(){ ctrl.archive(att); }, title: "archive"}, [
+                                            m("i.fa.fa-fw.fa-lg.fa-archive")
+                                          ])   
+                                        ])
+                                      : ""
+                                    ]),
+                                    
+                                    
                                   ]
                                 ) : (
                                   canUpload ?
