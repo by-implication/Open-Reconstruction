@@ -23,27 +23,7 @@ requestCreation.view = function(ctrl){
       icon: "fa-briefcase",
       content: [
         m("h2", "Basic Information"),
-        // m("h2", "Disaster"),
-        
-
-        // m.switch(ctrl.input.projectTypeId())
-        //   .case("Bridge", function(){
-        //     return common.field(
-        //       "Parent Road",
-        //       m("input", {type: "text", placeholder: "Tagbilaran North Road"}),
-        //       "Tell us on which road this bridge is located."
-        //     );
-        //   })
-        //   .case("Agriculture", function(){
-        //     return "agri!";
-        //   })
-        //   .case("Other", function(){
-        //     return "specify!";
-        //   })
-        //   .render(),
-        
-      ],
-      // help: "Now tell us about this project. Please be as brief as you can when describing your project. Making it simple and easy to understand will make your project more likely to be approved."
+      ]
     },
     {
       icon: "fa-paperclip",
@@ -131,7 +111,7 @@ requestCreation.view = function(ctrl){
             m(".columns.medium-12", [
               common.field(
                 "Disaster",
-                m("select", {onchange: m.withAttr("value", ctrl.input.disasterId)},
+                m("select", {onchange: m.withAttr("value", ctrl.disasterId)},
                   ctrl.info().disasters.map(function (d){
                     return m("option", {value: d.id}, d.name);
                   })
@@ -147,7 +127,7 @@ requestCreation.view = function(ctrl){
                 "Specific Requests"
               ]),
               m("p.help", [
-                "this is what will happen"
+                "Enter details below"
               ]),
               m("table", [
                 m("thead", [
@@ -172,18 +152,18 @@ requestCreation.view = function(ctrl){
                     ]),
                   ]),
                 ]),
-                m("tbody", [
-                  m("tr", [
+                m("tbody", ctrl.entries.map(function (e){
+                  return m("tr", [
                     m("td", [
-                      m("input", {onchange: m.withAttr("value", ctrl.input.description), type: "text", placeholder: "e.g. Reconstruction of a seawall for barangay A"}),
+                      m("input", {onchange: m.withAttr("value", e.description), type: "text", placeholder: "e.g. Reconstruction of a seawall for barangay A"}),
                     ]),
                     m("td", [
-                      m("input", {type: "number", onchange: m.withAttr("value", ctrl.input.amount)}),
+                      m("input", {type: "number", onchange: m.withAttr("value", e.amount)}),
                     ]),
                     m("td", [
                       m("select", {
-                        onchange: m.withAttr("value", ctrl.input.projectTypeId),
-                        value: ctrl.input.projectTypeId()
+                        onchange: m.withAttr("value", e.projectTypeId),
+                        value: e.projectTypeId()
                       }, [
                         m("optgroup", {label: "Infrastructure"}, [
                           projectTypeGroups([0, 10])
@@ -200,71 +180,19 @@ requestCreation.view = function(ctrl){
                       ])
                     ]),
                     m("td", [
-                      "location"
+                      m("td", m("button[type=button]", {onclick: e.openLocationModal}, "Location"))
                     ]),
                     m("td", [
-                      "attachments"
+                      m("td", m("button[type=button]", {onclick: e.openAttachmentsModal}, "Attachments"))
                     ]),
-                    m("td", [
-                      "delete button"
-                    ]),
-                  ]),
-                ]),
+                    m("td", m("button.alert[type=button]", {onclick: e.remove}, "Baleeted!"))
+                  ])
+                })),
               ]),
-              m("button", {type: "button"}, [
+              m("button", {type: "button", onclick: ctrl.newEntry}, [
                 "Add new entry"
               ]),
             ]),
-            // m("ul", [
-            //   m("li.card", [
-            //     m(".section", [
-            //       m(".row", [
-            //         m(".columns.medium-6", [
-            //           common.field(
-            //             "Description",
-            //             m("input", {onchange: m.withAttr("value", ctrl.input.description), type: "text", placeholder: "e.g. Reconstruction of a seawall for barangay A"}),
-            //             "Please make sure that the description is as specific as can be."
-            //           ),
-            //           common.field(
-            //             "Estimated Amount",
-            //             m("input", {type: "number", onchange: m.withAttr("value", ctrl.input.amount)}),
-            //             "Note that the agency assigned to evaluate this request may change the amount based on their costing."
-            //           ),
-            //           common.field(
-            //             "Type",
-            //             m("select", {
-            //               onchange: m.withAttr("value", ctrl.input.projectTypeId),
-            //               value: ctrl.input.projectTypeId()
-            //             }, [
-            //               m("optgroup", {label: "Infrastructure"}, [
-            //                 projectTypeGroups([0, 10])
-            //               ]),
-            //               m("optgroup", {label: "Water"}, [
-            //                 projectTypeGroups([5, 7, 8, 9, 12, 13])
-            //               ]),
-            //               m("optgroup", {label: "Buildings"}, [
-            //                 projectTypeGroups([1, 3, 6, 11])
-            //               ]),
-            //               m("optgroup", {label: "Other"}, [
-            //                 projectTypeGroups([2, 4, 14])
-            //               ]),
-            //             ])
-            //           ),
-            //         ]),
-            //         m(".columns.medium-6", [
-            //           common.field(
-            //             "Location",
-            //             m("div", {id: "map", config: ctrl.initMap}),
-            //             "Tell us where the project is. Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map."
-            //           )
-            //         ]),
-            //       ]),
-            //     ]),
-            //   ]),
-            //   m("li", [
-            //     "add new entry"
-            //   ]),
-            // ]),
           ]),
         ]),
         m("section", [

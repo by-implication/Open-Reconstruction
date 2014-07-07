@@ -10,6 +10,10 @@ import recon.support._
 
 object Attachments extends Controller with Secured {
 
+  def getNewBucketKey = UserAction(){ implicit user => implicit request =>
+    Rest.success("bucketKey" -> Bucket.getAvailableKey)
+  }
+
   def bucketThumb(key: String, requirementId: Int, filename: String) = UserAction(){ implicit user => implicit request =>
     Requirement.findById(requirementId).map { requirement =>
       val bf = Bucket(key).getFile(requirement, filename)

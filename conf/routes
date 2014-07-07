@@ -51,6 +51,7 @@ GET     /requests/:t/:p/:pid/:l/:s/:sD/:d/meta    controllers.Requests.indexMeta
 
 GET     /requests/new                             controllers.Requests.create
 GET     /requests/new/meta                        controllers.Requests.createMeta
+GET	    /requests/new/bucketKey			              controllers.Attachments.getNewBucketKey
 POST    /requests/new/attach/:k/:rId              controllers.Attachments.addToBucket(k: String, rId: Int)
 GET     /requests/new/thumb/:k/:rId/:f            controllers.Attachments.bucketThumb(k: String, rId: Int, f: String)
 GET     /requests/new/preview/:k/:rId/:f          controllers.Attachments.bucketPreview(k: String, rId: Int, f: String)

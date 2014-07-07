@@ -131,6 +131,7 @@ object Application extends Controller with Secured {
       Attachments.bucketDownload,
       Attachments.bucketPreview,
       Attachments.bucketThumb,
+      Attachments.getNewBucketKey,
       Attachments.unarchive,
       Attachments.preview,
       Attachments.download,

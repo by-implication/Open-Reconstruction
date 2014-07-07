@@ -61,47 +61,63 @@ object Requests extends Controller with Secured {
 
   def insert() = UserAction(){ implicit user => implicit request =>
 
-    val createForm: Form[(Req, String)] = Form(
+    val createForm: Form[Seq[(Req, String)]] = Form(
       mapping(
-        "amount" -> optional(projectAmount),
-        "description" -> nonEmptyText,
         "disasterId" -> number.verifying("No such disaster",
           id => Disaster.findById(id).isDefined
         ),
-        "location" -> nonEmptyText,
-        "projectTypeId" -> number,
-        "bucketKey" -> text
+        "reqs" -> seq(tuple(
+          "amount" -> optional(projectAmount),
+          "description" -> nonEmptyText,
+          "location" -> nonEmptyText,
+          "projectTypeId" -> number,
+          "bucketKey" -> text
+        ))
       )
-      ((amount, description, disasterId,
-        location, projectTypeId, bucketKey) => {
-        (Req(
-          amount = amount.getOrElse(0),
-          description = description,
-          disasterId = disasterId,
-          projectTypeId = projectTypeId,
-          location = location
-        ), bucketKey)
+      ((disasterId, reqs) => {
+        reqs.map { r =>
+          val (amount, description, location, projectTypeId, bucketKey) = r
+          (Req(
+            amount = amount.getOrElse(0),
+            description = description,
+            disasterId = disasterId,
+            projectTypeId = projectTypeId,
+            location = location
+          ), bucketKey)
+        }
       })
       (_ => None)
     )
 
 		createForm.bindFromRequest.fold(
+
 			Rest.formError(_),
-			_ match {
-        case (r, bucketKey) => {
+
+      rKeys => {
+
+  			val results: Seq[Either[Unit, Req]] = rKeys.map { case (r, bucketKey) => {
           r.copy(authorId = user.id, govUnitId = user.govUnitId).save().map { implicit r =>
             Event.newRequest().create().map { _ =>
               Checkpoint.push(user).map { _ =>
                 if(Bucket(bucketKey).dumpTo(r)){
-				          Rest.success(r.insertSeq:_*)
+  			          Right(r)
                 } else {
-                  Rest.serverError()
+                  Left()
                 }
-              }.getOrElse(Rest.serverError())
-            }.getOrElse(Rest.serverError())
-    			}.getOrElse(Rest.serverError())
-        }
+              }.getOrElse(Left())
+            }.getOrElse(Left())
+    			}.getOrElse(Left())
+        }}
+
+        val pResults = results.partition(_.isRight)
+
+        Rest.success(
+          "reqs" -> pResults._1.map(e => Json.obj(e.right.get.insertSeq:_*)),
+          "failures" -> pResults._2.size
+        )
+
       }
+
 		)
 
   }

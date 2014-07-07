@@ -10,14 +10,29 @@ requestCreation.controller = function(){
   this.requirementLevel = m.prop("Submission");
 
   this.preamble = m.prop(false);
-  this.input = {
-    amount: m.prop(0),
-    attachments: m.prop([]),
-    description: m.prop(""),
-    disasterId: m.prop(1),
-    location: m.prop(""),
-    projectTypeId: m.prop(1),
-    scopeOfWork: m.prop("Reconstruction")
+  this.disasterId = m.prop(1),
+  this.entries = [];
+  this.newEntry = function(bucketKey){
+    if(typeof bucketKey == "string"){
+      ctrl.entries.push({
+        description: m.prop(""),
+        amount: m.prop(0),
+        projectTypeId: m.prop(1),
+        location: m.prop(""),
+        attachments: m.prop([]),
+        bucketKey: bucketKey,
+        remove: function(){ ctrl.removeEntry(this); },
+        openLocationModal: function(){},
+        openAttachmentsModal: function(){}
+      });
+    } else {
+      bi.ajax(routes.controllers.Attachments.getNewBucketKey()).then(function (r){
+        ctrl.newEntry(r.bucketKey);
+      })
+    }
+  }
+  this.removeEntry = function (e){
+    this.entries.splice(this.entries.indexOf(e), 1);
   }
 
   this.submitButtonDisabled = m.prop(false);
@@ -94,10 +109,10 @@ requestCreation.controller = function(){
   }.bind(this);
 
   bi.ajax(routes.controllers.Requests.createMeta()).then(function (data){
-    this.info(data);
-    this.requirements(common.processReqts(data.requirements));
-    this.input.bucketKey = data.bucketKey;
-  }.bind(this));
+    ctrl.info(data);
+    ctrl.requirements(common.processReqts(data.requirements));
+    ctrl.newEntry(data.bucketKey);
+  });
 
   this.submitNewRequest = function(e){
     e.preventDefault();
