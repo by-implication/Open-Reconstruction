@@ -331,7 +331,7 @@ request.controller = function(){
         var dz = new Dropzone(elem, {
           url: routes.controllers.Attachments.add(this.id, reqt.id).url,
           previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
-          dictDefaultMessage: "Drop documents here, or click to browse.",
+          maxFiles: 1,
           clickable: true,
           autoDiscover: false,
           acceptedFiles: reqt.isImage ? "image/*" : ""
