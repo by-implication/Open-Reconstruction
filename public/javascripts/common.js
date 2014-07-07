@@ -2,7 +2,7 @@ var common = {};
 
 common.dropzonePreviewTemplate = m(".dz-preview.dz-file-preview", [
   m(".dz-details", [
-    m("img", {"data-dz-thumbnail": true}),
+    // m("img", {"data-dz-thumbnail": true}),
     m(".dz-filename", [
       m("span", {"data-dz-name": true}),
     ]),

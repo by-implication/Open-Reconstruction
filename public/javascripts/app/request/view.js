@@ -298,8 +298,22 @@ request.view = function(ctrl){
                                     m("span", {title: uploadDate}, helper.timeago(uploadDate)),
                                     " by ",
                                     m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
-                                    m("a", {href: routes.controllers.Attachments.preview(att.id).url}, "[PREVIEW]"),
-                                    canUpload ? m("a", {onclick: function(){ ctrl.archive(att); }}, "[ARCHIVE]") : ""
+                                    m("ul.button-group.round", [
+                                      m("li", [
+                                        m("a.button.tiny", {href: routes.controllers.Attachments.preview(att.id).url}, [
+                                          m("i.fa.fa-fw.fa-lg.fa-eye")
+                                        ]),
+                                      ]),
+                                      canUpload ? 
+                                        m("li", [
+                                          m("a.button.tiny", {onclick: function(){ ctrl.archive(att); }}, [
+                                            m("i.fa.fa-fw.fa-lg.fa-archive")
+                                          ])   
+                                        ])
+                                      : ""
+                                    ]),
+                                    
+                                    
                                   ]
                                 ) : (
                                   canUpload ?
