@@ -2,14 +2,14 @@ requestCreation.view = function(ctrl){
 
   function cancel(){ history.back(); }
 
-  function scopeLabel(scope){
-    switch(scope){
-      case "Reconstruction": return "Completely destroyed, and we need to rebuild it";
-      case "Repair": return "Partially damaged, and we need to repair it";
-      case "Prevention": return "Does not currently exist, and we need to build it for prevention";
-      default: return scope;
-    }
-  }
+  // function scopeLabel(scope){
+  //   switch(scope){
+  //     case "Reconstruction": return "Completely destroyed, and we need to rebuild it";
+  //     case "Repair": return "Partially damaged, and we need to repair it";
+  //     case "Prevention": return "Does not currently exist, and we need to build it for prevention";
+  //     default: return scope;
+  //   }
+  // }
 
   function projectTypeGroups(indexArr){
     return indexArr.map(function (i){
@@ -17,74 +17,6 @@ requestCreation.view = function(ctrl){
       return m("option", {value: projectType.id}, projectType.name);
     });
   }
-
-  var sections = [
-    {
-      icon: "fa-briefcase",
-      content: [
-        m("h2", "Basic Information"),
-      ]
-    },
-    {
-      icon: "fa-paperclip",
-      content: [
-        m(".header", [
-          m("h2", ["Documents"]),
-        ]),
-        m(".content", [
-          m(".row", [
-            m(".columns.medium-4", [
-              m("h4", [
-                "What documents do I need?"
-              ]),
-              ctrl.requirements().map(function (reqts, level){
-                var levelDict = [
-                  "Submission",
-                  "Agency Validation",
-                  "OCD Validation"
-                ];
-
-                return m("div", {class: level == 0 ? "current" : ""},
-                  [
-                    m("h2", levelDict[level]),
-                    m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
-                      var att = ctrl.attachmentFor(reqt);
-                      var uploadDate = att && new Date(att.dateUploaded);
-                      return m("li.document", [
-                        m("h4", [
-                          reqt.name
-                        ]),
-                        att ? m(
-                          "div", [
-                            m("a", {href: routes.controllers.Attachments.bucketDownload(att.key, reqt.id, att.filename).url}, att.filename),
-                            " uploaded ",
-                            m("span", {title: uploadDate}, helper.timeago(uploadDate)),
-                            " by ",
-                            m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
-                            m("a", {href: routes.controllers.Attachments.bucketPreview(att.key, reqt.id, att.filename).url}, "[PREVIEW]")
-                          ]
-                        ) : m("div.dropzone", {config: ctrl.initAttachmentDropzone(reqt)})
-                      ]);
-                    })])
-                  ]
-                );
-
-              })
-            ])
-          ]),
-        ])
-      ]
-    },
-    {
-      content: [
-        m("button", {disabled: ctrl.submitButtonDisabled(), onclick: function(e){
-          ctrl.submitButtonDisabled(true);
-          ctrl.submitNewRequest(e);
-        }}, "Submit"),
-        m("button", {type: "button", class: "alert", onclick: cancel}, "Cancel"),
-      ]
-    }
-  ]
 
   return app.template(ctrl.app, "New Request", {className: "detail"}, [
     common.banner("New Project Request"),
@@ -109,7 +41,7 @@ requestCreation.view = function(ctrl){
     m(".row", [
       m(".columns.large-12", [
         m(".card", [
-          m("form", {onsubmit: ctrl.submitNewRequest }, [
+          m("form", {onsubmit: ctrl.submitNewRequest}, [
             m(".section", [
               m("h2", ["Terms of Agreement"]),
               common.field(
@@ -171,7 +103,7 @@ requestCreation.view = function(ctrl){
                       ]),
                     ]),
                   ]),
-                  m("tbody", ctrl.entries.map(function (e){
+                  m("tbody", ctrl.entries.map(function(e){
                     return m("tr", [
                       m("td", [
                         m("input", {onchange: m.withAttr("value", e.description), type: "text", placeholder: "e.g. Reconstruction of a seawall for barangay A"}),
@@ -184,18 +116,18 @@ requestCreation.view = function(ctrl){
                           onchange: m.withAttr("value", e.projectTypeId),
                           value: e.projectTypeId()
                         }, [
-                          m("optgroup", {label: "Infrastructure"}, [
+                          m("optgroup", {label: "Infrastructure"},
                             projectTypeGroups([0, 10])
-                          ]),
-                          m("optgroup", {label: "Water"}, [
+                          ),
+                          m("optgroup", {label: "Water"},
                             projectTypeGroups([5, 7, 8, 9, 12, 13])
-                          ]),
-                          m("optgroup", {label: "Buildings"}, [
+                          ),
+                          m("optgroup", {label: "Buildings"},
                             projectTypeGroups([1, 3, 6, 11])
-                          ]),
-                          m("optgroup", {label: "Other"}, [
+                          ),
+                          m("optgroup", {label: "Other"},
                             projectTypeGroups([2, 4, 14])
-                          ]),
+                          ),
                         ])
                       ]),
                       m("td", [
