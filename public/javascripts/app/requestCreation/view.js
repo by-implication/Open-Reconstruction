@@ -145,7 +145,7 @@ requestCreation.view = function(ctrl){
                 "Specific Requests"
               ]),
               m("p.help", [
-                "Enter details below"
+                "Each of these requests will get their own page, with their own statuses and tracking."
               ]),
               m("table", [
                 m("thead", [
