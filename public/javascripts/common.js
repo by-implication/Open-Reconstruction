@@ -319,7 +319,6 @@ common.stickyTabs.config = function(ctrl){
         idPosDict = _.chain(ctrl.tabs())
           .map(function(t){
             var item = t.href;
-            // console.log($(item).position().top, $(item).height());
             return [$(item).position().top + $(item).height(), item];
           })
           .object()
@@ -336,7 +335,6 @@ common.stickyTabs.config = function(ctrl){
           });
           var hash = idPosDict[closestPos];
           if ((location.hash != hash)){
-            // console.log(hash);
             m.startComputation();
             common.stickyTabs.locHandler(hash);
             m.endComputation();
