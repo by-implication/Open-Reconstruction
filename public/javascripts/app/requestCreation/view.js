@@ -158,6 +158,12 @@ requestCreation.view = function(ctrl){
                     m("th", [
                       "Location"
                     ]),
+                    m("th", [
+                      "Attachments"
+                    ]),
+                    m("th", [
+                      "Edit"
+                    ]),
                   ]),
                 ]),
                 m("tbody", [
@@ -189,6 +195,12 @@ requestCreation.view = function(ctrl){
                     ]),
                     m("td", [
                       "location"
+                    ]),
+                    m("td", [
+                      "attachments"
+                    ]),
+                    m("td", [
+                      "delete button"
                     ]),
                   ]),
                 ]),
