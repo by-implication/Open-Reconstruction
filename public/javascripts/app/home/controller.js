@@ -15,13 +15,15 @@ home.controller = function(){
       proposals: qtyAmt(),
       saro: qtyAmt(),
       projects: qtyAmt(),
-      fundedProjects: qtyAmt()
+      fundedProjects: qtyAmt(),
+      dpwh: qtyAmt()
     },
     yolanda: {
       proposals: qtyAmt(),
       saro: qtyAmt(),
       projects: qtyAmt(),
-      fundedProjects: qtyAmt()
+      fundedProjects: qtyAmt(),
+      dpwh: qtyAmt()
     }
   });
 

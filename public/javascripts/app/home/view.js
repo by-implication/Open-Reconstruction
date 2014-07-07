@@ -145,9 +145,9 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h2", [
-                        "13 ",
+                        ctrl.vizData().yolanda.dpwh.qty + " ",
                         m("span", "SAROs"),
-                        m("h6", "PHP " + helper.truncate(2161379935, 2) )
+                        m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.dpwh.amt, 2) )
                       ]),
                     ])
                   ])
@@ -159,9 +159,9 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h2", [
-                        "3 ",
+                        ctrl.vizData().bohol.dpwh.qty + " ",
                         m("span", "SAROs"),
-                        m("h6", "PHP " + helper.truncate(201597043, 2) )
+                        m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.dpwh.amt, 2) )
                       ]),
                     ])
                   ])
