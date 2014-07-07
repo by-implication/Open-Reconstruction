@@ -29,7 +29,7 @@ requestCreation.view = function(ctrl){
       }
     ),
     m(".row", [
-      m(".columns.large-12", [
+      m(".columns.large-8.large-offset-2", [
         m(".card", [
           m("form", {onsubmit: ctrl.submitNewRequest}, [
             m(".section", [
@@ -70,72 +70,127 @@ requestCreation.view = function(ctrl){
                 m("p.help", [
                   "Each of these requests will get their own page, with their own statuses and tracking."
                 ]),
-                m("table", [
-                  m("thead", [
-                    m("tr", [
-                      m("th", [
-                        "Description"
+                m("ul", ctrl.entries.map(function(e){
+                  return m("li.req", [
+                    m(".row", [
+                      m(".columns.medium-6", [
+                        m("label", [
+                          "Description",
+                          m("input", {onchange: m.withAttr("value", e.description), type: "text", placeholder: "e.g. Reconstruction of a seawall for barangay A"}),
+                        ]),
                       ]),
-                      m("th", [
-                        "Estimated Amount"
+                      m(".columns.medium-3", [
+                        m("label", [
+                          "Type",
+                          m("select", {
+                            onchange: m.withAttr("value", e.projectTypeId),
+                            value: e.projectTypeId()
+                          }, [
+                            m("optgroup", {label: "Infrastructure"},
+                              projectTypeGroups([0, 10])
+                            ),
+                            m("optgroup", {label: "Water"},
+                              projectTypeGroups([5, 7, 8, 9, 12, 13])
+                            ),
+                            m("optgroup", {label: "Buildings"},
+                              projectTypeGroups([1, 3, 6, 11])
+                            ),
+                            m("optgroup", {label: "Other"},
+                              projectTypeGroups([2, 4, 14])
+                            ),
+                          ])
+                        ]),
                       ]),
-                      m("th", [
-                        "Type"
-                      ]),
-                      m("th", [
-                        "Location"
-                      ]),
-                      m("th", [
-                        "Attachments"
-                      ]),
-                      m("th", [
-                        "Edit"
+                      m(".columns.medium-3", [
+                        m("label", [
+                          "Estimated Amount",
+                          m("input", {type: "number", onchange: m.withAttr("value", e.amount)}),
+                        ]),
                       ]),
                     ]),
-                  ]),
-                  m("tbody", ctrl.entries.map(function(e){
-                    return m("tr", [
-                      m("td", [
-                        m("input", {onchange: m.withAttr("value", e.description), type: "text", placeholder: "e.g. Reconstruction of a seawall for barangay A"}),
+                    m(".row", [
+                      m(".columns.medium-12", [
+                        m("ul.button-group.round.right", [
+                          m("li", [
+                            m("button[type=button].tiny", {onclick: e.openLocationModal}, "Set location")
+                          ]),
+                          m("li", [
+                            m("button[type=button].tiny", {onclick: e.openAttachmentsModal}, "Add attachments")
+                          ]),
+                          m("li", [
+                            m("button.alert[type=button].tiny", {onclick: e.remove}, "Delete")
+                          ]),
+                        ]),
                       ]),
-                      m("td", [
-                        m("input", {type: "number", onchange: m.withAttr("value", e.amount)}),
-                      ]),
-                      m("td", [
-                        m("select", {
-                          onchange: m.withAttr("value", e.projectTypeId),
-                          value: e.projectTypeId()
-                        }, [
-                          m("optgroup", {label: "Infrastructure"},
-                            projectTypeGroups([0, 10])
-                          ),
-                          m("optgroup", {label: "Water"},
-                            projectTypeGroups([5, 7, 8, 9, 12, 13])
-                          ),
-                          m("optgroup", {label: "Buildings"},
-                            projectTypeGroups([1, 3, 6, 11])
-                          ),
-                          m("optgroup", {label: "Other"},
-                            projectTypeGroups([2, 4, 14])
-                          ),
-                        ])
-                      ]),
-                      m("td", [
-                        m("td", [
-                          m("button[type=button].tiny", {onclick: e.openLocationModal}, "Set location")
-                        ])
-                      ]),
-                      m("td", [
-                        m("td", [
-                          m("button[type=button].tiny", {onclick: e.openAttachmentsModal}, "Add attachments")
-                        ])
-                      ]),
-                      m("td", [
-                        m("button.alert[type=button].tiny", {onclick: e.remove}, "Delete")
-                      ])
-                    ])
-                  })),
-                ]),
+                    ]),
+                  ])
+                })),
+                // m("table", [
+                //   m("thead", [
+                //     m("tr", [
+                //       m("th", [
+                //         "Description"
+                //       ]),
+                //       m("th", [
+                //         "Estimated Amount"
+                //       ]),
+                //       m("th", [
+                //         "Type"
+                //       ]),
+                //       m("th", [
+                //         "Location"
+                //       ]),
+                //       m("th", [
+                //         "Attachments"
+                //       ]),
+                //       m("th", [
+                //         "Edit"
+                //       ]),
+                //     ]),
+                //   ]),
+                //   m("tbody", ctrl.entries.map(function(e){
+                //     return m("tr", [
+                //       m("td", [
+                //         m("input", {onchange: m.withAttr("value", e.description), type: "text", placeholder: "e.g. Reconstruction of a seawall for barangay A"}),
+                //       ]),
+                //       m("td", [
+                //         m("input", {type: "number", onchange: m.withAttr("value", e.amount)}),
+                //       ]),
+                //       m("td", [
+                //         m("select", {
+                //           onchange: m.withAttr("value", e.projectTypeId),
+                //           value: e.projectTypeId()
+                //         }, [
+                //           m("optgroup", {label: "Infrastructure"},
+                //             projectTypeGroups([0, 10])
+                //           ),
+                //           m("optgroup", {label: "Water"},
+                //             projectTypeGroups([5, 7, 8, 9, 12, 13])
+                //           ),
+                //           m("optgroup", {label: "Buildings"},
+                //             projectTypeGroups([1, 3, 6, 11])
+                //           ),
+                //           m("optgroup", {label: "Other"},
+                //             projectTypeGroups([2, 4, 14])
+                //           ),
+                //         ])
+                //       ]),
+                //       m("td", [
+                //         m("td", [
+                //           m("button[type=button].tiny", {onclick: e.openLocationModal}, "Set location")
+                //         ])
+                //       ]),
+                //       m("td", [
+                //         m("td", [
+                //           m("button[type=button].tiny", {onclick: e.openAttachmentsModal}, "Add attachments")
+                //         ])
+                //       ]),
+                //       m("td", [
+                //         m("button.alert[type=button].tiny", {onclick: e.remove}, "Delete")
+                //       ])
+                //     ])
+                //   })),
+                // ]),
                 m("button", {type: "button", onclick: ctrl.newEntry}, [
                   "Add new entry"
                 ]),
