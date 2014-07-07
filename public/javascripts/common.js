@@ -549,3 +549,23 @@ common.dateField = function(label, timestampProp, htmlProp){
     })})
   );
 }
+
+common.processReqts = function(reqts){
+  var _reqts = [];
+  reqts.forEach(function (r){
+    if(!_reqts[r.level]){
+      _reqts[r.level] = [];
+    }
+    _reqts[r.level].push(r);
+  });
+  return _reqts;
+}
+
+common.attachmentFor = function(reqt){
+  var a = this.attachments();
+  for(var i in a){
+    if(a[i].requirementId == reqt.id){
+      return a[i];
+    }
+  }
+}

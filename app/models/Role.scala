@@ -130,7 +130,7 @@ case class Permission(value: Int)
 
 object Permission {
 
-  val CREATE_REQUESTS = Permission(1)
+  // val CREATE_REQUESTS = Permission(1)
   val VALIDATE_REQUESTS = Permission(2)
   val EDIT_REQUESTS = Permission(3)
   val IMPLEMENT_REQUESTS = Permission(4)
@@ -139,7 +139,6 @@ object Permission {
   val CREATE_LEGACY_REQUESTS = Permission(7)
 
   def json = Json.obj(
-    "CREATE_REQUESTS" -> CREATE_REQUESTS.value,
     "VALIDATE_REQUESTS" -> VALIDATE_REQUESTS.value,
     "EDIT_REQUESTS" -> EDIT_REQUESTS.value,
     "IMPLEMENT_REQUESTS" -> IMPLEMENT_REQUESTS.value,

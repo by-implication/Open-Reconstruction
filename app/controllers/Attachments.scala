@@ -39,6 +39,7 @@ object Attachments extends Controller with Secured {
             "key" -> key,
             "filename" -> upload.filename,
             "dateUploaded" -> Time.now,
+            "requirementId" -> requirementId,
             "uploader" -> Json.obj(
               "id" -> user.id,
               "name" -> user.name

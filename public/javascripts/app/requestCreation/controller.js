@@ -1,5 +1,5 @@
 requestCreation.controller = function(){
-  var self = this;
+  var ctrl = this;
   this.app = new app.controller();
   this.info = new m.prop({
     projectTypes: [],
@@ -22,57 +22,32 @@ requestCreation.controller = function(){
 
   this.submitButtonDisabled = m.prop(false);
 
-  this.attachments = m.prop({
-    imgs: [],
-    docs: []
-  })
+  this.requirements = m.prop([]);
+  this.attachments = m.prop([]);
 
-  this.initImageDropzone = function(elem, isInit){
-    if(!isInit){
+  this.initAttachmentDropzone = function(reqt){
+    return function(elem, isInit){
+      if(!isInit){
 
-      var dz = new Dropzone(elem, {
-        url: routes.controllers.Attachments.addToBucket(this.input.bucketKey, "img").url,
-        previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
-        dictDefaultMessage: "Drop photos here, or click to browse.",
-        clickable: true,
-        autoDiscover: false,
-        thumbnailWidth: 128,
-        thumbnailHeight: 128,
-        acceptedFiles: "image/*"
-      })
+        var dz = new Dropzone(elem, {
+          url: routes.controllers.Attachments.addToBucket(ctrl.input.bucketKey, reqt.id).url,
+          previewTemplate: m.stringify(common.dropzonePreviewTemplate),
+          dictDefaultMessage: "Drop photos here, or click to browse.",
+          clickable: true,
+          autoDiscover: false,
+          thumbnailWidth: 128,
+          thumbnailHeight: 128,
+          acceptedFiles: reqt.isImage ? "image/*" : ""
+        })
 
-      dz.on("success", function (_, r){
-        this.attachments().imgs.push(r);
-        m.redraw();
-      }.bind(this));
+        dz.on("success", function (_, r){
+          ctrl.attachments().push(r);
+          m.redraw();
+        }.bind(this));
 
+      }
     }
-  }.bind(this);
-
-  this.initDocDropzone = function(elem, isInit){
-    if(!isInit){
-
-      var dz = new Dropzone(elem, {
-        url: routes.controllers.Attachments.addToBucket(this.input.bucketKey, "doc").url,
-        previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
-        dictDefaultMessage: "Drop documents here, or click to browse. We recommend pdfs and doc files.",
-        clickable: true,
-        autoDiscover: false
-      });
-
-      dz.on("success", function (_, r){
-        this.attachments().docs.push(r);
-        m.redraw();
-      }.bind(this));
-
-    }
-  }.bind(this);
-
-  // this.configShowForm = function(elem){
-  //   window.setTimeout(function(){
-  //     elem.classList.add("expand");
-  //   }, 0)
-  // }
+  }
 
   this.initMap = function(elem, isInit){
 
@@ -111,7 +86,7 @@ requestCreation.controller = function(){
           editableLayers.addLayer(layer);
           editableLayers.openPopup();
 
-          self.input.location(strCoords);
+          ctrl.input.location(strCoords);
         });
       }, 100)
     }
@@ -120,10 +95,11 @@ requestCreation.controller = function(){
 
   bi.ajax(routes.controllers.Requests.createMeta()).then(function (data){
     this.info(data);
+    this.requirements(common.processReqts(data.requirements));
     this.input.bucketKey = data.bucketKey;
   }.bind(this));
 
-  this.submitNewRequest = function(e){;
+  this.submitNewRequest = function(e){
     e.preventDefault();
     if(this.preamble()) {
 
@@ -138,4 +114,7 @@ requestCreation.controller = function(){
       alert('To avoid double-budgeting, please make sure to request for assistance only once!');
     }
   }.bind(this);
+
+  this.attachmentFor = common.attachmentFor;
+
 }

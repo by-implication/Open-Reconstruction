@@ -206,15 +206,7 @@ request.controller = function(){
 
     this.author(data.author);
     this.govUnit(data.govUnit);
-
-    var _reqs = [];
-    data.requirements.forEach(function (r){
-      if(!_reqs[r.level]){
-        _reqs[r.level] = [];
-      }
-      _reqs[r.level].push(r);
-    })
-    this.requirements(_reqs);
+    this.requirements(common.processReqts(data.requirements));
 
     this.attachments(data.attachments);
     this.history(data.history);
@@ -354,14 +346,6 @@ request.controller = function(){
       }
     }.bind(this);
   }
-  this.attachmentFor = function(reqt){
-    var a = this.attachments();
-    for(var i in a){
-      if(a[i].requirementId == reqt.id){
-        return a[i];
-      }
-    }
-  }
 
   this.archive = function(att){
     bi.ajax(routes.controllers.Attachments.archive(att.id)).then(function (r){
@@ -370,5 +354,7 @@ request.controller = function(){
       ctrl.history().unshift(r.event);
     });
   }
+
+  this.attachmentFor = common.attachmentFor;
 
 }
