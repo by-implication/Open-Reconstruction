@@ -142,58 +142,60 @@ requestCreation.view = function(ctrl){
         ]),
         m("section.alt", [
           m(".row", [
-            m("table", [
-              m("thead", [
-                m("tr", [
-                  m("th", [
-                    "Description"
+            m(".columns.medium-12", [
+              m("table", [
+                m("thead", [
+                  m("tr", [
+                    m("th", [
+                      "Description"
+                    ]),
+                    m("th", [
+                      "Estimated Amount"
+                    ]),
+                    m("th", [
+                      "Type"
+                    ]),
+                    m("th", [
+                      "Location"
+                    ]),
                   ]),
-                  m("th", [
-                    "Estimated Amount"
-                  ]),
-                  m("th", [
-                    "Type"
-                  ]),
-                  m("th", [
-                    "Location"
+                ]),
+                m("tbody", [
+                  m("tr", [
+                    m("td", [
+                      m("input", {onchange: m.withAttr("value", ctrl.input.description), type: "text", placeholder: "e.g. Reconstruction of a seawall for barangay A"}),
+                    ]),
+                    m("td", [
+                      m("input", {type: "number", onchange: m.withAttr("value", ctrl.input.amount)}),
+                    ]),
+                    m("td", [
+                      m("select", {
+                        onchange: m.withAttr("value", ctrl.input.projectTypeId),
+                        value: ctrl.input.projectTypeId()
+                      }, [
+                        m("optgroup", {label: "Infrastructure"}, [
+                          projectTypeGroups([0, 10])
+                        ]),
+                        m("optgroup", {label: "Water"}, [
+                          projectTypeGroups([5, 7, 8, 9, 12, 13])
+                        ]),
+                        m("optgroup", {label: "Buildings"}, [
+                          projectTypeGroups([1, 3, 6, 11])
+                        ]),
+                        m("optgroup", {label: "Other"}, [
+                          projectTypeGroups([2, 4, 14])
+                        ]),
+                      ])
+                    ]),
+                    m("td", [
+                      "location"
+                    ]),
                   ]),
                 ]),
               ]),
-              m("tbody", [
-                m("tr", [
-                  m("td", [
-                    m("input", {onchange: m.withAttr("value", ctrl.input.description), type: "text", placeholder: "e.g. Reconstruction of a seawall for barangay A"}),
-                  ]),
-                  m("td", [
-                    m("input", {type: "number", onchange: m.withAttr("value", ctrl.input.amount)}),
-                  ]),
-                  m("td", [
-                    m("select", {
-                      onchange: m.withAttr("value", ctrl.input.projectTypeId),
-                      value: ctrl.input.projectTypeId()
-                    }, [
-                      m("optgroup", {label: "Infrastructure"}, [
-                        projectTypeGroups([0, 10])
-                      ]),
-                      m("optgroup", {label: "Water"}, [
-                        projectTypeGroups([5, 7, 8, 9, 12, 13])
-                      ]),
-                      m("optgroup", {label: "Buildings"}, [
-                        projectTypeGroups([1, 3, 6, 11])
-                      ]),
-                      m("optgroup", {label: "Other"}, [
-                        projectTypeGroups([2, 4, 14])
-                      ]),
-                    ])
-                  ]),
-                  m("td", [
-                    "location"
-                  ]),
-                ]),
+              m("button", {type: "button"}, [
+                "Add new entry"
               ]),
-            ]),
-            m("button", {type: "button"}, [
-              "Add new entry"
             ]),
             // m("ul", [
             //   m("li.card", [
