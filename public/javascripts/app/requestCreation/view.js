@@ -2,15 +2,6 @@ requestCreation.view = function(ctrl){
 
   function cancel(){ history.back(); }
 
-  // function scopeLabel(scope){
-  //   switch(scope){
-  //     case "Reconstruction": return "Completely destroyed, and we need to rebuild it";
-  //     case "Repair": return "Partially damaged, and we need to repair it";
-  //     case "Prevention": return "Does not currently exist, and we need to build it for prevention";
-  //     default: return scope;
-  //   }
-  // }
-
   function projectTypeGroups(indexArr){
     return indexArr.map(function (i){
       var projectType = ctrl.info().projectTypes[i];
@@ -20,24 +11,23 @@ requestCreation.view = function(ctrl){
 
   return app.template(ctrl.app, "New Request", {className: "detail"}, [
     common.banner("New Project Request"),
-    [ // modals
-      common.modal.view(
-        ctrl.locModal,
-        function (ctrl){
-          return common.field(
-            "Location",
-            m("div", {id: "map", config: ctrl.initMap}),
-            "Tell us where the project is. Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map."
-          )
-        }
-      ),
-      common.modal.view(
-        ctrl.attModal,
-        function (ctrl){
-          return "Attachments";
-        }
-      )
-    ],
+    // modals
+    common.modal.view(
+      ctrl.locModal,
+      function (ctrl){
+        return common.field(
+          "Location",
+          m("div", {id: "map", config: ctrl.initMap}),
+          "Tell us where the project is. Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map."
+        )
+      }
+    ),
+    common.modal.view(
+      ctrl.attModal,
+      function (ctrl){
+        return "Attachments";
+      }
+    ),
     m(".row", [
       m(".columns.large-12", [
         m(".card", [
