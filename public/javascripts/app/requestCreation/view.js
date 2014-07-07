@@ -209,7 +209,7 @@ requestCreation.view = function(ctrl){
                         ])
                       ]),
                       m("td", [
-                        m("button.alert[type=button].tiny", {onclick: e.remove}, "Baleeted!")
+                        m("button.alert[type=button].tiny", {onclick: e.remove}, "Delete")
                       ])
                     ])
                   })),
