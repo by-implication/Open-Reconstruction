@@ -143,6 +143,12 @@ requestCreation.view = function(ctrl){
         m("section.alt", [
           m(".row", [
             m(".columns.medium-12", [
+              m("h2", [
+                "Specific Requests"
+              ]),
+              m("p.help", [
+                "this is what will happen"
+              ]),
               m("table", [
                 m("thead", [
                   m("tr", [
