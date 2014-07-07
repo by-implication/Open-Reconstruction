@@ -560,11 +560,10 @@ common.processReqts = function(reqts){
   return _reqts;
 }
 
-common.attachmentFor = function(reqt){
-  var a = this.attachments();
-  for(var i in a){
-    if(a[i].requirementId == reqt.id){
-      return a[i];
+common.attachmentFor = function(reqt, atts){
+  for(var i in atts){
+    if(atts[i].requirementId == reqt.id){
+      return atts[i];
     }
   }
 }

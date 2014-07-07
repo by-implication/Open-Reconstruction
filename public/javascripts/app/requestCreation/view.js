@@ -16,74 +16,6 @@ requestCreation.view = function(ctrl){
     });
   }
 
-  var sections = [
-    {
-      icon: "fa-briefcase",
-      content: [
-        m("h2", "Basic Information"),
-      ]
-    },
-    {
-      icon: "fa-paperclip",
-      content: [
-        m(".header", [
-          m("h2", ["Documents"]),
-        ]),
-        m(".content", [
-          m(".row", [
-            m(".columns.medium-4", [
-              m("h4", [
-                "What documents do I need?"
-              ]),
-              ctrl.requirements().map(function (reqts, level){
-                var levelDict = [
-                  "Submission",
-                  "Agency Validation",
-                  "OCD Validation"
-                ];
-
-                return m("div", {class: level == 0 ? "current" : ""},
-                  [
-                    m("h2", levelDict[level]),
-                    m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
-                      var att = ctrl.attachmentFor(reqt);
-                      var uploadDate = att && new Date(att.dateUploaded);
-                      return m("li.document", [
-                        m("h4", [
-                          reqt.name
-                        ]),
-                        att ? m(
-                          "div", [
-                            m("a", {href: routes.controllers.Attachments.bucketDownload(att.key, reqt.id, att.filename).url}, att.filename),
-                            " uploaded ",
-                            m("span", {title: uploadDate}, helper.timeago(uploadDate)),
-                            " by ",
-                            m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
-                            m("a", {href: routes.controllers.Attachments.bucketPreview(att.key, reqt.id, att.filename).url}, "[PREVIEW]")
-                          ]
-                        ) : m("div.dropzone", {config: ctrl.initAttachmentDropzone(reqt)})
-                      ]);
-                    })])
-                  ]
-                );
-
-              })
-            ])
-          ]),
-        ])
-      ]
-    },
-    {
-      content: [
-        m("button", {disabled: ctrl.submitButtonDisabled(), onclick: function(e){
-          ctrl.submitButtonDisabled(true);
-          ctrl.submitNewRequest(e);
-        }}, "Submit"),
-        m("button", {type: "button", class: "alert", onclick: ctrl.cancel}, "Cancel"),
-      ]
-    }
-  ]
-
   return app.template(ctrl.app, "New Request", [
     common.banner("New Project Request"),
     [ // modals
@@ -104,7 +36,37 @@ requestCreation.view = function(ctrl){
         function (ctrl){
           return [
             "Attachments",
-            ctrl.content()
+            ctrl.requirements().map(function (reqts, level){
+              var levelDict = [
+                "Submission",
+                "Agency Validation",
+                "OCD Validation"
+              ];
+              return m("div", {class: level == 0 ? "current" : ""},
+                [
+                  m("h2", levelDict[level]),
+                  m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
+                    var att = ctrl.getFor(reqt, ctrl.activeEntry().attachments());
+                    var uploadDate = att && new Date(att.dateUploaded);
+                    return m("li.document", [
+                      m("h4", [
+                        reqt.name
+                      ]),
+                      att ? m(
+                        "div", [
+                          m("a", {href: routes.controllers.Attachments.bucketDownload(att.key, reqt.id, att.filename).url}, att.filename),
+                          " uploaded ",
+                          m("span", {title: uploadDate}, helper.timeago(uploadDate)),
+                          " by ",
+                          m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
+                          m("a", {href: routes.controllers.Attachments.bucketPreview(att.key, reqt.id, att.filename).url}, "[PREVIEW]")
+                        ]
+                      ) : m("div.dropzone", {config: ctrl.initDropzone(ctrl.activeEntry(), reqt)})
+                    ]);
+                  })])
+                ]
+              );
+            })
           ];
         }
       )
@@ -206,7 +168,9 @@ requestCreation.view = function(ctrl){
                       ))
                     ]),
                     m("td", [
-                      m("td", m("button[type=button]", {onclick: e.openAttachmentsModal}, "Add attachments"))
+                      m("td", m("button[type=button]", {onclick: e.openAttachmentsModal}, "Add attachments" +
+                        (e.attachments().length ? " (" + e.attachments().length + " uploaded)" : "")
+                      ))
                     ]),
                     m("td", m("button.alert[type=button]", {onclick: e.remove}, "Baleeted!"))
                   ])

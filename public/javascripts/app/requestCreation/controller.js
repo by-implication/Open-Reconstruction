@@ -10,6 +10,7 @@ requestCreation.controller = function(){
   });
 
   this.requirementLevel = m.prop("Submission");
+  this.activeEntry = m.prop();
 
   this.locModal = new common.modal.controller({
     initMap: function(elem, isInit){
@@ -48,19 +49,45 @@ requestCreation.controller = function(){
             editableLayers.addLayer(layer);
             editableLayers.openPopup();
 
-            ctrl.activeEntry.location(strCoords);
+            ctrl.activeEntry().location(strCoords);
           });
         }, 100)
       }
     }
   });
 
-  this.attModal = new common.modal.controller();
+  this.attModal = new common.modal.controller({
+    requirements: m.prop([]),
+    getFor: common.attachmentFor,
+    activeEntry: ctrl.activeEntry,
+    initDropzone: function(entry, reqt){
+      return function(elem, isInit){
+        if(!isInit){
+
+          var dz = new Dropzone(elem, {
+            url: routes.controllers.Attachments.addToBucket(entry.bucketKey, reqt.id).url,
+            previewTemplate: m.stringify(common.dropzonePreviewTemplate),
+            dictDefaultMessage: "Drop photos here, or click to browse.",
+            clickable: true,
+            autoDiscover: false,
+            thumbnailWidth: 128,
+            thumbnailHeight: 128,
+            acceptedFiles: reqt.isImage ? "image/*" : ""
+          })
+
+          dz.on("success", function (_, r){
+            entry.attachments().push(r);
+            m.redraw();
+          }.bind(this));
+
+        }
+      }
+    }
+  });
 
   this.preamble = m.prop(false);
   this.disasterId = m.prop(1),
   this.entries = [];
-  this.activeEntry = null;
   this.newEntry = function(bucketKey){
     if(typeof bucketKey == "string"){
 
@@ -73,11 +100,11 @@ requestCreation.controller = function(){
         bucketKey: bucketKey,
         remove: function(){ ctrl.removeEntry(this); },
         openLocationModal: function(){
-          ctrl.activeEntry = entry;
+          ctrl.activeEntry(entry);
           ctrl.locModal.show();
         },
         openAttachmentsModal: function(){
-          ctrl.activeEntry = entry;
+          ctrl.activeEntry(entry);
           ctrl.attModal.show();
         }
       }
@@ -96,36 +123,9 @@ requestCreation.controller = function(){
 
   this.submitButtonDisabled = m.prop(false);
 
-  this.requirements = m.prop([]);
-  this.attachments = m.prop([]);
-
-  this.initAttachmentDropzone = function(reqt){
-    return function(elem, isInit){
-      if(!isInit){
-
-        var dz = new Dropzone(elem, {
-          url: routes.controllers.Attachments.addToBucket(ctrl.input.bucketKey, reqt.id).url,
-          previewTemplate: m.stringify(common.dropzonePreviewTemplate),
-          dictDefaultMessage: "Drop photos here, or click to browse.",
-          clickable: true,
-          autoDiscover: false,
-          thumbnailWidth: 128,
-          thumbnailHeight: 128,
-          acceptedFiles: reqt.isImage ? "image/*" : ""
-        })
-
-        dz.on("success", function (_, r){
-          ctrl.attachments().push(r);
-          m.redraw();
-        }.bind(this));
-
-      }
-    }
-  }
-
   bi.ajax(routes.controllers.Requests.createMeta()).then(function (data){
     ctrl.info(data);
-    ctrl.requirements(common.processReqts(data.requirements));
+    ctrl.attModal.requirements(common.processReqts(data.requirements));
     ctrl.newEntry(data.bucketKey);
   });
 
@@ -144,7 +144,5 @@ requestCreation.controller = function(){
       alert('To avoid double-budgeting, please make sure to request for assistance only once!');
     }
   }.bind(this);
-
-  this.attachmentFor = common.attachmentFor;
 
 }
