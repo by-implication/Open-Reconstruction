@@ -191,12 +191,18 @@ requestCreation.view = function(ctrl){
                         ])
                       ]),
                       m("td", [
-                        m("td", m("button[type=button]", {onclick: e.openLocationModal}, "Set location"))
+                        m("td", [
+                          m("button[type=button].tiny", {onclick: e.openLocationModal}, "Set location")
+                        ])
                       ]),
                       m("td", [
-                        m("td", m("button[type=button]", {onclick: e.openAttachmentsModal}, "Add attachments"))
+                        m("td", [
+                          m("button[type=button].tiny", {onclick: e.openAttachmentsModal}, "Add attachments")
+                        ])
                       ]),
-                      m("td", m("button.alert[type=button]", {onclick: e.remove}, "Baleeted!"))
+                      m("td", [
+                        m("button.alert[type=button].tiny", {onclick: e.remove}, "Baleeted!")
+                      ])
                     ])
                   })),
                 ]),
