@@ -98,44 +98,40 @@ requestCreation.view = function(ctrl){
               m("h4", [
                 "What documents do I need?"
               ]),
-              request.requirements(ctrl)
-            ]),
-            m(".columns.medium-8", [
-              m("div.dropzone", {config: ctrl.initDocDropzone}),
-              ctrl.attachments().docs.length ?
-                m("table.doc-list", [
-                  m("thead", [
-                    m("tr", [
-                      m("td", "Filename"),
-                      m("td", "Date Uploaded"),
-                      m("td", "Uploader"),
-                      m("td", "Actions")
-                    ])
-                  ]),
-                  m("tbody", [
-                    ctrl.attachments().docs.map(function (doc){
-                      return m("tr", [
-                        m("td", doc.filename),
-                        m("td", common.displayDate(doc.dateUploaded)),
-                        m("td", [
-                          m("a", {href: routes.controllers.Users.view(doc.uploader.id).url, config: m.route}, doc.uploader.name)
+              ctrl.requirements().map(function (reqts, level){
+                var levelDict = [
+                  "Submission",
+                  "Agency Validation",
+                  "OCD Validation"
+                ];
+
+                return m("div", {class: level == 0 ? "current" : ""},
+                  [
+                    m("h2", levelDict[level]),
+                    m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
+                      var att = ctrl.attachmentFor(reqt);
+                      var uploadDate = att && new Date(att.dateUploaded);
+                      return m("li.document", [
+                        m("h4", [
+                          reqt.name
                         ]),
-                        m("td", [
-                          m("a", {title: "Preview", href: routes.controllers.Attachments.bucketPreview(doc.key, "doc", doc.filename).url, target: "_blank"}, [
-                            m("i.fa.fa-lg.fa-fw.fa-eye"),
-                          ]),
-                          m("a", {title: "Download", href: routes.controllers.Attachments.bucketDownload(doc.key, "doc", doc.filename).url}, [
-                            m("i.fa.fa-lg.fa-fw.fa-download"),
-                          ])
-                        ])
-                      ])
-                    })
-                  ])
-                ])
-              : m("h2.empty", [
-                "No documents have been uploaded yet."
-              ])
-            ]),
+                        att ? m(
+                          "div", [
+                            m("a", {href: routes.controllers.Attachments.bucketDownload(att.key, reqt.id, att.filename).url}, att.filename),
+                            " uploaded ",
+                            m("span", {title: uploadDate}, helper.timeago(uploadDate)),
+                            " by ",
+                            m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
+                            m("a", {href: routes.controllers.Attachments.bucketPreview(att.key, reqt.id, att.filename).url}, "[PREVIEW]")
+                          ]
+                        ) : m("div.dropzone", {config: ctrl.initAttachmentDropzone(reqt)})
+                      ]);
+                    })])
+                  ]
+                );
+
+              })
+            ])
           ]),
         ])
       ]

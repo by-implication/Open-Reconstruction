@@ -206,15 +206,7 @@ request.controller = function(){
 
     this.author(data.author);
     this.govUnit(data.govUnit);
-
-    var _reqs = [];
-    data.requirements.forEach(function (r){
-      if(!_reqs[r.level]){
-        _reqs[r.level] = [];
-      }
-      _reqs[r.level].push(r);
-    })
-    this.requirements(_reqs);
+    this.requirements(common.processReqts(data.requirements));
 
     this.attachments(data.attachments);
     this.history(data.history);
@@ -355,25 +347,6 @@ request.controller = function(){
     }.bind(this);
   }
 
-// <<<<<<< HEAD
-//       var dz = new Dropzone(elem, {
-//         url: routes.controllers.Attachments.add(this.id, "doc").url,
-//         previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
-//         dictDefaultMessage: "Drop documents here or click to browse.",
-//         clickable: true,
-//         autoDiscover: false
-//       });
-// =======
-  this.attachmentFor = function(reqt){
-    var a = this.attachments();
-    for(var i in a){
-      if(a[i].requirementId == reqt.id){
-        return a[i];
-      }
-    }
-  }
-// >>>>>>> 78d994facdd137a5e84689ff30db63f27596a819
-
   this.archive = function(att){
     bi.ajax(routes.controllers.Attachments.archive(att.id)).then(function (r){
       var a = ctrl.attachments();
@@ -381,5 +354,7 @@ request.controller = function(){
       ctrl.history().unshift(r.event);
     });
   }
+
+  this.attachmentFor = common.attachmentFor;
 
 }

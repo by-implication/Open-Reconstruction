@@ -291,12 +291,6 @@ request.view = function(ctrl){
                                 m("h4", [
                                   reqt.name
                                 ]),
-// <<<<<<< HEAD
-
-//                                 ctrl.curUserCanUpload() ?
-//                                   m(".dropzone", {config: ctrl.initDocDropzone})
-//                                 : "No documents have been uploaded yet."
-// =======
                                 att ? m(
                                   "div", [
                                     m("a", {href: routes.controllers.Attachments.download(att.id).url}, att.filename),
@@ -312,7 +306,6 @@ request.view = function(ctrl){
                                   m("div.dropzone", {config: ctrl.initAttachmentDropzone(reqt)})
                                   : "No documents have been uploaded yet."
                                 )
-// >>>>>>> 78d994facdd137a5e84689ff30db63f27596a819
                               ]);
                             })])
                           ]

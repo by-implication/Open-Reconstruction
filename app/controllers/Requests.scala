@@ -24,7 +24,8 @@ object Requests extends Controller with Secured {
     Ok(Json.obj(
       "projectTypes" -> ProjectType.jsonList,
       "bucketKey" -> Bucket.getAvailableKey,
-      "disasters" -> Disaster.jsonList
+      "disasters" -> Disaster.jsonList,
+      "requirements" -> Requirement.getFor(user.govUnit.role, true).map(_.toJson)
     ))
   }
 
@@ -52,7 +53,7 @@ object Requests extends Controller with Secured {
         "history" -> Json.toJson(Event.findForRequest(id).map(_.listJson)),
         "projects" -> Json.toJson(req.projects.map(_.requestViewJson)),
         "disasterTypes" -> DisasterType.jsonList,
-        "requirements" -> Requirement.getFor(req).map(_.toJson)
+        "requirements" -> Requirement.getFor(req.govUnit.role).map(_.toJson)
       )
     }.getOrElse(Rest.notFound())
     
@@ -84,26 +85,24 @@ object Requests extends Controller with Secured {
       (_ => None)
     )
 
-  	if(user.canCreateRequests){
-  		createForm.bindFromRequest.fold(
-  			Rest.formError(_),
-  			_ match {
-          case (r, bucketKey) => {
-            r.copy(authorId = user.id).save().map { implicit r =>
-              Event.newRequest().create().map { _ =>
-                Checkpoint.push(user).map { _ =>
-                  if(Bucket(bucketKey).dumpTo(r)){
-  				          Rest.success(r.insertSeq:_*)
-                  } else {
-                    Rest.serverError()
-                  }
-                }.getOrElse(Rest.serverError())
+		createForm.bindFromRequest.fold(
+			Rest.formError(_),
+			_ match {
+        case (r, bucketKey) => {
+          r.copy(authorId = user.id, govUnitId = user.govUnitId).save().map { implicit r =>
+            Event.newRequest().create().map { _ =>
+              Checkpoint.push(user).map { _ =>
+                if(Bucket(bucketKey).dumpTo(r)){
+				          Rest.success(r.insertSeq:_*)
+                } else {
+                  Rest.serverError()
+                }
               }.getOrElse(Rest.serverError())
-      			}.getOrElse(Rest.serverError())
-          }
+            }.getOrElse(Rest.serverError())
+    			}.getOrElse(Rest.serverError())
         }
-			)
-  	} else Rest.unauthorized()
+      }
+		)
 
   }
 

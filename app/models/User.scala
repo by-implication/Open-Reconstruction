@@ -15,7 +15,8 @@ object User extends UserGen {
   def generateSamples() = {
     List(
       User(NA, "oparr", "OPARR Admin", "oparr", 7, true).create(),
-      User(NA, "herp", "herpy", "derp", 1, false).create()
+      User(NA, "herp", "herpy", "derp", 4, false).create(),
+      User(NA, "brgy", "Barangay", "brgy", 61, false).create()
     ).flatten.size.toString
   }
 
@@ -214,10 +215,6 @@ case class User(
       )
       checks.take(r.level).foldLeft(false)(_ || _)
     }
-  }
-
-  def canCreateRequests = {
-    canDo(Permission.CREATE_REQUESTS) && !handle.startsWith("legacy")
   }
 
   def canCreateLegacy = {
