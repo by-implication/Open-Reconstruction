@@ -264,11 +264,17 @@ requestCreation.view = function(ctrl){
         m("section", [
           m(".row", [
             m(".columns.medium-12", [
-              m("button", {disabled: ctrl.submitButtonDisabled(), onclick: function(e){
-                ctrl.submitButtonDisabled(true);
-                ctrl.submitNewRequest(e);
-              }}, "Submit"),
-              m("button", {type: "button", class: "alert", onclick: cancel}, "Cancel"),
+              m("ul.button-group", [
+                m("li", [
+                  m("button", {disabled: ctrl.submitButtonDisabled(), onclick: function(e){
+                    ctrl.submitButtonDisabled(true);
+                    ctrl.submitNewRequest(e);
+                  }}, "Submit"),
+                ]),
+                m("li", [
+                  m("button", {type: "button", class: "alert", onclick: cancel}, "Cancel"),
+                ]),
+              ]),
             ]),
           ]),
         ]),
