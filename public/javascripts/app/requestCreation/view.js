@@ -192,6 +192,9 @@ requestCreation.view = function(ctrl){
                 ]),
               ]),
             ]),
+            m("button", {type: "button"}, [
+              "Add new entry"
+            ]),
             // m("ul", [
             //   m("li.card", [
             //     m(".section", [
