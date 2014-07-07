@@ -86,7 +86,7 @@ requestCreation.view = function(ctrl){
     }
   ]
 
-  return app.template(ctrl.app, "New Request", [
+  return app.template(ctrl.app, "New Request", {className: "detail"}, [
     common.banner("New Project Request"),
     [ // modals
       common.modal.view(
