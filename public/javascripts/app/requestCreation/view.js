@@ -1,7 +1,5 @@
 requestCreation.view = function(ctrl){
 
-  function cancel(){ history.back(); }
-
   function scopeLabel(scope){
     switch(scope){
       case "Reconstruction": return "Completely destroyed, and we need to rebuild it";
@@ -81,7 +79,7 @@ requestCreation.view = function(ctrl){
           ctrl.submitButtonDisabled(true);
           ctrl.submitNewRequest(e);
         }}, "Submit"),
-        m("button", {type: "button", class: "alert", onclick: cancel}, "Cancel"),
+        m("button", {type: "button", class: "alert", onclick: ctrl.cancel}, "Cancel"),
       ]
     }
   ]
@@ -94,15 +92,20 @@ requestCreation.view = function(ctrl){
         function (ctrl){
           return common.field(
             "Location",
-            m("div", {id: "map", config: ctrl.initMap}),
-            "Tell us where the project is. Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map."
+            m("div", {id: "map", config: ctrl.initMap}), [
+              "Tell us where the project is. Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map.",
+              ctrl.content()
+            ]
           )
         }
       ),
       common.modal.view(
         ctrl.attModal,
         function (ctrl){
-          return "Attachments";
+          return [
+            "Attachments",
+            ctrl.content()
+          ];
         }
       )
     ],
@@ -198,7 +201,9 @@ requestCreation.view = function(ctrl){
                       ])
                     ]),
                     m("td", [
-                      m("td", m("button[type=button]", {onclick: e.openLocationModal}, "Set location"))
+                      m("td", m("button[type=button]", {onclick: e.openLocationModal}, "Set location" +
+                        (e.location() ? " [already set]" : "")
+                      ))
                     ]),
                     m("td", [
                       m("td", m("button[type=button]", {onclick: e.openAttachmentsModal}, "Add attachments"))
@@ -224,7 +229,7 @@ requestCreation.view = function(ctrl){
                   }}, "Submit"),
                 ]),
                 m("li", [
-                  m("button", {type: "button", class: "alert", onclick: cancel}, "Cancel"),
+                  m("button", {type: "button", class: "alert", onclick: ctrl.cancel}, "Cancel"),
                 ]),
               ]),
             ]),

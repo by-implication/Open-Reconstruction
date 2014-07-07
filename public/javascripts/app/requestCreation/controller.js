@@ -1,5 +1,7 @@
 requestCreation.controller = function(){
   var ctrl = this;
+
+  this.cancel = function(){ history.back(); }
   this.app = new app.controller();
   this.info = new m.prop({
     projectTypes: [],
@@ -9,15 +11,60 @@ requestCreation.controller = function(){
 
   this.requirementLevel = m.prop("Submission");
 
-  this.locModal = new common.modal.controller();
+  this.locModal = new common.modal.controller({
+    initMap: function(elem, isInit){
+      if(!isInit){
+        window.setTimeout(function(){
+          var map = common.leaflet.map(elem);
+
+          var editableLayers = new L.FeatureGroup();
+          map.addLayer(editableLayers);
+
+          // Initialise the draw control and pass it the FeatureGroup of editable layers
+          var drawControl = new L.Control.Draw({
+            edit: {
+              featureGroup: editableLayers,
+              edit: false,
+              remove: false
+            },
+            draw: {
+              polyline: false,
+              polygon: false,
+              rectangle: false,
+              circle: false
+            },
+            // position: 'topright'
+          });
+          map.addControl(drawControl);
+
+          map.on('draw:created', function (e) {
+            var type = e.layerType,
+              layer = e.layer;
+            var coords = layer._latlng
+            var strCoords = coords.lat+","+coords.lng
+
+            layer.bindPopup("<h5>Location Saved!</h5>Your coordinates are<br/>" + strCoords);
+            editableLayers.clearLayers();
+            editableLayers.addLayer(layer);
+            editableLayers.openPopup();
+
+            ctrl.activeEntry.location(strCoords);
+          });
+        }, 100)
+      }
+    }
+  });
+
   this.attModal = new common.modal.controller();
 
   this.preamble = m.prop(false);
   this.disasterId = m.prop(1),
   this.entries = [];
+  this.activeEntry = null;
   this.newEntry = function(bucketKey){
     if(typeof bucketKey == "string"){
-      ctrl.entries.push({
+
+      var entry = {
         description: m.prop(""),
         amount: m.prop(0),
         projectTypeId: m.prop(1),
@@ -25,13 +72,18 @@ requestCreation.controller = function(){
         attachments: m.prop([]),
         bucketKey: bucketKey,
         remove: function(){ ctrl.removeEntry(this); },
-        openLocationModal: function(e){
+        openLocationModal: function(){
+          ctrl.activeEntry = entry;
           ctrl.locModal.show();
         },
-        openAttachmentsModal: function(e){
+        openAttachmentsModal: function(){
+          ctrl.activeEntry = entry;
           ctrl.attModal.show();
         }
-      });
+      }
+
+      ctrl.entries.push(entry);
+
     } else {
       bi.ajax(routes.controllers.Attachments.getNewBucketKey()).then(function (r){
         ctrl.newEntry(r.bucketKey);
@@ -70,50 +122,6 @@ requestCreation.controller = function(){
       }
     }
   }
-
-  this.initMap = function(elem, isInit){
-
-    if(!isInit){
-      window.setTimeout(function(){
-        var map = common.leaflet.map(elem);
-
-        var editableLayers = new L.FeatureGroup();
-        map.addLayer(editableLayers);
-
-        // Initialise the draw control and pass it the FeatureGroup of editable layers
-        var drawControl = new L.Control.Draw({
-          edit: {
-            featureGroup: editableLayers,
-            edit: false,
-            remove: false
-          },
-          draw: {
-            polyline: false,
-            polygon: false,
-            rectangle: false,
-            circle: false
-          },
-          // position: 'topright'
-        });
-        map.addControl(drawControl);
-
-        map.on('draw:created', function (e) {
-          var type = e.layerType,
-            layer = e.layer;
-          var coords = layer._latlng
-          var strCoords = coords.lat+","+coords.lng
-
-          layer.bindPopup("<h5>Location Saved!</h5>Your coordinates are<br/>" + strCoords);
-          editableLayers.clearLayers();
-          editableLayers.addLayer(layer);
-          editableLayers.openPopup();
-
-          ctrl.input.location(strCoords);
-        });
-      }, 100)
-    }
-
-  }.bind(this);
 
   bi.ajax(routes.controllers.Requests.createMeta()).then(function (data){
     ctrl.info(data);

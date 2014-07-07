@@ -378,7 +378,7 @@ common.sticky.config = function(ctrl){
 }
 
 common.modal = {};
-common.modal.controller = function(){
+common.modal.controller = function(options){
   this.isVisible = m.prop(false);
   this.show = function(){
     this.isVisible(true);
@@ -400,6 +400,7 @@ common.modal.controller = function(){
       elem.style.top = scrollPos + "px";
     }, 0); 
   }
+  _.extend(this, options);
 }
 common.modal.view = function(ctrl, content){
   if (ctrl.isVisible()) {
