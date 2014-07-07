@@ -109,17 +109,21 @@ requestCreation.view = function(ctrl){
   return app.template(ctrl.app, "New Request", [
     common.banner("New Project Request"),
     m("form", {onsubmit: ctrl.submitNewRequest }, [
-      common.formSection("fa-star", [
-        m("h2", ["Terms of Agreement"]),
-        common.field(
-          "",
-          m("div", [
-            m("input", {type: "checkbox", onchange: m.withAttr("checked", ctrl.preamble)}),
-            m("span", [
-              "I have not requested for assistance for this project from any other source."
-            ])
-          ])
-        )
+      m("section", [
+        m(".row", [
+          m(".columns.medium-12", [
+            m("h2", ["Terms of Agreement"]),
+            common.field(
+              "",
+              m("div", [
+                m("input", {type: "checkbox", onchange: m.withAttr("checked", ctrl.preamble)}),
+                m("span", [
+                  "I have not requested for assistance for this project from any other source."
+                ])
+              ])
+            )
+          ]),
+        ]),
       ]),
       ctrl.preamble() ? m("div", [
         m("section", [
