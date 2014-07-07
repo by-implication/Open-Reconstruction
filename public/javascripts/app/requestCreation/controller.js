@@ -9,6 +9,9 @@ requestCreation.controller = function(){
 
   this.requirementLevel = m.prop("Submission");
 
+  this.locModal = new common.modal.controller();
+  this.attModal = new common.modal.controller();
+
   this.preamble = m.prop(false);
   this.disasterId = m.prop(1),
   this.entries = [];
@@ -22,8 +25,12 @@ requestCreation.controller = function(){
         attachments: m.prop([]),
         bucketKey: bucketKey,
         remove: function(){ ctrl.removeEntry(this); },
-        openLocationModal: function(){},
-        openAttachmentsModal: function(){}
+        openLocationModal: function(e){
+          ctrl.locModal.show();
+        },
+        openAttachmentsModal: function(e){
+          ctrl.attModal.show();
+        }
       });
     } else {
       bi.ajax(routes.controllers.Attachments.getNewBucketKey()).then(function (r){

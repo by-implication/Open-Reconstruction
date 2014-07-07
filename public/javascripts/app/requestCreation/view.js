@@ -88,6 +88,24 @@ requestCreation.view = function(ctrl){
 
   return app.template(ctrl.app, "New Request", [
     common.banner("New Project Request"),
+    [ // modals
+      common.modal.view(
+        ctrl.locModal,
+        function (ctrl){
+          return common.field(
+            "Location",
+            m("div", {id: "map", config: ctrl.initMap}),
+            "Tell us where the project is. Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map."
+          )
+        }
+      ),
+      common.modal.view(
+        ctrl.attModal,
+        function (ctrl){
+          return "Attachments";
+        }
+      )
+    ],
     m("form", {onsubmit: ctrl.submitNewRequest }, [
       m("section", [
         m(".row", [
@@ -180,10 +198,10 @@ requestCreation.view = function(ctrl){
                       ])
                     ]),
                     m("td", [
-                      m("td", m("button[type=button]", {onclick: e.openLocationModal}, "Location"))
+                      m("td", m("button[type=button]", {onclick: e.openLocationModal}, "Set location"))
                     ]),
                     m("td", [
-                      m("td", m("button[type=button]", {onclick: e.openAttachmentsModal}, "Attachments"))
+                      m("td", m("button[type=button]", {onclick: e.openAttachmentsModal}, "Add attachments"))
                     ]),
                     m("td", m("button.alert[type=button]", {onclick: e.remove}, "Baleeted!"))
                   ])

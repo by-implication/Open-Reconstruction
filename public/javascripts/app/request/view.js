@@ -372,7 +372,7 @@ request.view = function(ctrl){
                   ]),
                   m("h4", ((ctrl.request().level > 4 && ctrl.currentUserBelongsToImplementingAgency()) ? [
                     "Project Monitoring",
-                    m("button.tiny.right", {type: "button", onclick: ctrl.addProjectModal.show.bind(ctrl.addProjectModal)}, [
+                    m("button.tiny.right", {type: "button", onclick: ctrl.addProjectModal.show}, [
                       "Reference a Project"
                     ]),
                   ] : ("Projects"))),
@@ -469,11 +469,11 @@ request.approval = function(ctrl){
                 m("h4", [
                   "Please assign a SARO to this request."
                 ]),
-                m("button", {onclick: ctrl.saroModal.show.bind(ctrl.saroModal)}, [
+                m("button", {onclick: ctrl.saroModal.show}, [
                   m("i.fa.fa-fw.fa-check"),
                   "Assign SARO"
                 ]),
-                m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
+                m("button.alert", {onclick: ctrl.rejectModal.show}, [
                   m("i.fa.fa-fw.fa-times"),
                   "Reject"
                 ])
@@ -482,11 +482,11 @@ request.approval = function(ctrl){
                 m("h4", [
                   "Sign off on this request only if you feel the information is complete for your step in the approval process."
                 ]),
-                m("button", {onclick: ctrl.signoffModal.show.bind(ctrl.signoffModal)}, [
+                m("button", {onclick: ctrl.signoffModal.show}, [
                   m("i.fa.fa-fw.fa-check"),
                   "Sign off"
                 ]),
-                m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
+                m("button.alert", {onclick: ctrl.rejectModal.show}, [
                   m("i.fa.fa-fw.fa-times"),
                   "Reject"
                 ])
@@ -520,7 +520,7 @@ request.approval = function(ctrl){
               ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
                 ctrl.app.isSuperAdmin() ?
                   [
-                    m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
+                    m("button.alert", {onclick: ctrl.rejectModal.show}, [
                       m("i.fa.fa-fw.fa-times"),
                       "Reject"
                     ])

@@ -383,7 +383,7 @@ common.modal.controller = function(){
   this.show = function(){
     this.isVisible(true);
     this.height = helper.docHeight;
-  }
+  }.bind(this);
   this.close = function(){
     this.isVisible(false);
   }
