@@ -52,7 +52,7 @@ home.view = function(ctrl){
             m("li", [
                 m("img", {src:"/assets/images/landing/1-time since.svg"}),
                 m("h2.title", "Time since Disaster"),
-                m("table.val-group", [
+                m("table.val-group.first", [
                   m("tr", [
                     m("td", [
                       m(".caption", "Typhoon Yolanda"),
@@ -65,10 +65,10 @@ home.view = function(ctrl){
                     ])
                   ])
                 ]),
-                m("table.val-group", [
+                m("table.val-group.first", [
                   m("tr", [
                     m("td", [
-                      m(".caption", "Bohol Quake"),
+                      m(".caption", "Bohol Earthquake"),
                     ]),
                     m("td", [
                       m("h2", [
