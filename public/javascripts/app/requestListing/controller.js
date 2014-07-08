@@ -6,6 +6,7 @@ requestListing.controller = function(){
     ALL: 'all',
     SIGNOFF: 'signoff',
     ASSESSOR: 'assessor',
+    EXECUTOR: 'executor',
     MINE: 'mine',
     APPROVAL: 'approval',
     IMPLEMENTATION: 'implementation'
@@ -104,6 +105,12 @@ requestListing.controller = function(){
           return "My agency's requests";
         }
       }
+    },
+    {
+      identifier: this.tabFilters.EXECUTOR,
+      href: nav({tab: "executor"}),
+      when: function(){ return _.contains(self.app.currentUser().permissions, 4) },
+      _label: "Needs executor"
     },
     {
       identifier: this.tabFilters.APPROVAL,
