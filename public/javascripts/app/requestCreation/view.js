@@ -16,58 +16,64 @@ requestCreation.view = function(ctrl){
     });
   }
 
-  return app.template(ctrl.app, "New Request", {className: "detail"}, [
+  return app.template(ctrl.app, "New Request", {className: "detail"},[
+      common.modal.view(
+        ctrl.locModal,
+        function (ctrl){
+          return m(".section", [
+            m("h2", [
+              "Location"
+            ]),
+            m("p.help", [
+              "Tell us where the project is. Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map."
+            ]),
+            m("div", {id: "map", config: ctrl.initMap}),
+          ])
+        }
+      ),
+      common.modal.view(
+        ctrl.attModal,
+        function (ctrl){
+          return [
+            "Attachments",
+            ctrl.requirements().map(function (reqts, level){
+              var levelDict = [
+                "Submission",
+                "Agency Validation",
+                "OCD Validation"
+              ];
+              return m("div", {class: level == 0 ? "current" : ""},
+                [
+                  m("h2", levelDict[level]),
+                  m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
+                    var att = ctrl.getFor(reqt, ctrl.activeEntry().attachments());
+                    var uploadDate = att && new Date(att.dateUploaded);
+                    return m("li.document", [
+                      m("h4", [
+                        reqt.name
+                      ]),
+                      att ? m(
+                        "div", [
+                          m("a", {href: routes.controllers.Attachments.bucketDownload(att.key, reqt.id, att.filename).url}, att.filename),
+                          " uploaded ",
+                          m("span", {title: uploadDate}, helper.timeago(uploadDate)),
+                          " by ",
+                          m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
+                          m("a", {href: routes.controllers.Attachments.bucketPreview(att.key, reqt.id, att.filename).url}, "[PREVIEW]")
+                        ]
+                      ) : m("div.dropzone", {config: ctrl.initDropzone(ctrl.activeEntry(), reqt)})
+                    ]);
+                  })])
+                ]
+              );
+            })
+          ];
+        }
+      ),
+    ], [
     common.banner("New Project Request"),
     // modals
-    common.modal.view(
-      ctrl.locModal,
-      function (ctrl){
-        return common.field(
-          "Location",
-          m("div", {id: "map", config: ctrl.initMap}),
-          "Tell us where the project is. Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map."
-        )
-      }
-    ),
-    common.modal.view(
-      ctrl.attModal,
-      function (ctrl){
-        return [
-          "Attachments",
-          ctrl.requirements().map(function (reqts, level){
-            var levelDict = [
-              "Submission",
-              "Agency Validation",
-              "OCD Validation"
-            ];
-            return m("div", {class: level == 0 ? "current" : ""},
-              [
-                m("h2", levelDict[level]),
-                m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
-                  var att = ctrl.getFor(reqt, ctrl.activeEntry().attachments());
-                  var uploadDate = att && new Date(att.dateUploaded);
-                  return m("li.document", [
-                    m("h4", [
-                      reqt.name
-                    ]),
-                    att ? m(
-                      "div", [
-                        m("a", {href: routes.controllers.Attachments.bucketDownload(att.key, reqt.id, att.filename).url}, att.filename),
-                        " uploaded ",
-                        m("span", {title: uploadDate}, helper.timeago(uploadDate)),
-                        " by ",
-                        m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
-                        m("a", {href: routes.controllers.Attachments.bucketPreview(att.key, reqt.id, att.filename).url}, "[PREVIEW]")
-                      ]
-                    ) : m("div.dropzone", {config: ctrl.initDropzone(ctrl.activeEntry(), reqt)})
-                  ]);
-                })])
-              ]
-            );
-          })
-        ];
-      }
-    ),
+    
     m(".row", [
       m(".columns.large-12", [
         m(".card", [
