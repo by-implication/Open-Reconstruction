@@ -34,9 +34,14 @@ requestCreation.view = function(ctrl){
       common.modal.view(
         ctrl.attModal,
         function (ctrl){
-          return [
-            "Attachments",
-            ctrl.requirements().map(function (reqts, level){
+          return m(".section", [
+            m("h2", [
+              "Attachments"
+            ]),
+            m("p.help", [
+              "While these attachments are necessary for your request to progress, you may submit your request with incomplete attachments, and upload them at a later time."
+            ]),
+            m("div", ctrl.requirements().map(function (reqts, level){
               var levelDict = [
                 "Submission",
                 "Agency Validation",
@@ -44,7 +49,6 @@ requestCreation.view = function(ctrl){
               ];
               return m("div", {class: level == 0 ? "current" : ""},
                 [
-                  m("h2", levelDict[level]),
                   m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
                     var att = ctrl.getFor(reqt, ctrl.activeEntry().attachments());
                     var uploadDate = att && new Date(att.dateUploaded);
@@ -66,8 +70,8 @@ requestCreation.view = function(ctrl){
                   })])
                 ]
               );
-            })
-          ];
+            })),
+          ]);
         }
       ),
     ], [
