@@ -48,7 +48,7 @@ home.view = function(ctrl){
       ]),
       m("section.proposals", [
         m(".row", [
-          m("ul.medium-block-grid-5#derp", [
+          m("ul.medium-block-grid-4#derp", [
             m("li", [
                 m("img", {src:"/assets/images/landing/1-time since.svg"}),
                 m("h2.title", "Time since Disaster"),
@@ -120,7 +120,7 @@ home.view = function(ctrl){
                 config:m.route
               }, [
                 m("img", {src:"/assets/images/landing/3-budget releases.svg"}),
-                m("h2.title", "Budget Releases"),
+                m("h2.title", "Projects with Released Budget*"),
                 m("table.val-group", [
                   m("tr", [
                     m("td", [
@@ -153,49 +153,12 @@ home.view = function(ctrl){
             ]),
             m("li", [
               m("a", {
-                href: routes.controllers.Viz.index().url,
-                config:m.route
-              }, [
-                m("img", {src:"/assets/images/landing/3-budget releases.svg"}),
-                m("h2.title", "DPWH Budget Releases"),
-                m("table.val-group", [
-                  m("tr", [
-                    m("td", [
-                      m(".caption", "Typhoon Yolanda"),
-                    ]),
-                    m("td", [
-                      m("h2", [
-                        ctrl.vizData().yolanda.dpwh.qty + " ",
-                        m("span", "SAROs"),
-                        m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.dpwh.amt, 2) )
-                      ]),
-                    ])
-                  ])
-                ]),
-                m("table.val-group", [
-                  m("tr", [
-                    m("td", [
-                      m(".caption", "Bohol Quake"),
-                    ]),
-                    m("td", [
-                      m("h2", [
-                        ctrl.vizData().bohol.dpwh.qty + " ",
-                        m("span", "SAROs"),
-                        m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.dpwh.amt, 2) )
-                      ]),
-                    ])
-                  ])
-                ]),
-              ])
-            ]),
-            m("li", [
-              m("a", {
                 href:"/requests",
                 config:m.route
               }, [
                 m("img", {src:"/assets/images/landing/4-ongoing projects.svg"}),
                 m("h2.title", [
-                  "DPWH Ongoing Projects",
+                  "Ongoing Projects (Public Works)*",
                 ]),
                 m("table.val-group", [
                   m("tr", [
