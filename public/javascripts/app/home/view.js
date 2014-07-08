@@ -162,7 +162,10 @@ home.view = function(ctrl){
                         " PHP ",
                         m("span.fig", helper.truncate(ctrl.vizData().bohol.dpwh.amt, 2))
                       ]),
-                      m("h6", "All Agencies: PHP " + helper.truncate(ctrl.vizData().bohol.saro.amt, 2) )
+                      m("h6", [
+                        "All Agencies: PHP ",
+                        m("span.fig",  helper.truncate(ctrl.vizData().bohol.saro.amt, 2))
+                      ])
                     ])
                   ])
                 ]),
