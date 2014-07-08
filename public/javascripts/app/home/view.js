@@ -93,8 +93,9 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h2", [
-                        helper.commaize(ctrl.vizData().yolanda.projects.qty),
-                        m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.projects.amt, 2) + "")
+                        m("span", "PHP"),
+                        " " + helper.truncate(ctrl.vizData().yolanda.projects.amt, 2) + "",
+                        m("h6", helper.commaize(ctrl.vizData().yolanda.projects.qty) + " Projects")
                       ]),
                     ])
                   ])
@@ -106,8 +107,9 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h2", [
-                        helper.commaize(ctrl.vizData().bohol.projects.qty),
-                        m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.projects.amt, 2) + "")
+                        m("span", "PHP"),
+                        " " + helper.truncate(ctrl.vizData().bohol.projects.amt, 2) + "",
+                        m("h6", helper.commaize(ctrl.vizData().bohol.projects.qty) + " Projects")
                       ]),
                     ])
                   ])
@@ -128,9 +130,10 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h2", [
-                        ctrl.vizData().yolanda.saro.qty + " ",
-                        m("span", "SAROs"),
-                        m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.saro.amt, 2) )
+                        // ctrl.vizData().yolanda.saro.qty + " ",
+                        // m("span", "SAROs"),
+                        m("h6", "DPWH: PHP " + helper.truncate(ctrl.vizData().yolanda.dpwh.amt, 2) ),
+                        m("h6", "All Agencies: PHP " + helper.truncate(ctrl.vizData().yolanda.saro.amt, 2) )
                       ]),
                     ])
                   ])
@@ -142,9 +145,10 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h2", [
-                        ctrl.vizData().bohol.saro.qty + " ",
-                        m("span", "SAROs"),
-                        m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.saro.amt, 2) )
+                        // ctrl.vizData().bohol.saro.qty + " ",
+                        // m("span", "SAROs"),
+                        m("h6", "DPWH: PHP " + helper.truncate(ctrl.vizData().bohol.dpwh.amt, 2) ),
+                        m("h6", "All Agencies: PHP " + helper.truncate(ctrl.vizData().bohol.saro.amt, 2) )
                       ]),
                     ])
                   ])
@@ -167,8 +171,9 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h2", [
-                        ctrl.vizData().yolanda.fundedProjects.qty,
-                        m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.fundedProjects.amt, 2) + "")
+                        m("span", "PHP"),
+                        " " + helper.truncate(ctrl.vizData().yolanda.fundedProjects.amt, 2) + "",
+                        m("h6", ctrl.vizData().yolanda.fundedProjects.qty + " Projects")
                       ]),
                     ])
                   ])
@@ -180,8 +185,9 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h2", [
-                        ctrl.vizData().bohol.fundedProjects.qty,
-                        m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.fundedProjects.amt, 2) + "")
+                        m("span", "PHP"),
+                        " " + helper.truncate(ctrl.vizData().bohol.fundedProjects.amt, 2) + "",
+                        m("h6", ctrl.vizData().bohol.fundedProjects.qty + " Projects")
                       ]),
                     ])
                   ])
