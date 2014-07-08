@@ -65,7 +65,11 @@ requestCreation.view = function(ctrl){
                           m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
                           m("a", {href: routes.controllers.Attachments.bucketPreview(att.key, reqt.id, att.filename).url}, "[PREVIEW]")
                         ]
-                      ) : m("div.dropzone", {config: ctrl.initDropzone(ctrl.activeEntry(), reqt)})
+                      ) : m("div.dropzone", {config: ctrl.initDropzone(ctrl.activeEntry(), reqt)}, [
+                        m(".dz-message", [
+                          "Drop documents here or click to browse"
+                        ]),
+                      ])
                     ]);
                   })])
                 ]
@@ -80,7 +84,7 @@ requestCreation.view = function(ctrl){
     
     m(".row", [
       m(".columns.large-8.large-offset-2", [
-        m(".card", [
+        m("div", [
           m("form", {onsubmit: ctrl.submitNewRequest}, [
             m(".section", [
               m("h2", ["Terms of Agreement"]),
@@ -94,7 +98,7 @@ requestCreation.view = function(ctrl){
                 ])
               )
             ]),
-            ctrl.preamble() ? m("div", [
+            ctrl.preamble() ? m(".card", [
               m(".section", [
                 common.field(
                   "Disaster",
@@ -174,8 +178,8 @@ requestCreation.view = function(ctrl){
                       m(".columns.medium-12", [
                         m("ul.button-group.radius.right", [
                           m("li", [
-                            m("button[type=button].tiny", {onclick: e.openLocationModal}, "Set location" +
-                              (e.location() ? " [already set]" : "")
+                            m("button[type=button].tiny", {onclick: e.openLocationModal}, 
+                              (e.location() ? " Location set to coordinates: " + e.location() : "Set location")
                             )
                           ]),
                           m("li", [
