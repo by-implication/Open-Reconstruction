@@ -19,15 +19,15 @@ requestCreation.view = function(ctrl){
   return app.template(ctrl.app, "New Request", {className: "detail"},[
       common.modal.view(
         ctrl.locModal,
-        function (ctrl){
+        function (modCtrl){
           return m(".section", [
             m("h2", [
-              "Location"
+              "Location for " + ctrl.activeEntry().description()
             ]),
             m("p.help", [
               "Tell us where the project is. Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map."
             ]),
-            m("div", {id: "map", config: ctrl.initMap}),
+            m("div", {id: "map", config: modCtrl.initMap}),
           ])
         }
       ),
@@ -36,7 +36,7 @@ requestCreation.view = function(ctrl){
         function (ctrl){
           return m(".section", [
             m("h2", [
-              "Attachments"
+              "Attachments for " + ctrl.activeEntry().description()
             ]),
             m("p.help", [
               "While these attachments are necessary for your request to progress, you may submit your request with incomplete attachments, and upload them at a later time."
@@ -120,8 +120,20 @@ requestCreation.view = function(ctrl){
                 m("p.help", [
                   "Each of these requests will get their own page, with their own statuses and tracking."
                 ]),
-                m("ul", ctrl.entries.map(function(e){
+                m("ul", ctrl.entries.map(function(e, index){
                   return m("li.req", [
+                    m(".row", [
+                      m(".columns.medium-12", [
+                        m("button.alert[type=button].tiny.radius.right", {onclick: e.remove}, [
+                          m("i.fa.fa-fw.fa-lg.fa-times")
+                        ]),
+                        m("h3", [
+                          e.description() ?
+                            e.description()
+                          : "Request #" + (index + 1)
+                        ]),
+                      ]),
+                    ]),
                     m(".row", [
                       m(".columns.medium-6", [
                         m("label", [
@@ -160,7 +172,7 @@ requestCreation.view = function(ctrl){
                     ]),
                     m(".row", [
                       m(".columns.medium-12", [
-                        m("ul.button-group.round.right", [
+                        m("ul.button-group.radius.right", [
                           m("li", [
                             m("button[type=button].tiny", {onclick: e.openLocationModal}, "Set location" +
                               (e.location() ? " [already set]" : "")
@@ -171,33 +183,11 @@ requestCreation.view = function(ctrl){
                               (e.attachments().length ? " (" + e.attachments().length + " uploaded)" : "")
                             )
                           ]),
-                          m("li", [
-                            m("button.alert[type=button].tiny", {onclick: e.remove}, "Delete")
-                          ]),
                         ]),
                       ]),
-// <<<<<<< HEAD
                     ]),
                   ])
                 })),
-// =======
-//                       m("td", [
-//                         m("button[type=button].tiny", {onclick: e.openLocationModal}, "Set location" +
-//                           (e.location() ? " [already set]" : "")
-//                         )
-//                       ]),
-//                       m("td", [
-//                         m("button[type=button].tiny", {onclick: e.openAttachmentsModal}, "Add attachments" +
-//                           (e.attachments().length ? " (" + e.attachments().length + " uploaded)" : "")
-//                         )
-//                       ]),
-//                       m("td", [
-//                         m("button.alert[type=button].tiny", {onclick: e.remove}, "Delete")
-//                       ])
-//                     ])
-//                   })),
-//                 ]),
-// >>>>>>> attachments
                 m("button", {type: "button", onclick: ctrl.newEntry}, [
                   "Add new entry"
                 ]),
