@@ -649,6 +649,7 @@ request.listView = function(reqs, sortBy){
           m("th", "Stagnation"),
           m("th", "Name"),
           m("th", "Gov Unit"),
+          m("th", "Implementing Agency"),
           m("th", "Status"),
           m("th.text-right", [
             m("a", {href: sortBy("amount"), config: m.route}, [
@@ -673,6 +674,13 @@ request.listView = function(reqs, sortBy){
                 m("td", [m("a",
                   {href: routes.controllers.GovUnits.view(p.author.govUnit.id).url, config: m.route},
                   p.author.govUnit.name)]),
+                m("td", [
+                  p.implementingAgency ? 
+                    m("a",
+                    {href: routes.controllers.GovUnits.view(p.implementingAgency.id).url, config: m.route},
+                    p.implementingAgency.name)
+                  : "Unassigned"
+                ]),
                 m("td", [
                   !p.isRejected ?
                     request.miniProgress(p)

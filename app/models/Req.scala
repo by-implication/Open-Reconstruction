@@ -391,6 +391,13 @@ case class Req(
       )
     ),
     "assessingAgencyId" -> assessingAgencyId,
+    "implementingAgency" -> (implementingAgency match {
+      case Some(agency) => Json.obj(
+        "id" -> agency.id,
+        "name" -> (agency.acronym.getOrElse(agency.name):String)
+      )
+      case None => JsNull
+    }),
     "canSignoff" -> user.canSignoff(this),
     "isRejected" -> isRejected
   )
