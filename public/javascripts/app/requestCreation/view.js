@@ -95,7 +95,7 @@ requestCreation.view = function(ctrl){
                 m("div", [
                   m("input", {type: "checkbox", onchange: m.withAttr("checked", ctrl.preamble)}),
                   m("span", [
-                    "I have not requested for assistance for this project from any other source."
+                    "I have not requested for assistance for the following projects from any other source."
                   ])
                 ])
               )
