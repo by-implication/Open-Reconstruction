@@ -10,7 +10,7 @@ home.view = function(ctrl){
             m("p", [
               "￼A centralized portal for tracking taxpayer money spent on disaster response and reconstruction.",
               m("br"),
-              m("a.button",[
+              m("a.button",{href:"#infodump"},[
                 "Learn how Open Reconstruction promotes transparency and improves efficiency. ",
                 m("i.fa.fa-chevron-circle-down")
               ])
@@ -214,7 +214,7 @@ home.view = function(ctrl){
           ]),
         ]),
       ]),
-      m("section.alt.for-everyone",[
+      m("section.alt.for-everyone#infodump",[
         m(".row.info", [
           m(".columns.medium-12", [
             m("h2", [
