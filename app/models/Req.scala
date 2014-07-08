@@ -11,6 +11,17 @@ import scala.language.existentials
 
 object Req extends ReqGen {
 
+  lazy val levels = List(
+    "RECEIVED",
+    "ASSESSOR_ASSIGNMENT",
+    "ASSESSOR_SIGNOFF",
+    "OCD_SIGNOFF",
+    "OP_SIGNOFF",
+    "SARO_ASSIGNMENT",
+    "EXECUTOR_ASSIGNMENT",
+    "IMPLEMENTATION"
+  )
+
   def PAGE_LIMIT = 20
 
   private def byProjectType = DB.withConnection { implicit c =>
@@ -301,7 +312,8 @@ case class Req(
   saroNo: Option[String] = None,
   disasterId: Int = 0,
   govUnitId: Int = 0,
-  isLegacy: Boolean = false
+  isLegacy: Boolean = false,
+  executingAgencyId: Option[Int] = None
 ) extends ReqCCGen with Entity[Req]
 // GENERATED case class end
 {
@@ -319,6 +331,7 @@ case class Req(
 
   lazy val assessingAgency = assessingAgencyId.map(GovUnit.findById(_).get)
   lazy val implementingAgency = implementingAgencyId.map(GovUnit.findById(_).get)
+  lazy val executingAgency = executingAgencyId.map(GovUnit.findById(_).get)
 
   lazy val isSaroAssigned: Boolean = saroNo.isDefined
 
@@ -394,6 +407,7 @@ case class Req(
     "isSaroAssigned" -> isSaroAssigned,
     "assessingAgencyId" -> assessingAgencyId,
     "implementingAgencyId" -> implementingAgencyId,
+    "executingAgencyId" -> executingAgencyId,
     "location" -> location,
     "disaster" -> disaster.toJson,
     "isLegacy" -> isLegacy
@@ -419,9 +433,10 @@ trait ReqGen extends EntityCompanion[Req] {
     get[Option[String]]("saro_no") ~
     get[Int]("disaster_id") ~
     get[Int]("gov_unit_id") ~
-    get[Boolean]("req_legacy") map {
-      case id~description~projectTypeId~amount~date~level~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~attachmentIds~saroNo~disasterId~govUnitId~isLegacy =>
-        Req(id, description, projectTypeId, amount, date, level, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, attachmentIds, saroNo, disasterId, govUnitId, isLegacy)
+    get[Boolean]("req_legacy") ~
+    get[Option[Int]]("executing_agency_id") map {
+      case id~description~projectTypeId~amount~date~level~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~attachmentIds~saroNo~disasterId~govUnitId~isLegacy~executingAgencyId =>
+        Req(id, description, projectTypeId, amount, date, level, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, attachmentIds, saroNo, disasterId, govUnitId, isLegacy, executingAgencyId)
     }
   }
 
@@ -465,7 +480,8 @@ trait ReqGen extends EntityCompanion[Req] {
             saro_no,
             disaster_id,
             gov_unit_id,
-            req_legacy
+            req_legacy,
+            executing_agency_id
           ) VALUES (
             DEFAULT,
             {description},
@@ -482,7 +498,8 @@ trait ReqGen extends EntityCompanion[Req] {
             {saroNo},
             {disasterId},
             {govUnitId},
-            {isLegacy}
+            {isLegacy},
+            {executingAgencyId}
           )
         """).on(
           'id -> o.id,
@@ -500,7 +517,8 @@ trait ReqGen extends EntityCompanion[Req] {
           'saroNo -> o.saroNo,
           'disasterId -> o.disasterId,
           'govUnitId -> o.govUnitId,
-          'isLegacy -> o.isLegacy
+          'isLegacy -> o.isLegacy,
+          'executingAgencyId -> o.executingAgencyId
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -522,7 +540,8 @@ trait ReqGen extends EntityCompanion[Req] {
             saro_no,
             disaster_id,
             gov_unit_id,
-            req_legacy
+            req_legacy,
+            executing_agency_id
           ) VALUES (
             {id},
             {description},
@@ -539,7 +558,8 @@ trait ReqGen extends EntityCompanion[Req] {
             {saroNo},
             {disasterId},
             {govUnitId},
-            {isLegacy}
+            {isLegacy},
+            {executingAgencyId}
           )
         """).on(
           'id -> o.id,
@@ -557,7 +577,8 @@ trait ReqGen extends EntityCompanion[Req] {
           'saroNo -> o.saroNo,
           'disasterId -> o.disasterId,
           'govUnitId -> o.govUnitId,
-          'isLegacy -> o.isLegacy
+          'isLegacy -> o.isLegacy,
+          'executingAgencyId -> o.executingAgencyId
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -580,7 +601,8 @@ trait ReqGen extends EntityCompanion[Req] {
         saro_no={saroNo},
         disaster_id={disasterId},
         gov_unit_id={govUnitId},
-        req_legacy={isLegacy}
+        req_legacy={isLegacy},
+        executing_agency_id={executingAgencyId}
       where req_id={id}
     """).on(
       'id -> o.id,
@@ -598,7 +620,8 @@ trait ReqGen extends EntityCompanion[Req] {
       'saroNo -> o.saroNo,
       'disasterId -> o.disasterId,
       'govUnitId -> o.govUnitId,
-      'isLegacy -> o.isLegacy
+      'isLegacy -> o.isLegacy,
+      'executingAgencyId -> o.executingAgencyId
     ).executeUpdate() > 0
   }
 

@@ -76,10 +76,12 @@ request.controller = function(){
   this.unassignedAgency = {id: 0};
   this.assessingAgency = m.prop(this.unassignedAgency);
   this.implementingAgency = m.prop(this.unassignedAgency);
+  this.executingAgency = m.prop(this.unassignedAgency);
   this.coords = m.prop();
   
   this.assessingAgencies = m.prop([]);
   this.implementingAgencies = m.prop([]);
+  this.executingAgencies = m.prop([]);
 
   // displayEditGroups
   var deg = displayEditGroup;
@@ -150,6 +152,22 @@ request.controller = function(){
           ctrl.implementingAgency(ctrl.unassignedAgency);
         }
       }
+    )),
+
+    execute: new deg(function(){
+      return (self.app.isSuperAdmin() || self.app.isDBM() || self.currentUserBelongsToImplementingAgency())
+    }, edit("executingAgency"), save("executingAgency",
+      function (r){
+        var agency = extractAgency(r);
+        if(agency.id){
+          ctrl.executingAgency(agency);
+          if(process.levelDict[ctrl.request().level + 1] == "EXECUTOR_ASSIGNMENT") {
+            ctrl.request().level++;
+          }
+        } else {
+          ctrl.executingAgency(ctrl.unassignedAgency);
+        }
+      }
     ))
 
   };
@@ -187,15 +205,23 @@ request.controller = function(){
   }
 
   this.getBlockingAgency = function(){
-    var agency = process.levelToAgencyName()[this.request().level]
-    if(agency === "ASSESSING_AGENCY"){
-      if (this.assessingAgency().id){
-        return this.assessingAgency().name;
-      } else {
-        return "AWAITING_ASSIGNMENT";
+    var agency = process.levelToAgencyName()[this.request().level];
+    switch (agency) {
+      case "ASSESSING_AGENCY": {
+        if (this.assessingAgency().id){
+          return this.assessingAgency().name;
+        } else {
+          return "AWAITING_ASSIGNMENT";
+        }
       }
-    } else {
-      return agency;
+      case "IMPLEMENTING_AGENCY": {
+        if (this.executingAgency().id){
+          return this.executingAgency().name;
+        } else {
+          return "AWAITING_ASSIGNMENT";
+        }
+      }
+      default: return agency;
     }
   }
 
@@ -212,8 +238,10 @@ request.controller = function(){
     this.history(data.history);
     this.assessingAgencies(data.assessingAgencies);
     this.implementingAgencies(data.implementingAgencies);
+    this.executingAgencies(data.implementingAgencies); // Make a new list that includes even LGUs.
     this.assessingAgency(data.assessingAgency || this.unassignedAgency);
     this.implementingAgency(data.implementingAgency || this.unassignedAgency);
+    this.executingAgency(data.executingAgency || this.unassignedAgency);
 
     this.isInvolved(data.isInvolved);
     this.hasSignedoff(data.hasSignedoff)
@@ -254,7 +282,13 @@ request.controller = function(){
     ctrl.history().unshift(r.event);
     ctrl.canSignoff(false);
     ctrl.hasSignedoff(true);
-    ctrl.request().level++;
+    if((process.levelDict[(ctrl.request().level) + 1] == "SARO_ASSIGNMENT") &&
+      ctrl.executingAgency() != ctrl.unassignedAgency
+    ){
+      ctrl.request().level += 2;
+    } else {
+      ctrl.request().level++;
+    }
   }
 
   this.signoffModal.signoff = function(e){

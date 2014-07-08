@@ -50,6 +50,9 @@ object Requests extends Controller with Secured {
           GovUnit.findById(aid).map(_.toJson)
         },
         "attachments" -> req.attachments.map((Attachment.insertJson _).tupled),
+        "executingAgency" -> req.executingAgencyId.map { aid =>
+          GovUnit.findById(aid).map(_.toJson)
+        },
         "history" -> Json.toJson(Event.findForRequest(id).map(_.listJson)),
         "projects" -> Json.toJson(req.projects.map(_.requestViewJson)),
         "disasterTypes" -> DisasterType.jsonList,
@@ -152,12 +155,19 @@ object Requests extends Controller with Secured {
 
         signoffForm.bindFromRequest.fold(
           Rest.formError(_),
-          r => r.copy(level = r.level + 1).save().map( implicit r =>
-            Event.signoff(user.govUnit).create().map { e =>
-              Checkpoint.push(user)
-              Rest.success("event" -> e.listJson)
-            }.getOrElse(Rest.serverError())
-          ).getOrElse(Rest.serverError())
+          r => {
+            val newLevel = if (Req.levels(r.level + 1) == "SARO_ASSIGNMENT" && r.executingAgencyId.isDefined) {
+              r.level + 2
+            } else {
+              r.level + 1
+            }
+            r.copy(level = newLevel).save().map( implicit r =>
+              Event.signoff(user.govUnit).create().map { e =>
+                Checkpoint.push(user)
+                Rest.success("event" -> e.listJson)
+              }.getOrElse(Rest.serverError())
+            )
+          }.getOrElse(Rest.serverError())
         )
 
       } else Rest.unauthorized()
@@ -298,6 +308,20 @@ object Requests extends Controller with Secured {
           case _ => Some(govUnitId)
       }))(_ => None)
     }
+    case "executingAgency" => {
+      mapping(
+        "input" -> number.verifying("Unauthorized",
+          id => (Some(user.govUnitId) == req.implementingAgencyId || user.isSuperAdmin || user.isDBM)
+        )
+      )(govUnitId => req.copy(executingAgencyId = govUnitId match {
+          case 0 => None
+          case _ => Some(govUnitId)
+        }, level = Req.levels(req.level + 1) match {
+          case "EXECUTOR_ASSIGNMENT" => req.level + 1
+          case _ => req.level
+        }
+      ))(_ => None)
+    }
     case _ => {
       mapping(
         "input" -> text.verifying("Invalid field", _ => false)
@@ -316,6 +340,7 @@ object Requests extends Controller with Secured {
               (field match {
                 case "assessingAgency" => Event.assign("assess", req.assessingAgency)
                 case "implementingAgency" => Event.assign("implement", req.implementingAgency)
+                case "executingAgency" => Event.assign("execute", req.executingAgency)
                 case _ => Event.editField(field)
               }).create().map { e =>
                 Rest.success("event" -> e.listJson)

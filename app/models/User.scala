@@ -14,9 +14,16 @@ object User extends UserGen {
 
   def generateSamples() = {
     List(
-      User(NA, "oparr", "OPARR Admin", "oparr", 7, true).create(),
-      User(NA, "herp", "herpy", "derp", 4, false).create(),
-      User(NA, "brgy", "Barangay", "brgy", 61, false).create()
+      User(NA, "ocd_test", "OCD Test", "getsupport", 2, true).create(),
+      User(NA, "oparr_test", "OPARR Test", "getsupport", 7, true).create(),
+      User(NA, "op_test", "OP Test", "getsupport", 3, true).create(),
+      User(NA, "dpwh_test", "DPWH Test", "getsupport", 4, true).create(),
+      User(NA, "dbm_test", "DBM Test", "getsupport", 5, true).create(),
+      User(NA, "dilg_test", "DILG Test", "getsupport", 6, true).create(),
+      User(NA, "ocdeguzman", "Oscar Clamidio De Guzman", "password", 2, true).create(),
+      User(NA, "bsaquinoiii", "Benigno S. Aquino III", "password", 3, true).create(),
+      User(NA, "dpwhereford", "David Pena Whereford", "password", 4, true).create(),
+      User(NA, "dbmoya", "Dersecretary Bon Moya", "password", 5, true).create()
     ).flatten.size.toString
   }
 

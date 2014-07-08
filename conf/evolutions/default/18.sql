@@ -2,7 +2,8 @@
 
 ALTER TABLE reqs
 	ADD COLUMN gov_unit_id int REFERENCES gov_units,
-	ADD COLUMN req_legacy boolean NOT NULL DEFAULT FALSE;
+	ADD COLUMN req_legacy boolean NOT NULL DEFAULT FALSE,
+	ADD COLUMN executing_agency_id int REFERENCES gov_units(gov_unit_id);
 
 UPDATE reqs
 	SET gov_unit_id = users.gov_unit_id
@@ -54,4 +55,5 @@ UPDATE roles
 
 ALTER TABLE reqs
 	DROP COLUMN gov_unit_id,
-	DROP COLUMN req_legacy;
+	DROP COLUMN req_legacy,
+  DROP COLUMN executing_agency_id;

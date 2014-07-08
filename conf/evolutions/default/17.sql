@@ -23,4 +23,5 @@ UPDATE reqs
 # --- !Downs
 
 DROP FUNCTION psgcify;
+
 DROP FUNCTION filter_zeros;

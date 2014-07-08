@@ -207,7 +207,7 @@ request.view = function(ctrl){
                 ]),
                 m(".content", [
                   m(".row", [
-                    m(".columns.medium-6", [
+                    m(".columns.large-4", [
                       m("p", [
                         "Assessing Agency",
                         ctrl.degs.assess.view(
@@ -234,7 +234,7 @@ request.view = function(ctrl){
                         ]),
                       ]),
                     ]),
-                    m(".columns.medium-6", [
+                    m(".columns.large-4", [
                       m("p", [
                         "Implementing Agency",
                         ctrl.degs.implement.view(
@@ -258,6 +258,33 @@ request.view = function(ctrl){
                         ),
                         m("p.help", [
                           "The Implementing Agency will be responsible for handling the money, and the completion of the request. Most of the time the Assessing Agency and the Implementing Agency are the same, but there are some cases wherein they are different. e.g. A school should probably be assessed by the DPWH, but DepEd should handle implementation."
+                        ]),
+                      ]),
+                    ]),
+                    m(".columns.large-4", [
+                      m("p", [
+                        "Executing Agency",
+                        ctrl.degs.execute.view(
+                          function(){
+                            return ctrl.executingAgency().id ?
+                              m("h4", [
+                                m("a", {href: routes.controllers.GovUnits.view(ctrl.executingAgency().id).url, config: m.route}, [
+                                  ctrl.executingAgency().name
+                                ])
+                              ])
+                            : m("h4", "Unassigned");
+                          },
+                          function(){
+                            return m("select", {onchange: m.withAttr("value", this.input)},
+                              [m("option", {value: 0, selected: ctrl.executingAgency().id == 0}, "None")]
+                              .concat(ctrl.executingAgencies().map(function(agency){
+                                return m("option", {value: agency.id, selected: ctrl.executingAgency().id == agency.id}, agency.name)
+                              }
+                            )));
+                          }
+                        ),
+                        m("p.help", [
+                          "The Executing Agency will be in charge of execution."
                         ]),
                       ]),
                     ]),
@@ -492,7 +519,7 @@ request.approval = function(ctrl){
                 ])
               ])
             )
-          : ctrl.hasSignedoff() ?
+          : (ctrl.hasSignedoff() && (!ctrl.currentUserBelongsToImplementingAgency() || ctrl.executingAgency())) ?
             m("div", [
               m("h4", [
                 m("div", [m("i.fa.fa-thumbs-up.fa-2x")]),
@@ -502,7 +529,7 @@ request.approval = function(ctrl){
           : m("div", [
             m("h4",
               ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
-                ctrl.app.isSuperAdmin() ?
+                (ctrl.app.isSuperAdmin() || ctrl.currentUserBelongsToImplementingAgency()) ?
                   [
                     "Please ",
                     m("a", {href: "#assignments", onclick: function(e){
@@ -511,9 +538,11 @@ request.approval = function(ctrl){
                     }}, [
                       "assign an agency"
                     ]),
-                    " to assess this request."
+                    " to " + ((ctrl.request().level <=  1 ) ? "assess" : "execute") + " this request."
                   ]
-                : "Waiting for the Office of Civil Defense to assign an agency to assess this request."
+                : ((ctrl.request().level == 0) ? 
+                  "Waiting for the Office of Civil Defense to assign an agency to assess this request."
+                  : "Waiting for " + ctrl.implementingAgency().name + " to assign an executing agency.")
               : "Waiting for " + ctrl.getBlockingAgency() + " approval."
             ),
             m("div",
