@@ -274,19 +274,6 @@ h1 small
   background-color: white
   box-shadow: 0px 2px 2px rgba(black, 0.05)
   margin-bottom: 20px
-  .section
-    padding: 20px 30px
-    &.type
-      background-color: $accent
-      color: white
-    &.big
-      padding: 50px 40px
-      h1
-        margin-bottom: 0
-      .header
-        margin-bottom: 30px
-      .help
-        color: $gray
   h4
     font-weight: 300
   // h1
@@ -295,6 +282,19 @@ h1 small
     border-top: 0px
     border-bottom: 1px solid #eee
     margin: 0
+.section
+  padding: 20px 30px
+  &.type
+    background-color: $accent
+    color: white
+  &.big
+    padding: 50px 40px
+    h1
+      margin-bottom: 0
+    .header
+      margin-bottom: 30px
+    .help
+      color: $gray
 
 hr.dashed
   border-top: 0px
@@ -310,7 +310,7 @@ hr.dashed
 
 .dropzone
   +clearfix
-  padding: 40px
+  padding: 30px 20px
   background-color: #eee
   margin-bottom: 20px
   cursor: pointer
@@ -319,24 +319,23 @@ hr.dashed
     .dz-message
       color: #aaa
   .dz-message
-    font-size: 36px
+    font-size: 24px
     text-align: center
     color: #ccc
     font-weight: 300
   &.dz-started
     .dz-message
-      margin-bottom: 40px
+      display: none
   .dz-preview
     &.dz-processing
       display: block
       &.dz-success
         display: none
-    float: left
-    // background-color: white
-    margin-right: 20px
+    // float: left
+    // margin-right: 20px
     cursor: default
-    width: 128px
-    height: 256px
+    // width: 128px
+    // height: 256px
     img
       margin-bottom: 6px
     .dz-size
@@ -973,6 +972,22 @@ thead
   $activeColor: $orange
   position: relative
   display: inline-block
+  &.right-edge
+    .explanation
+      left: auto
+      right: 50%
+      &:before
+        @include triangle(12px, $activeColor, down-right)
+        left: auto
+        right: 0px
+  &.left-edge
+    .explanation
+      right: auto
+      left: 50%
+      &:before
+        @include triangle(12px, $activeColor, down-left)
+        right: auto
+        left: 0px
   .explanation
     $width: 300px
     display: none
@@ -989,10 +1004,8 @@ thead
     &:before
       display: block
       content: ""
-      @include triangle(12px, $activeColor, down-left)
       position: absolute
       top: -12px
-      left: 0px
   .hoverthing
     display: inline-block
     color: #333
@@ -1002,3 +1015,15 @@ thead
       & + .explanation
         display: block
 
+.document
+  .file
+    .info
+      margin-bottom: 10px
+
+.req
+  padding: 10px
+  border: 1px solid #eee
+  margin-bottom: 10px
+  background-color: #f8f8f8
+  &:last-child
+    margin-bottom: 0px

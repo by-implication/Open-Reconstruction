@@ -2,7 +2,7 @@ var common = {};
 
 common.dropzonePreviewTemplate = m(".dz-preview.dz-file-preview", [
   m(".dz-details", [
-    m("img", {"data-dz-thumbnail": true}),
+    // m("img", {"data-dz-thumbnail": true}),
     m(".dz-filename", [
       m("span", {"data-dz-name": true}),
     ]),
@@ -18,6 +18,9 @@ common.dropzonePreviewTemplate = m(".dz-preview.dz-file-preview", [
 
 common.stagnation = function(reqCtrl, offset){
 
+  var req = reqCtrl.request();
+  if(req.isLegacy) return "UNKNOWN [Legacy Data]";
+
   function getDateRejected(history){
     var rejection = history.filter(function (h){
       return h.kind == "reject";
@@ -32,7 +35,6 @@ common.stagnation = function(reqCtrl, offset){
     return new Date(approval.date);
   }
 
-  var req = reqCtrl.request();
   var timestamp = req.date;
 
   var current;
@@ -123,7 +125,7 @@ common.attachmentActions = function(attachment){
       m("a", {title: "Unarchive", onclick: function(){
         bi.ajax(routes.controllers.Attachments.unarchive(attachment.id)).then(function (r){
           alert("Succesfully unarchived document.");
-          this.attachments().docs.push(r.doc);
+          this.attachments().push(r.attachment);
           this.history(this.history().filter(function (e){
             var attachmentId = e.content.split(" ").pop();
             return !(e.kind == 'archiveAttachment' && attachmentId == attachment.id);
@@ -134,8 +136,8 @@ common.attachmentActions = function(attachment){
       ]) : m("a", {title: "Archive", onclick: function(){
         bi.ajax(routes.controllers.Attachments.archive(attachment.id)).then(function (r){
           alert("Succesfully archived document.");
-          var docs = this.attachments().docs;
-          docs.splice(docs.indexOf(attachment), 1);
+          var a = this.attachments();
+          a.splice(a.indexOf(attachment), 1);
           this.history().unshift(r.event);
         }.bind(this))
       }.bind(this) }, [
@@ -158,8 +160,12 @@ common.banner = function(text){
   ]);
 }
 
-common.help = function(text){
-  return m(".common-help", [
+common.help = function(text, isRight){
+  var dirClass = "left-edge";
+  if(isRight){
+    dirClass = "right-edge";
+  }
+  return m(".common-help", {className: dirClass}, [
     m("a.hoverthing", [
       m("i.fa.fa-question-circle"),
     ]),
@@ -328,15 +334,19 @@ common.stickyTabs.config = function(ctrl){
         idPosDict = _.chain(ctrl.tabs())
           .map(function(t){
             var item = t.href;
-            // console.log($(item).position().top, $(item).height());
             return [$(item).position().top + $(item).height(), item];
           })
           .object()
           .value();
 
-        var poss = _.keys(idPosDict);
-        var windowPos = $(window).scrollTop();
-        var closestPos = _.find(poss, function(p){ return p >= windowPos });
+        var poss = _.chain(idPosDict)
+          .keys()
+          .map(function(d){return d * 1})
+          .sortBy(_.identity)
+          .value();
+
+        // var windowPos = $(window).scrollTop();
+        // var closestPos = _.find(poss, function(p){ return p >= windowPos });
 
         $(window).on("scroll", function(e){
           var windowPos = $(window).scrollTop();
@@ -345,7 +355,6 @@ common.stickyTabs.config = function(ctrl){
           });
           var hash = idPosDict[closestPos];
           if ((location.hash != hash)){
-            // console.log(hash);
             m.startComputation();
             common.stickyTabs.locHandler(hash);
             m.endComputation();
@@ -389,12 +398,12 @@ common.sticky.config = function(ctrl){
 }
 
 common.modal = {};
-common.modal.controller = function(){
+common.modal.controller = function(options){
   this.isVisible = m.prop(false);
   this.show = function(){
     this.isVisible(true);
     this.height = helper.docHeight;
-  }
+  }.bind(this);
   this.close = function(){
     this.isVisible(false);
   }
@@ -411,13 +420,17 @@ common.modal.controller = function(){
       elem.style.top = scrollPos + "px";
     }, 0); 
   }
+  _.extend(this, options);
 }
-common.modal.view = function(ctrl, content){
+common.modal.view = function(ctrl, content, optionalClasses){
   if (ctrl.isVisible()) {
     return m("section.modal", {style: {height: ctrl.height()+"px"}, config: ctrl.config}, [
       m(".curtain", {onclick: ctrl.close.bind(ctrl)}),
       m(".row", [
-        m(".columns.medium-6.medium-centered.dialog", {config: ctrl.dialogConfig}, [
+        m(".columns.medium-centered.dialog", {
+          config: ctrl.dialogConfig,
+          className: optionalClasses ? optionalClasses : "medium-6"
+        }, [
           m(".card", [
             content(ctrl)
           ]),
@@ -546,5 +559,34 @@ common.formErrorHandler = function(r){
     alert(msg);
   } else {
     alert(r.reason);
+  }
+}
+
+common.dateField = function(label, timestampProp, htmlProp){
+  return common.field(
+    label,
+    m("input", {type: "date", value: htmlProp(), onchange: m.withAttr("value", function (v){
+      htmlProp(v);
+      timestampProp((new Date(v)).getTime());
+    })})
+  );
+}
+
+common.processReqts = function(reqts){
+  var _reqts = [];
+  reqts.forEach(function (r){
+    if(!_reqts[r.level]){
+      _reqts[r.level] = [];
+    }
+    _reqts[r.level].push(r);
+  });
+  return _reqts;
+}
+
+common.attachmentFor = function(reqt, atts){
+  for(var i in atts){
+    if(atts[i].requirementId == reqt.id){
+      return atts[i];
+    }
   }
 }

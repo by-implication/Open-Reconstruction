@@ -84,17 +84,12 @@ object Application extends Controller with Secured {
   }
 
   def populate() = Action { implicit request =>
-
     if(Play.mode == Mode.Dev) {
       play.Logger.info("  Generating Sample Users")
       play.Logger.info(User.generateSamples())
       play.Logger.info("* Sample users generated")
-    }
-
-    play.Logger.info("  Processing PSGC migrations")
-    play.Logger.info(Req.assignByPsgc)
-    play.Logger.info("* PSGC processed")
-    Redirect(routes.Application.index)
+      Redirect(routes.Application.index)
+    } else NotFound
   }
 
   def jsRoutes = Action { implicit request =>
@@ -136,6 +131,7 @@ object Application extends Controller with Secured {
       Attachments.bucketDownload,
       Attachments.bucketPreview,
       Attachments.bucketThumb,
+      Attachments.getNewBucketKey,
       Attachments.unarchive,
       Attachments.preview,
       Attachments.download,
@@ -145,13 +141,16 @@ object Application extends Controller with Secured {
       Requests.comment,
       Requests.create,
       Requests.createMeta,
+      Requests.edit,
       Requests.editField,
+      Requests.editMeta,
       Requests.index,
-      Requests.indexPage,
       Requests.indexMeta,
+      Requests.indexPage,
       Requests.insert,
       Requests.reject,
       Requests.signoff,
+      Requests.update,
       Requests.view,
       Requests.viewAssignments,
       Requests.viewImages,

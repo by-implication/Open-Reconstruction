@@ -18,12 +18,14 @@ object Requests extends Controller with Secured {
   def viewDocuments = Application.index1 _
   def viewActivity = Application.index1 _
   def viewReferences = Application.index1 _
+  def edit = Application.index1 _
 
   def createMeta() = UserAction(){ implicit user => implicit request =>
     Ok(Json.obj(
       "projectTypes" -> ProjectType.jsonList,
       "bucketKey" -> Bucket.getAvailableKey,
-      "disasters" -> Disaster.jsonList
+      "disasters" -> Disaster.jsonList,
+      "requirements" -> Requirement.getFor(user.govUnit.role, true).map(_.toJson)
     ))
   }
 
@@ -37,7 +39,8 @@ object Requests extends Controller with Secured {
         "isInvolved" -> Json.toJson(user.isInvolvedWith(req)),
         "hasSignedoff" -> Json.toJson(user.hasSignedoff(req)),
         "canSignoff" -> Json.toJson(user.canSignoff(req)),
-        "author" -> User.findById(req.authorId).map(_.infoJson),
+        "author" -> req.author.infoJson,
+        "govUnit" -> req.govUnit.toJson,
         "assessingAgencies" -> Json.toJson(GovUnit.withPermission(Permission.VALIDATE_REQUESTS).map(_.toJson)),
         "implementingAgencies" -> Json.toJson(GovUnit.withPermission(Permission.IMPLEMENT_REQUESTS).map(_.toJson)),
         "assessingAgency" -> req.assessingAgencyId.map { aid =>
@@ -46,17 +49,14 @@ object Requests extends Controller with Secured {
         "implementingAgency" -> req.implementingAgencyId.map { aid =>
           GovUnit.findById(aid).map(_.toJson)
         },
-        "attachments" -> {
-          val (imgs, docs) = req.attachments.partition(_._1.isImage)
-          val tf = (Attachment.insertJson _).tupled
-          Json.obj(
-            "imgs" -> imgs.map(tf),
-            "docs" -> docs.map(tf)
-          )
+        "attachments" -> req.attachments.map((Attachment.insertJson _).tupled),
+        "executingAgency" -> req.executingAgencyId.map { aid =>
+          GovUnit.findById(aid).map(_.toJson)
         },
         "history" -> Json.toJson(Event.findForRequest(id).map(_.listJson)),
         "projects" -> Json.toJson(req.projects.map(_.requestViewJson)),
-        "disasterTypes" -> DisasterType.jsonList
+        "disasterTypes" -> DisasterType.jsonList,
+        "requirements" -> Requirement.getFor(req.govUnit.role).map(_.toJson)
       )
     }.getOrElse(Rest.notFound())
     
@@ -64,50 +64,64 @@ object Requests extends Controller with Secured {
 
   def insert() = UserAction(){ implicit user => implicit request =>
 
-    val createForm: Form[(Req, String)] = Form(
+    val createForm: Form[Seq[(Req, String)]] = Form(
       mapping(
-        "amount" -> optional(projectAmount),
-        "description" -> nonEmptyText,
         "disasterId" -> number.verifying("No such disaster",
           id => Disaster.findById(id).isDefined
         ),
-        "location" -> nonEmptyText,
-        "projectTypeId" -> number,
-        "bucketKey" -> text
+        "reqs" -> seq(tuple(
+          "amount" -> optional(projectAmount),
+          "description" -> nonEmptyText,
+          "location" -> nonEmptyText,
+          "projectTypeId" -> number,
+          "bucketKey" -> text
+        )).verifying("No entries", _.size > 0)
       )
-      ((amount, description, disasterId,
-        location, projectTypeId, bucketKey) => {
-        (Req(
-          amount = amount.getOrElse(0),
-          description = description,
-          disasterId = disasterId,
-          projectTypeId = projectTypeId,
-          location = location
-        ), bucketKey)
+      ((disasterId, reqs) => {
+        reqs.map { r =>
+          val (amount, description, location, projectTypeId, bucketKey) = r
+          (Req(
+            amount = amount.getOrElse(0),
+            description = description,
+            disasterId = disasterId,
+            projectTypeId = projectTypeId,
+            location = location
+          ), bucketKey)
+        }
       })
       (_ => None)
     )
 
-  	if(user.canCreateRequests){
-  		createForm.bindFromRequest.fold(
-  			Rest.formError(_),
-  			_ match {
-          case (r, bucketKey) => {
-            r.copy(authorId = user.id).save().map { implicit r =>
-              Event.newRequest().create().map { _ =>
-                Checkpoint.push(user).map { _ =>
-                  if(Bucket(bucketKey).dumpTo(r)){
-  				          Rest.success(r.insertSeq:_*)
-                  } else {
-                    Rest.serverError()
-                  }
-                }.getOrElse(Rest.serverError())
-              }.getOrElse(Rest.serverError())
-      			}.getOrElse(Rest.serverError())
-          }
-        }
-			)
-  	} else Rest.unauthorized()
+		createForm.bindFromRequest.fold(
+
+			Rest.formError(_),
+
+      rKeys => {
+
+  			val results: Seq[Either[Unit, Req]] = rKeys.map { case (r, bucketKey) => {
+          r.copy(authorId = user.id, govUnitId = user.govUnitId).save().map { implicit r =>
+            Event.newRequest().create().map { _ =>
+              Checkpoint.push(user).map { _ =>
+                if(Bucket(bucketKey).dumpTo(r)){
+  			          Right(r)
+                } else {
+                  Left()
+                }
+              }.getOrElse(Left())
+            }.getOrElse(Left())
+    			}.getOrElse(Left())
+        }}
+
+        val pResults = results.partition(_.isRight)
+
+        Rest.success(
+          "reqs" -> pResults._1.map(e => Json.obj(e.right.get.insertSeq:_*)),
+          "failures" -> pResults._2.size
+        )
+
+      }
+
+		)
 
   }
 
@@ -141,12 +155,19 @@ object Requests extends Controller with Secured {
 
         signoffForm.bindFromRequest.fold(
           Rest.formError(_),
-          r => r.copy(level = r.level + 1).save().map( implicit r =>
-            Event.signoff(user.govUnit).create().map { e =>
-              Checkpoint.push(user)
-              Rest.success("event" -> e.listJson)
-            }.getOrElse(Rest.serverError())
-          ).getOrElse(Rest.serverError())
+          r => {
+            val newLevel = if (Req.levels(r.level + 1) == "SARO_ASSIGNMENT" && r.executingAgencyId.isDefined) {
+              r.level + 2
+            } else {
+              r.level + 1
+            }
+            r.copy(level = newLevel).save().map( implicit r =>
+              Event.signoff(user.govUnit).create().map { e =>
+                Checkpoint.push(user)
+                Rest.success("event" -> e.listJson)
+              }.getOrElse(Rest.serverError())
+            )
+          }.getOrElse(Rest.serverError())
         )
 
       } else Rest.unauthorized()
@@ -287,6 +308,20 @@ object Requests extends Controller with Secured {
           case _ => Some(govUnitId)
       }))(_ => None)
     }
+    case "executingAgency" => {
+      mapping(
+        "input" -> number.verifying("Unauthorized",
+          id => (Some(user.govUnitId) == req.implementingAgencyId || user.isSuperAdmin || user.isDBM)
+        )
+      )(govUnitId => req.copy(executingAgencyId = govUnitId match {
+          case 0 => None
+          case _ => Some(govUnitId)
+        }, level = Req.levels(req.level + 1) match {
+          case "EXECUTOR_ASSIGNMENT" => req.level + 1
+          case _ => req.level
+        }
+      ))(_ => None)
+    }
     case _ => {
       mapping(
         "input" -> text.verifying("Invalid field", _ => false)
@@ -305,6 +340,7 @@ object Requests extends Controller with Secured {
               (field match {
                 case "assessingAgency" => Event.assign("assess", req.assessingAgency)
                 case "implementingAgency" => Event.assign("implement", req.implementingAgency)
+                case "executingAgency" => Event.assign("execute", req.executingAgency)
                 case _ => Event.editField(field)
               }).create().map { e =>
                 Rest.success("event" -> e.listJson)
@@ -313,6 +349,50 @@ object Requests extends Controller with Secured {
           )
         } else Rest.unauthorized()
       }.getOrElse(Rest.notFound())
+    } else Rest.unauthorized()
+  }
+
+  def editMeta(id: Int) = UserAction(){ implicit user => implicit request =>
+    if(user.canCreateLegacy){
+      Req.findById(id).map { req =>
+        Rest.success(
+          "status" -> req.level,
+          "date" -> req.date,
+          "saroNo" -> req.saroNo
+        )
+      }.getOrElse(Rest.notFound())
+    } else Rest.unauthorized()
+  }
+
+  def update(id: Int) = UserAction(){ implicit user => implicit request =>
+    if(user.canCreateLegacy){
+
+      def updateForm(id: Int): Form[Option[Req]] = Form(
+        mapping(
+          "status" -> number,
+          "date" -> longNumber,
+          "saroNo" -> optional(text)
+        )
+        ((status, date, saroNo) =>
+          Req.findById(id).map(_.copy(
+            level = status,
+            date = date,
+            saroNo = saroNo
+          ))
+        )(_ => None)
+      )
+
+      updateForm(id).bindFromRequest.fold(
+        Rest.formError(_),
+        _.map {
+          _.save().map { implicit req =>
+            Event.legacyEdit().create().map { _ =>
+              Rest.success()
+            }.getOrElse(Rest.serverError())
+          }.getOrElse(Rest.serverError())
+        }.getOrElse(Rest.notFound())
+      )
+
     } else Rest.unauthorized()
   }
 

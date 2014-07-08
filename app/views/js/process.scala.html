@@ -1,6 +1,7 @@
 @()
 
 @import recon.models.Permission
+@import recon.models.Req
 
 var process = {};
 
@@ -9,17 +10,12 @@ process.levelToAgencyName = m.prop([
   "ASSESSING_AGENCY",
   "Office of Civil Defense",
   "Office of the President",
-  "Department of Budget and Management"
+  "Department of Budget and Management",
+  "IMPLEMENTING_AGENCY"
 ]);
 
 process.levelDict = [
-  "RECEIVED",
-  "ASSESSOR_ASSIGNMENT",
-  "ASSESSOR_SIGNOFF",
-  "OCD_SIGNOFF",
-  "OP_SIGNOFF",
-  "SARO_ASSIGNMENT",
-  "IMPLEMENTATION"
-];
+  @Html(Req.levels.map(l => "\"" + l + "\"").reduce( (x,y) => x + ", \n" + y ))
+]
 
 process.permissions = @Html(Permission.json.toString);

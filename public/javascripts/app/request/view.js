@@ -121,6 +121,9 @@ request.view = function(ctrl){
               m(".big.section#summary", [
                 m(".header", [
                   m("h1", ["Summary"]),
+                  ctrl.request().isLegacy ? "This is a LEGACY request. " : "",
+                  ctrl.app.isAuthorized(process.permissions.CREATE_LEGACY_REQUESTS) ?
+                    m("a", {href: routes.controllers.Requests.edit(ctrl.id).url}, "Click here to edit special fields.") : ""
                 ]),
                 m(".content", [
                   request.progress(ctrl),
@@ -135,6 +138,8 @@ request.view = function(ctrl){
                   m("p.meta", [
                     "Posted by ",
                     m("a",{href: routes.controllers.Users.view(ctrl.author().id).url, config: m.route}, ctrl.author().name),
+                    " on behalf of ",
+                    m("a",{href: routes.controllers.GovUnits.view(ctrl.govUnit().id).url, config: m.route}, ctrl.govUnit().name),
                     m("br"),
                     " on "+(new Date(ctrl.request().date).toString()), // change this as people modify this. "Last edited by _____"
                   ]),
@@ -202,7 +207,7 @@ request.view = function(ctrl){
                 ]),
                 m(".content", [
                   m(".row", [
-                    m(".columns.medium-6", [
+                    m(".columns.large-4", [
                       m("p", [
                         "Assessing Agency",
                         ctrl.degs.assess.view(
@@ -229,7 +234,7 @@ request.view = function(ctrl){
                         ]),
                       ]),
                     ]),
-                    m(".columns.medium-6", [
+                    m(".columns.large-4", [
                       m("p", [
                         "Implementing Agency",
                         ctrl.degs.implement.view(
@@ -256,6 +261,33 @@ request.view = function(ctrl){
                         ]),
                       ]),
                     ]),
+                    m(".columns.large-4", [
+                      m("p", [
+                        "Executing Agency",
+                        ctrl.degs.execute.view(
+                          function(){
+                            return ctrl.executingAgency().id ?
+                              m("h4", [
+                                m("a", {href: routes.controllers.GovUnits.view(ctrl.executingAgency().id).url, config: m.route}, [
+                                  ctrl.executingAgency().name
+                                ])
+                              ])
+                            : m("h4", "Unassigned");
+                          },
+                          function(){
+                            return m("select", {onchange: m.withAttr("value", this.input)},
+                              [m("option", {value: 0, selected: ctrl.executingAgency().id == 0}, "None")]
+                              .concat(ctrl.executingAgencies().map(function(agency){
+                                return m("option", {value: agency.id, selected: ctrl.executingAgency().id == agency.id}, agency.name)
+                              }
+                            )));
+                          }
+                        ),
+                        m("p.help", [
+                          "The Executing Agency will be in charge of execution."
+                        ]),
+                      ]),
+                    ]),
                   ]),
                 ]),
               ]),
@@ -266,42 +298,65 @@ request.view = function(ctrl){
                 ]),
                 m(".content", [
                   m(".row", [
-                    m(".columns.medium-4", [
-                      m("h4", [
-                        "What documents are needed?"
-                      ]),
-                      request.requirements(ctrl),
-                    ]),
-                    m(".columns.medium-8", [
-                      ctrl.curUserCanUpload() ?
-                        m("div.dropzone", {config: ctrl.initDocDropzone})
-                      : "",
-                      ctrl.attachments().docs.length ?
-                        m("table.doc-list", [
-                          m("thead", [
-                            m("tr", [
-                              m("td", "Filename"),
-                              m("td", "Date Uploaded"),
-                              m("td", "Uploader"),
-                              m("td", "Actions")
-                            ])
-                          ]),
-                          m("tbody", [
-                            ctrl.attachments().docs.map(function (doc){
-                              return m("tr", [
-                                m("td", doc.filename),
-                                m("td", common.displayDate(doc.dateUploaded)),
-                                m("td", [
-                                  m("a", {href: routes.controllers.Users.view(doc.uploader.id).url, config: m.route}, doc.uploader.name)
+                    m(".columns.medium-12", [
+                      ctrl.requirements().map(function (reqts, level){
+
+                        var levelDict = [
+                          "Submission",
+                          "Agency Validation",
+                          "OCD Validation"
+                        ];
+
+                        return m("div", {class: level == (ctrl.request().level+1) ? "current" : ""},
+                          [
+                            m("h2", levelDict[level]),
+                            m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
+                              var att = ctrl.attachmentFor(reqt, ctrl.attachments());
+                              var uploadDate = att && new Date(att.dateUploaded);
+                              var canUpload = ctrl.curUserCanUpload();
+                              return m("li.document", [
+                                m("h4", [
+                                  reqt.name
                                 ]),
-                                m("td", common.attachmentActions.bind(ctrl)(doc))
-                              ])
-                            })
-                          ])
-                        ])
-                      : m("h3.empty", [
-                        "No documents have been uploaded yet."
-                      ])
+                                att ? m(
+                                  ".file", [
+                                    m(".info", [
+                                      m("a", {href: routes.controllers.Attachments.download(att.id).url}, att.filename),
+                                      " uploaded ",
+                                      m("span", {title: uploadDate}, helper.timeago(uploadDate)),
+                                      " by ",
+                                      m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
+                                    ]),
+                                    m("ul.button-group.round", [
+                                      m("li", [
+                                        m("a.button.tiny", {href: routes.controllers.Attachments.preview(att.id).url, title: "preview"}, [
+                                          m("i.fa.fa-fw.fa-lg.fa-eye")
+                                        ]),
+                                      ]),
+                                      canUpload ? 
+                                        m("li", [
+                                          m("a.button.tiny", {onclick: function(){ ctrl.archive(att); }, title: "archive"}, [
+                                            m("i.fa.fa-fw.fa-lg.fa-archive")
+                                          ])   
+                                        ])
+                                      : ""
+                                    ]),
+                                    
+                                    
+                                  ]
+                                ) : (
+                                  canUpload ?
+                                  m(".dropzone", {config: ctrl.initAttachmentDropzone(reqt)}, [
+                                    m(".dz-message", "Drop documents here or click to browse")
+                                  ])
+                                  : "No documents have been uploaded yet."
+                                )
+                              ]);
+                            })])
+                          ]
+                        );
+
+                      })
                     ]),
                   ]),
                 ]),
@@ -344,7 +399,7 @@ request.view = function(ctrl){
                   ]),
                   m("h4", ((ctrl.request().level > 4 && ctrl.currentUserBelongsToImplementingAgency()) ? [
                     "Project Monitoring",
-                    m("button.tiny.right", {type: "button", onclick: ctrl.addProjectModal.show.bind(ctrl.addProjectModal)}, [
+                    m("button.tiny.right", {type: "button", onclick: ctrl.addProjectModal.show}, [
                       "Reference a Project"
                     ]),
                   ] : ("Projects"))),
@@ -441,11 +496,11 @@ request.approval = function(ctrl){
                 m("h4", [
                   "Please assign a SARO to this request."
                 ]),
-                m("button", {onclick: ctrl.saroModal.show.bind(ctrl.saroModal)}, [
+                m("button", {onclick: ctrl.saroModal.show}, [
                   m("i.fa.fa-fw.fa-check"),
                   "Assign SARO"
                 ]),
-                m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
+                m("button.alert", {onclick: ctrl.rejectModal.show}, [
                   m("i.fa.fa-fw.fa-times"),
                   "Reject"
                 ])
@@ -454,17 +509,17 @@ request.approval = function(ctrl){
                 m("h4", [
                   "Sign off on this request only if you feel the information is complete for your step in the approval process."
                 ]),
-                m("button", {onclick: ctrl.signoffModal.show.bind(ctrl.signoffModal)}, [
+                m("button", {onclick: ctrl.signoffModal.show}, [
                   m("i.fa.fa-fw.fa-check"),
                   "Sign off"
                 ]),
-                m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
+                m("button.alert", {onclick: ctrl.rejectModal.show}, [
                   m("i.fa.fa-fw.fa-times"),
                   "Reject"
                 ])
               ])
             )
-          : ctrl.hasSignedoff() ?
+          : (ctrl.hasSignedoff() && (!ctrl.currentUserBelongsToImplementingAgency() || ctrl.executingAgency())) ?
             m("div", [
               m("h4", [
                 m("div", [m("i.fa.fa-thumbs-up.fa-2x")]),
@@ -474,7 +529,7 @@ request.approval = function(ctrl){
           : m("div", [
             m("h4",
               ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
-                ctrl.app.isSuperAdmin() ?
+                (ctrl.app.isSuperAdmin() || ctrl.currentUserBelongsToImplementingAgency()) ?
                   [
                     "Please ",
                     m("a", {href: "#assignments", onclick: function(e){
@@ -483,16 +538,18 @@ request.approval = function(ctrl){
                     }}, [
                       "assign an agency"
                     ]),
-                    " to assess this request."
+                    " to " + ((ctrl.request().level <=  1 ) ? "assess" : "execute") + " this request."
                   ]
-                : "Waiting for the Office of Civil Defense to assign an agency to assess this request."
+                : ((ctrl.request().level == 0) ? 
+                  "Waiting for the Office of Civil Defense to assign an agency to assess this request."
+                  : "Waiting for " + ctrl.implementingAgency().name + " to assign an executing agency.")
               : "Waiting for " + ctrl.getBlockingAgency() + " approval."
             ),
             m("div",
               ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
                 ctrl.app.isSuperAdmin() ?
                   [
-                    m("button.alert", {onclick: ctrl.rejectModal.show.bind(ctrl.rejectModal)}, [
+                    m("button.alert", {onclick: ctrl.rejectModal.show}, [
                       m("i.fa.fa-fw.fa-times"),
                       "Reject"
                     ])
@@ -514,66 +571,6 @@ request.approval = function(ctrl){
   ])
 }
 
-request.requirements = function(ctrl){
-  var list = {
-    "Submission": {
-      "LGU": [
-        "Sangguniang Resolution declaring the area under a State of Calamity / Imminent Danger and appropriating local counterpart for the project;",
-        "Certification by Local Chief Executive (LCE) concerned thru a Sangguniang Resolution assuring that whatever amount will be provided by the Office of the President (OP), the project will be completed/finished;",
-        "Certification and justification by the LCE concerned that funding requests chargeable against Calamity Fund are of an emergency in character;",
-        "Certification by the Local Accountant or Finance Officer that their Local Calamity Fund is already depleted/exhausted and/or non – availability of funding source other than the Calamity Fund;",
-        "Certification that the infrastructures being requested for funding support are not covered by insurance;"
-      ],
-      "NGA": [
-        "Work and financial program/plan of the agency;",
-        "Endorsement of the Department Secretary or Head of Agency requesting for funding assistance;"
-      ]
-    },
-    "Agency Validation": {
-      "LGU": [
-        "Certification by the DPWH that the concerned LGU is capable of implementing the project",
-        "Other pertinent documents which may be required by the Council such as an independent validation of the project by the DPWH Regional Director/District Engineer",
-        "Validation/recommendation from the Secretary DPWH"
-      ],
-      "NGA": [
-        "Validation/evaluation of appropriate agency to whom the NDRRMC referred the request"
-      ]
-    },
-    "OCD Validation": {
-      "LGU": [
-        "Local Disaster Risk reduction and Management Council (DRRMC) Damage Report/ Calamity Impact Assessment Report/ Work and financial Plan (to include colored pictures)",
-        "Endorsement of RDRRMC Chairperson (OCD Regional Director)"
-      ],
-      "NGA": [
-        "Other pertinent documents which may be required by the Council such as an independent evaluation of the project from the concerned agencies/departments (additional documents may be requested by OCD via comments)"
-      ]
-    }
-  }
-
-  return m("div", [
-    m('select', {onchange: m.withAttr("value", ctrl.requirementLevel)}, 
-      Object.keys(list).map(function(k){
-        return m("option" + (ctrl.requirementLevel() == k ? '[selected="true"]' : ""), k)
-      })
-    ),
-    m("div", 
-      _.map(list[ctrl.requirementLevel()], function(docs, party){
-        return m("div", [
-          m("h4", [
-            party
-          ]),
-          m("ol", docs.map(function(doc){
-            return m("li", [
-              doc
-            ])
-          })),
-        ]);
-      })
-    ),
-  ])
-
-}
-
 request.progress = function(ctrl){
   return m("section", [
     m(".row", [
@@ -587,7 +584,7 @@ request.progress = function(ctrl){
                   (ctrl.request().level === (level - 1) ? 'pending' : '')
               }, [
                 step,
-                common.help("wut")
+                common.help("wut", true)
               ])
             })
             .value()

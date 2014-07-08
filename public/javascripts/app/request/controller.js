@@ -10,8 +10,6 @@ request.controller = function(){
     amount: m.prop()
   }
 
-  this.requirementLevel = m.prop("Agency Validation");
-
   var requestId = m.route.param('id');
   this.requestTabs = new common.stickyTabs.controller();
   this.requestTabs.tabs([
@@ -46,10 +44,13 @@ request.controller = function(){
     name: ""
   });
 
-  this.attachments = m.prop({
-    imgs: [],
-    docs: []
+  this.govUnit = m.prop({
+    id: 0,
+    name: ""
   });
+
+  this.requirements = m.prop([]);
+  this.attachments = m.prop([]);
 
   this.history = m.prop([]);
   this.location = m.prop("");
@@ -75,10 +76,12 @@ request.controller = function(){
   this.unassignedAgency = {id: 0};
   this.assessingAgency = m.prop(this.unassignedAgency);
   this.implementingAgency = m.prop(this.unassignedAgency);
+  this.executingAgency = m.prop(this.unassignedAgency);
   this.coords = m.prop();
   
   this.assessingAgencies = m.prop([]);
   this.implementingAgencies = m.prop([]);
+  this.executingAgencies = m.prop([]);
 
   // displayEditGroups
   var deg = displayEditGroup;
@@ -124,10 +127,6 @@ request.controller = function(){
     description: new deg(this.canEdit, edit("description"), save("description")),
     amount: new deg(this.canEdit, edit("amount"), save("amount")),
     location: new deg(this.canEdit, edit("location"), save("location")),
-    disaster: new deg(this.canEdit, edit("disaster"), save("disaster"), function (c){
-      this.htmlDate("");
-      c();
-    }, {htmlDate: m.prop("")}),
 
     assess: new deg(this.app.isSuperAdmin, edit("assessingAgency"), save("assessingAgency",
       function (r){
@@ -151,6 +150,22 @@ request.controller = function(){
           ctrl.implementingAgency(agency);
         } else {
           ctrl.implementingAgency(ctrl.unassignedAgency);
+        }
+      }
+    )),
+
+    execute: new deg(function(){
+      return (self.app.isSuperAdmin() || self.app.isDBM() || self.currentUserBelongsToImplementingAgency())
+    }, edit("executingAgency"), save("executingAgency",
+      function (r){
+        var agency = extractAgency(r);
+        if(agency.id){
+          ctrl.executingAgency(agency);
+          if(process.levelDict[ctrl.request().level + 1] == "EXECUTOR_ASSIGNMENT") {
+            ctrl.request().level++;
+          }
+        } else {
+          ctrl.executingAgency(ctrl.unassignedAgency);
         }
       }
     ))
@@ -190,15 +205,23 @@ request.controller = function(){
   }
 
   this.getBlockingAgency = function(){
-    var agency = process.levelToAgencyName()[this.request().level]
-    if(agency === "ASSESSING_AGENCY"){
-      if (this.assessingAgency().id){
-        return this.assessingAgency().name;
-      } else {
-        return "AWAITING_ASSIGNMENT";
+    var agency = process.levelToAgencyName()[this.request().level];
+    switch (agency) {
+      case "ASSESSING_AGENCY": {
+        if (this.assessingAgency().id){
+          return this.assessingAgency().name;
+        } else {
+          return "AWAITING_ASSIGNMENT";
+        }
       }
-    } else {
-      return agency;
+      case "IMPLEMENTING_AGENCY": {
+        if (this.executingAgency().id){
+          return this.executingAgency().name;
+        } else {
+          return "AWAITING_ASSIGNMENT";
+        }
+      }
+      default: return agency;
     }
   }
 
@@ -208,12 +231,17 @@ request.controller = function(){
     this.projects(data.projects);
 
     this.author(data.author);
+    this.govUnit(data.govUnit);
+    this.requirements(common.processReqts(data.requirements));
+
     this.attachments(data.attachments);
     this.history(data.history);
     this.assessingAgencies(data.assessingAgencies);
     this.implementingAgencies(data.implementingAgencies);
+    this.executingAgencies(data.implementingAgencies); // Make a new list that includes even LGUs.
     this.assessingAgency(data.assessingAgency || this.unassignedAgency);
     this.implementingAgency(data.implementingAgency || this.unassignedAgency);
+    this.executingAgency(data.executingAgency || this.unassignedAgency);
 
     this.isInvolved(data.isInvolved);
     this.hasSignedoff(data.hasSignedoff)
@@ -254,7 +282,13 @@ request.controller = function(){
     ctrl.history().unshift(r.event);
     ctrl.canSignoff(false);
     ctrl.hasSignedoff(true);
-    ctrl.request().level++;
+    if((process.levelDict[(ctrl.request().level) + 1] == "SARO_ASSIGNMENT") &&
+      ctrl.executingAgency() != ctrl.unassignedAgency
+    ){
+      ctrl.request().level += 2;
+    } else {
+      ctrl.request().level++;
+    }
   }
 
   this.signoffModal.signoff = function(e){
@@ -324,46 +358,37 @@ request.controller = function(){
     }.bind(this));
   }.bind(this);
 
-  this.initImageDropzone = function(elem, isInit){
-    if(!isInit){
+  this.initAttachmentDropzone = function(reqt){
+    return function(elem, isInit){
+      if(!isInit){
 
-      var dz = new Dropzone(elem, {
-        url: routes.controllers.Attachments.add(this.id, "img").url,
-        previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
-        dictDefaultMessage: "Drop photos here, or click to browse.",
-        clickable: true,
-        autoDiscover: false,
-        thumbnailWidth: 128,
-        thumbnailHeight: 128,
-        acceptedFiles: "image/*"
-      })
+        var dz = new Dropzone(elem, {
+          url: routes.controllers.Attachments.add(this.id, reqt.id).url,
+          previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
+          maxFiles: 1,
+          clickable: true,
+          autoDiscover: false,
+          acceptedFiles: reqt.isImage ? "image/*" : ""
+        });
 
-      dz.on("success", function (_, r){
-        this.attachments().imgs.push(r.attachment);
-        this.history().unshift(r.event);
-        m.redraw();
-      }.bind(this));
+        dz.on("success", function (_, r){
+          this.attachments().push(r.attachment);
+          this.history().unshift(r.event);
+          m.redraw();
+        }.bind(this));
 
-    }
-  }.bind(this);
+      }
+    }.bind(this);
+  }
 
-  this.initDocDropzone = function(elem, isInit){
-    if(!isInit){
+  this.archive = function(att){
+    bi.ajax(routes.controllers.Attachments.archive(att.id)).then(function (r){
+      var a = ctrl.attachments();
+      a.splice(a.indexOf(att), 1);
+      ctrl.history().unshift(r.event);
+    });
+  }
 
-      var dz = new Dropzone(elem, {
-        url: routes.controllers.Attachments.add(this.id, "doc").url,
-        previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
-        dictDefaultMessage: "Drop documents here, or click to browse. We recommend pdfs and doc files.",
-        clickable: true,
-        autoDiscover: false
-      });
+  this.attachmentFor = common.attachmentFor;
 
-      dz.on("success", function (_, r){
-        this.attachments().docs.push(r.attachment);
-        this.history().unshift(r.event);
-        m.redraw();
-      }.bind(this));
-
-    }
-  }.bind(this);
 }
