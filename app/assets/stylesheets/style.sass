@@ -851,17 +851,22 @@ nav
 
 a#feedback-tab
   position: fixed
-  bottom: -3px
+  bottom: 0
   right: 20px
-  background-color: $red
+  background-color: rgba($red, 0.8)
+  text-shadow: 0 3px 3px $red, 0 -3px 3px $red, 3px 0px 3px $red, -3px 0 3px $red
   color: white
   padding: 8px 16px
-  opacity: 0.8
+  border-bottom: 0px solid #790300
   +transition( all 0.2s )
+  i
+    +transition( all 0.2s )
   &:hover
-    bottom: 0
-    padding: 10px 20px
-    opacity: 1
+    background-color: rgba($red, 1)
+    border-bottom: 5px solid #790300
+    padding: 10px 20px 10px 25px
+    i
+      +transform( translateX(-6px) rotate(-24deg) scale(1.3) )
 
 // .tabs-content
 //   .section

@@ -30,7 +30,8 @@ app.template = function(){
 
 app.feedback = function(ctrl){
   return m("a#feedback-tab", {href:"https://docs.google.com/forms/d/1GUdE6Si1QnnMtVJ8ig8rwECo9DK9BloOXiGVVnj_efw/viewform", target:"potato"}, [
-    "feedback"
+    m("i.fa.fa-bullhorn"),
+    " Feedback"
   ])
 }
 
