@@ -135,12 +135,16 @@ home.view = function(ctrl){
                       m(".caption", "Typhoon Yolanda"),
                     ]),
                     m("td", [
-                      m("h2", [
-                        // ctrl.vizData().yolanda.saro.qty + " ",
-                        // m("span", "SAROs"),
-                        m("h6", "DPWH: PHP " + helper.truncate(ctrl.vizData().yolanda.dpwh.amt, 2) ),
-                        m("h6", "All Agencies: PHP " + helper.truncate(ctrl.vizData().yolanda.saro.amt, 2) )
+                      // ctrl.vizData().yolanda.saro.qty + " ",
+                      // m("span", "SAROs"),
+                      m("h6", [
+                        "DPWH: PHP ",
+                        m("span.fig", helper.truncate(ctrl.vizData().yolanda.dpwh.amt, 2))
                       ]),
+                      m("h6", [
+                        "All Agencies: PHP ",
+                        m("span.fig",  helper.truncate(ctrl.vizData().yolanda.saro.amt, 2))
+                      ])
                     ])
                   ])
                 ]),
@@ -150,12 +154,13 @@ home.view = function(ctrl){
                       m(".caption", "Bohol Quake"),
                     ]),
                     m("td", [
-                      m("h2", [
-                        // ctrl.vizData().bohol.saro.qty + " ",
-                        // m("span", "SAROs"),
-                        m("h6", "DPWH: PHP " + helper.truncate(ctrl.vizData().bohol.dpwh.amt, 2) ),
-                        m("h6", "All Agencies: PHP " + helper.truncate(ctrl.vizData().bohol.saro.amt, 2) )
+                      // ctrl.vizData().bohol.saro.qty + " ",
+                      // m("span", "SAROs"),
+                      m("h6", [
+                        "DPWH: PHP ",
+                        m("span.fig", helper.truncate(ctrl.vizData().bohol.dpwh.amt, 2))
                       ]),
+                      m("h6", "All Agencies: PHP " + helper.truncate(ctrl.vizData().bohol.saro.amt, 2) )
                     ])
                   ])
                 ]),
@@ -177,11 +182,11 @@ home.view = function(ctrl){
                       m(".caption", "Typhoon Yolanda"),
                     ]),
                     m("td", [
-                      m("h2", [
-                        m("span", "PHP"),
-                        " " + helper.truncate(ctrl.vizData().yolanda.fundedProjects.amt, 2) + "",
-                        m("h6", ctrl.vizData().yolanda.fundedProjects.qty + " Projects")
+                      m("h6", [
+                        "DPWH: PHP ",
+                        m("span.fig", helper.truncate(ctrl.vizData().yolanda.fundedProjects.amt, 2))
                       ]),
+                      m("h6", ctrl.vizData().yolanda.fundedProjects.qty + " Projects")
                     ])
                   ])
                 ]),
@@ -191,11 +196,11 @@ home.view = function(ctrl){
                       m(".caption", "Bohol Quake"),
                     ]),
                     m("td", [
-                      m("h2", [
-                        m("span", "PHP"),
-                        " " + helper.truncate(ctrl.vizData().bohol.fundedProjects.amt, 2) + "",
-                        m("h6", ctrl.vizData().bohol.fundedProjects.qty + " Projects")
+                      m("h6", [
+                        "DPWH: PHP ",
+                        m("span.fig", helper.truncate(ctrl.vizData().bohol.fundedProjects.amt, 2))
                       ]),
+                      m("h6", ctrl.vizData().bohol.fundedProjects.qty + " Projects")
                     ])
                   ])
                 ])
