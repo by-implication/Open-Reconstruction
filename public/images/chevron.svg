@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1"
+	xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="33.5px"
+	height="131.522px" viewBox="0 0 33.5 131.522" enable-background="new 0 0 33.5 131.522" xml:space="preserve">
+<metadata>
+		<slices></slices>
+		<sliceSourceBounds  y="-1090.46" x="500.041" width="29.504" height="131.92" bottomLeftOrigin="true"></sliceSourceBounds>
+</metadata>
+<polyline fill="none" stroke="#166CAD" stroke-width="1.5" stroke-miterlimit="10" points="3,0 31.5,65.761 3,131.522 "/>
+</svg>

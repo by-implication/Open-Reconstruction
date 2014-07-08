@@ -79,7 +79,7 @@ home.view = function(ctrl){
                   ])
                 ]),
             ]),
-            m("li", [
+            m("li.arrow", [
               m("a", {
                 href:"/requests",
                 config:m.route
@@ -114,7 +114,7 @@ home.view = function(ctrl){
                 ])
               ])
             ]),
-            m("li", [
+            m("li.arrow", [
               m("a", {
                 href: routes.controllers.Viz.index().url,
                 config:m.route
