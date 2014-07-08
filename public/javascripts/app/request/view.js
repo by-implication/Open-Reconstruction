@@ -583,8 +583,8 @@ request.progress = function(ctrl){
                 className: (ctrl.request().level >= level ? 'done ' : '') +
                   (ctrl.request().level === (level - 1) ? 'pending' : '')
               }, [
-                step,
-                common.help("wut", true)
+                step
+                // common.help("wut", true)
               ])
             })
             .value()
@@ -614,7 +614,7 @@ request.listView = function(reqs, sortBy){
           ]),
           m("th", [
             "Stagnation",
-            common.help("yo")
+            common.help("This is how long the project has been waiting at the current stage.")
           ]),
           m("th", "Name"),
           m("th", "Gov Unit"),
