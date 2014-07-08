@@ -39,7 +39,7 @@ requestCreation.view = function(ctrl){
         function (ctrl){
           return m(".section", [
             m("h2", [
-              "Attachments for " + ctrl.activeEntry().description()
+              "Attachments for " + (ctrl.activeEntry().description() ? ctrl.activeEntry().description() : "unnamed request")
             ]),
             m("p.help", [
               "While these attachments are necessary for your request to progress, you may submit your request with incomplete attachments, and upload them at a later time."
