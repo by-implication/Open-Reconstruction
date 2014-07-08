@@ -333,16 +333,16 @@ request.view = function(ctrl){
                                           m("i.fa.fa-fw.fa-lg.fa-eye")
                                         ]),
                                       ]),
-                                      canUpload ? 
+                                      canUpload ?
                                         m("li", [
                                           m("a.button.tiny", {onclick: function(){ ctrl.archive(att); }, title: "archive"}, [
                                             m("i.fa.fa-fw.fa-lg.fa-archive")
-                                          ])   
+                                          ])
                                         ])
                                       : ""
                                     ]),
-                                    
-                                    
+
+
                                   ]
                                 ) : (
                                   canUpload ?
@@ -540,7 +540,7 @@ request.approval = function(ctrl){
                     ]),
                     " to " + ((ctrl.request().level <=  1 ) ? "assess" : "execute") + " this request."
                   ]
-                : ((ctrl.request().level == 0) ? 
+                : ((ctrl.request().level == 0) ?
                   "Waiting for the Office of Civil Defense to assign an agency to assess this request."
                   : "Waiting for " + ctrl.implementingAgency().name + " to assign an executing agency.")
               : "Waiting for " + ctrl.getBlockingAgency() + " approval."
