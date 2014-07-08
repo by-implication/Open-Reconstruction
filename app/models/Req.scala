@@ -195,6 +195,11 @@ object Req extends ReqGen {
         addWhereClause("req_level = 0")
         addWhereClause("assessing_agency_id IS NULL")
       }
+      case "executor" => {
+        addWhereClause("req_level = 5 AND implementing_agency_id = " + user.govUnitId)
+        addWhereClause("implementing_agency_id IS NOT NULL")
+        addWhereClause("executing_agency_id IS NULL")
+      }
       case "mine" => {
         if (!user.isAnon){
           addWhereClause("gov_unit_id = " + user.govUnit.id)
@@ -391,6 +396,13 @@ case class Req(
       )
     ),
     "assessingAgencyId" -> assessingAgencyId,
+    "implementingAgency" -> (implementingAgency match {
+      case Some(agency) => Json.obj(
+        "id" -> agency.id,
+        "name" -> (agency.acronym.getOrElse(agency.name):String)
+      )
+      case None => JsNull
+    }),
     "canSignoff" -> user.canSignoff(this),
     "isRejected" -> isRejected
   )
