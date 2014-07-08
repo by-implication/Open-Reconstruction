@@ -110,14 +110,14 @@ requestCreation.view = function(ctrl){
                     })
                   )
                 ),
-                common.field(
-                  "I am making this request in behalf of:",
-                  m("select", [
-                    m("option", [
-                      "option1"
-                    ]),
-                  ])
-                )
+                // common.field(
+                //   "I am making this request in behalf of:",
+                //   m("select", [
+                //     m("option", [
+                //       "option1"
+                //     ]),
+                //   ])
+                // )
               ]),
               m(".section", [
                 m("h2", [
