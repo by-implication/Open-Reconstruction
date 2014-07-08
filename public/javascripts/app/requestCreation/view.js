@@ -26,7 +26,9 @@ requestCreation.view = function(ctrl){
                 "Location for " + (ctrl.activeEntry().description() ? ctrl.activeEntry().description() : "unnamed request")
               ]),
               m("p.help", [
-                "Tell us where the project is. Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map."
+                "Tell us where the project is.",
+                m("br"),
+                "Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map."
               ]),
             ]),
             m("div", {id: "map", className: "large", config: modCtrl.initMap}),
