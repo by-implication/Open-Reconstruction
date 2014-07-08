@@ -39,7 +39,7 @@ app.footer = function(ctrl){
     m("footer", [
       m(".row.notice", [
         m(".columns",
-          "The data presented may be incomplete, and is pending refinement by the relevant agencies."
+          "* The data presented may be incomplete, and is pending refinement by the relevant agencies."
         )
       ]),
       m(".row", [

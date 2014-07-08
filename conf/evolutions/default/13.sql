@@ -4,7 +4,7 @@
 
 INSERT INTO projects (req_id, project_source_id, project_name, project_amount, gov_unit_id, project_type_id, project_scope, project_funded)
 SELECT req_id, group_id, project_name, amount, gov_unit_id, project_type_id, scope, bool
-FROM (SELECT req_id, group_id, project_name, 
+FROM (SELECT req_id, group_id, project_name,
     CASE 
       WHEN amount = '-' THEN 0
       ELSE amount::numeric(12,2)
@@ -15,7 +15,9 @@ FROM (SELECT req_id, group_id, project_name,
     initcap(scope)::project_scope as scope,
     false,
     gov_unit_acronym,
+    req_level,
     oparr_bohol.implementing_agency,
+    oparr_bohol.status,
     (SELECT array_agg(distinct gov_units.gov_unit_acronym) FROM gov_units) as agencies
     FROM oparr_bohol
     LEFT JOIN reqs on req_description = group_id
@@ -23,10 +25,12 @@ FROM (SELECT req_id, group_id, project_name,
     LEFT JOIN project_types on initcap(project_type_name) = initcap(project_type)
     WHERE oparr_bohol.psgc = reqs.req_location
   ) AS new_projects
- WHERE implementing_agency ilike gov_unit_acronym OR
-   (implementing_agency NOT ILIKE coalesce(gov_unit_acronym, '') 
-   AND implementing_agency ilike any(agencies) IS NULL
-   AND gov_unit_acronym IS NULL);;
+ WHERE (implementing_agency ilike gov_unit_acronym OR
+    (implementing_agency NOT ILIKE coalesce(gov_unit_acronym, '') 
+    AND implementing_agency ilike any(agencies) IS NULL
+    AND gov_unit_acronym IS NULL)) AND
+    ((new_projects.req_level = 0 AND coalesce(new_projects.status, '') NOT ilike 'Funded (2.3B Release)') OR
+    (new_projects.req_level = 5 AND new_projects.status ilike 'Funded (2.3B Release)'));;
 
 -- assign DPWH EPLC projects
 

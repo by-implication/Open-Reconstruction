@@ -3,8 +3,8 @@
 -- create OPARR-Bohol requests
 
 INSERT INTO reqs (req_description, project_type_id, req_disaster_name, 
-  req_amount, author_id, req_location, req_disaster_date,
-  disaster_type_id, assessing_agency_id, implementing_agency_id)
+  req_amount, author_id, req_location, req_disaster_date, req_date,
+  disaster_type_id, assessing_agency_id, implementing_agency_id, req_level)
 SELECT group_id,
   CASE 
     WHEN array_agg(DISTINCT project_type_id) = ARRAY[NULL]::INT[] THEN 
@@ -24,20 +24,25 @@ SELECT group_id,
     WHEN disaster_name ilike '%yolanda%' THEN '2013-11-8'::date
     ELSE now()
     END as disaster_date,
+  '2014-5-18'::date as req_date,
   CASE 
     WHEN disaster_name ilike '%bohol%' THEN 2
     WHEN disaster_name ilike '%yolanda%' THEN 1
     ELSE 7
     END as disaster_type,
   agencies.gov_unit_id,
-  agencies.gov_unit_id
+  agencies.gov_unit_id,
+  CASE
+    WHEN oparr_bohol.status ilike 'Funded (2.3B Release)' THEN 5
+    ELSE 0
+    END as level
 FROM oparr_bohol
 LEFT JOIN project_types on initcap(project_type_name) = initcap(project_type)
 LEFT JOIN (
   SELECT gov_unit_id, gov_unit_acronym FROM gov_units 
   WHERE gov_unit_acronym IS NOT NULL
 ) as agencies on oparr_bohol.implementing_agency ilike agencies.gov_unit_acronym
-GROUP BY group_id, disaster_name, oparr_bohol.psgc, agencies.gov_unit_id;;
+GROUP BY group_id, disaster_name, oparr_bohol.psgc, agencies.gov_unit_id, oparr_bohol.status;;
 
 -- create DPWH EPLC requests
 
