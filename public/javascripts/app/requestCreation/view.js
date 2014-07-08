@@ -29,7 +29,7 @@ requestCreation.view = function(ctrl){
                 "Tell us where the project is. Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map."
               ]),
             ]),
-            m("div", {id: "map", config: modCtrl.initMap}),
+            m("div", {id: "map", className: "large", config: modCtrl.initMap}),
           ])
         },
         "medium-8"
