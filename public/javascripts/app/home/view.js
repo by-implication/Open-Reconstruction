@@ -8,7 +8,12 @@ home.view = function(ctrl){
             m("div#logo", {config: ctrl.drawLogo}, [m.trust(home.Logo)]),
             m("h1", "Open Reconstruction"),
             m("p", [
-              "￼Tracking taxpayer money spent on disaster response and reconstruction projects."
+              "￼A centralized portal for tracking taxpayer money spent on disaster response and reconstruction.",
+              m("br"),
+              m("a.button",[
+                "Learn how Open Reconstruction promotes transparency and improves efficiency. ",
+                m("i.fa.fa-chevron-circle-down")
+              ])
             ])
           ]),
         ])
