@@ -402,12 +402,15 @@ common.modal.controller = function(options){
   }
   _.extend(this, options);
 }
-common.modal.view = function(ctrl, content){
+common.modal.view = function(ctrl, content, optionalClasses){
   if (ctrl.isVisible()) {
     return m("section.modal", {style: {height: ctrl.height()+"px"}, config: ctrl.config}, [
       m(".curtain", {onclick: ctrl.close.bind(ctrl)}),
       m(".row", [
-        m(".columns.medium-6.medium-centered.dialog", {config: ctrl.dialogConfig}, [
+        m(".columns.medium-centered.dialog", {
+          config: ctrl.dialogConfig,
+          className: optionalClasses ? optionalClasses : "medium-6"
+        }, [
           m(".card", [
             content(ctrl)
           ]),

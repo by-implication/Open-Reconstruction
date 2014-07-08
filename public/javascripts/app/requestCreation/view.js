@@ -29,7 +29,8 @@ requestCreation.view = function(ctrl){
             ]),
             m("div", {id: "map", config: modCtrl.initMap}),
           ])
-        }
+        },
+        "medium-8"
       ),
       common.modal.view(
         ctrl.attModal,
@@ -76,7 +77,8 @@ requestCreation.view = function(ctrl){
               );
             })),
           ]);
-        }
+        },
+        "medium-8"
       ),
     ], [
     common.banner("New Project Request"),
