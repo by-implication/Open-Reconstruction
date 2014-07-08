@@ -18,6 +18,20 @@ home.view = function(ctrl){
           ]),
         ])
       ]),
+      m("section.search",[
+        m(".row",[
+          m(".columns.medium-1"),
+          m(".columns.medium-11",[
+            m("h2", [
+              "Find projects and requests in your town, region, or area.",
+              m("a.button",[
+                "Search ",
+                m("i.fa.fa-search")
+              ])
+            ])
+          ])
+        ])
+      ]),
       m("section", [
         m(".row", [
           m(".columns.medium-12", [
