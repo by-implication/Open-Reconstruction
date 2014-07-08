@@ -131,18 +131,27 @@ requestCreation.controller = function(){
 
   this.submitNewRequest = function(e){
     e.preventDefault();
-    if(this.preamble()) {
+    if(ctrl.preamble()) {
 
-      bi.ajax(routes.controllers.Requests.insert(), {data: this.input}).then(function (r){
-        m.route(routes.controllers.Requests.view(r.id).url);
+      bi.ajax(routes.controllers.Requests.insert(), {data: {
+        disasterId: ctrl.disasterId,
+        reqs: ctrl.entries
+      }}).then(function (r){
+        var msg = "Successfully created " + r.reqs.length + " new request(s)."
+        if(r.failures){
+          msg += "\n\nFailed to create " + r.failures + " request(s)."
+        }
+        msg += "\n\nRedirecting you back to request listing."
+        alert(msg);
+        m.route(routes.controllers.Requests.index().url);
       }, function (r){
         common.formErrorHandler(r);
-        this.submitButtonDisabled(false);
+        ctrl.submitButtonDisabled(false);
       });
       
     } else {
       alert('To avoid double-budgeting, please make sure to request for assistance only once!');
     }
-  }.bind(this);
+  };
 
 }

@@ -72,7 +72,7 @@ object Requests extends Controller with Secured {
           "location" -> nonEmptyText,
           "projectTypeId" -> number,
           "bucketKey" -> text
-        ))
+        )).verifying("No entries", _.size > 0)
       )
       ((disasterId, reqs) => {
         reqs.map { r =>

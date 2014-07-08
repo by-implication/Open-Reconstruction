@@ -245,28 +245,32 @@ case class Bucket(key: String){
       }
     }
 
-    val attachmentIds: Seq[Int] = bucketDir.listFiles().map { subDir =>
-      try {
-        val requirementId = subDir.getName.toInt
-        Requirement.findById(requirementId).map { requirement =>
-          files(requirement).map { f =>
-            Attachment(filename = f.filename, uploaderId = req.authorId, reqId = req.id, requirementId = requirementId)
-                .create().map { a =>
+    val attachmentIds: Seq[Int] = {
+      if(bucketDir.exists){
+        bucketDir.listFiles().map { subDir =>
+          try {
+            val requirementId = subDir.getName.toInt
+            Requirement.findById(requirementId).map { requirement =>
+              files(requirement).map { f =>
+                Attachment(filename = f.filename, uploaderId = req.authorId, reqId = req.id, requirementId = requirementId)
+                    .create().map { a =>
 
-              moveFile(f.file, a.file)
-              if(requirement.isImage) moveFile(f.thumb, a.thumb)
+                  moveFile(f.file, a.file)
+                  if(requirement.isImage) moveFile(f.thumb, a.thumb)
 
-              Event.attachment(a)(req, req.author).create().getOrElse(Rest.serverError())
+                  Event.attachment(a)(req, req.author).create().getOrElse(Rest.serverError())
 
-              a.id
+                  a.id
 
+                }
+              }
             }
+          } catch {
+            case t: Throwable => None
           }
-        }
-      } catch {
-        case t: Throwable => None
-      }
-    }.flatten.flatten.flatten.map(pkToInt)
+        }.flatten.flatten.flatten.map(pkToInt)
+      } else Seq.empty[Int]
+    }
 
     req.copy(attachmentIds = attachmentIds).save()
 
