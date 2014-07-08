@@ -3,6 +3,7 @@ home.view = function(ctrl){
     m("div#home", [
       m("section.banner", [
         m(".row", [
+          m(".columns.medium-1"),
           m(".columns.medium-11", [
             m("div#logo", {config: ctrl.drawLogo}, [m.trust(home.Logo)]),
             m("h1", "Open Reconstruction"),
