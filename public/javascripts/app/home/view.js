@@ -85,7 +85,10 @@ home.view = function(ctrl){
                 config:m.route
               }, [
                 m("img", {src:"/assets/images/landing/2-projects requested.svg"}),
-                m("h2.title", "Requested Projects"),
+                m("h2.title", [
+                  "Requested Projects",
+                  common.help("Projects sought by local governments, agencies related to reconstruction. Project requests are vetted, then approved, by the relevant agency before a budget for them from the reconstruction fund is approved.", true)
+                ]),
                 m("table.val-group", [
                   m("tr", [
                     m("td", [
@@ -122,7 +125,10 @@ home.view = function(ctrl){
                 config:m.route
               }, [
                 m("img", {src:"/assets/images/landing/3-budget releases.svg"}),
-                m("h2.title", "Projects with Released Budget*"),
+                m("h2.title", [
+                  "Projects with Released Budget*",
+                  common.help("Reconstruction funds are allocated and readied for release.", true)
+                ]),
                 m("table.val-group", [
                   m("tr", [
                     m("td", [
@@ -163,6 +169,7 @@ home.view = function(ctrl){
                 m("img", {src:"/assets/images/landing/4-ongoing projects.svg"}),
                 m("h2.title", [
                   "Ongoing Projects (Public Works)*",
+                  common.help("Projects under implementation. Once approved and funds are allocated for the projects, the proponent is given a go-signal to proceed with building it.", true)
                 ]),
                 m("table.val-group", [
                   m("tr", [
