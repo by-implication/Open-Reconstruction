@@ -284,7 +284,7 @@ request.view = function(ctrl){
                           [
                             m("h2", levelDict[level]),
                             m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
-                              var att = ctrl.attachmentFor(reqt);
+                              var att = ctrl.attachmentFor(reqt, ctrl.attachments());
                               var uploadDate = att && new Date(att.dateUploaded);
                               var canUpload = ctrl.curUserCanUpload();
                               return m("li.document", [

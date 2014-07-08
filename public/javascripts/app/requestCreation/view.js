@@ -1,6 +1,13 @@
 requestCreation.view = function(ctrl){
 
-  function cancel(){ history.back(); }
+  function scopeLabel(scope){
+    switch(scope){
+      case "Reconstruction": return "Completely destroyed, and we need to rebuild it";
+      case "Repair": return "Partially damaged, and we need to repair it";
+      case "Prevention": return "Does not currently exist, and we need to build it for prevention";
+      default: return scope;
+    }
+  }
 
   function projectTypeGroups(indexArr){
     return indexArr.map(function (i){
@@ -9,25 +16,68 @@ requestCreation.view = function(ctrl){
     });
   }
 
-  return app.template(ctrl.app, "New Request", {className: "detail"}, [
+  return app.template(ctrl.app, "New Request", {className: "detail"},[
+      common.modal.view(
+        ctrl.locModal,
+        function (ctrl){
+          return m(".section", [
+            m("h2", [
+              "Location"
+            ]),
+            m("p.help", [
+              "Tell us where the project is. Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map."
+            ]),
+            m("div", {id: "map", config: ctrl.initMap}),
+          ])
+        }
+      ),
+      common.modal.view(
+        ctrl.attModal,
+        function (ctrl){
+          return m(".section", [
+            m("h2", [
+              "Attachments"
+            ]),
+            m("p.help", [
+              "While these attachments are necessary for your request to progress, you may submit your request with incomplete attachments, and upload them at a later time."
+            ]),
+            m("div", ctrl.requirements().map(function (reqts, level){
+              var levelDict = [
+                "Submission",
+                "Agency Validation",
+                "OCD Validation"
+              ];
+              return m("div", {class: level == 0 ? "current" : ""},
+                [
+                  m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
+                    var att = ctrl.getFor(reqt, ctrl.activeEntry().attachments());
+                    var uploadDate = att && new Date(att.dateUploaded);
+                    return m("li.document", [
+                      m("h4", [
+                        reqt.name
+                      ]),
+                      att ? m(
+                        "div", [
+                          m("a", {href: routes.controllers.Attachments.bucketDownload(att.key, reqt.id, att.filename).url}, att.filename),
+                          " uploaded ",
+                          m("span", {title: uploadDate}, helper.timeago(uploadDate)),
+                          " by ",
+                          m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
+                          m("a", {href: routes.controllers.Attachments.bucketPreview(att.key, reqt.id, att.filename).url}, "[PREVIEW]")
+                        ]
+                      ) : m("div.dropzone", {config: ctrl.initDropzone(ctrl.activeEntry(), reqt)})
+                    ]);
+                  })])
+                ]
+              );
+            })),
+          ]);
+        }
+      ),
+    ], [
     common.banner("New Project Request"),
     // modals
-    common.modal.view(
-      ctrl.locModal,
-      function (ctrl){
-        return common.field(
-          "Location",
-          m("div", {id: "map", config: ctrl.initMap}),
-          "Tell us where the project is. Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map."
-        )
-      }
-    ),
-    common.modal.view(
-      ctrl.attModal,
-      function (ctrl){
-        return "Attachments";
-      }
-    ),
+    
     m(".row", [
       m(".columns.large-8.large-offset-2", [
         m(".card", [
@@ -112,85 +162,42 @@ requestCreation.view = function(ctrl){
                       m(".columns.medium-12", [
                         m("ul.button-group.round.right", [
                           m("li", [
-                            m("button[type=button].tiny", {onclick: e.openLocationModal}, "Set location")
+                            m("button[type=button].tiny", {onclick: e.openLocationModal}, "Set location" +
+                              (e.location() ? " [already set]" : "")
+                            )
                           ]),
                           m("li", [
-                            m("button[type=button].tiny", {onclick: e.openAttachmentsModal}, "Add attachments")
+                            m("button[type=button].tiny", {onclick: e.openAttachmentsModal}, "Add attachments" +
+                              (e.attachments().length ? " (" + e.attachments().length + " uploaded)" : "")
+                            )
                           ]),
                           m("li", [
                             m("button.alert[type=button].tiny", {onclick: e.remove}, "Delete")
                           ]),
                         ]),
                       ]),
+// <<<<<<< HEAD
                     ]),
                   ])
                 })),
-                // m("table", [
-                //   m("thead", [
-                //     m("tr", [
-                //       m("th", [
-                //         "Description"
-                //       ]),
-                //       m("th", [
-                //         "Estimated Amount"
-                //       ]),
-                //       m("th", [
-                //         "Type"
-                //       ]),
-                //       m("th", [
-                //         "Location"
-                //       ]),
-                //       m("th", [
-                //         "Attachments"
-                //       ]),
-                //       m("th", [
-                //         "Edit"
-                //       ]),
-                //     ]),
-                //   ]),
-                //   m("tbody", ctrl.entries.map(function(e){
-                //     return m("tr", [
-                //       m("td", [
-                //         m("input", {onchange: m.withAttr("value", e.description), type: "text", placeholder: "e.g. Reconstruction of a seawall for barangay A"}),
-                //       ]),
-                //       m("td", [
-                //         m("input", {type: "number", onchange: m.withAttr("value", e.amount)}),
-                //       ]),
-                //       m("td", [
-                //         m("select", {
-                //           onchange: m.withAttr("value", e.projectTypeId),
-                //           value: e.projectTypeId()
-                //         }, [
-                //           m("optgroup", {label: "Infrastructure"},
-                //             projectTypeGroups([0, 10])
-                //           ),
-                //           m("optgroup", {label: "Water"},
-                //             projectTypeGroups([5, 7, 8, 9, 12, 13])
-                //           ),
-                //           m("optgroup", {label: "Buildings"},
-                //             projectTypeGroups([1, 3, 6, 11])
-                //           ),
-                //           m("optgroup", {label: "Other"},
-                //             projectTypeGroups([2, 4, 14])
-                //           ),
-                //         ])
-                //       ]),
-                //       m("td", [
-                //         m("td", [
-                //           m("button[type=button].tiny", {onclick: e.openLocationModal}, "Set location")
-                //         ])
-                //       ]),
-                //       m("td", [
-                //         m("td", [
-                //           m("button[type=button].tiny", {onclick: e.openAttachmentsModal}, "Add attachments")
-                //         ])
-                //       ]),
-                //       m("td", [
-                //         m("button.alert[type=button].tiny", {onclick: e.remove}, "Delete")
-                //       ])
-                //     ])
-                //   })),
-                // ]),
+// =======
+//                       m("td", [
+//                         m("button[type=button].tiny", {onclick: e.openLocationModal}, "Set location" +
+//                           (e.location() ? " [already set]" : "")
+//                         )
+//                       ]),
+//                       m("td", [
+//                         m("button[type=button].tiny", {onclick: e.openAttachmentsModal}, "Add attachments" +
+//                           (e.attachments().length ? " (" + e.attachments().length + " uploaded)" : "")
+//                         )
+//                       ]),
+//                       m("td", [
+//                         m("button.alert[type=button].tiny", {onclick: e.remove}, "Delete")
+//                       ])
+//                     ])
+//                   })),
+//                 ]),
+// >>>>>>> attachments
                 m("button", {type: "button", onclick: ctrl.newEntry}, [
                   "Add new entry"
                 ]),
@@ -204,7 +211,7 @@ requestCreation.view = function(ctrl){
                     }}, "Submit"),
                   ]),
                   m("li", [
-                    m("button", {type: "button", class: "alert", onclick: cancel}, "Cancel"),
+                    m("button", {type: "button", class: "alert", onclick: ctrl.cancel}, "Cancel"),
                   ]),
                 ]),
               ]),
