@@ -20,12 +20,14 @@ requestCreation.view = function(ctrl){
       common.modal.view(
         ctrl.locModal,
         function (modCtrl){
-          return m(".section", [
-            m("h2", [
-              "Location for " + ctrl.activeEntry().description()
-            ]),
-            m("p.help", [
-              "Tell us where the project is. Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map."
+          return m("div", [
+            m(".section", [
+              m("h2", [
+                "Location for " + (ctrl.activeEntry().description() ? ctrl.activeEntry().description() : "unnamed request")
+              ]),
+              m("p.help", [
+                "Tell us where the project is. Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map."
+              ]),
             ]),
             m("div", {id: "map", config: modCtrl.initMap}),
           ])
