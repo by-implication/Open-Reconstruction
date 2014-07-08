@@ -196,7 +196,7 @@ object Req extends ReqGen {
         addWhereClause("assessing_agency_id IS NULL")
       }
       case "executor" => {
-        addWhereClause("req_level = 5")
+        addWhereClause("req_level = 5 AND implementing_agency_id = " + user.govUnitId)
         addWhereClause("implementing_agency_id IS NOT NULL")
         addWhereClause("executing_agency_id IS NULL")
       }
