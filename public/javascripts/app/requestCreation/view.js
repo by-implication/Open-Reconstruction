@@ -95,7 +95,7 @@ requestCreation.view = function(ctrl){
                 m("div", [
                   m("input", {type: "checkbox", onchange: m.withAttr("checked", ctrl.preamble)}),
                   m("span", [
-                    "I have not requested for assistance for this project from any other source."
+                    "I have not requested for assistance for the following projects from any other source."
                   ])
                 ])
               )
@@ -110,14 +110,14 @@ requestCreation.view = function(ctrl){
                     })
                   )
                 ),
-                common.field(
-                  "I am making this request in behalf of:",
-                  m("select", [
-                    m("option", [
-                      "option1"
-                    ]),
-                  ])
-                )
+                // common.field(
+                //   "I am making this request in behalf of:",
+                //   m("select", [
+                //     m("option", [
+                //       "option1"
+                //     ]),
+                //   ])
+                // )
               ]),
               m(".section", [
                 m("h2", [

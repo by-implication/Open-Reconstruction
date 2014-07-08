@@ -3,13 +3,33 @@ home.view = function(ctrl){
     m("div#home", [
       m("section.banner", [
         m(".row", [
+          m(".columns.medium-1"),
           m(".columns.medium-11", [
             m("div#logo", {config: ctrl.drawLogo}, [m.trust(home.Logo)]),
             m("h1", "Open Reconstruction"),
             m("p", [
-              "￼Tracking taxpayer money spent on disaster response and reconstruction projects."
+              "￼A centralized portal for tracking taxpayer money spent on disaster response and reconstruction.",
+              m("br"),
+              m("a.button",{href:"#infodump"},[
+                "Learn how Open Reconstruction promotes transparency and improves efficiency. ",
+                m("i.fa.fa-chevron-circle-down")
+              ])
             ])
           ]),
+        ])
+      ]),
+      m("section.search",[
+        m(".row",[
+          m(".columns.medium-1"),
+          m(".columns.medium-11",[
+            m("h2", [
+              "Find projects and requests in your town, region, or area.",
+              m("a.button",[
+                "Search ",
+                m("i.fa.fa-search")
+              ])
+            ])
+          ])
         ])
       ]),
       m("section", [
@@ -28,7 +48,7 @@ home.view = function(ctrl){
       ]),
       m("section.proposals", [
         m(".row", [
-          m("ul.medium-block-grid-5#derp", [
+          m("ul.medium-block-grid-4#derp", [
             m("li", [
                 m("img", {src:"/assets/images/landing/1-time since.svg"}),
                 m("h2.title", "Time since Disaster"),
@@ -59,7 +79,7 @@ home.view = function(ctrl){
                   ])
                 ]),
             ]),
-            m("li", [
+            m("li.arrow", [
               m("a", {
                 href:"/requests",
                 config:m.route
@@ -73,8 +93,9 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h2", [
-                        helper.commaize(ctrl.vizData().yolanda.projects.qty),
-                        m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.projects.amt, 2) + "")
+                        m("span", "PHP"),
+                        " " + helper.truncate(ctrl.vizData().yolanda.projects.amt, 2) + "",
+                        m("h6", helper.commaize(ctrl.vizData().yolanda.projects.qty) + " Projects")
                       ]),
                     ])
                   ])
@@ -86,21 +107,22 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h2", [
-                        helper.commaize(ctrl.vizData().bohol.projects.qty),
-                        m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.projects.amt, 2) + "")
+                        m("span", "PHP"),
+                        " " + helper.truncate(ctrl.vizData().bohol.projects.amt, 2) + "",
+                        m("h6", helper.commaize(ctrl.vizData().bohol.projects.qty) + " Projects")
                       ]),
                     ])
                   ])
                 ])
               ])
             ]),
-            m("li", [
+            m("li.arrow", [
               m("a", {
                 href: routes.controllers.Viz.index().url,
                 config:m.route
               }, [
                 m("img", {src:"/assets/images/landing/3-budget releases.svg"}),
-                m("h2.title", "Budget Releases"),
+                m("h2.title", "Projects with Released Budget*"),
                 m("table.val-group", [
                   m("tr", [
                     m("td", [
@@ -108,9 +130,10 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h2", [
-                        ctrl.vizData().yolanda.saro.qty + " ",
-                        m("span", "SAROs"),
-                        m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.saro.amt, 2) )
+                        // ctrl.vizData().yolanda.saro.qty + " ",
+                        // m("span", "SAROs"),
+                        m("h6", "DPWH: PHP " + helper.truncate(ctrl.vizData().yolanda.dpwh.amt, 2) ),
+                        m("h6", "All Agencies: PHP " + helper.truncate(ctrl.vizData().yolanda.saro.amt, 2) )
                       ]),
                     ])
                   ])
@@ -122,46 +145,10 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h2", [
-                        ctrl.vizData().bohol.saro.qty + " ",
-                        m("span", "SAROs"),
-                        m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.saro.amt, 2) )
-                      ]),
-                    ])
-                  ])
-                ]),
-              ])
-            ]),
-            m("li", [
-              m("a", {
-                href: routes.controllers.Viz.index().url,
-                config:m.route
-              }, [
-                m("img", {src:"/assets/images/landing/3-budget releases.svg"}),
-                m("h2.title", "DPWH Budget Releases"),
-                m("table.val-group", [
-                  m("tr", [
-                    m("td", [
-                      m(".caption", "Typhoon Yolanda"),
-                    ]),
-                    m("td", [
-                      m("h2", [
-                        "13 ",
-                        m("span", "SAROs"),
-                        m("h6", "PHP " + helper.truncate(2161379935, 2) )
-                      ]),
-                    ])
-                  ])
-                ]),
-                m("table.val-group", [
-                  m("tr", [
-                    m("td", [
-                      m(".caption", "Bohol Quake"),
-                    ]),
-                    m("td", [
-                      m("h2", [
-                        "3 ",
-                        m("span", "SAROs"),
-                        m("h6", "PHP " + helper.truncate(201597043, 2) )
+                        // ctrl.vizData().bohol.saro.qty + " ",
+                        // m("span", "SAROs"),
+                        m("h6", "DPWH: PHP " + helper.truncate(ctrl.vizData().bohol.dpwh.amt, 2) ),
+                        m("h6", "All Agencies: PHP " + helper.truncate(ctrl.vizData().bohol.saro.amt, 2) )
                       ]),
                     ])
                   ])
@@ -175,7 +162,7 @@ home.view = function(ctrl){
               }, [
                 m("img", {src:"/assets/images/landing/4-ongoing projects.svg"}),
                 m("h2.title", [
-                  "DPWH Ongoing Projects",
+                  "Ongoing Projects (Public Works)*",
                 ]),
                 m("table.val-group", [
                   m("tr", [
@@ -184,8 +171,9 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h2", [
-                        ctrl.vizData().yolanda.fundedProjects.qty,
-                        m("h6", "PHP " + helper.truncate(ctrl.vizData().yolanda.fundedProjects.amt, 2) + "")
+                        m("span", "PHP"),
+                        " " + helper.truncate(ctrl.vizData().yolanda.fundedProjects.amt, 2) + "",
+                        m("h6", ctrl.vizData().yolanda.fundedProjects.qty + " Projects")
                       ]),
                     ])
                   ])
@@ -197,8 +185,9 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h2", [
-                        ctrl.vizData().bohol.fundedProjects.qty,
-                        m("h6", "PHP " + helper.truncate(ctrl.vizData().bohol.fundedProjects.amt, 2) + "")
+                        m("span", "PHP"),
+                        " " + helper.truncate(ctrl.vizData().bohol.fundedProjects.amt, 2) + "",
+                        m("h6", ctrl.vizData().bohol.fundedProjects.qty + " Projects")
                       ]),
                     ])
                   ])
@@ -208,7 +197,7 @@ home.view = function(ctrl){
           ]),
         ]),
       ]),
-      m("section.alt.for-everyone",[
+      m("section.alt.for-everyone#infodump",[
         m(".row.info", [
           m(".columns.medium-12", [
             m("h2", [
