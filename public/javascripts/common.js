@@ -590,3 +590,17 @@ common.attachmentFor = function(reqt, atts){
     }
   }
 }
+
+common.collapsibleFilter.controller = function(){
+  this.isCollapsed = false;
+}
+common.collapsibleFilter.view = function(ctrl, label, drawer){
+  return m(".collapsible-filter", [
+    m(".collapsible-label", [
+      label
+    ]),
+    m(".collapsible-drawer", [
+      drawer()
+    ]),
+  ])
+}
