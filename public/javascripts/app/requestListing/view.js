@@ -27,21 +27,37 @@ requestListing.view = function(ctrl){
 // {disaster: f.id}
   return app.template(ctrl.app, "Requests", [
     common.banner("Requests"),
-    m("section#new-request-banner", [
+    m.cookie().logged_in ?
+      m("section#new-request-banner", [
+        m(".row", [
+          m(".columns.medium-12", [
+            m("h2.left", [
+              "Make a new request. We're here to help."
+            ]),
+            m("a.button.right",
+              {href: routes.controllers.Requests.create().url, config: m.route},
+              "New Request"
+            ),
+          ]),
+        ]),
+      ])
+    : "",
+    
+    m("section#loc-filters", [
       m(".row", [
         m(".columns.medium-12", [
-          m("h2.left", [
-            "Make a new request. We're here to help."
+          m("h2", [
+            "Looking for something specific? Try our filters."
           ]),
-          m.cookie().logged_in ? m(
-            "a.button.right",
-            {href: routes.controllers.Requests.create().url, config: m.route},
-            "New Request"
-          ) : ""
         ]),
       ]),
-    ]),
-    m("section#loc-filters", [
+      m(".row", [
+        m(".columns.medium-12", [
+          m("h4", [
+            "Location"
+          ]),
+        ]),
+      ]),
       m(".row", [
         ctrl.locFilters.map(function (f){
           return m(".columns.medium-3", [
@@ -52,12 +68,10 @@ requestListing.view = function(ctrl){
           ])
         }),
       ]),
-    ]),
-    m("section", [
       m(".row", [
         m(".columns.medium-12", [
           m("h4", [
-            "Filter by Disaster"
+            "Disaster"
           ]),
         ]),
       ]),
@@ -67,7 +81,7 @@ requestListing.view = function(ctrl){
       m(".row", [
         m(".columns.medium-12", [
           m("h4", [
-            "Filter by Agency"
+            "Agency"
           ]),
         ]),
       ]),
@@ -77,7 +91,7 @@ requestListing.view = function(ctrl){
       m(".row", [
         m(".columns.medium-12", [
           m("h4", [
-            "Filter by Project Type"
+            "Project Type"
           ]),
         ]),
       ]),
@@ -85,6 +99,9 @@ requestListing.view = function(ctrl){
         filterColumns(ctrl.projectFilters, 4, ctrl.projectTypeId, "projectTypeId")
       ]),
     ]),
+    // m("section", [
+      
+    // ]),
     m("section", [
       m.cookie().logged_in ?
         m(".row", [
@@ -98,21 +115,6 @@ requestListing.view = function(ctrl){
           common.tabs.content(ctrl.tabs),
           pagination,
         ]),
-        // m(".columns.medium-3", [
-          
-        //   m("ul.filters",
-        //     _.chain(ctrl.projectFilters)
-        //     .map(function (filter){
-        //       return m("li.filter",{className: (ctrl.projectTypeId == filter.id) ? "active" : ""}, [
-        //         m("a", {
-        //           href: ctrl.nav({projectTypeId: filter.id}),
-        //           config: m.route
-        //         }, filter.name)
-        //       ])
-        //     })
-        //     .value()
-        //   )
-        // ])
       ])
     ])
   ])
