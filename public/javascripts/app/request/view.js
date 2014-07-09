@@ -574,6 +574,16 @@ request.approval = function(ctrl){
 }
 
 request.progress = function(ctrl){
+  var stepDict = {
+    "RECEIVED": "Request Received",
+    "ASSESSOR_ASSIGNMENT": "Assessor Assignment",
+    "ASSESSOR_SIGNOFF": "Assessor Signoff",
+    "OCD_SIGNOFF": "OCD Signoff",
+    "OP_SIGNOFF": "OP Signoff",
+    "SARO_ASSIGNMENT": "SARO Assignment",
+    "EXECUTOR_ASSIGNMENT": "Executor Assignment",
+    "IMPLEMENTATION": "Implementation"
+  }
   return m(".row", [
     m(".columns.medium-12", [
       m(".progress", [
@@ -584,7 +594,7 @@ request.progress = function(ctrl){
               className: (ctrl.request().level >= level ? 'done ' : '') +
                 (ctrl.request().level === (level - 1) ? 'pending' : '')
             }, [
-              step
+              stepDict[step]
               // common.help("wut", true)
             ])
           })
