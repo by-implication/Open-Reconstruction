@@ -195,7 +195,7 @@ object GovUnits extends Controller with Secured {
       "govUnits" -> GovUnit.search(s).map { g =>
         Json.obj(
           "id" -> g.id,
-          "text" -> g.name
+          "text" -> g.searchKey
         )
       }
     )

@@ -257,3 +257,4 @@ trait GovUnitCCGen {
   val companion = GovUnit
 }
 // GENERATED object end
+
