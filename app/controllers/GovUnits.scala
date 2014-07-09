@@ -190,4 +190,15 @@ object GovUnits extends Controller with Secured {
     }.getOrElse(Rest.notFound())
   }
 
+  def search(s: String) = UserAction(){ implicit user => implicit request =>
+    Rest.success(
+      "govUnits" -> GovUnit.search(s).map { g =>
+        Json.obj(
+          "id" -> g.id,
+          "text" -> g.searchKey
+        )
+      }
+    )
+  }
+
 }

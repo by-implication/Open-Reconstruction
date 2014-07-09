@@ -94,6 +94,7 @@ POST    /gov-units/new/agency                     controllers.GovUnits.insertAge
 GET     /gov-units/new/lgu/:l/:id                 controllers.GovUnits.createLgu(l: Int, id: Int)
 GET     /gov-units/new/lgu/:l/:id/meta            controllers.GovUnits.createLguMeta(l: Int, id: Int)
 POST    /gov-units/new/lgu/:l/:id                 controllers.GovUnits.insertLgu(l: Int, id: Int)
+GET			/gov-units/search/:s											controllers.GovUnits.search(s: String)
 GET     /gov-units/:id                            controllers.GovUnits.view(id: Int)
 GET     /gov-units/:id/:p                         controllers.GovUnits.viewPage(id: Int, p: Int)
 GET     /gov-units/:id/:p/meta                    controllers.GovUnits.viewMeta(id: Int, p: Int)

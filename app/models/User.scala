@@ -183,7 +183,6 @@ case class User(
           "name" -> govUnit.name,
           "acronym" -> govUnit.acronym,
           "id" -> govUnit.id,
-          "coords" -> govUnit.coords,
           "role" -> Role.findById(govUnit.roleId).map(_.name)
         ),
         "isAdmin" -> isAdmin,

@@ -69,6 +69,9 @@ object Requests extends Controller with Secured {
         "disasterId" -> number.verifying("No such disaster",
           id => Disaster.findById(id).isDefined
         ),
+        "govUnitId" -> number.verifying("No such Government Unit",
+          id => GovUnit.findById(id).isDefined
+        ),
         "reqs" -> seq(tuple(
           "amount" -> optional(projectAmount),
           "description" -> nonEmptyText,
@@ -77,7 +80,7 @@ object Requests extends Controller with Secured {
           "bucketKey" -> text
         )).verifying("No entries", _.size > 0)
       )
-      ((disasterId, reqs) => {
+      ((disasterId, govUnitId, reqs) => {
         reqs.map { r =>
           val (amount, description, location, projectTypeId, bucketKey) = r
           (Req(
@@ -85,7 +88,9 @@ object Requests extends Controller with Secured {
             description = description,
             disasterId = disasterId,
             projectTypeId = projectTypeId,
-            location = location
+            location = location,
+            govUnitId = govUnitId,
+            authorId = user.id
           ), bucketKey)
         }
       })
@@ -99,7 +104,7 @@ object Requests extends Controller with Secured {
       rKeys => {
 
   			val results: Seq[Either[Unit, Req]] = rKeys.map { case (r, bucketKey) => {
-          r.copy(authorId = user.id, govUnitId = user.govUnitId).save().map { implicit r =>
+          r.save().map { implicit r =>
             Event.newRequest().create().map { _ =>
               Checkpoint.push(user).map { _ =>
                 if(Bucket(bucketKey).dumpTo(r)){
