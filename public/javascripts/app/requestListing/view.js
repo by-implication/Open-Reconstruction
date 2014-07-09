@@ -24,6 +24,19 @@ requestListing.view = function(ctrl){
         ])
       });
   }
+
+  var currentFilterNameFromArray = function(arr, id){
+    id = id * 1;
+    var obj = _.find(arr, function(e){
+      return e.id === id;
+    });
+    // console.log(obj);
+    if(!_.isUndefined(obj)){
+      return obj.name;
+    } else {
+      return null;
+    }
+  }
 // {disaster: f.id}
   return app.template(ctrl.app, "Requests", [
     common.banner("Requests"),
@@ -68,19 +81,19 @@ requestListing.view = function(ctrl){
       common.collapsibleFilter.view(
         ctrl.disasterCF, 
         "Disaster", 
-        ctrl.disaster, 
+        currentFilterNameFromArray(ctrl.disasters, ctrl.disaster), 
         filterColumns.bind(null, ctrl.disasters, 4, ctrl.disaster, "disaster")
         ),
       common.collapsibleFilter.view(
         ctrl.agencyCF, 
         "Agency", 
-        ctrl.agencyFilterId, 
+        currentFilterNameFromArray(ctrl.agencies, ctrl.agencyFilterId),
         filterColumns.bind(null, ctrl.agencies, 4, ctrl.agencyFilterId, "agencyFilterId")
         ),
       common.collapsibleFilter.view(
         ctrl.projectTypeCF, 
         "Project Type", 
-        ctrl.projectTypeId, 
+        currentFilterNameFromArray(ctrl.projectFilters, ctrl.projectTypeId),
         filterColumns.bind(null, ctrl.projectFilters, 4, ctrl.projectTypeId, "projectTypeId")
         ),
     ]),
