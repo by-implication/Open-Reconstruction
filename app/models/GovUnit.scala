@@ -127,7 +127,8 @@ case class GovUnit(
       "acronym" -> (acronym.getOrElse(""): String),
       "totalUsers" -> users.length,
       "roleId" -> roleId,
-      "role" -> role.name
+      "role" -> role.name,
+      "coords" -> coords
     )
   }
 
