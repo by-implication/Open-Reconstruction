@@ -1,20 +1,20 @@
-/*! NProgress (c) 2013, Rico Sta. Cruz
- *  http://ricostacruz.com/nprogress */
+/* NProgress, (c) 2013, 2014 Rico Sta. Cruz - http://ricostacruz.com/nprogress
+ * @license MIT */
 
-;(function(factory) {
+;(function(root, factory) {
 
-  if (typeof module === 'function') {
-    module.exports = factory();
-  } else if (typeof define === 'function' && define.amd) {
+  if (typeof define === 'function' && define.amd) {
     define(factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
   } else {
-    this.NProgress = factory();
+    root.NProgress = factory();
   }
 
-})(function() {
+})(this, function() {
   var NProgress = {};
 
-  NProgress.version = '0.1.3';
+  NProgress.version = '0.1.6';
 
   var Settings = NProgress.settings = {
     minimum: 0.08,
@@ -27,6 +27,7 @@
     showSpinner: true,
     barSelector: '[role="bar"]',
     spinnerSelector: '[role="spinner"]',
+    parent: 'body',
     template: '<div class="bar" role="bar"><div class="peg"></div></div><div class="spinner" role="spinner"><div class="spinner-icon"></div></div>'
   };
 
@@ -226,6 +227,7 @@
 
     var bar      = progress.querySelector(Settings.barSelector),
         perc     = fromStart ? '-100' : toBarPerc(NProgress.status || 0),
+        parent   = document.querySelector(Settings.parent),
         spinner;
     
     css(bar, {
@@ -238,7 +240,11 @@
       spinner && removeElement(spinner);
     }
 
-    document.body.appendChild(progress);
+    if (parent != document.body) {
+      addClass(parent, 'nprogress-custom-parent');
+    }
+
+    parent.appendChild(progress);
     return progress;
   };
 
@@ -248,6 +254,7 @@
 
   NProgress.remove = function() {
     removeClass(document.documentElement, 'nprogress-busy');
+    removeClass(document.querySelector(Settings.parent), 'nprogress-custom-parent')
     var progress = document.getElementById('nprogress');
     progress && removeElement(progress);
   };
