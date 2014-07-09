@@ -605,7 +605,7 @@ common.collapsibleFilter.controller = function(){
       // this.isExpanded(false);
   }.bind(this)
 }
-common.collapsibleFilter.view = function(ctrl, label, drawer){
+common.collapsibleFilter.view = function(ctrl, label, preview, drawer){
   return m(".collapsible-filter", [
     m(".collapsible-label", [
       m("a.row", {onclick: ctrl.toggleExpand}, [
@@ -613,6 +613,11 @@ common.collapsibleFilter.view = function(ctrl, label, drawer){
           // m("button.tiny.radius.right", {type: "button", onclick: ctrl.toggleExpand}, [
           //   m("i.fa.fa-fw.fa-lg.fa-plus")
           // ]),
+          preview ? 
+            m("span.label.right", [
+              preview
+            ])
+          : null,
           m("h4", [
             label
           ]),

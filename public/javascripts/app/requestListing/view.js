@@ -68,7 +68,7 @@ requestListing.view = function(ctrl){
       //     ])
       //   }),
       // ]),
-      common.collapsibleFilter.view(ctrl.locationCF, "Location", function(){
+      common.collapsibleFilter.view(ctrl.locationCF, "Location", null, function(){
         return ctrl.locFilters.map(function (f){
           return m(".columns.medium-3", [
             m("label", [
@@ -78,9 +78,9 @@ requestListing.view = function(ctrl){
           ])
         })
       }),
-      common.collapsibleFilter.view(ctrl.disasterCF, "Disaster", filterColumns.bind(null, ctrl.disasters, 4, ctrl.disaster, "disaster")),
-      common.collapsibleFilter.view(ctrl.agencyCF, "Agency", filterColumns.bind(null, ctrl.agencies, 4, ctrl.agencyFilterId, "agencyFilterId")),
-      common.collapsibleFilter.view(ctrl.projectTypeCF, "Project Type", filterColumns.bind(null, ctrl.projectFilters, 4, ctrl.projectTypeId, "projectTypeId")),
+      common.collapsibleFilter.view(ctrl.disasterCF, "Disaster", ctrl.disaster, filterColumns.bind(null, ctrl.disasters, 4, ctrl.disaster, "disaster")),
+      common.collapsibleFilter.view(ctrl.agencyCF, "Agency", ctrl.agencyFilterId, filterColumns.bind(null, ctrl.agencies, 4, ctrl.agencyFilterId, "agencyFilterId")),
+      common.collapsibleFilter.view(ctrl.projectTypeCF, "Project Type", ctrl.projectTypeId, filterColumns.bind(null, ctrl.projectFilters, 4, ctrl.projectTypeId, "projectTypeId")),
       // m(".row", [
       //   m(".columns.medium-12", [
       //     m("h4", [
