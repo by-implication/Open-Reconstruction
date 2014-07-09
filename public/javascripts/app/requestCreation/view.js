@@ -16,6 +16,11 @@ requestCreation.view = function(ctrl){
     });
   }
 
+  if(!ctrl.govUnit()){
+    var govUnit = ctrl.app.currentUser().govUnit;
+    ctrl.govUnit({ id: govUnit.id, text: govUnit.name });
+  }
+
   return app.template(ctrl.app, "New Request", {className: "detail"},[
       common.modal.view(
         ctrl.locModal,
@@ -110,14 +115,28 @@ requestCreation.view = function(ctrl){
                     })
                   )
                 ),
-                // common.field(
-                //   "I am making this request in behalf of:",
-                //   m("select", [
-                //     m("option", [
-                //       "option1"
-                //     ]),
-                //   ])
-                // )
+                common.field(
+                  "I am making this request in behalf of:",
+                  select2.view({
+                    value: ctrl.govUnit().id,
+                    minimumInputLength: 3,
+                    query: function(o){
+                      m.request({
+                        url: routes.controllers.GovUnits.search(o.term).url,
+                        method: "GET",
+                        background: true
+                      }).then(function (r){
+                        o.callback({more: false, results: r.govUnits.concat(ctrl.govUnit())});
+                      });
+                    },
+                    initSelection: function(elem, c){
+                      c(ctrl.govUnit());
+                    },
+                    onchange: function(e){
+                      ctrl.govUnit(e);
+                    }
+                  })
+                )
               ]),
               m(".section", [
                 m("h2", [

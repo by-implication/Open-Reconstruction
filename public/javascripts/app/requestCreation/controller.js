@@ -9,6 +9,7 @@ requestCreation.controller = function(){
     disasters: []
   });
 
+  this.govUnit = m.prop();
   this.requirementLevel = m.prop("Submission");
   this.activeEntry = m.prop();
 
@@ -135,6 +136,7 @@ requestCreation.controller = function(){
 
       bi.ajax(routes.controllers.Requests.insert(), {data: {
         disasterId: ctrl.disasterId,
+        govUnitId: ctrl.govUnit().id,
         reqs: ctrl.entries
       }}).then(function (r){
         var msg = "Successfully created " + r.reqs.length + " new request(s)."

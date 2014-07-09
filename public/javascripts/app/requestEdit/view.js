@@ -12,7 +12,9 @@ requestEdit.view = function(ctrl){
               common.field("Status",
                 select2.view({data: process.levelDict.map(function (l, i){
                   return {id: i, name: l};
-                }), value: ctrl.status(), onchange: ctrl.status})
+                }), value: ctrl.status(), onchange: function(data){
+                  ctrl.status(data.id);
+                }})
               ),
               common.dateField("Date Received", ctrl.date, ctrl.htmlDate),
               common.field("SARO No.",
