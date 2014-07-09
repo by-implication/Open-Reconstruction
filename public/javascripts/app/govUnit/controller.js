@@ -21,19 +21,17 @@ govUnit.controller = function(){
   this.coords = m.prop();
 
   this.initMap = function(elem, isInit){
-    if(self.coords()){
-
-      !function tryMap(){
-        if($(elem).height()){
-          var map = common.leaflet.map(elem);
+    !function tryMap(){
+      if($(elem).height()){
+        var map = common.leaflet.map(elem);
+        if(self.coords()){
           map.setView(self.coords(), 8);
           common.leaflet.addMarker(self.coords());
-        } else {
-          setTimeout(tryMap, 100);
         }
-      }()
-
-    }
+      } else {
+        setTimeout(tryMap, 100);
+      }
+    }()
   }
 
   bi.ajax(routes.controllers.GovUnits.viewMeta(this.id, this.page)).then(function (r){
