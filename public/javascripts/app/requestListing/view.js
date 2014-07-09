@@ -10,20 +10,21 @@ requestListing.view = function(ctrl){
 
   return app.template(ctrl.app, "Requests", [
     common.banner("Requests"),
-    m("section#new-request-banner", [
-      m(".row", [
-        m(".columns.medium-12", [
-          m("h2.left", [
-            "Make a new request. We're here to help."
+    m.cookie().logged_in ?
+      m("section#new-request-banner", [
+        m(".row", [
+          m(".columns.medium-12", [
+            m("h2.left", [
+              "Make a new request. We're here to help."
+            ]),
+            m("a.button.right",
+              {href: routes.controllers.Requests.create().url, config: m.route},
+              "New Request"
+            ),
           ]),
-          m(
-            "a.button.right",
-            {href: routes.controllers.Requests.create().url, config: m.route},
-            "New Request"
-          )
         ]),
-      ]),
-    ]),
+      ])
+    : "",
     m("section#loc-filters", [
       m(".row", [
         ctrl.locFilters.map(function (f){
