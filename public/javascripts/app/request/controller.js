@@ -328,19 +328,21 @@ request.controller = function(){
   }.bind(this);
 
   this.initMap = function(elem, isInit){
-    if(self.coords()){
-
-      !function tryMap(){
-        if($(elem).height()){
-          var map = common.leaflet.map(elem);
+    !function tryMap(){
+      if($(elem).height()){
+        var map = common.leaflet.map(elem);
+        if(self.coords()){
           map.setView(self.coords(), 8);
           common.leaflet.addMarker(self.coords());
-        } else {
-          setTimeout(tryMap, 100);
         }
-      }()
+      } else {
+        setTimeout(tryMap, 100);
+      }
+    }()
+  }
 
-    }
+  this.progressConfig = function(elem, isInit){
+    
   }
 
   this.refreshHistory = function(){

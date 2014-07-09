@@ -120,6 +120,14 @@ case class GovUnit(
 
   def users:Seq[User] = GovUnit.users(id)
 
+  def filterJson: JsObject = {
+    Json.obj(
+      "id" -> id.toInt,
+      "name" -> name,
+      "acronym" -> (acronym.getOrElse(""): String)
+    )
+  }
+
   def toJson: JsObject = {
     Json.obj(
       "id" -> id.toInt,

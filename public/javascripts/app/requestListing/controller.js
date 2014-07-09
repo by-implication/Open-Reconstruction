@@ -6,6 +6,7 @@ requestListing.controller = function(){
     ALL: 'all',
     SIGNOFF: 'signoff',
     ASSESSOR: 'assessor',
+    EXECUTOR: 'executor',
     MINE: 'mine',
     APPROVAL: 'approval',
     IMPLEMENTATION: 'implementation'
@@ -15,13 +16,14 @@ requestListing.controller = function(){
   this.tab = m.route.param("tab") || "all";
   this.page = parseInt(m.route.param("page")) || 1;
   this.projectTypeId = m.route.param("projectTypeId") || 0;
+  this.agencyFilterId = m.route.param("agencyFilterId") || 0;
   this._queryLocFilters = m.route.param("l") || "-";
   this.sort = m.route.param("sort") || "id";
   this.sortDir = m.route.param("sortDir") || "asc";
   this.disaster = m.route.param("disaster") || 0;
 
   var nav = this.nav = function(params, meta){
-    var keys = ["tab", "page", "projectTypeId", "_queryLocFilters", "sort", "sortDir", "disaster"];
+    var keys = ["tab", "page", "projectTypeId", "_queryLocFilters", "sort", "sortDir", "disaster", "agencyFilterId"];
     var p = {};
     keys.forEach(function (k){
       p[k] = self[k];
@@ -107,6 +109,12 @@ requestListing.controller = function(){
       }
     },
     {
+      identifier: this.tabFilters.EXECUTOR,
+      href: nav({tab: "executor"}),
+      when: function(){ return _.contains(self.app.currentUser().permissions, 4) },
+      _label: "Needs executor"
+    },
+    {
       identifier: this.tabFilters.APPROVAL,
       href: nav({tab: "approval"}),
       when: function(){ return !self.app.currentUser() },
@@ -137,6 +145,7 @@ requestListing.controller = function(){
   this.tabs.tabs = m.prop(tabs);
   this.requestList = [];
   this.projectFilters = [{id: 0, name: "All"}];
+  this.agencies = [{id: 0, name: "All", acronym: "All"}];
   this.maxPage = function(){
     var count = parseInt(this.counts[this.tab]) || 0;
     return Math.ceil(count / 20);
@@ -168,6 +177,7 @@ requestListing.controller = function(){
     this.requestList = r.list;
     this.counts = r.counts;
     this.projectFilters = this.projectFilters.concat(r.filters);
+    this.agencies = this.agencies.concat(r.agencies);
     this.disasters = [{id: 0, name: "All"}].concat(r.disasters);
     for(var i in r.locFilters){
       this.locFilters[i].data = [{id: '-', name: 'All'}].concat(r.locFilters[i].sort(function (a, b){

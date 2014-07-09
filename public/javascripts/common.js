@@ -160,6 +160,21 @@ common.banner = function(text){
   ]);
 }
 
+common.help = function(text, isRight){
+  var dirClass = "left-edge";
+  if(isRight){
+    dirClass = "right-edge";
+  }
+  return m(".common-help", {className: dirClass}, [
+    m("a.hoverthing", [
+      m("i.fa.fa-question-circle"),
+    ]),
+    m(".explanation", [
+      text
+    ]),
+  ])
+}
+
 common.field = function(name, content, help, outsideLabel){
 
   var label = m("div.row", [
@@ -324,9 +339,14 @@ common.stickyTabs.config = function(ctrl){
           .object()
           .value();
 
-        var poss = _.keys(idPosDict);
-        var windowPos = $(window).scrollTop();
-        var closestPos = _.find(poss, function(p){ return p >= windowPos });
+        var poss = _.chain(idPosDict)
+          .keys()
+          .map(function(d){return d * 1})
+          .sortBy(_.identity)
+          .value();
+
+        // var windowPos = $(window).scrollTop();
+        // var closestPos = _.find(poss, function(p){ return p >= windowPos });
 
         $(window).on("scroll", function(e){
           var windowPos = $(window).scrollTop();

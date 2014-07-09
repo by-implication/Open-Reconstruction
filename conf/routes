@@ -46,8 +46,8 @@ GET     /users/:id/:page/:s/:sD                   controllers.Users.viewPage(id:
 GET     /users/:id/:page/:s/:sD/meta              controllers.Users.viewMeta(id: Int, page: Int, s: String, sD: String)
 
 GET     /requests                                 controllers.Requests.index
-GET     /requests/:t/:p/:pid/:l/:s/:sD/:d         controllers.Requests.indexPage(t: String, p: Int, pid: Int, l: String, s: String, sD: String, d: Int)
-GET     /requests/:t/:p/:pid/:l/:s/:sD/:d/meta    controllers.Requests.indexMeta(t: String, p: Int, pid: Int, l: String, s: String, sD: String, d: Int)
+GET     /requests/:t/:p/:pid/:l/:s/:sD/:d/:a      controllers.Requests.indexPage(t: String, p: Int, pid: Int, l: String, s: String, sD: String, d: Int, a: Int)
+GET     /requests/:t/:p/:pid/:l/:s/:sD/:d/:a/meta controllers.Requests.indexMeta(t: String, p: Int, pid: Int, l: String, s: String, sD: String, d: Int, a: Int)
 
 GET     /requests/new                             controllers.Requests.create
 GET     /requests/new/meta                        controllers.Requests.createMeta

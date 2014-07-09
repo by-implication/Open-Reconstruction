@@ -30,7 +30,8 @@ app.template = function(){
 
 app.feedback = function(ctrl){
   return m("a#feedback-tab", {href:"https://docs.google.com/forms/d/1GUdE6Si1QnnMtVJ8ig8rwECo9DK9BloOXiGVVnj_efw/viewform", target:"potato"}, [
-    "feedback"
+    m("i.fa.fa-bullhorn"),
+    " Feedback"
   ])
 }
 
@@ -39,7 +40,7 @@ app.footer = function(ctrl){
     m("footer", [
       m(".row.notice", [
         m(".columns",
-          "The data presented may be incomplete, and is pending refinement by the relevant agencies."
+          "* The data presented may be incomplete, and is pending refinement by the relevant agencies."
         )
       ]),
       m(".row", [

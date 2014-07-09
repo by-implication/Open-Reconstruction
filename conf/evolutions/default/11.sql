@@ -18,8 +18,9 @@ CREATE TABLE oparr_bohol (
     psgc text,
     latitude decimal,
     longitude decimal,
-    scope_type text,
-    source text
+    source text,
+    status text,
+    version text
 );;
 
 COPY oparr_bohol FROM 'oparr_bohol.csv' CSV ENCODING 'ISO_8859_9';;

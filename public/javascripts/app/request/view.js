@@ -108,7 +108,8 @@ request.view = function(ctrl){
     ],
     [
       // approval section
-      ctrl.isInvolved() ? request.approval(ctrl) : "",
+      // ctrl.isInvolved() ? request.approval(ctrl) : "",
+      request.approval(ctrl),
       // progress tracker
 
 
@@ -126,7 +127,7 @@ request.view = function(ctrl){
                     m("a", {href: routes.controllers.Requests.edit(ctrl.id).url}, "Click here to edit special fields.") : ""
                 ]),
                 m(".content", [
-                  request.progress(ctrl),
+                  
                   ctrl.degs.description.view(
                     function(){ return m("h2", ctrl.request().description) },
                     function(){
@@ -333,16 +334,16 @@ request.view = function(ctrl){
                                           m("i.fa.fa-fw.fa-lg.fa-eye")
                                         ]),
                                       ]),
-                                      canUpload ? 
+                                      canUpload ?
                                         m("li", [
                                           m("a.button.tiny", {onclick: function(){ ctrl.archive(att); }, title: "archive"}, [
                                             m("i.fa.fa-fw.fa-lg.fa-archive")
-                                          ])   
+                                          ])
                                         ])
                                       : ""
                                     ]),
-                                    
-                                    
+
+
                                   ]
                                 ) : (
                                   canUpload ?
@@ -481,6 +482,7 @@ request.view = function(ctrl){
 
 request.approval = function(ctrl){
   return m("section.approval", {className: ctrl.request().isRejected ? "rejected" : ""}, [
+    request.progress(ctrl),
     m(".row", [
       m(".columns.medium-12", [
         ctrl.request().isRejected ?
@@ -540,7 +542,7 @@ request.approval = function(ctrl){
                     ]),
                     " to " + ((ctrl.request().level <=  1 ) ? "assess" : "execute") + " this request."
                   ]
-                : ((ctrl.request().level == 0) ? 
+                : ((ctrl.request().level == 0) ?
                   "Waiting for the Office of Civil Defense to assign an agency to assess this request."
                   : "Waiting for " + ctrl.implementingAgency().name + " to assign an executing agency.")
               : "Waiting for " + ctrl.getBlockingAgency() + " approval."
@@ -572,20 +574,31 @@ request.approval = function(ctrl){
 }
 
 request.progress = function(ctrl){
-  return m("section", [
-    m(".row", [
-      m(".columns.medium-12", [
-        m(".progress", [
-          _.chain(process.levelDict)
-            .map(function (step, level, steps){
-              return m(".step", {
-                style: {width: (100/steps.length + '%')},
-                className: (ctrl.request().level >= level ? 'done ' : '') +
-                  (ctrl.request().level === (level - 1) ? 'pending' : '')
-              }, step)
-            })
-            .value()
-        ]),
+  var stepDict = {
+    "RECEIVED": "Request Received",
+    "ASSESSOR_ASSIGNMENT": "Assessor Assignment",
+    "ASSESSOR_SIGNOFF": "Assessor Signoff",
+    "OCD_SIGNOFF": "OCD Signoff",
+    "OP_SIGNOFF": "OP Signoff",
+    "SARO_ASSIGNMENT": "SARO Assignment",
+    "EXECUTOR_ASSIGNMENT": "Executor Assignment",
+    "IMPLEMENTATION": "Implementation"
+  }
+  return m(".row", [
+    m(".columns.medium-12", [
+      m(".progress", [
+        _.chain(process.levelDict)
+          .map(function (step, level, steps){
+            return m(".step", {
+              style: {width: (100/steps.length + '%')},
+              className: (ctrl.request().level >= level ? 'done ' : '') +
+                (ctrl.request().level === (level - 1) ? 'pending' : '')
+            }, [
+              stepDict[step]
+              // common.help("wut", true)
+            ])
+          })
+          .value()
       ]),
     ]),
   ])
@@ -609,9 +622,13 @@ request.listView = function(reqs, sortBy){
               "Id "
             ]),
           ]),
-          m("th", "Stagnation"),
+          m("th", [
+            "Stagnation",
+            common.help("This is how long the project has been waiting at the current stage.")
+          ]),
           m("th", "Name"),
           m("th", "Gov Unit"),
+          m("th", "Implementing Agency"),
           m("th", "Status"),
           m("th.text-right", [
             m("a", {href: sortBy("amount"), config: m.route}, [
@@ -636,6 +653,13 @@ request.listView = function(reqs, sortBy){
                 m("td", [m("a",
                   {href: routes.controllers.GovUnits.view(p.author.govUnit.id).url, config: m.route},
                   p.author.govUnit.name)]),
+                m("td", [
+                  p.implementingAgency ? 
+                    m("a",
+                    {href: routes.controllers.GovUnits.view(p.implementingAgency.id).url, config: m.route},
+                    p.implementingAgency.name)
+                  : "Unassigned"
+                ]),
                 m("td", [
                   !p.isRejected ?
                     request.miniProgress(p)
