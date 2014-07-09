@@ -24,9 +24,12 @@ home.view = function(ctrl){
           m(".columns.medium-11",[
             m("h2", [
               "Find projects and requests in your town, region, or area.",
-              m("a.button",[
-                "Search ",
-                m("i.fa.fa-search")
+              m("a.button",{
+                  href:"/requests",
+                  config:m.route
+                },[
+                  "Search ",
+                  m("i.fa.fa-search")
               ])
             ])
           ])
