@@ -57,13 +57,14 @@ requestListing.controller = function(){
     this.label = label;
     this.data = [];
     this.value = m.prop(value);
-    this.onchange = function(v){
+    this.onchange = function(data){
+      var v = data.id;
       var _qlf = self._queryLocFilters;
       var qlf = v == '-' ? _qlf.slice(0, _qlf.lastIndexOf('.')) : v;
       this.value(v);
       var targetRoute = nav({_queryLocFilters: qlf});
       m.route(targetRoute);
-    }
+    }.bind(this);
   };
 
   this.locFilters = ["Region", "Province", "City / Municipality", "Barangay"].map(function (label, index){
