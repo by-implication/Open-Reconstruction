@@ -8,6 +8,23 @@ requestListing.view = function(ctrl){
     }
   );
 
+  var filterColumns = function(filterArr, columnNum, currentFilter, filterNav){
+    return helper.splitArrayTo(filterArr, columnNum)
+      .map(function(fg, index){
+        var threshold = Math.min(columnNum, filterArr.length);
+        var isLast = index + 1 >= threshold;
+        return m(".columns", {className: (isLast ? "end " : "") + "medium-" + (12/columnNum)}, [
+          m("ul.filters", fg.map(function(f){
+            var navObj = {};
+            navObj[filterNav] = f.id
+            return m("li.filter", {className: (f.id == currentFilter) ? "active" : ""}, [
+              m("a", {href: ctrl.nav(navObj), config: m.route}, f.name)
+            ]);
+          })),
+        ])
+      });
+  }
+// {disaster: f.id}
   return app.template(ctrl.app, "Requests", [
     common.banner("Requests"),
     m("section#new-request-banner", [
@@ -38,48 +55,34 @@ requestListing.view = function(ctrl){
     ]),
     m("section", [
       m(".row", [
-        m("h4", [
-          "Filter by Disaster"
-        ]),
-        m("ul.filters",
-          ctrl.disasters.map(function (d){
-            return m("li.filter", {className: (d.id == ctrl.disaster) ? "active" : ""}, [
-              m("a", {href: ctrl.nav({disaster: d.id}), config: m.route}, d.name)
-            ]);
-          })
-        ),
-      ]),
-      m(".row", [
-        m("h4", [
-          "Filter by Agency"
+        m(".columns.medium-12", [
+          m("h4", [
+            "Filter by Disaster"
+          ]),
         ]),
       ]),
       m(".row", [
-        helper.splitArrayTo(ctrl.agencies, 6)
-          .map(function(fg){
-            return m(".columns.medium-2", [
-              m("ul.filters", fg.map(function(f){
-                return m("li.filters", {className: (ctrl.agencyFilterId == f.id) ? "active" : ""}, [
-                  m("a", {
-                    href: ctrl.nav({agencyFilterId: f.id}),
-                    config: m.route
-                  }, f.acronym)
-                ])
-              }))
-            ])
-          })
-        // m("ul.filters",
-        //   _.chain(ctrl.agencies)
-        //   .map(function (filter){
-        //     return m("li.filter",{className: (ctrl.agencyFilterId == filter.id) ? "active" : ""}, [
-        //       m("a", {
-        //         href: ctrl.nav({agencyFilterId: filter.id}),
-        //         config: m.route
-        //       }, filter.acronym)
-        //     ])
-        //   })
-        //   .value()
-        // ),
+        filterColumns(ctrl.disasters, 4, ctrl.disaster, "disaster")
+      ]),
+      m(".row", [
+        m(".columns.medium-12", [
+          m("h4", [
+            "Filter by Agency"
+          ]),
+        ]),
+      ]),
+      m(".row", [
+        filterColumns(ctrl.agencies, 4, ctrl.agencyFilterId, "agencyFilterId")
+      ]),
+      m(".row", [
+        m(".columns.medium-12", [
+          m("h4", [
+            "Filter by Project Type"
+          ]),
+        ]),
+      ]),
+      m(".row", [
+        filterColumns(ctrl.projectFilters, 4, ctrl.projectTypeId, "projectTypeId")
       ]),
     ]),
     m("section", [
@@ -90,28 +93,26 @@ requestListing.view = function(ctrl){
           ]),
         ]) : "",
       m(".row", [
-        m(".columns.medium-9", [
+        m(".columns.medium-12", [
           pagination,
           common.tabs.content(ctrl.tabs),
           pagination,
         ]),
-        m(".columns.medium-3", [
-          m("h4", [
-            "Filter by Project Type"
-          ]),
-          m("ul.filters",
-            _.chain(ctrl.projectFilters)
-            .map(function (filter){
-              return m("li.filter",{className: (ctrl.projectTypeId == filter.id) ? "active" : ""}, [
-                m("a", {
-                  href: ctrl.nav({projectTypeId: filter.id}),
-                  config: m.route
-                }, filter.name)
-              ])
-            })
-            .value()
-          )
-        ])
+        // m(".columns.medium-3", [
+          
+        //   m("ul.filters",
+        //     _.chain(ctrl.projectFilters)
+        //     .map(function (filter){
+        //       return m("li.filter",{className: (ctrl.projectTypeId == filter.id) ? "active" : ""}, [
+        //         m("a", {
+        //           href: ctrl.nav({projectTypeId: filter.id}),
+        //           config: m.route
+        //         }, filter.name)
+        //       ])
+        //     })
+        //     .value()
+        //   )
+        // ])
       ])
     ])
   ])
