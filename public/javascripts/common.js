@@ -601,23 +601,22 @@ common.collapsibleFilter.controller = function(){
   this.maxHeight = m.prop();
   this.drawerConfig = function(elem, isInit){
     // console.log($(elem).height());
-    if (!isInit){
-      this.maxHeight($(elem).children(".row").height());
+    this.maxHeight($(elem).children(".row").height());
       // this.isExpanded(false);
-    }
   }.bind(this)
 }
 common.collapsibleFilter.view = function(ctrl, label, drawer){
   return m(".collapsible-filter", [
     m(".collapsible-label", [
-      m(".row", [
-        m(".columns.medium-12", [
+      m("a.row", {onclick: ctrl.toggleExpand}, [
+        m(".columns.medium-12.end", [
+          // m("button.tiny.radius.right", {type: "button", onclick: ctrl.toggleExpand}, [
+          //   m("i.fa.fa-fw.fa-lg.fa-plus")
+          // ]),
           m("h4", [
             label
           ]),
-          m("button", {type: "button", onclick: ctrl.toggleExpand}, [
-            "+"
-          ]),
+          
         ]),
       ]),
     ]),

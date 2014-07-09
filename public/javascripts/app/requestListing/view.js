@@ -51,54 +51,46 @@ requestListing.view = function(ctrl){
           ]),
         ]),
       ]),
-      m(".row", [
-        m(".columns.medium-12", [
-          m("h4", [
-            "Location"
-          ]),
-        ]),
-      ]),
-      m(".row", [
-        ctrl.locFilters.map(function (f){
+      // m(".row", [
+      //   m(".columns.medium-12", [
+      //     m("h4", [
+      //       "Location"
+      //     ]),
+      //   ]),
+      // ]),
+      // m(".row", [
+      //   ctrl.locFilters.map(function (f){
+      //     return m(".columns.medium-3", [
+      //       m("label", [
+      //         f.label,
+      //         select2.view({data: f.data, value: f.value(), onchange: f.onchange})
+      //       ]),
+      //     ])
+      //   }),
+      // ]),
+      common.collapsibleFilter.view(ctrl.locationCF, "Location", function(){
+        return ctrl.locFilters.map(function (f){
           return m(".columns.medium-3", [
             m("label", [
               f.label,
               select2.view({data: f.data, value: f.value(), onchange: f.onchange})
             ]),
           ])
-        }),
-      ]),
+        })
+      }),
+      common.collapsibleFilter.view(ctrl.disasterCF, "Disaster", filterColumns.bind(null, ctrl.disasters, 4, ctrl.disaster, "disaster")),
+      common.collapsibleFilter.view(ctrl.agencyCF, "Agency", filterColumns.bind(null, ctrl.agencies, 4, ctrl.agencyFilterId, "agencyFilterId")),
+      common.collapsibleFilter.view(ctrl.projectTypeCF, "Project Type", filterColumns.bind(null, ctrl.projectFilters, 4, ctrl.projectTypeId, "projectTypeId")),
       // m(".row", [
       //   m(".columns.medium-12", [
       //     m("h4", [
-      //       "Disaster"
+      //       "Project Type"
       //     ]),
       //   ]),
       // ]),
-      common.collapsibleFilter.view(ctrl.disasterCF, "Disaster", filterColumns.bind(null, ctrl.disasters, 4, ctrl.disaster, "disaster")),
-      m(".row", [
-        // filterColumns(ctrl.disasters, 4, ctrl.disaster, "disaster"),
-      ]),
-      m(".row", [
-        m(".columns.medium-12", [
-          m("h4", [
-            "Agency"
-          ]),
-        ]),
-      ]),
-      m(".row", [
-        filterColumns(ctrl.agencies, 4, ctrl.agencyFilterId, "agencyFilterId")
-      ]),
-      m(".row", [
-        m(".columns.medium-12", [
-          m("h4", [
-            "Project Type"
-          ]),
-        ]),
-      ]),
-      m(".row", [
-        filterColumns(ctrl.projectFilters, 4, ctrl.projectTypeId, "projectTypeId")
-      ]),
+      // m(".row", [
+      //   filterColumns(ctrl.projectFilters, 4, ctrl.projectTypeId, "projectTypeId")
+      // ]),
     ]),
     // m("section", [
       
