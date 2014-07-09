@@ -61,6 +61,21 @@ requestListing.view = function(ctrl){
             })
           ),
           m("h4", [
+            "Filter by Agency"
+          ]),
+          m("ul.filters",
+            _.chain(ctrl.agencies)
+            .map(function (filter){
+              return m("li.filter",{className: (ctrl.projectTypeId == filter.id) ? "active" : ""}, [
+                m("a", {
+                  href: ctrl.nav({projectTypeId: filter.id}),
+                  config: m.route
+                }, filter.acronym)
+              ])
+            })
+            .value()
+          ),
+          m("h4", [
             "Filter by Project Type"
           ]),
           m("ul.filters",

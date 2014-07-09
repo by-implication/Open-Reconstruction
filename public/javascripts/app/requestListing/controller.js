@@ -143,6 +143,7 @@ requestListing.controller = function(){
   this.tabs.tabs = m.prop(tabs);
   this.requestList = [];
   this.projectFilters = [{id: 0, name: "All"}];
+  this.agencies = [{id: 0, name: "All", acronym: "All"}];
   this.maxPage = function(){
     var count = parseInt(this.counts[this.tab]) || 0;
     return Math.ceil(count / 20);
@@ -174,6 +175,7 @@ requestListing.controller = function(){
     this.requestList = r.list;
     this.counts = r.counts;
     this.projectFilters = this.projectFilters.concat(r.filters);
+    this.agencies = this.agencies.concat(r.agencies);
     this.disasters = [{id: 0, name: "All"}].concat(r.disasters);
     for(var i in r.locFilters){
       this.locFilters[i].data = [{id: '-', name: 'All'}].concat(r.locFilters[i].sort(function (a, b){
