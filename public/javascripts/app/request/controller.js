@@ -341,6 +341,10 @@ request.controller = function(){
     }()
   }
 
+  this.progressConfig = function(elem, isInit){
+    
+  }
+
   this.refreshHistory = function(){
     bi.ajax(routes.controllers.Requests.viewMeta(this.id)).then(function(data){
       this.history(data.history);

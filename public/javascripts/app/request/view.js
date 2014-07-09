@@ -108,7 +108,8 @@ request.view = function(ctrl){
     ],
     [
       // approval section
-      ctrl.isInvolved() ? request.approval(ctrl) : "",
+      // ctrl.isInvolved() ? request.approval(ctrl) : "",
+      request.approval(ctrl),
       // progress tracker
 
 
@@ -126,7 +127,7 @@ request.view = function(ctrl){
                     m("a", {href: routes.controllers.Requests.edit(ctrl.id).url}, "Click here to edit special fields.") : ""
                 ]),
                 m(".content", [
-                  request.progress(ctrl),
+                  
                   ctrl.degs.description.view(
                     function(){ return m("h2", ctrl.request().description) },
                     function(){
@@ -481,6 +482,7 @@ request.view = function(ctrl){
 
 request.approval = function(ctrl){
   return m("section.approval", {className: ctrl.request().isRejected ? "rejected" : ""}, [
+    request.progress(ctrl),
     m(".row", [
       m(".columns.medium-12", [
         ctrl.request().isRejected ?
@@ -572,23 +574,21 @@ request.approval = function(ctrl){
 }
 
 request.progress = function(ctrl){
-  return m("section", [
-    m(".row", [
-      m(".columns.medium-12", [
-        m(".progress", [
-          _.chain(process.levelDict)
-            .map(function (step, level, steps){
-              return m(".step", {
-                style: {width: (100/steps.length + '%')},
-                className: (ctrl.request().level >= level ? 'done ' : '') +
-                  (ctrl.request().level === (level - 1) ? 'pending' : '')
-              }, [
-                step
-                // common.help("wut", true)
-              ])
-            })
-            .value()
-        ]),
+  return m(".row", [
+    m(".columns.medium-12", [
+      m(".progress", [
+        _.chain(process.levelDict)
+          .map(function (step, level, steps){
+            return m(".step", {
+              style: {width: (100/steps.length + '%')},
+              className: (ctrl.request().level >= level ? 'done ' : '') +
+                (ctrl.request().level === (level - 1) ? 'pending' : '')
+            }, [
+              step
+              // common.help("wut", true)
+            ])
+          })
+          .value()
       ]),
     ]),
   ])
