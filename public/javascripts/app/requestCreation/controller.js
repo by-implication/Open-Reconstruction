@@ -9,6 +9,7 @@ requestCreation.controller = function(){
     disasters: []
   });
 
+  this.govUnit = m.prop();
   this.requirementLevel = m.prop("Submission");
   this.activeEntry = m.prop();
 

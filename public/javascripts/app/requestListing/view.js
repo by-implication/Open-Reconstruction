@@ -16,11 +16,11 @@ requestListing.view = function(ctrl){
           m("h2.left", [
             "Make a new request. We're here to help."
           ]),
-          m(
+          m.cookie().logged_in ? m(
             "a.button.right",
             {href: routes.controllers.Requests.create().url, config: m.route},
             "New Request"
-          )
+          ) : ""
         ]),
       ]),
     ]),
@@ -30,7 +30,7 @@ requestListing.view = function(ctrl){
           return m(".columns.medium-3", [
             m("label", [
               f.label,
-              select2.view({data: f.data, value: f.value(), onchange: f.onchange.bind(f)})
+              select2.view({data: f.data, value: f.value(), onchange: f.onchange})
             ]),
           ])
         }),

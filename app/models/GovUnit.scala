@@ -10,6 +10,11 @@ import recon.support._
 
 object GovUnit extends GovUnitGen {
 
+  def search(s: String): Seq[GovUnit] = DB.withConnection { implicit c =>
+    SQL("SELECT * FROM gov_units WHERE gov_unit_search_key ILIKE {searchKey}")
+    .on('searchKey -> ("%" + s.split(" ").mkString("%") + "%")).list(simple)
+  }
+
   def findByName(name: String): Option[GovUnit] = DB.withConnection { implicit c =>
     SQL("""
       SELECT * FROM gov_units
@@ -65,7 +70,8 @@ case class GovUnit(
   id: Pk[Int] = NA,
   name: String = "",
   acronym: Option[String] = None,
-  roleId: Int = 0
+  roleId: Int = 0,
+  searchKey: String = ""
 ) extends GovUnitCCGen with Entity[GovUnit]
 // GENERATED case class end
 {
@@ -145,9 +151,10 @@ trait GovUnitGen extends EntityCompanion[GovUnit] {
     get[Pk[Int]]("gov_unit_id") ~
     get[String]("gov_unit_name") ~
     get[Option[String]]("gov_unit_acronym") ~
-    get[Int]("role_id") map {
-      case id~name~acronym~roleId =>
-        GovUnit(id, name, acronym, roleId)
+    get[Int]("role_id") ~
+    get[String]("gov_unit_search_key") map {
+      case id~name~acronym~roleId~searchKey =>
+        GovUnit(id, name, acronym, roleId, searchKey)
     }
   }
 
@@ -179,18 +186,21 @@ trait GovUnitGen extends EntityCompanion[GovUnit] {
             gov_unit_id,
             gov_unit_name,
             gov_unit_acronym,
-            role_id
+            role_id,
+            gov_unit_search_key
           ) VALUES (
             DEFAULT,
             {name},
             {acronym},
-            {roleId}
+            {roleId},
+            {searchKey}
           )
         """).on(
           'id -> o.id,
           'name -> o.name,
           'acronym -> o.acronym,
-          'roleId -> o.roleId
+          'roleId -> o.roleId,
+          'searchKey -> o.searchKey
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -200,18 +210,21 @@ trait GovUnitGen extends EntityCompanion[GovUnit] {
             gov_unit_id,
             gov_unit_name,
             gov_unit_acronym,
-            role_id
+            role_id,
+            gov_unit_search_key
           ) VALUES (
             {id},
             {name},
             {acronym},
-            {roleId}
+            {roleId},
+            {searchKey}
           )
         """).on(
           'id -> o.id,
           'name -> o.name,
           'acronym -> o.acronym,
-          'roleId -> o.roleId
+          'roleId -> o.roleId,
+          'searchKey -> o.searchKey
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -222,13 +235,15 @@ trait GovUnitGen extends EntityCompanion[GovUnit] {
       update gov_units set
         gov_unit_name={name},
         gov_unit_acronym={acronym},
-        role_id={roleId}
+        role_id={roleId},
+        gov_unit_search_key={searchKey}
       where gov_unit_id={id}
     """).on(
       'id -> o.id,
       'name -> o.name,
       'acronym -> o.acronym,
-      'roleId -> o.roleId
+      'roleId -> o.roleId,
+      'searchKey -> o.searchKey
     ).executeUpdate() > 0
   }
 
@@ -241,4 +256,3 @@ trait GovUnitCCGen {
   val companion = GovUnit
 }
 // GENERATED object end
-

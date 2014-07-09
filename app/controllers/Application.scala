@@ -176,7 +176,8 @@ object Application extends Controller with Secured {
       GovUnits.insertAgency,
       GovUnits.createLgu,
       GovUnits.createLguMeta,
-      GovUnits.insertLgu
+      GovUnits.insertLgu,
+      GovUnits.search
     )).as("text/javascript")
   }
 
