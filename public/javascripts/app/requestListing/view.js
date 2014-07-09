@@ -66,9 +66,9 @@ requestListing.view = function(ctrl){
           m("ul.filters",
             _.chain(ctrl.agencies)
             .map(function (filter){
-              return m("li.filter",{className: (ctrl.projectTypeId == filter.id) ? "active" : ""}, [
+              return m("li.filter",{className: (ctrl.agencyFilterId == filter.id) ? "active" : ""}, [
                 m("a", {
-                  href: ctrl.nav({projectTypeId: filter.id}),
+                  href: ctrl.nav({agencyFilterId: filter.id}),
                   config: m.route
                 }, filter.acronym)
               ])
