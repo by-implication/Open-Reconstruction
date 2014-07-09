@@ -68,15 +68,16 @@ requestListing.view = function(ctrl){
           ])
         }),
       ]),
+      // m(".row", [
+      //   m(".columns.medium-12", [
+      //     m("h4", [
+      //       "Disaster"
+      //     ]),
+      //   ]),
+      // ]),
+      common.collapsibleFilter.view(ctrl.disasterCF, "Disaster", filterColumns.bind(null, ctrl.disasters, 4, ctrl.disaster, "disaster")),
       m(".row", [
-        m(".columns.medium-12", [
-          m("h4", [
-            "Disaster"
-          ]),
-        ]),
-      ]),
-      m(".row", [
-        filterColumns(ctrl.disasters, 4, ctrl.disaster, "disaster")
+        // filterColumns(ctrl.disasters, 4, ctrl.disaster, "disaster"),
       ]),
       m(".row", [
         m(".columns.medium-12", [

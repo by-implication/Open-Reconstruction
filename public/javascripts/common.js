@@ -591,16 +591,43 @@ common.attachmentFor = function(reqt, atts){
   }
 }
 
+common.collapsibleFilter = {}
+
 common.collapsibleFilter.controller = function(){
-  this.isCollapsed = false;
+  this.isExpanded = m.prop(false);
+  this.toggleExpand = function(){
+    this.isExpanded(!this.isExpanded());
+  }.bind(this)
+  this.maxHeight = m.prop();
+  this.drawerConfig = function(elem, isInit){
+    // console.log($(elem).height());
+    if (!isInit){
+      this.maxHeight($(elem).children(".row").height());
+      // this.isExpanded(false);
+    }
+  }.bind(this)
 }
 common.collapsibleFilter.view = function(ctrl, label, drawer){
   return m(".collapsible-filter", [
     m(".collapsible-label", [
-      label
+      m(".row", [
+        m(".columns.medium-12", [
+          m("h4", [
+            label
+          ]),
+          m("button", {type: "button", onclick: ctrl.toggleExpand}, [
+            "+"
+          ]),
+        ]),
+      ]),
     ]),
-    m(".collapsible-drawer", [
-      drawer()
-    ]),
+    m(".collapsible-drawer", {
+      style: "max-height: " + (ctrl.isExpanded() ? ctrl.maxHeight() : 0) + "px",
+      config: ctrl.drawerConfig
+    }, [
+      m(".row", [
+        drawer()
+      ]),
+    ])
   ])
 }

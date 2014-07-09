@@ -2,6 +2,7 @@ requestListing.controller = function(){
   var self = this;
   this.app = new app.controller();
   this.tabs = new common.tabs.controller();
+  this.disasterCF = new common.collapsibleFilter.controller();
   this.tabFilters = {
     ALL: 'all',
     SIGNOFF: 'signoff',
