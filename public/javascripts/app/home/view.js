@@ -90,7 +90,7 @@ home.view = function(ctrl){
                 m("img", {src:"/assets/images/landing/2-projects requested.svg"}),
                 m("h2.title", [
                   "Requested Projects",
-                  common.help("Projects sought by local governments, agencies related to reconstruction. Project requests are vetted, then approved, by the relevant agency before a budget for them from the reconstruction fund is approved.", true)
+                  common.help("Projects sought by local governments, agencies related to reconstruction. Project requests are vetted and then approved by the relevant agency before a budget for them from the reconstruction fund is approved.", true)
                 ]),
                 m("table.val-group", [
                   m("tr", [
