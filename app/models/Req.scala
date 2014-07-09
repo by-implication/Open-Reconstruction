@@ -160,7 +160,7 @@ object Req extends ReqGen {
     def add(vars: (Any, anorm.ParameterValue[_])*) = list = list ++ vars.toSeq
   }
 
-  private def getSqlParams(tab: String, projectTypeId: Option[Int], psgc: PGLTree, disasterId: Option[Int])(implicit user: User) = {
+  private def getSqlParams(tab: String, projectTypeId: Option[Int], psgc: PGLTree, disasterId: Option[Int], agencyId: Option[Int])(implicit user: User) = {
 
     var table = "reqs"
     var whereClauses = Seq.empty[String]
@@ -170,6 +170,11 @@ object Req extends ReqGen {
     disasterId.map { id =>
       addWhereClause("disaster_id = {disasterId}")
       varMap.add('disasterId -> id)
+    }
+
+    agencyId.map { id =>
+      addWhereClause("implementing_agency_id = {agencyId}")
+      varMap.add('agencyId -> id)
     }
 
     projectTypeId.map(_ => addWhereClause("project_type_id = {projectTypeId}"))
@@ -224,8 +229,8 @@ object Req extends ReqGen {
 
   }
 
-  def indexCount(tab: String, projectTypeId: Option[Int], psgc: PGLTree, disasterId: Int)(implicit user: User): Long = {
-    val (table, whereClauses, varMap) = getSqlParams(tab, projectTypeId, psgc, if (disasterId == 0) None else Some(disasterId) )
+  def indexCount(tab: String, projectTypeId: Option[Int], psgc: PGLTree, disasterId: Int, agencyId: Int)(implicit user: User): Long = {
+    val (table, whereClauses, varMap) = getSqlParams(tab, projectTypeId, psgc, if (disasterId == 0) None else Some(disasterId), if (agencyId == 0) None else Some(agencyId) )
     DB.withConnection { implicit c =>
       SQL("SELECT COUNT(*) FROM " + table + {
         if (!whereClauses.isEmpty) " WHERE " + whereClauses.mkString(" AND ")
@@ -235,8 +240,8 @@ object Req extends ReqGen {
     }
   }
 
-  def indexList(tab: String, offset: Int, limit: Int, projectTypeId: Option[Int], psgc: PGLTree, sort: String, sortDir: String, disasterId: Int)(implicit user: User): Seq[Req] = {
-    var (table, whereClauses, varMap) = getSqlParams(tab, projectTypeId, psgc, if (disasterId == 0) None else Some(disasterId) )
+  def indexList(tab: String, offset: Int, limit: Int, projectTypeId: Option[Int], psgc: PGLTree, sort: String, sortDir: String, disasterId: Int, agencyId: Int)(implicit user: User): Seq[Req] = {
+    var (table, whereClauses, varMap) = getSqlParams(tab, projectTypeId, psgc, if (disasterId == 0) None else Some(disasterId), if (agencyId == 0) None else Some(agencyId) )
     val sortColumn = (sort match {
       case "id" => "req_id"
       case "status" => "req_level"
