@@ -1030,6 +1030,7 @@ thead
     .explanation
       left: auto
       right: 50%
+      +transform-origin( right -12px )
       &:before
         @include triangle(12px, $activeColor, down-right)
         left: auto
@@ -1038,13 +1039,16 @@ thead
     .explanation
       right: auto
       left: 50%
+      +transform-origin( left -12px )
       &:before
         @include triangle(12px, $activeColor, down-left)
         right: auto
         left: 0px
   .explanation
     $width: 300px
-    display: none
+    // display: none
+    +transform( scale(0) )
+    +transition( all 0.1s )
     position: absolute
     top: 100%
     width: $width
@@ -1067,6 +1071,8 @@ thead
     &:hover
       color: $activeColor
       & + .explanation
+        +transition( all 0.2s cubic-bezier(0, 0.72, 0.64906, 1.35) )
+        +transform( scale(1) )
         display: block
 
 .document
