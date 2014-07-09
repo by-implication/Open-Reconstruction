@@ -226,6 +226,22 @@ helper.docHeight = function(){
   return height;
 }
 
+helper.splitArrayToLen = function(array, substrlen){
+  // var substrLength = Math.ceil(array.length / num);
+  var tempArray = array.slice();
+  if(tempArray.length > 0){
+    var temp = [tempArray.splice(0, substrlen)];
+    return temp.concat(helper.splitArrayToLen(tempArray, substrlen))
+  } else {
+    return []
+  }
+}
+
+helper.splitArrayTo = function(array, count){
+  var length = Math.ceil(array.length / count);
+  return helper.splitArrayToLen(array, length);
+}
+
 
 phiDraw = function(elements, GID, initialDelay, propagationDelay) {
 
