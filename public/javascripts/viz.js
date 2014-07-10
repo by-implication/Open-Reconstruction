@@ -463,6 +463,94 @@ viz.create(
 )
 
 viz.create(
+  'Request Count and Amount per Unique Named Disaster',
+  'topDisasters',
+  'request',
+  function(ctrl){
+    var byDisaster = _.sortBy(ctrl.requests().byNamedDisaster(), "count").reverse();
+    return {
+      data: {
+        json: byDisaster,
+        keys: {
+          x: "name",
+          value: ["name", "count", "amount"]
+        },
+        axes: {
+          "count": "y",
+          "amount": "y2"
+        },
+        type: "bar",
+      },
+      axis: {
+        x: {
+          type: "category",
+          label: {
+            text: "Disaster",
+            position: "outer-middle"
+          }
+        },
+        y: {
+          label: {
+            text: "Count",
+            position: "outer-center"
+          }
+        },
+        y2: {
+          show: true,
+          tick: {
+            format: function(t){
+              return helper.truncate(t, 2);
+            }
+          },
+          label: {
+            text: "Amount in PHP",
+            position: "outer-center"
+          },
+        },
+        rotated: true,
+      },
+    }
+  }
+)
+
+viz.create(
+  'Request Type Distribution',
+  'projectTypes',
+  'request',
+  function(ctrl){
+    var byType = _.sortBy(ctrl.requests().byProjectType(), "count").reverse();
+    // var counts = _.pluck(byType, "count");
+    // var types = _.pluck(byType, "name");
+    return {
+      data: {
+        json: byType,
+        keys: {
+          x: "name",
+          value: ["count"]
+        },
+        type: "bar",
+      },
+      axis: {
+        x: {
+          type: "category",
+          label: {
+            text: "Request Types",
+            position: "outer-middle"
+          }
+        },
+        y: {
+          label: {
+            text: "Number of Requests",
+            position: "outer-center"
+          }
+        },
+        rotated: true
+      }
+    }
+  }
+)
+
+viz.create(
   'Request Count and Amount History',
   'requestHistory',
   'request',
@@ -525,43 +613,6 @@ viz.create(
             bottom: 0
           }
         },
-      }
-    }
-  }
-)
-
-viz.create(
-  'Request Type Distribution',
-  'projectTypes',
-  'request',
-  function(ctrl){
-    var byType = _.sortBy(ctrl.requests().byProjectType(), "count").reverse();
-    // var counts = _.pluck(byType, "count");
-    // var types = _.pluck(byType, "name");
-    return {
-      data: {
-        json: byType,
-        keys: {
-          x: "name",
-          value: ["count"]
-        },
-        type: "bar",
-      },
-      axis: {
-        x: {
-          type: "category",
-          label: {
-            text: "Request Types",
-            position: "outer-middle"
-          }
-        },
-        y: {
-          label: {
-            text: "Number of Requests",
-            position: "outer-center"
-          }
-        },
-        rotated: true
       }
     }
   }
@@ -641,57 +692,6 @@ viz.create(
           }
         },
       }
-    }
-  }
-)
-
-viz.create(
-  'Request Count and Amount per Unique Named Disaster',
-  'topDisasters',
-  'request',
-  function(ctrl){
-    var byDisaster = _.sortBy(ctrl.requests().byNamedDisaster(), "count").reverse();
-    return {
-      data: {
-        json: byDisaster,
-        keys: {
-          x: "name",
-          value: ["name", "count", "amount"]
-        },
-        axes: {
-          "count": "y",
-          "amount": "y2"
-        },
-        type: "bar",
-      },
-      axis: {
-        x: {
-          type: "category",
-          label: {
-            text: "Disaster",
-            position: "outer-middle"
-          }
-        },
-        y: {
-          label: {
-            text: "Count",
-            position: "outer-center"
-          }
-        },
-        y2: {
-          show: true,
-          tick: {
-            format: function(t){
-              return helper.truncate(t, 2);
-            }
-          },
-          label: {
-            text: "Amount in PHP",
-            position: "outer-center"
-          },
-        },
-        rotated: true,
-      },
     }
   }
 )
