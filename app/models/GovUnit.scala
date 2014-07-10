@@ -11,7 +11,7 @@ import recon.support._
 object GovUnit extends GovUnitGen {
 
   def search(s: String): Seq[GovUnit] = DB.withConnection { implicit c =>
-    SQL("SELECT * FROM gov_units WHERE gov_unit_search_key ILIKE {searchKey}")
+    SQL("SELECT * FROM gov_units WHERE gov_unit_search_key ILIKE {searchKey} LIMIT 5")
     .on('searchKey -> ("%" + s.split(" ").mkString("%") + "%")).list(simple)
   }
 
