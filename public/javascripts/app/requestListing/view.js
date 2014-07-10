@@ -45,7 +45,7 @@ requestListing.view = function(ctrl){
         m(".row", [
           m(".columns.medium-12", [
             m("h2.left", [
-              "Make a new request. We're here to help."
+              "Don't have an existing request? Make a new one."
             ]),
             m("a.button.right",
               {href: routes.controllers.Requests.create().url, config: m.route},
