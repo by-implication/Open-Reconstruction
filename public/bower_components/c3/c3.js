@@ -4,7 +4,7 @@
     /*global define, module, exports, require */
 
     var c3 = {
-        version: "0.2.3"
+        version: "0.2.4"
     };
 
     var CLASS = {
@@ -256,6 +256,9 @@
         var __bar_width = getConfig(['bar', 'width']),
             __bar_width_ratio = getConfig(['bar', 'width', 'ratio'], 0.6),
             __bar_zerobased = getConfig(['bar', 'zerobased'], true);
+
+        // area
+        var __area_zerobased = getConfig(['area', 'zerobased'], true);
 
         // pie
         var __pie_label_show = getConfig(['pie', 'label', 'show'], true),
@@ -556,13 +559,13 @@
             return h > 0 ? h : 320;
         }
         function getCurrentPaddingTop() {
-            return __padding_top ? __padding_top : 0;
+            return isValue(__padding_top) ? __padding_top : 0;
         }
         function getCurrentPaddingBottom() {
-            return __padding_bottom ? __padding_bottom : 0;
+            return isValue(__padding_bottom) ? __padding_bottom : 0;
         }
         function getCurrentPaddingLeft() {
-            if (__padding_left) {
+            if (isValue(__padding_left)) {
                 return __padding_left;
             } else if (__axis_rotated) {
                 return !__axis_x_show ? 1 : Math.max(ceil10(getAxisWidthByAxisId('x')), 40);
@@ -572,8 +575,8 @@
         }
         function getCurrentPaddingRight() {
             var defaultPadding = 10, legendWidthOnRight = isLegendRight ? getLegendWidth() + 20 : 0;
-            if (__padding_right) {
-                return __padding_right;
+            if (isValue(__padding_right)) {
+                return __padding_right + 1; // 1 is needed not to hide tick line
             } else if (__axis_rotated) {
                 return defaultPadding + legendWidthOnRight;
             } else {
@@ -1270,7 +1273,7 @@
                 domainLength, padding, padding_top, padding_bottom,
                 center = axisId === 'y2' ? __axis_y2_center : __axis_y_center,
                 yDomainAbs, lengths, diff, ratio, isAllPositive, isAllNegative,
-                isZeroBased = (hasBarType(yTargets) && __bar_zerobased) || hasAreaType(yTargets),
+                isZeroBased = (hasBarType(yTargets) && __bar_zerobased) || (hasAreaType(yTargets) && __area_zerobased),
                 showHorizontalDataLabel = hasDataLabel() && __axis_rotated,
                 showVerticalDataLabel = hasDataLabel() && !__axis_rotated;
             if (yTargets.length === 0) { // use current domain if target of axisId is none
@@ -4331,6 +4334,7 @@
             options.withUpdateXDomain = true;
             options.withUpdateOrgXDomain = true;
             options.withTransitionForExit = false;
+            options.withTransitionForTransform = getOption(options, "withTransitionForTransform", options.withTransition);
             // MEMO: this needs to be called before updateLegend and it means this ALWAYS needs to be called)
             updateSizes();
             // MEMO: called in updateLegend in redraw if withLegend
@@ -4340,7 +4344,7 @@
                 updateScales();
                 updateSvgSize();
                 // Update g positions
-                transformAll(options.withTransition, transitions);
+                transformAll(options.withTransitionForTransform, transitions);
             }
             // Draw with new sizes & scales
             redraw(options, transitions);
@@ -4816,10 +4820,12 @@
             }
         }
         function transformTo(targetIds, type, optionsForRedraw) {
-            var withTransitionForAxis = !hasArcType(c3.data.targets);
+            var withTransitionForAxis = !hasArcType(c3.data.targets),
+                options = optionsForRedraw || {withTransitionForAxis: withTransitionForAxis};
+            options.withTransitionForTransform = false;
             transiting = false;
             setTargetType(targetIds, type);
-            updateAndRedraw(optionsForRedraw || {withTransitionForAxis: withTransitionForAxis});
+            updateAndRedraw(options);
         }
 
         c3.focus = function (targetId) {

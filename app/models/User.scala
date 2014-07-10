@@ -27,6 +27,18 @@ object User extends UserGen {
     ).flatten.size.toString
   }
 
+  def generateLegacyUsers() = DB.withConnection { implicit c =>
+    SQL("SELECT DISTINCT gov_unit_id FROM reqs")
+    .list(get[Int]("gov_unit_id") map { lguId =>
+      User(
+        name = "Legacy Data",
+        password = "legacy" + lguId + "getsupport",
+        handle = "legacy" + lguId,
+        govUnitId = lguId
+      ).create().getOrElse(Some("Failed to create user for" + lguId))
+    }).size.toString
+  }
+
   override def insert(o: User): Option[User] = DB.withConnection { implicit c =>
     o.id match {
       case NotAssigned => {

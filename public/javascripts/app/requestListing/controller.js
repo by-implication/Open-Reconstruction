@@ -2,6 +2,10 @@ requestListing.controller = function(){
   var self = this;
   this.app = new app.controller();
   this.tabs = new common.tabs.controller();
+  this.disasterCF = new common.collapsibleFilter.controller();
+  this.agencyCF = new common.collapsibleFilter.controller();
+  this.projectTypeCF = new common.collapsibleFilter.controller();
+  this.locationCF = new common.collapsibleFilter.controller();
   this.tabFilters = {
     ALL: 'all',
     SIGNOFF: 'signoff',

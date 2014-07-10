@@ -590,3 +590,48 @@ common.attachmentFor = function(reqt, atts){
     }
   }
 }
+
+common.collapsibleFilter = {}
+
+common.collapsibleFilter.controller = function(){
+  this.isExpanded = m.prop(false);
+  this.toggleExpand = function(){
+    this.isExpanded(!this.isExpanded());
+  }.bind(this)
+  this.maxHeight = m.prop();
+  this.drawerConfig = function(elem, isInit){
+    // console.log($(elem).height());
+    this.maxHeight($(elem).children(".row").height());
+      // this.isExpanded(false);
+  }.bind(this)
+}
+common.collapsibleFilter.view = function(ctrl, label, preview, drawer){
+  return m(".collapsible-filter", [
+    m(".collapsible-label", [
+      m("a.row", {onclick: ctrl.toggleExpand}, [
+        m(".columns.medium-12.end", [
+          // m("button.tiny.radius.right", {type: "button", onclick: ctrl.toggleExpand}, [
+          //   m("i.fa.fa-fw.fa-lg.fa-plus")
+          // ]),
+          preview ? 
+            m("span.label.right", [
+              preview
+            ])
+          : null,
+          m("h4", [
+            label
+          ]),
+          
+        ]),
+      ]),
+    ]),
+    m(".collapsible-drawer", {
+      style: "max-height: " + (ctrl.isExpanded() ? ctrl.maxHeight() : 0) + "px",
+      config: ctrl.drawerConfig
+    }, [
+      m(".row", [
+        drawer()
+      ]),
+    ])
+  ])
+}

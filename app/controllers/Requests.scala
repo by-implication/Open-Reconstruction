@@ -242,7 +242,7 @@ object Requests extends Controller with Secured {
         "list" -> reqList.map(_.indexJson),
         "filters" -> ProjectType.jsonList,
         "locFilters" -> Lgu.getLocFilters(psgc),
-        "agencies" -> GovUnit.listAgencies.map(_.filterJson),
+        "agencies" -> GovUnit.withPermission(Permission.IMPLEMENT_REQUESTS).map(_.toJson),
         "disasters" -> Disaster.jsonList,
         "counts" -> Json.obj(
           "all" -> Req.indexCount("all", projectTypeIdOption, psgc, disasterId, agencyId),

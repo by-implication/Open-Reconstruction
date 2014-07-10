@@ -8,33 +8,94 @@ requestListing.view = function(ctrl){
     }
   );
 
+  var filterColumns = function(filterArr, columnNum, currentFilter, filterNav){
+    return helper.splitArrayTo(filterArr, columnNum)
+      .map(function(fg, index){
+        var threshold = Math.min(columnNum, filterArr.length);
+        var isLast = index + 1 >= threshold;
+        return m(".columns", {className: (isLast ? "end " : "") + "medium-" + (12/columnNum)}, [
+          m("ul.filters", fg.map(function(f){
+            var navObj = {};
+            navObj[filterNav] = f.id
+            return m("li.filter", {className: (f.id == currentFilter) ? "active" : ""}, [
+              m("a", {href: ctrl.nav(navObj), config: m.route}, f.name)
+            ]);
+          })),
+        ])
+      });
+  }
+
+  var currentFilterNameFromArray = function(arr, id){
+    id = id * 1;
+    var obj = _.find(arr, function(e){
+      return e.id === id;
+    });
+    // console.log(obj);
+    if(!_.isUndefined(obj)){
+      return obj.name;
+    } else {
+      return null;
+    }
+  }
+// {disaster: f.id}
   return app.template(ctrl.app, "Requests", [
     common.banner("Requests"),
-    m("section#new-request-banner", [
-      m(".row", [
-        m(".columns.medium-12", [
-          m("h2.left", [
-            "Make a new request. We're here to help."
+    m.cookie().logged_in ?
+      m("section#new-request-banner", [
+        m(".row", [
+          m(".columns.medium-12", [
+            m("h2.left", [
+              "Make a new request. We're here to help."
+            ]),
+            m("a.button.right",
+              {href: routes.controllers.Requests.create().url, config: m.route},
+              "New Request"
+            ),
           ]),
-          m.cookie().logged_in ? m(
-            "a.button.right",
-            {href: routes.controllers.Requests.create().url, config: m.route},
-            "New Request"
-          ) : ""
         ]),
-      ]),
-    ]),
+      ])
+    : "",
+    
     m("section#loc-filters", [
       m(".row", [
-        ctrl.locFilters.map(function (f){
-          return m(".columns.medium-3", [
-            m("label", [
-              f.label,
-              select2.view({data: f.data, value: f.value(), onchange: f.onchange})
-            ]),
-          ])
-        }),
+        m(".columns.medium-12", [
+          m("h2", [
+            "Looking for something specific? Try our filters."
+          ]),
+        ]),
       ]),
+      common.collapsibleFilter.view(
+        ctrl.locationCF, 
+        "Location", 
+        null, 
+        function(){
+          return ctrl.locFilters.map(function (f){
+            return m(".columns.medium-3", [
+              m("label", [
+                f.label,
+                select2.view({data: f.data, value: f.value(), onchange: f.onchange})
+              ]),
+            ])
+          })
+        }),
+      common.collapsibleFilter.view(
+        ctrl.disasterCF, 
+        "Disaster", 
+        currentFilterNameFromArray(ctrl.disasters, ctrl.disaster), 
+        filterColumns.bind(null, ctrl.disasters, 4, ctrl.disaster, "disaster")
+        ),
+      common.collapsibleFilter.view(
+        ctrl.agencyCF, 
+        "Agency", 
+        currentFilterNameFromArray(ctrl.agencies, ctrl.agencyFilterId),
+        filterColumns.bind(null, ctrl.agencies, 4, ctrl.agencyFilterId, "agencyFilterId")
+        ),
+      common.collapsibleFilter.view(
+        ctrl.projectTypeCF, 
+        "Project Type", 
+        currentFilterNameFromArray(ctrl.projectFilters, ctrl.projectTypeId),
+        filterColumns.bind(null, ctrl.projectFilters, 4, ctrl.projectTypeId, "projectTypeId")
+        ),
     ]),
     m("section", [
       m.cookie().logged_in ?
@@ -44,53 +105,11 @@ requestListing.view = function(ctrl){
           ]),
         ]) : "",
       m(".row", [
-        m(".columns.medium-9", [
+        m(".columns.medium-12", [
           pagination,
           common.tabs.content(ctrl.tabs),
           pagination,
         ]),
-        m(".columns.medium-3", [
-          m("h4", [
-            "Filter by Disaster"
-          ]),
-          m("ul.filters",
-            ctrl.disasters.map(function (d){
-              return m("li.filter", {className: (d.id == ctrl.disaster) ? "active" : ""}, [
-                m("a", {href: ctrl.nav({disaster: d.id}), config: m.route}, d.name)
-              ]);
-            })
-          ),
-          m("h4", [
-            "Filter by Agency"
-          ]),
-          m("ul.filters",
-            _.chain(ctrl.agencies)
-            .map(function (filter){
-              return m("li.filter",{className: (ctrl.agencyFilterId == filter.id) ? "active" : ""}, [
-                m("a", {
-                  href: ctrl.nav({agencyFilterId: filter.id}),
-                  config: m.route
-                }, filter.acronym)
-              ])
-            })
-            .value()
-          ),
-          m("h4", [
-            "Filter by Project Type"
-          ]),
-          m("ul.filters",
-            _.chain(ctrl.projectFilters)
-            .map(function (filter){
-              return m("li.filter",{className: (ctrl.projectTypeId == filter.id) ? "active" : ""}, [
-                m("a", {
-                  href: ctrl.nav({projectTypeId: filter.id}),
-                  config: m.route
-                }, filter.name)
-              ])
-            })
-            .value()
-          )
-        ])
       ])
     ])
   ])

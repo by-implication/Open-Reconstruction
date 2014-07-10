@@ -88,8 +88,13 @@ object Application extends Controller with Secured {
       play.Logger.info("  Generating Sample Users")
       play.Logger.info(User.generateSamples())
       play.Logger.info("* Sample users generated")
-      Redirect(routes.Application.index)
-    } else NotFound
+    }
+
+    play.Logger.info("  Generating legacy Users")
+    play.Logger.info(User.generateLegacyUsers())
+    play.Logger.info("* Legacy users generated")
+
+    Redirect(routes.Application.index)
   }
 
   def jsRoutes = Action { implicit request =>
