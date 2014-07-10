@@ -175,18 +175,18 @@ object GovUnits extends Controller with Secured {
 
   def update(id: Int) = IsSuperAdmin(){ implicit user => implicit request =>
     GovUnit.findById(id).map { g =>
-      g.role.name match {
-        case "LGU" => editLguForm(g).bindFromRequest.fold(
-          Rest.formError(_),
-          _.save().map(_ => Rest.success())
-          .getOrElse(Rest.serverError())
-        )
-        case _ => editAgencyForm(g).bindFromRequest.fold(
-          Rest.formError(_),
-          _.save().map(_ => Rest.success())
-          .getOrElse(Rest.serverError())
-        )
-      }
+      
+      (g.role.name match {
+        case "LGU" => editLguForm(g)
+        case _ => editAgencyForm(g)
+      }).bindFromRequest.fold(
+        Rest.formError(_),
+        _.withUpdatedSearchKey().save().map { g =>
+          g.lguOpt.map(_.updateDescendantSearchKeys())
+          Rest.success()
+        }.getOrElse(Rest.serverError())
+      )
+
     }.getOrElse(Rest.notFound())
   }
 

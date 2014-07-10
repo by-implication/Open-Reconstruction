@@ -43,10 +43,10 @@ m.route(document, window.location.pathname, GATrackedRoutes({
   "/admin/types/disaster": admin,
   "/gov-units/new/agency": agencyCreation,
   "/gov-units/new/lgu/:level/:parentId": lguCreation,
-  "/gov-units/:id/new-user": userCreation,
   "/gov-units/:id": govUnit,
-  "/gov-units/:id/:page": govUnit,
   "/gov-units/:id/edit": govUnitEdit,
+  "/gov-units/:id/new-user": userCreation,
+  "/gov-units/:id/:page": govUnit,
   "/login": login,
   "/faq": faq
 }));

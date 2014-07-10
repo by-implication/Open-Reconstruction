@@ -76,11 +76,20 @@ case class GovUnit(
 // GENERATED case class end
 {
 
-  def coords: Option[Map[String, BigDecimal]] = DB.withConnection { implicit c =>
-    
-    val lguOpt = SQL("SELECT * FROM lgus WHERE lgu_id = {id}")
-      .on('id -> id).singleOpt(Lgu.simple)
+  def withUpdatedSearchKey() = copy(searchKey = (lguOpt.map { lgu =>
+    if(lgu.ancestors.isEmpty){
+      name
+    } else {
+      (lgu.ancestors.map(_.name) :+ name).reverse.mkString(", ")
+    }
+  }.getOrElse(name)))
 
+  lazy val lguOpt = DB.withConnection { implicit c =>
+    SQL("SELECT * FROM lgus WHERE lgu_id = {id}")
+    .on('id -> id).singleOpt(Lgu.simple)
+  }
+
+  def coords: Option[Map[String, BigDecimal]] = {
     for {
       lgu <- lguOpt
       lat <- Some(lgu.lat.getOrElse(lgu.getMeanLat))
@@ -91,7 +100,6 @@ case class GovUnit(
         "lng" -> lng
       )
     }
-
   }
 
   def requests(p: Int): (Seq[Req], Long) = DB.withConnection { implicit c =>
