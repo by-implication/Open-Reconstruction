@@ -24,7 +24,11 @@ SELECT group_id,
     WHEN disaster_name ilike '%yolanda%' THEN '2013-11-8'::date
     ELSE now()
     END as disaster_date,
-  '2014-5-18'::date as req_date,
+  CASE 
+    WHEN disaster_name ilike '%bohol%' THEN '2013-12-10'::date
+    WHEN disaster_name ilike '%yolanda%' THEN '2014-5-18'::date
+    ELSE now()
+    END as req_date,
   CASE 
     WHEN disaster_name ilike '%bohol%' THEN 2
     WHEN disaster_name ilike '%yolanda%' THEN 1
