@@ -1,6 +1,6 @@
 {
   "name": "mithril",
-  "version": "0.1.16",
+  "version": "0.1.18",
   "main": "mithril.min.js",
   "description": "A Javascript Framework for building brilliant applications",
   "authors": [
@@ -24,11 +24,11 @@
     "framework"
   ],
   "homepage": "https://github.com/lhorie/mithril",
-  "_release": "0.1.16",
+  "_release": "0.1.18",
   "_resolution": {
     "type": "version",
-    "tag": "v0.1.16",
-    "commit": "0fa122234fe1c71a3ca9549fee5def2c9bfa6d6f"
+    "tag": "v0.1.18",
+    "commit": "66176a1df06afd98b5df4886817c95451010185e"
   },
   "_source": "git://github.com/lhorie/mithril.git",
   "_target": "~0.1.8",

@@ -1,7 +1,7 @@
 Mithril = m = new function app(window) {
 	var selectorCache = {}
 	var type = {}.toString
-	var parser = /(?:(^|#|\.)([^#\.\[\]]+))|(\[.+?\])/g, attrParser = /\[(.+?)(?:=("|'|)(.+?)\2)?\]/
+	var parser = /(?:(^|#|\.)([^#\.\[\]]+))|(\[.+?\])/g, attrParser = /\[(.+?)(?:=("|'|)(.*?)\2)?\]/
 
 	function m() {
 		var args = arguments
@@ -18,7 +18,7 @@ Mithril = m = new function app(window) {
 				else if (match[1] == ".") classes.push(match[2])
 				else if (match[3][0] == "[") {
 					var pair = attrParser.exec(match[3])
-					cell.attrs[pair[1]] = pair[3] || true
+					cell.attrs[pair[1]] = pair[3] || (pair[2] ? "" :true)
 				}
 			}
 			if (classes.length > 0) cell.attrs[classAttrName] = classes.join(" ")
@@ -34,16 +34,17 @@ Mithril = m = new function app(window) {
 	}
 	function build(parentElement, parentTag, parentCache, parentIndex, data, cached, shouldReattach, index, editable, namespace, configs) {
 		if (data === null || data === undefined) data = ""
-		if (data.subtree === "retain") return
+		if (data.subtree === "retain") return cached
 
 		var cachedType = type.call(cached), dataType = type.call(data)
 		if (cachedType != dataType) {
 			if (cached !== null && cached !== undefined) {
 				if (parentCache && parentCache.nodes) {
 					var offset = index - parentIndex
-					clear(parentCache.nodes.slice(offset, offset + (dataType == "[object Array]" ? data : cached.nodes).length))
+					var end = offset + (dataType == "[object Array]" ? data : cached.nodes).length
+					clear(parentCache.nodes.slice(offset, end), parentCache.slice(offset, end))
 				}
-				else clear(cached.nodes)
+				else clear(cached.nodes, cached)
 			}
 			cached = new data.constructor
 			cached.nodes = []
@@ -74,7 +75,7 @@ Mithril = m = new function app(window) {
 				
 				for (var i = 0, change; change = changes[i]; i++) {
 					if (change.action == DELETION) {
-						clear(cached[change.index].nodes)
+						clear(cached[change.index].nodes, cached[change.index])
 						newCached.splice(change.index, 1)
 					}
 					if (change.action == INSERTION) {
@@ -108,7 +109,10 @@ Mithril = m = new function app(window) {
 					if (cached[i] !== undefined) nodes = nodes.concat(cached[i].nodes)
 				}
 				for (var i = nodes.length, node; node = cached.nodes[i]; i++) {
-					if (node.parentNode !== null && node.parentNode.childNodes.length != nodes.length) node.parentNode.removeChild(node)
+					if (node.parentNode !== null && node.parentNode.childNodes.length != nodes.length) {
+						node.parentNode.removeChild(node)
+						if (cached[i]) unload(cached[i])
+					}
 				}
 				for (var i = cached.nodes.length, node; node = nodes[i]; i++) {
 					if (node.parentNode === null) parentElement.appendChild(node)
@@ -119,7 +123,10 @@ Mithril = m = new function app(window) {
 			
 		}
 		else if (dataType == "[object Object]") {
-			if (data.tag != cached.tag || Object.keys(data.attrs).join() != Object.keys(cached.attrs).join() || data.attrs.id != cached.attrs.id) clear(cached.nodes)
+			if (data.tag != cached.tag || Object.keys(data.attrs).join() != Object.keys(cached.attrs).join() || data.attrs.id != cached.attrs.id) {
+				clear(cached.nodes)
+				if (cached.configContext && typeof cached.configContext.onunload == "function") cached.configContext.onunload()
+			}
 			if (typeof data.tag != "string") return
 
 			var node, isNew = cached.nodes.length === 0
@@ -129,8 +136,9 @@ Mithril = m = new function app(window) {
 				node = namespace === undefined ? window.document.createElement(data.tag) : window.document.createElementNS(namespace, data.tag)
 				cached = {
 					tag: data.tag,
-					attrs: setAttributes(node, data.tag, data.attrs, {}, namespace),
+					//process children before attrs so that select.value works correctly
 					children: data.children !== undefined ? build(node, data.tag, undefined, undefined, data.children, cached.children, true, 0, data.attrs.contenteditable ? node : editable, namespace, configs) : undefined,
+					attrs: setAttributes(node, data.tag, data.attrs, {}, namespace),
 					nodes: [node]
 				}
 				parentElement.insertBefore(node, parentElement.childNodes[index] || null)
@@ -143,7 +151,7 @@ Mithril = m = new function app(window) {
 				if (shouldReattach === true) parentElement.insertBefore(node, parentElement.childNodes[index] || null)
 			}
 			if (type.call(data.attrs["config"]) == "[object Function]") {
-				configs.push(data.attrs["config"].bind(window, node, !isNew, cached.configContext = cached.configContext || {}))
+				configs.push(data.attrs["config"].bind(window, node, !isNew, cached.configContext = cached.configContext || {}, cached))
 			}
 		}
 		else {
@@ -163,7 +171,7 @@ Mithril = m = new function app(window) {
 				nodes = cached.nodes
 				if (!editable || editable !== window.document.activeElement) {
 					if (data.$trusted) {
-						clear(nodes)
+						clear(nodes, cached)
 						nodes = injectHTML(parentElement, index, data)
 					}
 					else {
@@ -171,7 +179,7 @@ Mithril = m = new function app(window) {
 						else if (editable) editable.innerHTML = data
 						else {
 							if (nodes[0].nodeType == 1 || nodes.length > 1) { //was a trusted string
-								clear(cached.nodes)
+								clear(cached.nodes, cached)
 								nodes = [window.document.createTextNode(data)]
 							}
 							parentElement.insertBefore(nodes[0], parentElement.childNodes[index] || null)
@@ -221,9 +229,22 @@ Mithril = m = new function app(window) {
 		}
 		return cachedAttrs
 	}
-	function clear(nodes) {
-		for (var i = nodes.length - 1; i > -1; i--) if (nodes[i] && nodes[i].parentNode) nodes[i].parentNode.removeChild(nodes[i])
+	function clear(nodes, cached) {
+		for (var i = nodes.length - 1; i > -1; i--) {
+			if (nodes[i] && nodes[i].parentNode) {
+				nodes[i].parentNode.removeChild(nodes[i])
+				cached = [].concat(cached)
+				if (cached[i]) unload(cached[i])
+			}
+		}
 		nodes.length = 0
+	}
+	function unload(cached) {
+		if (cached.configContext && typeof cached.configContext.onunload == "function") cached.configContext.onunload()
+		if (cached.children) {
+			if (cached.children instanceof Array) for (var i = 0; i < cached.children.length; i++) unload(cached.children[i])
+			else if (cached.children.tag) unload(cached.children)
+		}
 	}
 	function injectHTML(parentElement, index, data) {
 		var nextSibling = parentElement.childNodes[index]
@@ -282,11 +303,15 @@ Mithril = m = new function app(window) {
 	m.render = function(root, cell) {
 		var configs = []
 		if (!root) throw new Error("Please ensure the DOM element exists before rendering a template into it.")
-		var index = nodeCache.indexOf(root)
-		var id = index < 0 ? nodeCache.push(root) - 1 : index
+		var id = getCellCacheKey(root)
 		var node = root == window.document || root == window.document.documentElement ? documentNode : root
+		if (cellCache[id] === undefined) clear(node.childNodes)
 		cellCache[id] = build(node, null, undefined, undefined, cell, cellCache[id], false, 0, null, undefined, configs)
 		for (var i = 0; i < configs.length; i++) configs[i]()
+	}
+	function getCellCacheKey(element) {
+		var index = nodeCache.indexOf(element)
+		return index < 0 ? nodeCache.push(element) - 1 : index
 	}
 
 	m.trust = function(value) {
@@ -413,17 +438,27 @@ Mithril = m = new function app(window) {
 		}
 
 		for (var route in router) {
-			if (route == path) return !void m.module(root, router[route])
+			if (route == path) {
+				var cacheKey = getCellCacheKey(root)
+				clear(root.childNodes, cellCache[cacheKey])
+				cellCache[cacheKey] = undefined
+				m.module(root, router[route])
+				return true
+			}
 
 			var matcher = new RegExp("^" + route.replace(/:[^\/]+?\.{3}/g, "(.*?)").replace(/:[^\/]+/g, "([^\\/]+)") + "\/?$")
 
 			if (matcher.test(path)) {
-				return !void path.replace(matcher, function() {
+				var cacheKey = getCellCacheKey(root)
+				clear(root.childNodes, cellCache[cacheKey])
+				cellCache[cacheKey] = undefined
+				path.replace(matcher, function() {
 					var keys = route.match(/:[^\/]+/g) || []
 					var values = [].slice.call(arguments, 1, -2)
 					for (var i = 0; i < keys.length; i++) routeParams[keys[i].replace(/:|\./g, "")] = decodeSpace(values[i])
 					m.module(root, router[route])
 				})
+				return true
 			}
 		}
 	}
@@ -546,6 +581,9 @@ Mithril = m = new function app(window) {
 				else options.onerror({type: "error", target: xhr})
 			}
 		}
+		if (options.serialize == JSON.stringify && options.method != "GET") {
+			xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+		}
 		if (typeof options.config == "function") {
 			var maybeXhr = options.config(xhr, options)
 			if (maybeXhr !== undefined) xhr = maybeXhr
@@ -577,8 +615,8 @@ Mithril = m = new function app(window) {
 	m.request = function(xhrOptions) {
 		if (xhrOptions.background !== true) m.startComputation()
 		var deferred = m.deferred()
-		var serialize = xhrOptions.serialize || JSON.stringify
-		var deserialize = xhrOptions.deserialize || JSON.parse
+		var serialize = xhrOptions.serialize = xhrOptions.serialize || JSON.stringify
+		var deserialize = xhrOptions.deserialize = xhrOptions.deserialize || JSON.parse
 		var extract = xhrOptions.extract || function(xhr) {
 			return xhr.responseText.length === 0 && deserialize === JSON.parse ? null : xhr.responseText
 		}
