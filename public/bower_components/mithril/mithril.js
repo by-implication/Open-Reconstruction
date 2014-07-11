@@ -1,30 +1,25 @@
 Mithril = m = new function app(window) {
-	var selectorCache = {}
 	var type = {}.toString
 	var parser = /(?:(^|#|\.)([^#\.\[\]]+))|(\[.+?\])/g, attrParser = /\[(.+?)(?:=("|'|)(.*?)\2)?\]/
-
+	
 	function m() {
 		var args = arguments
 		var hasAttrs = type.call(args[1]) == "[object Object]" && !("tag" in args[1]) && !("subtree" in args[1])
 		var attrs = hasAttrs ? args[1] : {}
 		var classAttrName = "class" in attrs ? "class" : "className"
-		var cell = selectorCache[args[0]]
-		if (cell === undefined) {
-			selectorCache[args[0]] = cell = {tag: "div", attrs: {}}
-			var match, classes = []
-			while (match = parser.exec(args[0])) {
-				if (match[1] == "") cell.tag = match[2]
-				else if (match[1] == "#") cell.attrs.id = match[2]
-				else if (match[1] == ".") classes.push(match[2])
-				else if (match[3][0] == "[") {
-					var pair = attrParser.exec(match[3])
-					cell.attrs[pair[1]] = pair[3] || (pair[2] ? "" :true)
-				}
+		var cell = {tag: "div", attrs: {}}
+		var match, classes = []
+		while (match = parser.exec(args[0])) {
+			if (match[1] == "") cell.tag = match[2]
+			else if (match[1] == "#") cell.attrs.id = match[2]
+			else if (match[1] == ".") classes.push(match[2])
+			else if (match[3][0] == "[") {
+				var pair = attrParser.exec(match[3])
+				cell.attrs[pair[1]] = pair[3] || (pair[2] ? "" :true)
 			}
-			if (classes.length > 0) cell.attrs[classAttrName] = classes.join(" ")
 		}
-		cell = clone(cell)
-		cell.attrs = clone(cell.attrs)
+		if (classes.length > 0) cell.attrs[classAttrName] = classes.join(" ")
+		
 		cell.children = hasAttrs ? args[2] : args[1]
 		for (var attrName in attrs) {
 			if (attrName == classAttrName) cell.attrs[attrName] = (cell.attrs[attrName] || "") + " " + attrs[attrName]
@@ -54,7 +49,7 @@ Mithril = m = new function app(window) {
 			var nodes = [], intact = cached.length === data.length, subArrayCount = 0
 			
 			var DELETION = 1, INSERTION = 2 , MOVE = 3
-			var existing = {}, shouldMaintainIdentities = false
+			var existing = {}, unkeyed = [], shouldMaintainIdentities = false
 			for (var i = 0; i < cached.length; i++) {
 				if (cached[i] && cached[i].attrs && cached[i].attrs.key !== undefined) {
 					shouldMaintainIdentities = true
@@ -63,15 +58,18 @@ Mithril = m = new function app(window) {
 			}
 			if (shouldMaintainIdentities) {
 				for (var i = 0; i < data.length; i++) {
-					if (data[i] && data[i].attrs && data[i].attrs.key !== undefined) {
-						var key = data[i].attrs.key
-						if (!existing[key]) existing[key] = {action: INSERTION, index: i}
-						else existing[key] = {action: MOVE, index: i, from: existing[key].index, element: parentElement.childNodes[existing[key].index]}
+					if (data[i] && data[i].attrs) {
+						if (data[i].attrs.key !== undefined) {
+							var key = data[i].attrs.key
+							if (!existing[key]) existing[key] = {action: INSERTION, index: i}
+							else existing[key] = {action: MOVE, index: i, from: existing[key].index, element: parentElement.childNodes[existing[key].index]}
+						}
+						else unkeyed.push({index: i, element: parentElement.childNodes[i]})
 					}
 				}
 				var actions = Object.keys(existing).map(function(key) {return existing[key]})
 				var changes = actions.sort(function(a, b) {return a.action - b.action || b.index - a.index})
-				var newCached = new Array(cached.length)
+				var newCached = cached.slice()
 				
 				for (var i = 0, change; change = changes[i]; i++) {
 					if (change.action == DELETION) {
@@ -92,6 +90,11 @@ Mithril = m = new function app(window) {
 						newCached[change.index] = cached[change.from]
 					}
 				}
+				for (var i = 0; i < unkeyed.length; i++) {
+					var change = unkeyed[i]
+					parentElement.insertBefore(change.element, parentElement.childNodes[change.index])
+					newCached[change.index] = cached[change.index]
+				}
 				cached = newCached
 				cached.nodes = []
 				for (var i = 0, child; child = parentElement.childNodes[i]; i++) cached.nodes.push(child)
@@ -101,18 +104,16 @@ Mithril = m = new function app(window) {
 				var item = build(parentElement, parentTag, cached, index, data[i], cached[cacheCount], shouldReattach, index + subArrayCount || subArrayCount, editable, namespace, configs)
 				if (item === undefined) continue
 				if (!item.nodes.intact) intact = false
-				subArrayCount += item instanceof Array ? item.length : 1
+				var isArray = item instanceof Array
+				subArrayCount += isArray ? item.length : 1
 				cached[cacheCount++] = item
 			}
 			if (!intact) {
 				for (var i = 0; i < data.length; i++) {
 					if (cached[i] !== undefined) nodes = nodes.concat(cached[i].nodes)
 				}
-				for (var i = nodes.length, node; node = cached.nodes[i]; i++) {
-					if (node.parentNode !== null && node.parentNode.childNodes.length != nodes.length) {
-						node.parentNode.removeChild(node)
-						if (cached[i]) unload(cached[i])
-					}
+				for (var i = 0, node; node = cached.nodes[i]; i++) {
+					if (node.parentNode !== null && nodes.indexOf(node) < 0) node.parentNode.removeChild(node)
 				}
 				for (var i = cached.nodes.length, node; node = nodes[i]; i++) {
 					if (node.parentNode === null) parentElement.appendChild(node)
@@ -196,6 +197,7 @@ Mithril = m = new function app(window) {
 		return cached
 	}
 	function setAttributes(node, tag, dataAttrs, cachedAttrs, namespace) {
+		var groups = {}
 		for (var attrName in dataAttrs) {
 			var dataAttr = dataAttrs[attrName]
 			var cachedAttr = cachedAttrs[attrName]
@@ -266,12 +268,7 @@ Mithril = m = new function app(window) {
 		}
 		return nodes
 	}
-	function clone(object) {
-		var result = {}
-		for (var prop in object) result[prop] = object[prop]
-		return result
-	}
-	function autoredraw(callback, object) {
+	function autoredraw(callback, object, group) {
 		return function(e) {
 			e = e || event
 			m.startComputation()
@@ -290,9 +287,10 @@ Mithril = m = new function app(window) {
 			if (html === undefined) html = window.document.createElement("html")
 			if (node.nodeName == "HTML") html = node
 			else html.appendChild(node)
-			if (window.document.documentElement !== html) {
+			if (window.document.documentElement && window.document.documentElement !== html) {
 				window.document.replaceChild(html, window.document.documentElement)
 			}
+			else window.document.appendChild(html)
 		},
 		insertBefore: function(node) {
 			this.appendChild(node)
@@ -320,7 +318,7 @@ Mithril = m = new function app(window) {
 		return value
 	}
 
-	var roots = [], modules = [], controllers = [], now = 0, lastRedraw = 0, lastRedrawId = 0, computePostRedrawHook = null
+	var roots = [], modules = [], controllers = [], lastRedrawId = 0, computePostRedrawHook = null
 	m.module = function(root, module) {
 		var index = roots.indexOf(root)
 		if (index < 0) index = roots.length
@@ -340,14 +338,10 @@ Mithril = m = new function app(window) {
 		}
 	}
 	m.redraw = function() {
-		now = window.performance && window.performance.now ? window.performance.now() : new window.Date().getTime()
-		if (now - lastRedraw > 16) redraw()
-		else {
-			var cancel = window.cancelAnimationFrame || window.clearTimeout
-			var defer = window.requestAnimationFrame || window.setTimeout
-			cancel(lastRedrawId)
-			lastRedrawId = defer(redraw, 0)
-		}
+		var cancel = window.cancelAnimationFrame || window.clearTimeout
+		var defer = window.requestAnimationFrame || window.setTimeout
+		cancel(lastRedrawId)
+		lastRedrawId = defer(redraw, 0)
 	}
 	function redraw() {
 		for (var i = 0; i < roots.length; i++) {
@@ -357,7 +351,6 @@ Mithril = m = new function app(window) {
 			computePostRedrawHook()
 			computePostRedrawHook = null
 		}
-		lastRedraw = now
 	}
 
 	var pendingRequests = 0
@@ -395,7 +388,6 @@ Mithril = m = new function app(window) {
 			}
 			computePostRedrawHook = setScroll
 			window[listener]()
-			currentRoute = normalizeRoute(window.location[m.route.mode])
 		}
 		else if (arguments[0].addEventListener) {
 			var element = arguments[0]
@@ -414,7 +406,7 @@ Mithril = m = new function app(window) {
 			if (querystring) currentRoute += (currentRoute.indexOf("?") === -1 ? "?" : "&") + querystring
 
 			var shouldReplaceHistoryEntry = (arguments.length == 3 ? arguments[2] : arguments[1]) === true
-
+			
 			if (window.history.pushState) {
 				computePostRedrawHook = function() {
 					window.history[shouldReplaceHistoryEntry ? "replaceState" : "pushState"](null, window.document.title, modes[m.route.mode] + currentRoute)
@@ -439,9 +431,7 @@ Mithril = m = new function app(window) {
 
 		for (var route in router) {
 			if (route == path) {
-				var cacheKey = getCellCacheKey(root)
-				clear(root.childNodes, cellCache[cacheKey])
-				cellCache[cacheKey] = undefined
+				reset(root)
 				m.module(root, router[route])
 				return true
 			}
@@ -449,9 +439,7 @@ Mithril = m = new function app(window) {
 			var matcher = new RegExp("^" + route.replace(/:[^\/]+?\.{3}/g, "(.*?)").replace(/:[^\/]+/g, "([^\\/]+)") + "\/?$")
 
 			if (matcher.test(path)) {
-				var cacheKey = getCellCacheKey(root)
-				clear(root.childNodes, cellCache[cacheKey])
-				cellCache[cacheKey] = undefined
+				reset(root)
 				path.replace(matcher, function() {
 					var keys = route.match(/:[^\/]+/g) || []
 					var values = [].slice.call(arguments, 1, -2)
@@ -461,6 +449,11 @@ Mithril = m = new function app(window) {
 				return true
 			}
 		}
+	}
+	function reset(root) {
+		var cacheKey = getCellCacheKey(root)
+		clear(root.childNodes, cellCache[cacheKey])
+		cellCache[cacheKey] = undefined
 	}
 	function routeUnobtrusive(e) {
 		e = e || event
@@ -588,7 +581,7 @@ Mithril = m = new function app(window) {
 			var maybeXhr = options.config(xhr, options)
 			if (maybeXhr !== undefined) xhr = maybeXhr
 		}
-		xhr.send(options.data)
+		xhr.send(options.method == "GET" ? "" : options.data)
 		return xhr
 	}
 	function bindData(xhrOptions, data, serialize) {
