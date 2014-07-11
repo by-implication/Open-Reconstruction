@@ -28,7 +28,8 @@ object Req extends ReqGen {
     SQL("""
       SELECT project_type_name, yolanda_projects.count as yolanda_qty, yolanda_projects.sum as yolanda_amt, 
       bohol_projects.count as bohol_qty, bohol_projects.sum as bohol_amt
-      FROM project_types,
+      FROM project_types
+      LEFT JOIN 
       (
         SELECT count(*), sum(req_amount), project_type_id
         FROM reqs NATURAL JOIN disasters
@@ -36,7 +37,8 @@ object Req extends ReqGen {
         WHERE disaster_name = 'Typhoon Yolanda'
         AND reqs.project_type_id = project_types.project_type_id
         GROUP BY project_type_id
-      ) as yolanda_projects,
+      ) as yolanda_projects on project_types.project_type_id = yolanda_projects.project_type_id
+      LEFT JOIN 
       (
         SELECT count(*), sum(req_amount), project_type_id
         FROM reqs NATURAL JOIN disasters
@@ -44,9 +46,7 @@ object Req extends ReqGen {
         WHERE disaster_name = 'Bohol Earthquake'
         AND reqs.project_type_id = project_types.project_type_id
         GROUP BY project_type_id
-      ) as bohol_projects
-      WHERE project_types.project_type_id = yolanda_projects.project_type_id
-      AND project_types.project_type_id = bohol_projects.project_type_id
+      ) as bohol_projects on project_types.project_type_id = bohol_projects.project_type_id
     """).list(
       get[String]("project_type_name") ~
       get[Long]("yolanda_qty") ~
