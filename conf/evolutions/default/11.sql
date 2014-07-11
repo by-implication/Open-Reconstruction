@@ -239,12 +239,14 @@ COPY dpwh_eplc FROM 'dpwh_eplc.csv' CSV ENCODING 'ISO_8859_9';;
 CREATE TABLE saro_bureau_g (
     agency text,
     saro_number text,
-    saro_date timestamp,
+    saro_date date,
     month text,
     year integer,
     amount decimal,
+    fund_source text,
     project_quantity integer,
     disaster text,
+    disaster_date date,
     remarks text
 );;
 
