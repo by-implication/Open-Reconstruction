@@ -26,20 +26,39 @@ object Req extends ReqGen {
 
   private def byProjectType = DB.withConnection { implicit c =>
     SQL("""
-      SELECT disasters.disaster_name, project_type_name, COUNT(*), SUM(req_amount)
-      FROM reqs NATURAL JOIN project_types
-      NATURAL JOIN disasters
-      GROUP BY project_type_name, disaster_name
+      SELECT project_type_name, yolanda_projects.count as yolanda_qty, yolanda_projects.sum as yolanda_amt, 
+      bohol_projects.count as bohol_qty, bohol_projects.sum as bohol_amt
+      FROM project_types,
+      (
+        SELECT count(*), sum(req_amount), project_type_id
+        FROM reqs NATURAL JOIN disasters
+        NATURAL JOIN project_types
+        WHERE disaster_name = 'Typhoon Yolanda'
+        AND reqs.project_type_id = project_types.project_type_id
+        GROUP BY project_type_id
+      ) as yolanda_projects,
+      (
+        SELECT count(*), sum(req_amount), project_type_id
+        FROM reqs NATURAL JOIN disasters
+        NATURAL JOIN project_types
+        WHERE disaster_name = 'Bohol Earthquake'
+        AND reqs.project_type_id = project_types.project_type_id
+        GROUP BY project_type_id
+      ) as bohol_projects
+      WHERE project_types.project_type_id = yolanda_projects.project_type_id
+      AND project_types.project_type_id = bohol_projects.project_type_id
     """).list(
-      get[String]("disaster_name") ~
       get[String]("project_type_name") ~
-      get[Long]("count") ~
-      get[Option[java.math.BigDecimal]]("sum") map { case disasterName~projectTypeName~count~amount =>
+      get[Long]("yolanda_qty") ~
+      get[java.math.BigDecimal]("yolanda_amt") ~
+      get[Long]("bohol_qty") ~
+      get[java.math.BigDecimal]("bohol_amt") map { case projectTypeName~yolandaQty~yolandaAmt~boholQty~boholAmt =>
         Json.obj(
-          "disasterName" -> disasterName,
           "projectTypeName" -> projectTypeName,
-          "count" -> count,
-          "amount" -> amount.getOrElse(0).toString
+          "yolandaQty" -> yolandaQty,
+          "yolandaAmt" -> yolandaAmt.toString,
+          "boholQty" -> boholQty,
+          "boholAmt" -> boholAmt.toString
         )
       }
     )
