@@ -518,17 +518,26 @@ viz.create(
   'projectTypes',
   'request',
   function(ctrl){
-    var byType = _.sortBy(ctrl.requests().byProjectType(), "count").reverse();
+    var byType = _.chain(ctrl.requests().byProjectType())
+      .sortBy("count")
+      .reverse()
+      // .groupBy("disasterName")
+      .value();
+    console.log(byType);
     // var counts = _.pluck(byType, "count");
     // var types = _.pluck(byType, "name");
     return {
+      size: {
+        height: 400,
+        fullViewHeight: 600
+      },
       data: {
         json: byType,
         keys: {
-          x: "name",
-          value: ["count"]
+          x: "projectTypeName",
+          value: ["boholQty", "yolandaQty"],
         },
-        type: "bar",
+        type: "bar"
       },
       axis: {
         x: {
