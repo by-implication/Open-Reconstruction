@@ -26,8 +26,11 @@ object Req extends ReqGen {
 
   private def byProjectType = DB.withConnection { implicit c =>
     SQL("""
-      SELECT project_type_name, yolanda_projects.count as yolanda_qty, yolanda_projects.sum as yolanda_amt, 
-      bohol_projects.count as bohol_qty, bohol_projects.sum as bohol_amt
+      SELECT project_type_name, 
+      COALESCE(yolanda_projects.count, 0) as yolanda_qty, 
+      COALESCE(yolanda_projects.sum, 0) as yolanda_amt, 
+      COALESCE(bohol_projects.count, 0) as bohol_qty, 
+      COALESCE(bohol_projects.sum, 0) as bohol_amt
       FROM project_types
       LEFT JOIN 
       (
@@ -47,6 +50,7 @@ object Req extends ReqGen {
         AND reqs.project_type_id = project_types.project_type_id
         GROUP BY project_type_id
       ) as bohol_projects on project_types.project_type_id = bohol_projects.project_type_id
+      WHERE yolanda_projects.count IS NOT NULL OR bohol_projects.count IS NOT NULL
     """).list(
       get[String]("project_type_name") ~
       get[Long]("yolanda_qty") ~
