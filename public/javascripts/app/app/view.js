@@ -132,6 +132,15 @@ app.navbar = function(ctrl){
             className: (m.route().startsWith(routes.controllers.Requests.index().url) ? "active" : "")
           }, "Requests")
         ]),
+        m.cookie().logged_in ?
+          m("li", [
+            m("a", {
+              href: routes.controllers.Feed.index().url,
+              config: m.route,
+              className: (m.route().startsWith(routes.controllers.Feed.index().url) ? "active" : "")
+            }, "Feed")
+          ])
+        : "",
         m("li", [
           m("a", {
             href: routes.controllers.Application.faq().url,

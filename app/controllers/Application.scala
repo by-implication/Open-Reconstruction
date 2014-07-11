@@ -182,7 +182,8 @@ object Application extends Controller with Secured {
       GovUnits.createLgu,
       GovUnits.createLguMeta,
       GovUnits.insertLgu,
-      GovUnits.search
+      GovUnits.search,
+      Feed.index
     )).as("text/javascript")
   }
 
