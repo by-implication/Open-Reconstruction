@@ -10,6 +10,12 @@ import recon.support._
 
 object Event extends EventGen {
 
+  def feed()(implicit user: User) = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT * FROM events ORDER BY event_date DESC
+    """).list(simple)
+  }
+
   private def generate(kind: String, content: String, legacy: Boolean = false)(implicit req: Req, user: User) = Event(
     kind = kind,
     content = Some(content),

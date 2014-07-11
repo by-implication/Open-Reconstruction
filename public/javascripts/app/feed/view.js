@@ -4,7 +4,14 @@ feed.view = function(ctrl){
     ctrl.app,
     "Feed",
     {className: "detail"},
-    ['Feed']
+    [
+      m("h1", "Feed"),
+      m("div",
+        ctrl.events().map(function (e){
+          return historyEvent[e.kind].bind(ctrl)(e);
+        })
+      )
+    ]
   )
 
 }

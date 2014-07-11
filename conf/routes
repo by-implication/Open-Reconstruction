@@ -105,3 +105,4 @@ GET     /gov-units/:id/:p                         controllers.GovUnits.viewPage(
 GET     /gov-units/:id/:p/meta                    controllers.GovUnits.viewMeta(id: Int, p: Int)
 
 GET			/feed																			controllers.Feed.index
+GET			/feed/meta																controllers.Feed.indexMeta
