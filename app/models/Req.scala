@@ -26,15 +26,18 @@ object Req extends ReqGen {
 
   private def byProjectType = DB.withConnection { implicit c =>
     SQL("""
-      SELECT project_type_name, COUNT(*), SUM(req_amount)
+      SELECT disasters.disaster_name, project_type_name, COUNT(*), SUM(req_amount)
       FROM reqs NATURAL JOIN project_types
-      GROUP BY project_type_name;
+      NATURAL JOIN disasters
+      GROUP BY project_type_name, disaster_name
     """).list(
+      get[String]("disaster_name") ~
       get[String]("project_type_name") ~
       get[Long]("count") ~
-      get[Option[java.math.BigDecimal]]("sum") map { case name~count~amount =>
+      get[Option[java.math.BigDecimal]]("sum") map { case disasterName~projectTypeName~count~amount =>
         Json.obj(
-          "name" -> name,
+          "disasterName" -> disasterName,
+          "projectTypeName" -> projectTypeName,
           "count" -> count,
           "amount" -> amount.getOrElse(0).toString
         )
