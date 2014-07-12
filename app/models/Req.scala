@@ -229,6 +229,11 @@ object Req extends ReqGen {
       }
       case "mine" => {
         if (!user.isAnon){
+          addWhereClause("author_id = " + user.id)
+        }
+      }
+      case "agency" => {
+        if (!user.isAnon){
           addWhereClause("gov_unit_id = " + user.govUnit.id)
         }
       }
