@@ -76,10 +76,26 @@ vizIndex.view = function(ctrl){
       m("section.alt", [
         m(".row", [
           // common.stickyTabs.menu(ctrl.projectVisTabs, {className: "vertical", config: ctrl.scrollHandler}),
-          m(".columns.medium-3", {config: common.sticky.config(ctrl)}, [
-            // directory(),
-            "lol"
-          ]),
+          m(".columns.medium-3", {config: common.sticky.config(ctrl)}, 
+            _.chain(ctrl.visFilters)
+              .map(function(fg, fgName){
+                return m("div", [
+                  m("h4", [
+                    fgName
+                  ]),
+                  m("ul.filters", 
+                    fg.map(function(f){
+                      return m("li.filter", [
+                        m("a", [
+                          f
+                        ]),
+                      ])
+                    })
+                    ),
+                ])
+              })
+              .value()
+            ),
           m(".columns.medium-9", [
             m("ul#vis-isotope-container", {config: ctrl.isotopeConfig}, 
               _.chain(ctrl.visDict)

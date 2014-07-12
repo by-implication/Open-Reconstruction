@@ -83,6 +83,7 @@ vizIndex.controller = function(){
   })
 
   this.visDict = viz.library;
+  this.visFilters = viz.filters;
 
   this.isotopeConfig = function(elem, isInit){
     var container = $(elem);
