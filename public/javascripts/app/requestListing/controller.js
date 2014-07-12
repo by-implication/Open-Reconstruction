@@ -1,4 +1,5 @@
 requestListing.controller = function(){
+
   var self = this;
   this.app = new app.controller();
   this.tabs = new common.tabs.controller();
@@ -12,6 +13,7 @@ requestListing.controller = function(){
     ASSESSOR: 'assessor',
     EXECUTOR: 'executor',
     MINE: 'mine',
+    AGENCY: 'agency',
     APPROVAL: 'approval',
     IMPLEMENTATION: 'implementation'
   }
@@ -91,7 +93,7 @@ requestListing.controller = function(){
     {
       identifier: this.tabFilters.SIGNOFF,
       href: nav({tab: "signoff"}),
-      when: function(){ return _.contains(self.app.currentUser().permissions, 5) },
+      when: function(){ return _.contains(self.app.currentUser().permissions, process.permissions.SIGNOFF) },
       _label: "Needs signoff"
     },
     {
@@ -101,9 +103,8 @@ requestListing.controller = function(){
       _label: "Needs assessor"
     },
     {
-      identifier: this.tabFilters.MINE,
-      href: nav({tab: "mine"}),
-      when: function(){ return _.contains(self.app.currentUser().permissions, 1) },
+      identifier: this.tabFilters.AGENCY,
+      href: nav({tab: "agency"}),
       _label: function(){
         if(self.app.currentUser().govUnit && self.app.currentUser().govUnit.role == "LGU") {
           return "My LGU's requests";
@@ -113,9 +114,14 @@ requestListing.controller = function(){
       }
     },
     {
+      identifier: this.tabFilters.MINE,
+      href: nav({tab: "mine"}),
+      _label: "My requests"
+    },
+    {
       identifier: this.tabFilters.EXECUTOR,
       href: nav({tab: "executor"}),
-      when: function(){ return _.contains(self.app.currentUser().permissions, 4) },
+      when: function(){ return _.contains(self.app.currentUser().permissions, process.permissions.IMPLEMENT_REQUESTS) },
       _label: "Needs executor"
     },
     {
@@ -168,10 +174,8 @@ requestListing.controller = function(){
 
       if(this.app.isSuperAdmin()){
         goToTab("assessor");
-      } else if(_.contains(this.app.currentUser().permissions, 5)){
+      } else if(_.contains(this.app.currentUser().permissions, process.permissions.SIGNOFF)){
         goToTab("signoff");
-      } else if(_.contains(this.app.currentUser().permissions, 1)){
-        goToTab("mine");
       } else {
         goToTab("all");
       }

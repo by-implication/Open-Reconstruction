@@ -76,13 +76,46 @@ vizIndex.view = function(ctrl){
       m("section.alt", [
         m(".row", [
           // common.stickyTabs.menu(ctrl.projectVisTabs, {className: "vertical", config: ctrl.scrollHandler}),
-          m(".columns.medium-3", {config: common.sticky.config(ctrl)}, [
-            directory(),
-          ]),
+          m(".columns.medium-3.text-right", {config: common.sticky.config(ctrl)}, 
+            _.chain(ctrl.visFilters)
+              .map(function(fg, fgName){
+                return m("div", [
+                  m("h4", [
+                    fgName
+                  ]),
+                  m("ul.filters",
+                    fg.map(function(f){
+                      var className = "." + fgName + "-" + f;
+                      var isActive = function(){
+                        return (f === "all" && !ctrl.filterState()[fgName]) || (ctrl.filterState()[fgName] === className)
+                      }
+                      return m("li.filter", {
+                        className: isActive() ? "active" : ""
+                      }, [
+                        m("a", {
+                          onclick: (f === "all") ? ctrl.clearFilter.bind(ctrl, fgName) : ctrl.isotopeFilter.bind(ctrl, fgName, className)
+                        }, [
+                          f
+                        ]),
+                      ])
+                    })
+                    ),
+                ])
+              })
+              .value()
+            ),
           m(".columns.medium-9", [
-            visSection("request"),
-            visSection("saro"),
-            visSection("project")
+            m("#vis-isotope-container", {config: ctrl.isotopeConfig}, 
+              _.chain(ctrl.visDict)
+                .map(function(viz, key){
+                  return visPanel.view(viz(ctrl))
+                })
+                .value()
+              ),
+            
+            // visSection("request"),
+            // visSection("saro"),
+            // visSection("project")
           ]),
         ]),
       ])

@@ -231,7 +231,7 @@ object Requests extends Controller with Secured {
     }
 
     val reqListOption = tab match {
-      case "all" | "approval" | "assessor" | "implementation" | "mine" | "signoff" | "executor" => {
+      case "all" | "approval" | "assessor" | "implementation" | "mine" | "agency" | "signoff" | "executor" => {
         Some(Req.indexList(tab, offset, limit, projectTypeIdOption, psgc, sort, sortDir, disasterId, agencyId))
       }
       case _ => None
@@ -251,6 +251,7 @@ object Requests extends Controller with Secured {
           "implementation" -> Req.indexCount("implementation", projectTypeIdOption, psgc, disasterId, agencyId),
           "executor" -> Req.indexCount("executor", projectTypeIdOption, psgc, disasterId, agencyId),
           "mine" -> Req.indexCount("mine", projectTypeIdOption, psgc, disasterId, agencyId),
+          "agency" -> Req.indexCount("agency", projectTypeIdOption, psgc, disasterId, agencyId),
           "signoff" -> Req.indexCount("signoff", projectTypeIdOption, psgc, disasterId, agencyId)
         )
       ))

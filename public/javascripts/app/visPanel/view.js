@@ -1,5 +1,17 @@
 visPanel.view = function(ctrl){
-  return m(".vis-panel", [
+  return m(".vis-panel", {
+    className: _.chain(ctrl.tags())
+      .map(function(tagGroup, tagGroupName){
+        return tagGroup.map(function(tag){
+          return tagGroupName + "-" + tag;
+        })
+      })
+      .flatten()
+      .reduce(function(acc, cur){
+        return acc + " " + cur
+      }, "")
+      .value()
+  }, [
     ctrl.isFullView() ?
       ""
       // m("div", [
