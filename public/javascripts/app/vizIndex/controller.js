@@ -118,8 +118,8 @@ vizIndex.controller = function(){
       this.filterState()[fgName] = className;
     }
 
-    // window.onresize();
     this.filterize();
+    window.onresize();
   }
 
   this.filterize = function(){
