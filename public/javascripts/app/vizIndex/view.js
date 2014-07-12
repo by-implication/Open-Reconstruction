@@ -77,12 +77,24 @@ vizIndex.view = function(ctrl){
         m(".row", [
           // common.stickyTabs.menu(ctrl.projectVisTabs, {className: "vertical", config: ctrl.scrollHandler}),
           m(".columns.medium-3", {config: common.sticky.config(ctrl)}, [
-            directory(),
+            // directory(),
+            "lol"
           ]),
           m(".columns.medium-9", [
-            visSection("request"),
-            visSection("saro"),
-            visSection("project")
+            console.log(ctrl.visDict),
+            m("ul#isotope-container.medium-block-grid-2", 
+              _.chain(ctrl.visDict)
+                .map(function(viz, key){
+                  return m("li.item", [
+                    visPanel.view(viz(ctrl))
+                  ])
+                })
+                .value()
+              ),
+            
+            // visSection("request"),
+            // visSection("saro"),
+            // visSection("project")
           ]),
         ]),
       ])

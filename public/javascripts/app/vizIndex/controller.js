@@ -82,10 +82,6 @@ vizIndex.controller = function(){
     self.saros(r.data);
   })
 
-  this.visDict = _.chain(viz.library)
-    .groupBy(function(v){
-      return v(self).type();
-    })
-    .value()
+  this.visDict = viz.library;
 
 }
