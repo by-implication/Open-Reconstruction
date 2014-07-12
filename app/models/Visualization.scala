@@ -287,10 +287,12 @@ object Visualization {
             actOpt(a9, a9start, a9end),
             actOpt(a10, a10start, a10end),
             actOpt(a11, a11start, a11end)
-        ).flatten, project_type, for {
+        ).flatten, Some(project_type.getOrElse("Other").capitalize), for {
           contract_start_date <- contract_start_date
           project_abc <- project_abc
-        } yield { (contract_start_date, BigDecimal(project_abc)) })
+        } yield { (contract_start_date, BigDecimal(project_abc)) },
+          disaster
+        )
 
       }
     })
@@ -299,9 +301,11 @@ object Visualization {
       name -> (list.map(_._2).sum / list.size)
     }
 
-    val byType = list.map(_._2).flatten.groupBy(x => x).map { case (name, list) =>
-      name -> list.size
-    }.toList.sortBy(_._2).reverse
+    val byType = list.map(p => (p._2.get, p._4.get)).groupBy(x => x._1).map { case (projectType, list) =>
+      projectType -> list.groupBy(_._2).map { case (disaster, list) =>
+        disaster -> list.size
+      }
+    }.toList
 
     def extractYearMonth(t: Timestamp): String = {
       val c = Calendar.getInstance()
@@ -315,9 +319,10 @@ object Visualization {
 
     Json.obj(
       "aveDur" -> averageDurations,
-      "byType" -> byType.map { case (name, count) => Json.obj(
-        "n" -> name,
-        "c" -> count
+      "byType" -> byType.map { case (projectType, list) => Json.obj(
+        "projectType" -> projectType,
+        "boholQty" -> list.find(_._1 == "Bohol Earthquake").map(_._2).getOrElse(0).toInt,
+        "yolandaQty" -> list.find(_._1 == "Typhoon Yolanda").map(_._2).getOrElse(0).toInt
       )},
       "byMonth" -> byMonth.map { case (ym, count, amount) => Json.obj(
         "yearMonth" -> ym,
