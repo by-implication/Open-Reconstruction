@@ -86,7 +86,7 @@ vizIndex.view = function(ctrl){
                   m("ul.filters", 
                     fg.map(function(f){
                       var className = "." + fgName + "-" + f;
-                      return m("li.filter", [
+                      return m("li.filter", {className: _.contains(ctrl.currentFilter(), className) ? "active" : ""}, [
                         m("a", {
                           onclick: ctrl.isotopeFilter.bind(ctrl, className)
                         }, [

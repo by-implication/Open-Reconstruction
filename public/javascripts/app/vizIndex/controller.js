@@ -16,6 +16,8 @@ vizIndex.controller = function(){
   this.requests().byLevel = m.prop([]);
   this.requests().byNamedDisaster = m.prop();
 
+  this.currentFilter = m.prop([]);
+
   var projectTabs = function(){
     return _.chain(viz.library)
       .groupBy(function(v){
@@ -102,7 +104,15 @@ vizIndex.controller = function(){
   }
 
   this.isotopeFilter = function(className){
-    $("#vis-isotope-container").isotope({filter: className});
+    if(_.contains(this.currentFilter(), className)){
+      this.currentFilter(_.without(this.currentFilter(), className));
+    } else {
+      this.currentFilter().push(className);
+    }
+    var strFilt = this.currentFilter().reduce(function(acc, head){
+      return acc + head;
+    }, "")
+    $("#vis-isotope-container").isotope({filter: strFilt});
     // window.onresize();
   }
 }
