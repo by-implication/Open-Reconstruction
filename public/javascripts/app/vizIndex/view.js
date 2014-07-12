@@ -76,7 +76,7 @@ vizIndex.view = function(ctrl){
       m("section.alt", [
         m(".row", [
           // common.stickyTabs.menu(ctrl.projectVisTabs, {className: "vertical", config: ctrl.scrollHandler}),
-          m(".columns.medium-3", {config: common.sticky.config(ctrl)}, 
+          m(".columns.medium-3.text-right", {config: common.sticky.config(ctrl)}, 
             _.chain(ctrl.visFilters)
               .map(function(fg, fgName){
                 return m("div", [
