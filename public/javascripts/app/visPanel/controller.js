@@ -19,7 +19,7 @@ visPanel.controller = function(){
   this.currentSort = m.prop();
   this.size = m.prop({
     height: 200,
-    width: 350
+    width: null
   });
   this.color = m.prop({
     pattern: ['#555', '#ff851b']
