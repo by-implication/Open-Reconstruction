@@ -89,9 +89,9 @@ vizIndex.controller = function(){
     var container = $(elem);
     if(!isInit){
       container.isotope({
-        itemSelector: ".item",
+        itemSelector: ".vis-panel",
         masonry: {
-          columnWidth: ".item",
+          columnWidth: ".vis-panel",
           gutter: 20
         }
       })
@@ -99,5 +99,10 @@ vizIndex.controller = function(){
     setTimeout(function(){
       container.isotope('layout');
     }, 100)
+  }
+
+  this.isotopeFilter = function(className){
+    $("#vis-isotope-container").isotope({filter: className});
+    // window.onresize();
   }
 }

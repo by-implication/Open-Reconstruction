@@ -85,8 +85,11 @@ vizIndex.view = function(ctrl){
                   ]),
                   m("ul.filters", 
                     fg.map(function(f){
+                      var className = "." + fgName + "-" + f;
                       return m("li.filter", [
-                        m("a", [
+                        m("a", {
+                          onclick: ctrl.isotopeFilter.bind(ctrl, className)
+                        }, [
                           f
                         ]),
                       ])
@@ -97,12 +100,10 @@ vizIndex.view = function(ctrl){
               .value()
             ),
           m(".columns.medium-9", [
-            m("ul#vis-isotope-container", {config: ctrl.isotopeConfig}, 
+            m("#vis-isotope-container", {config: ctrl.isotopeConfig}, 
               _.chain(ctrl.visDict)
                 .map(function(viz, key){
-                  return m("li.item", [
-                    visPanel.view(viz(ctrl))
-                  ])
+                  return visPanel.view(viz(ctrl))
                 })
                 .value()
               ),

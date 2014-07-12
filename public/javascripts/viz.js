@@ -549,7 +549,7 @@ viz.create(
   'projectTypes',
   {
     dataset: ["request"],
-    values: ["project type"],
+    values: ["project-type"],
     type: ["distribution"]
   },
   function(ctrl){
