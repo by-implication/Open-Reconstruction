@@ -12,7 +12,8 @@ object Event extends EventGen {
 
   def feed()(implicit user: User) = DB.withConnection { implicit c =>
     SQL("""
-      SELECT * FROM events ORDER BY event_date DESC
+      SELECT * FROM latest_events() NATURAL LEFT JOIN events
+      WHERE event_date = event_date;
     """).list(simple)
   }
 
