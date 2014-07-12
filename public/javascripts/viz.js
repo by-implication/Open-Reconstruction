@@ -248,41 +248,44 @@ viz.create(
   ["count", "amount"]
 )
 
-// viz.create(
-//   "Project Type Distribution",
-//   "projectTypeDistribution",
-//   "project",
-//   function(ctrl){
-//     var byType = ctrl.projects().byType;
-//     console.log(byType);
-//     return {
-//       data: {
-//         json: byType,
-//         keys: {
-//           x: "projectType",
-//           value: ["disaster"]
-//         },
-//         type: "bar"
-//       },
-//       axis: {
-//         x: {
-//           type: "category",
-//           label: {
-//             text: "Project Types",
-//             position: "outer-middle"
-//           }
-//         },
-//         y: {
-//           label: {
-//             text: "Number of Projects",
-//             position: "outer-center"
-//           }
-//         },
-//         rotated: true
-//       }
-//     }
-//   }
-// )
+viz.create(
+  "Project Type Distribution",
+  "projectTypeDistribution",
+  {
+    dataset: ["project"],
+    values: ["type"],
+    type: ["distribution"]
+  },
+  function(ctrl){
+    var byType = ctrl.projects().byType;
+    return {
+      data: {
+        json: byType,
+        keys: {
+          x: "projectType",
+          value: ["boholQty", "yolandaQty"]
+        },
+        type: "bar"
+      },
+      axis: {
+        x: {
+          type: "category",
+          label: {
+            text: "Project Types",
+            position: "outer-middle"
+          }
+        },
+        y: {
+          label: {
+            text: "Number of Projects",
+            position: "outer-center"
+          }
+        },
+        rotated: true
+      }
+    }
+  }
+)
 
 viz.create(
   'Project Count and Amount History',
@@ -549,7 +552,7 @@ viz.create(
   'projectTypes',
   {
     dataset: ["request"],
-    values: ["request-type"],
+    values: ["type"],
     type: ["distribution"]
   },
   function(ctrl){

@@ -119,7 +119,6 @@ vizIndex.controller = function(){
     }
 
     this.filterize();
-    window.onresize();
   }
 
   this.filterize = function(){
@@ -128,5 +127,6 @@ vizIndex.controller = function(){
     }, "");
 
     $("#vis-isotope-container").isotope({filter: strFilt});
+    visPanel.onresizer.queue();
   }
 }
