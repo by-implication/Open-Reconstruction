@@ -1,13 +1,24 @@
 var viz = {
-  library: {}
+  library: {},
+  filters: {}
 };
 
-viz.create = function(title, id, type, chartSettingsCreator, sorts){
+viz.create = function(title, id, tags, chartSettingsCreator, sorts){
+  _.chain(tags)
+    .forEach(function(tagsForTagName, tagName){
+      if(_.isUndefined(viz.filters[tagName])){
+        viz.filters[tagName] = []
+      }
+      var union = _.union(viz.filters[tagName], tagsForTagName);
+      viz.filters[tagName] = union;
+    })
+    .value()
+
   viz.library[id] = function(ctrl){
     var visCtrl = new visPanel.controller();
     visCtrl.title(title);
     visCtrl.link(id);
-    visCtrl.type(type);
+    visCtrl.tags(tags);
     visCtrl.chartSettings = chartSettingsCreator.bind(this, ctrl);
     if(!_.isUndefined(sorts)){
       visCtrl.sorts(sorts);
@@ -177,7 +188,11 @@ viz.Distribution = function(){
 viz.create(
   "Project Count and Amount, Distributed by Agency",
   "projectCountAmountAgency",
-  "project",
+  {
+    dataset: ["project"],
+    values: ["count", "amount"],
+    type: ["distribution"]
+  },
   function(ctrl){
     var byAgency = _.sortBy(ctrl.projects().byAgency(), "count").reverse();
     return {
@@ -272,7 +287,11 @@ viz.create(
 viz.create(
   'Project Count and Amount History',
   'projectCountHistory',
-  'project',
+  {
+    dataset: ["project"],
+    values: ["count", "amount"],
+    type: ["history"]
+  },
   function(ctrl){
 
     var byMonth = viz.padMonths(ctrl.projects().byMonth).map(function(d){
@@ -341,7 +360,11 @@ viz.create(
 viz.create(
   'SARO Count and Amount Distribution by Agency',
   'saroCountAmountAgency',
-  'saro',
+  {
+    dataset: ["SARO"],
+    values: ["count", "amount"],
+    type: ["distribution"]
+  },
   function(ctrl){
     var byAgency = _.sortBy(ctrl.saros().byAgency, "count").reverse();
 
@@ -397,7 +420,11 @@ viz.create(
 viz.create(
   'SARO Count and Amount History',
   'saroHistory',
-  'saro',
+  {
+    dataset: ["SARO"],
+    values: ["count", "amount"],
+    type: ["history"]
+  },
   function(ctrl){
     var byMonth = viz.padMonths(ctrl.saros().byMonth).map(function(d){
       return {
@@ -465,7 +492,11 @@ viz.create(
 viz.create(
   'Request Count and Amount per Unique Named Disaster',
   'topDisasters',
-  'request',
+  {
+    dataset: ["request"],
+    values: ["count", "amount"],
+    type: ["distribution"]
+  },
   function(ctrl){
     var byDisaster = _.sortBy(ctrl.requests().byNamedDisaster(), "count").reverse();
     return {
@@ -516,7 +547,11 @@ viz.create(
 viz.create(
   'Request Type Distribution',
   'projectTypes',
-  'request',
+  {
+    dataset: ["request"],
+    values: ["project type"],
+    type: ["distribution"]
+  },
   function(ctrl){
     var byType = _.chain(ctrl.requests().byProjectType())
       .sortBy("count")
@@ -558,7 +593,11 @@ viz.create(
 viz.create(
   'Request Count and Amount History',
   'requestHistory',
-  'request',
+  {
+    dataset: ["request"],
+    values: ["count", "amount"],
+    type: ["history"]
+  },
   function(ctrl){
     var byMonth = ctrl.requests().byMonth().map(function(d){
       return {
@@ -626,7 +665,11 @@ viz.create(
 viz.create(
   'Request History by Disaster Type', 
   'disasterHistory', 
-  'request',
+  {
+    dataset: ["request"],
+    values: ["count"],
+    type: ["history"]
+  },
   function(ctrl){
 
     var disasters = _.chain(ctrl.requests().byDisasterType())

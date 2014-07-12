@@ -42,7 +42,7 @@ visPanel.controller = function(){
   this.axis = m.prop({});
   this.title = m.prop("Chart Title");
   this.link = m.prop("Chart Link");
-  this.type = m.prop("type");
+  this.tags = m.prop({});
   this.isFullView = m.prop(false);
 
   this.config = function(elem, isInitialized){

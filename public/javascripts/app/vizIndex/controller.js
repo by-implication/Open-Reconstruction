@@ -25,20 +25,20 @@ vizIndex.controller = function(){
       .value();
   }
 
-  this.projectVisTabs = new common.stickyTabs.controller();
-  this.projectVisTabs.tabs(_.chain(viz.library)
-    .groupBy(function(v){
-      return v(self).type();
-    })
-    .keys()
-    .map(function(t){
-      return {
-        label: m.prop(t + " visualizations"),
-        href: "#" + t + "-visualizations"
-      }
-    })
-    .value()
-  );
+  // this.projectVisTabs = new common.stickyTabs.controller();
+  // this.projectVisTabs.tabs(_.chain(viz.library)
+  //   .groupBy(function(v){
+  //     return v(self).type();
+  //   })
+  //   .keys()
+  //   .map(function(t){
+  //     return {
+  //       label: m.prop(t + " visualizations"),
+  //       href: "#" + t + "-visualizations"
+  //     }
+  //   })
+  //   .value()
+  // );
 
   bi.ajax(routes.controllers.Viz.indexMeta()).then(function (r){
     self.mostCommonDisasterType(r.mostCommonDisasterType);
@@ -96,7 +96,6 @@ vizIndex.controller = function(){
       })
     }
     setTimeout(function(){
-      console.log("trigger!");
       container.isotope('layout');
     }, 100)
   }
