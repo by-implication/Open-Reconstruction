@@ -83,12 +83,17 @@ vizIndex.view = function(ctrl){
                   m("h4", [
                     fgName
                   ]),
-                  m("ul.filters", 
+                  m("ul.filters",
                     fg.map(function(f){
                       var className = "." + fgName + "-" + f;
-                      return m("li.filter", {className: _.contains(ctrl.currentFilter(), className) ? "active" : ""}, [
+                      var isActive = function(){
+                        return (f === "all" && !ctrl.filterState()[fgName]) || (ctrl.filterState()[fgName] === className)
+                      }
+                      return m("li.filter", {
+                        className: isActive() ? "active" : ""
+                      }, [
                         m("a", {
-                          onclick: ctrl.isotopeFilter.bind(ctrl, className)
+                          onclick: (f === "all") ? ctrl.clearFilter.bind(ctrl, fgName) : ctrl.isotopeFilter.bind(ctrl, fgName, className)
                         }, [
                           f
                         ]),

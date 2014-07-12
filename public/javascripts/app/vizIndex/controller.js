@@ -16,8 +16,6 @@ vizIndex.controller = function(){
   this.requests().byLevel = m.prop([]);
   this.requests().byNamedDisaster = m.prop();
 
-  this.currentFilter = m.prop([]);
-
   var projectTabs = function(){
     return _.chain(viz.library)
       .groupBy(function(v){
@@ -87,6 +85,11 @@ vizIndex.controller = function(){
   this.visDict = viz.library;
   this.visFilters = viz.filters;
 
+  this.filterState = m.prop(_.clone(this.visFilters));
+  _.forEach(this.filterState(), function(fg, fgName){
+    this.filterState()[fgName] = null;
+  }.bind(this));
+
   this.isotopeConfig = function(elem, isInit){
     var container = $(elem);
     if(!isInit){
@@ -103,16 +106,27 @@ vizIndex.controller = function(){
     }, 100)
   }
 
-  this.isotopeFilter = function(className){
-    if(_.contains(this.currentFilter(), className)){
-      this.currentFilter(_.without(this.currentFilter(), className));
+  this.clearFilter = function(fgName){
+    this.filterState()[fgName] = null
+    this.filterize();
+  }
+
+  this.isotopeFilter = function(fgName, className){
+    if (this.filterState()[fgName] === className){
+      this.clearFilter(fgName);
     } else {
-      this.currentFilter().push(className);
+      this.filterState()[fgName] = className;
     }
-    var strFilt = this.currentFilter().reduce(function(acc, head){
-      return acc + head;
-    }, "")
-    $("#vis-isotope-container").isotope({filter: strFilt});
+
     // window.onresize();
+    this.filterize();
+  }
+
+  this.filterize = function(){
+    var strFilt = _.compact(_.values(this.filterState())).reduce(function(acc, head){
+      return acc + head;
+    }, "");
+
+    $("#vis-isotope-container").isotope({filter: strFilt});
   }
 }

@@ -7,7 +7,7 @@ viz.create = function(title, id, tags, chartSettingsCreator, sorts){
   _.chain(tags)
     .forEach(function(tagsForTagName, tagName){
       if(_.isUndefined(viz.filters[tagName])){
-        viz.filters[tagName] = []
+        viz.filters[tagName] = ["all"]
       }
       var union = _.union(viz.filters[tagName], tagsForTagName);
       viz.filters[tagName] = union;
@@ -549,7 +549,7 @@ viz.create(
   'projectTypes',
   {
     dataset: ["request"],
-    values: ["project-type"],
+    values: ["request-type"],
     type: ["distribution"]
   },
   function(ctrl){
