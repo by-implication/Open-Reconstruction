@@ -245,7 +245,7 @@ viz.create(
         json: byType,
         keys: {
           x: "projectType",
-          value: ["disaster.bohol"]
+          value: ["disaster"]
         },
         type: "bar"
       },
