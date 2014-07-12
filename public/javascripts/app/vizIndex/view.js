@@ -82,7 +82,7 @@ vizIndex.view = function(ctrl){
           ]),
           m(".columns.medium-9", [
             console.log(ctrl.visDict),
-            m("ul#isotope-container.medium-block-grid-2", 
+            m("ul#vis-isotope-container", {config: ctrl.isotopeConfig}, 
               _.chain(ctrl.visDict)
                 .map(function(viz, key){
                   return m("li.item", [

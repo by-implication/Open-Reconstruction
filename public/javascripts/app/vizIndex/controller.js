@@ -84,4 +84,20 @@ vizIndex.controller = function(){
 
   this.visDict = viz.library;
 
+  this.isotopeConfig = function(elem, isInit){
+    var container = $(elem);
+    if(!isInit){
+      container.isotope({
+        itemSelector: ".item",
+        masonry: {
+          columnWidth: ".item",
+          gutter: 20
+        }
+      })
+    }
+    setTimeout(function(){
+      console.log("trigger!");
+      container.isotope('layout');
+    }, 100)
+  }
 }

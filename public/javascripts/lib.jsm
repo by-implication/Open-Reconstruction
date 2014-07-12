@@ -13,6 +13,7 @@ polyfill.js
 ../bower_components/c3/c3.js
 ../bower_components/jquery/dist/jquery.min.js
 ../bower_components/select2/select2.min.js
-../bower_components/isotope/jquery.isotope.min.js
+../bower_components/isotope/dist/isotope.pkgd.min.js
+../bower_components/isotope-fit-columns/fit-columns.js
 # hahahaha
 leaflet-conf.js
