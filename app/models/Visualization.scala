@@ -321,10 +321,8 @@ object Visualization {
       "aveDur" -> averageDurations,
       "byType" -> byType.map { case (projectType, list) => Json.obj(
         "projectType" -> projectType,
-        "disaster" -> Json.obj(
-          "bohol" -> list.find(_._1 == "Bohol Earthquake").map(_._2).getOrElse(0).toInt,
-          "yolanda" -> list.find(_._1 == "Typhoon Yolanda").map(_._2).getOrElse(0).toInt
-        )
+        "boholQty" -> list.find(_._1 == "Bohol Earthquake").map(_._2).getOrElse(0).toInt,
+        "yolandaQty" -> list.find(_._1 == "Typhoon Yolanda").map(_._2).getOrElse(0).toInt
       )},
       "byMonth" -> byMonth.map { case (ym, count, amount) => Json.obj(
         "yearMonth" -> ym,
