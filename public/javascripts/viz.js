@@ -239,13 +239,13 @@ viz.create(
   "project",
   function(ctrl){
     var byType = ctrl.projects().byType;
-
+    console.log(byType);
     return {
       data: {
         json: byType,
         keys: {
-          x: "n",
-          value: ["n", "c"]
+          x: "projectType",
+          value: ["disaster.bohol"]
         },
         type: "bar"
       },
@@ -521,11 +521,7 @@ viz.create(
     var byType = _.chain(ctrl.requests().byProjectType())
       .sortBy("count")
       .reverse()
-      // .groupBy("disasterName")
       .value();
-    console.log(byType);
-    // var counts = _.pluck(byType, "count");
-    // var types = _.pluck(byType, "name");
     return {
       size: {
         height: 400,
