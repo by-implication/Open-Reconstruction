@@ -8,7 +8,7 @@ feed.view = function(ctrl){
       m("h1", "Feed"),
       m("div",
         ctrl.events().map(function (e){
-          return historyEvent[e.kind].bind(ctrl)(e);
+          return feedEvent[e.kind](e);
         })
       )
     ]
