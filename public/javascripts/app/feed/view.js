@@ -5,12 +5,18 @@ feed.view = function(ctrl){
     "Feed",
     {className: "detail"},
     [
-      m("h1", "Feed"),
-      m("div",
-        ctrl.events().map(function (e){
-          return feedEvent[e.kind](e);
-        })
-      )
+      common.banner("Feed"),
+      m("section", [
+        m(".row", [
+          m(".columns.medium-12", [
+            m("div",
+              ctrl.events().map(function (e){
+                return feedEvent[e.kind](e);
+              })
+            )
+          ]),
+        ]),
+      ]),
     ]
   )
 
