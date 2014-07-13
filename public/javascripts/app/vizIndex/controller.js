@@ -25,20 +25,20 @@ vizIndex.controller = function(){
       .value();
   }
 
-  this.projectVisTabs = new common.stickyTabs.controller();
-  this.projectVisTabs.tabs(_.chain(viz.library)
-    .groupBy(function(v){
-      return v(self).type();
-    })
-    .keys()
-    .map(function(t){
-      return {
-        label: m.prop(t + " visualizations"),
-        href: "#" + t + "-visualizations"
-      }
-    })
-    .value()
-  );
+  // this.projectVisTabs = new common.stickyTabs.controller();
+  // this.projectVisTabs.tabs(_.chain(viz.library)
+  //   .groupBy(function(v){
+  //     return v(self).type();
+  //   })
+  //   .keys()
+  //   .map(function(t){
+  //     return {
+  //       label: m.prop(t + " visualizations"),
+  //       href: "#" + t + "-visualizations"
+  //     }
+  //   })
+  //   .value()
+  // );
 
   bi.ajax(routes.controllers.Viz.indexMeta()).then(function (r){
     self.mostCommonDisasterType(r.mostCommonDisasterType);
@@ -82,10 +82,51 @@ vizIndex.controller = function(){
     self.saros(r.data);
   })
 
-  this.visDict = _.chain(viz.library)
-    .groupBy(function(v){
-      return v(self).type();
-    })
-    .value()
+  this.visDict = viz.library;
+  this.visFilters = viz.filters;
 
+  this.filterState = m.prop(_.clone(this.visFilters));
+  _.forEach(this.filterState(), function(fg, fgName){
+    this.filterState()[fgName] = null;
+  }.bind(this));
+
+  this.isotopeConfig = function(elem, isInit){
+    var container = $(elem);
+    if(!isInit){
+      container.isotope({
+        itemSelector: ".vis-panel",
+        masonry: {
+          columnWidth: ".vis-panel",
+          gutter: 20
+        }
+      })
+    }
+    setTimeout(function(){
+      container.isotope('layout');
+    }, 100)
+  }
+
+  this.clearFilter = function(fgName){
+    this.filterState()[fgName] = null
+    this.filterize();
+  }
+
+  this.isotopeFilter = function(fgName, className){
+    if (this.filterState()[fgName] === className){
+      this.clearFilter(fgName);
+    } else {
+      this.filterState()[fgName] = className;
+    }
+
+    this.filterize();
+  }
+
+  this.filterize = function(){
+    var strFilt = _.compact(_.values(this.filterState())).reduce(function(acc, head){
+      return acc + head;
+    }, "");
+
+    $("#vis-isotope-container").isotope({filter: strFilt});
+    visPanel.onresizer.queue();
+  }
 }

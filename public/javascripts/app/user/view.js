@@ -20,13 +20,11 @@ user.view = function(ctrl){
             ]),
           ]),
           m("hr.dashed"),
-          ctrl.app.isUserAuthorized(ctrl.user(), 1) ?
-            m("div", [
-              m("h1",[m("small", "List of projects requested by this user (" + ctrl.requestCount() + ")")]),
-              pagination,
-              request.listView(ctrl.requestList(), ctrl.sortBy)
-            ])
-          : ""
+          m("div", [
+            m("h1",[m("small", "List of projects requested by this user (" + ctrl.requestCount() + ")")]),
+            pagination,
+            request.listView(ctrl.requestList(), ctrl.sortBy)
+          ])
         ])
       ])
     ]),

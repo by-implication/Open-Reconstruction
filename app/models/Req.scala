@@ -26,17 +26,43 @@ object Req extends ReqGen {
 
   private def byProjectType = DB.withConnection { implicit c =>
     SQL("""
-      SELECT project_type_name, COUNT(*), SUM(req_amount)
-      FROM reqs NATURAL JOIN project_types
-      GROUP BY project_type_name;
+      SELECT project_type_name, 
+      COALESCE(yolanda_projects.count, 0) as yolanda_qty, 
+      COALESCE(yolanda_projects.sum, 0) as yolanda_amt, 
+      COALESCE(bohol_projects.count, 0) as bohol_qty, 
+      COALESCE(bohol_projects.sum, 0) as bohol_amt
+      FROM project_types
+      LEFT JOIN 
+      (
+        SELECT count(*), sum(req_amount), project_type_id
+        FROM reqs NATURAL JOIN disasters
+        NATURAL JOIN project_types
+        WHERE disaster_name = 'Typhoon Yolanda'
+        AND reqs.project_type_id = project_types.project_type_id
+        GROUP BY project_type_id
+      ) as yolanda_projects on project_types.project_type_id = yolanda_projects.project_type_id
+      LEFT JOIN 
+      (
+        SELECT count(*), sum(req_amount), project_type_id
+        FROM reqs NATURAL JOIN disasters
+        NATURAL JOIN project_types
+        WHERE disaster_name = 'Bohol Earthquake'
+        AND reqs.project_type_id = project_types.project_type_id
+        GROUP BY project_type_id
+      ) as bohol_projects on project_types.project_type_id = bohol_projects.project_type_id
+      WHERE yolanda_projects.count IS NOT NULL OR bohol_projects.count IS NOT NULL
     """).list(
       get[String]("project_type_name") ~
-      get[Long]("count") ~
-      get[Option[java.math.BigDecimal]]("sum") map { case name~count~amount =>
+      get[Long]("yolanda_qty") ~
+      get[java.math.BigDecimal]("yolanda_amt") ~
+      get[Long]("bohol_qty") ~
+      get[java.math.BigDecimal]("bohol_amt") map { case projectTypeName~yolandaQty~yolandaAmt~boholQty~boholAmt =>
         Json.obj(
-          "name" -> name,
-          "count" -> count,
-          "amount" -> amount.getOrElse(0).toString
+          "projectTypeName" -> projectTypeName,
+          "yolandaQty" -> yolandaQty,
+          "yolandaAmt" -> yolandaAmt.toString,
+          "boholQty" -> boholQty,
+          "boholAmt" -> boholAmt.toString
         )
       }
     )
@@ -206,6 +232,11 @@ object Req extends ReqGen {
         addWhereClause("executing_agency_id IS NULL")
       }
       case "mine" => {
+        if (!user.isAnon){
+          addWhereClause("author_id = " + user.id)
+        }
+      }
+      case "agency" => {
         if (!user.isAnon){
           addWhereClause("gov_unit_id = " + user.govUnit.id)
         }

@@ -82,6 +82,30 @@ case class Lgu(
 // GENERATED case class end
 {
 
+  def updateDescendantSearchKeys() = DB.withConnection { implicit c =>
+
+    for {
+      len <- (psgc.list.length + 1) to 4
+    } yield {
+      SQL("""
+        UPDATE gov_units g
+        SET gov_unit_search_key = concat(g.gov_unit_name, ', ', parent.gov_unit_search_key)
+        FROM lgus l, gov_units parent, lgus parent_lgu
+        WHERE parent_lgu.lgu_id = parent.gov_unit_id
+        AND parent_lgu.lgu_psgc <@ {psgc}
+        AND nlevel(parent_lgu.lgu_psgc) = {len} - 1
+        AND nlevel(l.lgu_psgc) = {len}
+        AND l.lgu_id = g.gov_unit_id
+        AND l.lgu_psgc <@ {psgc}
+        AND l.lgu_psgc != parent_lgu.lgu_psgc
+      """).on(
+        'psgc -> psgc,
+        'len -> len
+      ).executeUpdate()
+    }
+
+  }
+
   lazy val level = psgc.list.length - 1
 
   private def getMeanCoord(coord: String) = DB.withConnection { implicit c =>
