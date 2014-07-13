@@ -5,6 +5,7 @@ SET datestyle = "ISO, MDY";;
 CREATE TABLE oparr_bohol (
     group_id text,
     project_id text,
+    eplc_id text,
     region text,
     province text,
     municipality text,
