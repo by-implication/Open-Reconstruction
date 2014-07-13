@@ -25,6 +25,25 @@ CREATE TABLE oparr_bohol (
 
 COPY oparr_bohol FROM 'oparr_bohol.csv' CSV ENCODING 'ISO_8859_9';;
 
+CREATE TABLE dilg_ray (
+    group_id text,
+    project_id text,
+    project_name text,
+    project_type text,
+    amount text,
+    scope text,
+    req_date date,
+    implementing_agency text,
+    disaster_date date,
+    disaster_name text,
+    region text,
+    province text,
+    municipality text,
+    psgc text
+);;
+
+COPY dilg_ray FROM 'dilg_ray.csv' CSV ENCODING 'ISO_8859_9';;
+
 INSERT INTO project_types VALUES
   (DEFAULT, 'Mixed'),
   (DEFAULT, 'Health Facility'),
