@@ -25,7 +25,7 @@ home.view = function(ctrl){
             m("h2", [
               "Find projects and requests in your town, region, or area.",
               m("a.button",{
-                  href:"/requests",
+                  href: routes.controllers.Requests.index().url,
                   config:m.route
                 },[
                   "Search ",
@@ -84,7 +84,7 @@ home.view = function(ctrl){
             ]),
             m("li.arrow", [
               m("a", {
-                href:"/requests",
+                href: routes.controllers.Requests.index().url,
                 config:m.route
               }, [
                 m("img", {src:"/assets/images/landing/2-projects requested.svg"}),
@@ -176,7 +176,7 @@ home.view = function(ctrl){
             ]),
             m("li", [
               m("a", {
-                href:"/viz",
+                href: routes.controllers.Projects.index().url,
                 config:m.route
               }, [
                 m("img", {src:"/assets/images/landing/4-ongoing projects.svg"}),
@@ -342,7 +342,7 @@ home.view = function(ctrl){
               "."
               ]),
             m("a.button.micro", {
-              href:"/faq",
+              href: routes.controllers.Application.faq().url,
               config:m.route
             }, "Learn more about this project")
           ]),
