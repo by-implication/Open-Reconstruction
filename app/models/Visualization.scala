@@ -45,7 +45,11 @@ object Visualization {
         saro_yolanda_dpwh.count as yolanda_dpwh_saro_qty,
         saro_yolanda_dpwh.sum as yolanda_dpwh_saro_amt,
         saro_bohol_dpwh.count as bohol_dpwh_saro_qty,
-        saro_bohol_dpwh.sum as bohol_dpwh_saro_amt
+        saro_bohol_dpwh.sum as bohol_dpwh_saro_amt,
+        saro_yolanda_dilg.count as yolanda_dilg_saro_qty,
+        saro_yolanda_dilg.sum as yolanda_dilg_saro_amt,
+        saro_bohol_dilg.count as bohol_dilg_saro_qty,
+        saro_bohol_dilg.sum as bohol_dilg_saro_amt
       FROM (
         SELECT count(*), sum(req_amount)
         FROM reqs NATURAL JOIN disasters
@@ -73,7 +77,17 @@ object Visualization {
         SELECT count(*), sum(amount) FROM saro_bureau_g
         WHERE disaster ILIKE '%bohol%'
         AND agency ILIKE 'DPWH'
-      ) as saro_bohol_dpwh
+      ) as saro_bohol_dpwh,
+      (
+        SELECT count(*), sum(amount) FROM saro_bureau_g
+        WHERE disaster ILIKE '%yolanda%'
+        AND agency ILIKE 'DILG'
+      ) as saro_yolanda_dilg,
+      (
+        SELECT count(*), sum(amount) FROM saro_bureau_g
+        WHERE disaster ILIKE '%bohol%'
+        AND agency ILIKE 'DILG'
+      ) as saro_bohol_dilg
     """).singleOpt(
       get[Long]("yolanda_req_qty") ~
       get[java.math.BigDecimal]("yolanda_req_amt") ~
@@ -86,14 +100,20 @@ object Visualization {
       get[Long]("yolanda_dpwh_saro_qty") ~
       get[java.math.BigDecimal]("yolanda_dpwh_saro_amt") ~
       get[Long]("bohol_dpwh_saro_qty") ~
-      get[java.math.BigDecimal]("bohol_dpwh_saro_amt") map {
+      get[java.math.BigDecimal]("bohol_dpwh_saro_amt") ~
+      get[Long]("yolanda_dilg_saro_qty") ~
+      get[java.math.BigDecimal]("yolanda_dilg_saro_amt") ~
+      get[Long]("bohol_dilg_saro_qty") ~
+      get[java.math.BigDecimal]("bohol_dilg_saro_amt") map {
 
         case yolanda_req_qty ~ yolanda_req_amt ~
           bohol_req_qty ~ bohol_req_amt ~
           yolanda_saro_qty ~ yolanda_saro_amt ~
           bohol_saro_qty ~ bohol_saro_amt ~
           yolanda_dpwh_saro_qty ~ yolanda_dpwh_saro_amt ~
-          bohol_dpwh_saro_qty ~ bohol_dpwh_saro_amt => {
+          bohol_dpwh_saro_qty ~ bohol_dpwh_saro_amt ~
+          yolanda_dilg_saro_qty ~ yolanda_dilg_saro_amt ~
+          bohol_dilg_saro_qty ~ bohol_dilg_saro_amt => {
 
           val List(bohol_unfunded, bohol_funded) = disasterProjects("Bohol Earthquake")
           val List(yolanda_unfunded, yolanda_funded) = disasterProjects("Typhoon Yolanda")
@@ -112,7 +132,8 @@ object Visualization {
                 yolanda_unfunded._2 + yolanda_funded._2
               ),
               "fundedProjects" -> (qtyAmt _ tupled yolanda_funded),
-              "dpwh" -> qtyAmt(yolanda_dpwh_saro_qty, yolanda_dpwh_saro_amt)
+              "dpwh" -> qtyAmt(yolanda_dpwh_saro_qty, yolanda_dpwh_saro_amt),
+              "dilg" -> qtyAmt(yolanda_dilg_saro_qty, yolanda_dilg_saro_amt)
             ),
             "bohol" -> Json.obj(
               "req" -> qtyAmt(bohol_req_qty, bohol_req_amt),
@@ -122,7 +143,8 @@ object Visualization {
                 bohol_unfunded._2 + bohol_funded._2
               ),
               "fundedProjects" -> (qtyAmt _ tupled bohol_funded),
-              "dpwh" -> qtyAmt(bohol_dpwh_saro_qty, bohol_dpwh_saro_amt)
+              "dpwh" -> qtyAmt(bohol_dpwh_saro_qty, bohol_dpwh_saro_amt),
+              "dilg" -> qtyAmt(bohol_dilg_saro_qty, bohol_dilg_saro_amt)
             )
           )
 

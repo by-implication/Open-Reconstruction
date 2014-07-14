@@ -144,6 +144,11 @@ home.view = function(ctrl){
                         m("span.fig", helper.truncate(ctrl.vizData().yolanda.dpwh.amt, 2))
                       ]),
                       m("h6", [
+                        m("span.dpwh-label", "DILG:"),
+                        " PHP ",
+                        m("span.fig", helper.truncate(ctrl.vizData().yolanda.dilg.amt, 2))
+                      ]),
+                      m("h6", [
                         "All Agencies: PHP ",
                         m("span.fig",  helper.truncate(ctrl.vizData().yolanda.saro.amt, 2))
                       ])
@@ -160,6 +165,11 @@ home.view = function(ctrl){
                         m("span.dpwh-label", "DPWH:"),
                         " PHP ",
                         m("span.fig", helper.truncate(ctrl.vizData().bohol.dpwh.amt, 2))
+                      ]),
+                      m("h6", [
+                        m("span.dpwh-label", "DILG:"),
+                        " PHP ",
+                        m("span.fig", helper.truncate(ctrl.vizData().bohol.dilg.amt, 2))
                       ]),
                       m("h6", [
                         "All Agencies: PHP ",
@@ -187,8 +197,7 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h6", [
-                        m("span.dpwh-label", "DPWH:"),
-                        " PHP ",
+                        "PHP ",
                         m("span.fig", helper.truncate(ctrl.vizData().yolanda.fundedProjects.amt, 2))
                       ]),
                       m("h6", ctrl.vizData().yolanda.fundedProjects.qty + " Projects")
@@ -202,8 +211,7 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h6", [
-                        m("span.dpwh-label", "DPWH:"),
-                        " PHP ",
+                        "PHP ",
                         m("span.fig", helper.truncate(ctrl.vizData().bohol.fundedProjects.amt, 2))
                       ]),
                       m("h6", ctrl.vizData().bohol.fundedProjects.qty + " Projects")
