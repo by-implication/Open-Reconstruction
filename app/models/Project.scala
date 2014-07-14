@@ -40,7 +40,12 @@ case class Project(
   amount: BigDecimal = 0,
   projectTypeId: Int = 0,
   scope: ProjectScope = ProjectScope.REPAIR,
-  isFunded: Boolean = false
+  isFunded: Boolean = false,
+  bidPrice: Option[BigDecimal] = None,
+  projectContractId: Option[String] = None,
+  contractCost: Option[BigDecimal] = None,
+  contractStart: Option[Timestamp] = None,
+  contractEnd: Option[Timestamp] = None
 ) extends ProjectCCGen with Entity[Project]
 // GENERATED case class end
 {
@@ -63,9 +68,14 @@ trait ProjectGen extends EntityCompanion[Project] {
     get[java.math.BigDecimal]("project_amount") ~
     get[Int]("project_type_id") ~
     get[ProjectScope]("project_scope") ~
-    get[Boolean]("project_funded") map {
-      case id~reqId~projectSourceId~name~amount~projectTypeId~scope~isFunded =>
-        Project(id, reqId, projectSourceId, name, amount, projectTypeId, scope, isFunded)
+    get[Boolean]("project_funded") ~
+    get[Option[BigDecimal]]("project_bid_price") ~
+    get[Option[String]]("project_contract_id") ~
+    get[Option[BigDecimal]]("project_contract_cost") ~
+    get[Option[Timestamp]]("project_contract_start") ~
+    get[Option[Timestamp]]("project_contract_end") map {
+      case id~reqId~projectSourceId~name~amount~projectTypeId~scope~isFunded~bidPrice~projectContractId~contractCost~contractStart~contractEnd =>
+        Project(id, reqId, projectSourceId, name, amount, projectTypeId, scope, isFunded, bidPrice, projectContractId, contractCost, contractStart, contractEnd)
     }
   }
 
@@ -101,7 +111,12 @@ trait ProjectGen extends EntityCompanion[Project] {
             project_amount,
             project_type_id,
             project_scope,
-            project_funded
+            project_funded,
+            project_bid_price,
+            project_contract_id,
+            project_contract_cost,
+            project_contract_start,
+            project_contract_end
           ) VALUES (
             DEFAULT,
             {reqId},
@@ -110,7 +125,12 @@ trait ProjectGen extends EntityCompanion[Project] {
             {amount},
             {projectTypeId},
             {scope},
-            {isFunded}
+            {isFunded},
+            {bidPrice},
+            {projectContractId},
+            {contractCost},
+            {contractStart},
+            {contractEnd}
           )
         """).on(
           'id -> o.id,
@@ -120,7 +140,12 @@ trait ProjectGen extends EntityCompanion[Project] {
           'amount -> o.amount.bigDecimal,
           'projectTypeId -> o.projectTypeId,
           'scope -> o.scope,
-          'isFunded -> o.isFunded
+          'isFunded -> o.isFunded,
+          'bidPrice -> o.bidPrice,
+          'projectContractId -> o.projectContractId,
+          'contractCost -> o.contractCost,
+          'contractStart -> o.contractStart,
+          'contractEnd -> o.contractEnd
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -134,7 +159,12 @@ trait ProjectGen extends EntityCompanion[Project] {
             project_amount,
             project_type_id,
             project_scope,
-            project_funded
+            project_funded,
+            project_bid_price,
+            project_contract_id,
+            project_contract_cost,
+            project_contract_start,
+            project_contract_end
           ) VALUES (
             {id},
             {reqId},
@@ -143,7 +173,12 @@ trait ProjectGen extends EntityCompanion[Project] {
             {amount},
             {projectTypeId},
             {scope},
-            {isFunded}
+            {isFunded},
+            {bidPrice},
+            {projectContractId},
+            {contractCost},
+            {contractStart},
+            {contractEnd}
           )
         """).on(
           'id -> o.id,
@@ -153,7 +188,12 @@ trait ProjectGen extends EntityCompanion[Project] {
           'amount -> o.amount.bigDecimal,
           'projectTypeId -> o.projectTypeId,
           'scope -> o.scope,
-          'isFunded -> o.isFunded
+          'isFunded -> o.isFunded,
+          'bidPrice -> o.bidPrice,
+          'projectContractId -> o.projectContractId,
+          'contractCost -> o.contractCost,
+          'contractStart -> o.contractStart,
+          'contractEnd -> o.contractEnd
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -168,7 +208,12 @@ trait ProjectGen extends EntityCompanion[Project] {
         project_amount={amount},
         project_type_id={projectTypeId},
         project_scope={scope},
-        project_funded={isFunded}
+        project_funded={isFunded},
+        project_bid_price={bidPrice},
+        project_contract_id={projectContractId},
+        project_contract_cost={contractCost},
+        project_contract_start={contractStart},
+        project_contract_end={contractEnd}
       where project_id={id}
     """).on(
       'id -> o.id,
@@ -178,7 +223,12 @@ trait ProjectGen extends EntityCompanion[Project] {
       'amount -> o.amount.bigDecimal,
       'projectTypeId -> o.projectTypeId,
       'scope -> o.scope,
-      'isFunded -> o.isFunded
+      'isFunded -> o.isFunded,
+      'bidPrice -> o.bidPrice,
+      'projectContractId -> o.projectContractId,
+      'contractCost -> o.contractCost,
+      'contractStart -> o.contractStart,
+      'contractEnd -> o.contractEnd
     ).executeUpdate() > 0
   }
 

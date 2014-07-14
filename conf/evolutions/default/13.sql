@@ -36,13 +36,20 @@ FROM (SELECT req_id, group_id, project_name,
 INSERT INTO projects (req_id, project_source_id,
   project_name, project_amount, 
   project_type_id, project_scope,
-  project_funded)
+  project_funded, project_bid_price,
+  project_contract_id, project_contract_cost,
+  project_contract_start, project_contract_end)
 SELECT req_id, dpwh_eplc.project_id,
   project_description,
   coalesce(project_abc*1000, 0),
   1 AS project_type_id,
   'Others'::project_scope AS scope,
-  true AS is_funded
+  true AS is_funded,
+  bid_price,
+  contract_id,
+  contract_cost,
+  contract_start_date,
+  contract_end_date
 FROM dpwh_eplc
 LEFT JOIN reqs on req_remarks = dpwh_eplc.project_id;;
 
