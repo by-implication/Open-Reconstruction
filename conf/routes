@@ -77,6 +77,9 @@ GET			/requests/:id/edit												controllers.Requests.edit(id: Int)
 GET			/requests/:id/edit/meta										controllers.Requests.editMeta(id: Int)
 POST		/requests/:id/edit												controllers.Requests.update(id: Int)
 
+GET	    /projects/:id							                controllers.Projects.view(id: Int)
+GET	    /projects/:id/meta				                controllers.Projects.viewMeta(id: Int)
+
 GET     /viz                                      controllers.Viz.index
 GET     /viz/meta                                 controllers.Viz.indexMeta
 GET     /viz/data/:v                              controllers.Viz.getData(v: String)

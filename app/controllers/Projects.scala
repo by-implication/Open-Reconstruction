@@ -10,6 +10,14 @@ import recon.support._
 
 object Projects extends Controller with Secured {
 
+  def view = Application.index1 _
+
+  def viewMeta(id: Int) = UserAction(){ implicit user => implicit request =>
+    Project.findById(id).map { p =>
+      Rest.success("project" -> p.requestViewJson)
+    }.getOrElse(Rest.notFound())
+  }
+
   private lazy val projectAmount = bigDecimal(15, 2).verifying("Invalid amount", _ >= 0)
 
   def insert(id: Int) = UserAction(){ implicit user => implicit request =>

@@ -143,6 +143,8 @@ object Application extends Controller with Secured {
       Attachments.thumb,
       Assets.at,
       Projects.insert,
+      Projects.view,
+      Projects.viewMeta,
       Requests.comment,
       Requests.create,
       Requests.createMeta,
