@@ -109,17 +109,22 @@ feedEvent.assign = function(data){
 
   var prepPhrase = isAssign ? " to " + duty : " from " + duty + "ing"
 
-  return m(".event", [
+  return m("a.event", {href: routes.controllers.Requests.view(data.req.id).url}, [
     m(".type.edit", [
       m("i.fa.fa-lg.fa-fw.fa-mail-forward")
     ]),
     m(".details", [
       isAssign ?
         m("h6", [
-          data.govUnit.name + " assigned " + govUnitName + " " + prepPhrase + " " + data.req.description
+          m("strong", data.govUnit.name),
+          " assigned ",
+          m("strong", govUnitName),
+          " " + prepPhrase + " ",
+          m("strong", data.req.description),
         ])
       : m("h6", [
-          data.govUnit.name + " unassigned " + duty.capitalize() + "ing agency"
+          m("strong", data.govUnit.name),
+          " unassigned " + duty.capitalize() + "ing agency"
         ]),
       feedEvent.meta(isAssign ? "Assigned" : "Unassigned", data, date)
     ])
