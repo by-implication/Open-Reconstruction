@@ -13,14 +13,18 @@ feedEvent.reject = function(data){
   var c = data.content.split(" ");
   var govUnitId = c.pop();
   var govUnitName = c.join(" ");
-  return m(".event", [
+  return m("a.event", {
+    href: routes.controllers.Requests.view(data.req.id).url,
+    className: data.isNew ? ".new" : ""
+  }, [
     m(".type.request", [
       m("i.fa.fa-lg.fa-fw.fa-times")
     ]),
     m(".details", [
-      m("p", [
-        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
-        " rejected this request."
+      m("h6", [
+        m("strong", data.user.name),
+        " rejected ",
+        m("strong", data.req.description)
       ]),
       feedEvent.meta("Rejected", data, date),
     ])
@@ -166,8 +170,11 @@ feedEvent.attachment = function(data){
 
 feedEvent.comment = function(data){
   var date = new Date(data.date);
-  return m("a.event.comment" + (data.isNew ? ".new" : ""),
-    {href: routes.controllers.Requests.view(data.req.id).url},
+  return m("a.event.comment",
+    {
+      href: routes.controllers.Requests.view(data.req.id).url,
+      className: data.isNew ? ".new" : ""
+    },
     [
       m(".type.comment", [
         m("i.fa.fa-lg.fa-fw.fa-comment")
