@@ -614,9 +614,10 @@ request.miniProgress = function(request){
 }
 
 request.listView = function(reqs, sortBy){
-  return m("table", [
+  return m("table.responsive", [
       m("thead", [
         m("tr", [
+          m("th", "Name"),
           m("th", [
             m("a", {href: sortBy("id"), config: m.route}, [
               "Id "
@@ -626,7 +627,6 @@ request.listView = function(reqs, sortBy){
             "Stagnation",
             common.help("This is how long the project has been waiting at the current stage.")
           ]),
-          m("th", "Name"),
           m("th", "Gov Unit"),
           m("th", "Implementing Agency"),
           m("th", "Status"),
@@ -642,14 +642,14 @@ request.listView = function(reqs, sortBy){
           reqs
             .map(function(p){
               return m("tr", [
-                m("td", p.id),
-                m("td", [common.day(p.age)]),
                 m("td", [
                   m("a.name", {
                     href: routes.controllers.Requests.view(p.id).url,
                     config: m.route
                   }, p.description)
                 ]),
+                m("td", p.id),
+                m("td", [common.day(p.age)]),
                 m("td", [m("a",
                   {href: routes.controllers.GovUnits.view(p.author.govUnit.id).url, config: m.route},
                   p.author.govUnit.name)]),

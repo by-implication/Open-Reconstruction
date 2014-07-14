@@ -22,7 +22,8 @@ app.template = function(){
       m("link[href='/assets/bower_components/leaflet-draw/leaflet.draw.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/bower_components/c3/c3.css'][rel='stylesheet'][type='text/css']"),
       // m("link[href='/assets/bower_components/select2/select2.css'][rel='stylesheet'][type='text/css']"),
-      m("link[href='/assets/stylesheets/select2-foundation5.css'][rel='stylesheet'][type='text/css']")
+      m("link[href='/assets/stylesheets/select2-foundation5.css'][rel='stylesheet'][type='text/css']"),
+      m("link[href='/assets/bower_components/responsive-tables/responsive-tables.css'][rel='stylesheet'][type='text/css']")
     ]),
     m("body", attrs, modals.concat(app.navbar(ctrl), m(".container", content), app.footer(ctrl), app.feedback(ctrl)))
   ])
