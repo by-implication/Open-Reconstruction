@@ -32,7 +32,22 @@ projectIndex.view = function(ctrl){
                 ]),
                 m("td", [
                   "Amount"
-                ])
+                ]),
+                m("td", [
+                  "Bid Price"
+                ]),
+                m("td", [
+                  "Contract ID"
+                ]),
+                m("td", [
+                  "Contract Cost"
+                ]),
+                m("td", [
+                  "Contract Start"
+                ]),
+                m("td", [
+                  "Contract End"
+                ]),
               ]),
             ]),
             m("tbody",
@@ -53,7 +68,22 @@ projectIndex.view = function(ctrl){
                   ]),
                   m("td", [
                     helper.commaize(p.amount)
-                  ])
+                  ]),
+                  m("td", [
+                    p.bidPrice || "N/A"
+                  ]),
+                  m("td", [
+                    p.projectContractId
+                  ]),
+                  m("td", [
+                    p.contract.cost || "N/A"
+                  ]),
+                  m("td", [
+                    (p.contract.start && new Date(p.contract.start).toDateString()) || "N/A"
+                  ]),
+                  m("td", [
+                    (p.contract.end && new Date(p.contract.end).toDateString()) || "N/A"
+                  ]),
                 ])
               })
             ),

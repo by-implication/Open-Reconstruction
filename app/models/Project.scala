@@ -55,7 +55,14 @@ case class Project(
     "id" -> id,
     "name" -> name,
     "amount" -> amount,
-    "scope" -> scope.name
+    "scope" -> scope.name,
+    "bidPrice" -> bidPrice,
+    "projectContractId" -> projectContractId,
+    "contract" -> Json.obj(
+      "cost" -> contractCost,
+      "start" -> contractStart,
+      "end" -> contractEnd
+    )
   )
 }
 // GENERATED object start
