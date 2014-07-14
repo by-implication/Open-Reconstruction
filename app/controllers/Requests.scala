@@ -54,7 +54,7 @@ object Requests extends Controller with Secured {
           GovUnit.findById(aid).map(_.toJson)
         },
         "history" -> Json.toJson(Event.findForRequest(id).map(_.listJson)),
-        "projects" -> Json.toJson(req.projects.map(_.requestViewJson)),
+        "projects" -> Json.toJson(req.projects.map(_.toJson)),
         "disasterTypes" -> DisasterType.jsonList,
         "requirements" -> Requirement.getFor(req.govUnit.role).map(_.toJson)
       )
@@ -244,6 +244,7 @@ object Requests extends Controller with Secured {
         "locFilters" -> Lgu.getLocFilters(psgc),
         "agencies" -> GovUnit.withPermission(Permission.IMPLEMENT_REQUESTS).map(_.toJson),
         "disasters" -> Disaster.jsonList,
+        "pageLimit" -> Req.PAGE_LIMIT,
         "counts" -> Json.obj(
           "all" -> Req.indexCount("all", projectTypeIdOption, psgc, disasterId, agencyId),
           "approval" -> Req.indexCount("approval", projectTypeIdOption, psgc, disasterId, agencyId),

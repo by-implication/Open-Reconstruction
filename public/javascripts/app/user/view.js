@@ -2,7 +2,8 @@ user.view = function(ctrl){
 
   var pagination = common.pagination(
     ctrl.page,
-    ctrl.maxPage(),
+    ctrl.requestCount(),
+    ctrl.pageLimit(),
     function (p){
       return routes.controllers.Users.viewPage(ctrl.id, p).url
     }

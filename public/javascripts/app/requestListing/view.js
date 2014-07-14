@@ -2,7 +2,8 @@ requestListing.view = function(ctrl){
   
   var pagination = common.pagination(
     ctrl.page,
-    ctrl.maxPage(),
+    ctrl.counts[ctrl.tab],
+    ctrl.pageLimit,
     function (p){
       return ctrl.nav({page: p});
     }

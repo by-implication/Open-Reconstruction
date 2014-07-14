@@ -21,6 +21,7 @@ requestListing.controller = function(){
 
   this.tab = m.route.param("tab") || "all";
   this.page = parseInt(m.route.param("page")) || 1;
+  this.pageLimit = 1;
   this.projectTypeId = m.route.param("projectTypeId") || 0;
   this.agencyFilterId = m.route.param("agencyFilterId") || 0;
   this._queryLocFilters = m.route.param("l") || "-";
@@ -156,10 +157,6 @@ requestListing.controller = function(){
   this.requestList = [];
   this.projectFilters = [{id: 0, name: "All"}];
   this.agencies = [{id: 0, name: "All", acronym: "All"}];
-  this.maxPage = function(){
-    var count = parseInt(this.counts[this.tab]) || 0;
-    return Math.ceil(count / 20);
-  };
 
   bi.ajax(nav(null, true)).then(function (r){
 
@@ -184,6 +181,7 @@ requestListing.controller = function(){
 
     this.requestList = r.list;
     this.counts = r.counts;
+    this.pageLimit = r.pageLimit;
     this.projectFilters = this.projectFilters.concat(r.filters);
     this.agencies = this.agencies.concat(r.agencies);
     this.disasters = [{id: 0, name: "All"}].concat(r.disasters);

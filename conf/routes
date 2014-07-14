@@ -16,12 +16,12 @@ GET     /admin/lgus/meta                          controllers.GovUnits.listLgus
 GET     /admin/lgus/:psgc                         controllers.GovUnits.getChildren(psgc: String)
 GET     /admin/agencies                           controllers.Application.adminAgencies
 GET     /admin/agencies/meta                      controllers.GovUnits.listAgencies
-GET     /admin/disasters		                      controllers.Disasters.index
+GET     /admin/disasters                          controllers.Disasters.index
 GET     /admin/disasters/meta                     controllers.Disasters.indexMeta
 GET     /admin/disasters/new                      controllers.Disasters.create
 GET     /admin/disasters/new/meta                 controllers.Disasters.createMeta
 POST    /admin/disasters/new                      controllers.Disasters.insert
-GET     /admin/disasters/:id			                controllers.Disasters.edit(id: Int)
+GET     /admin/disasters/:id                      controllers.Disasters.edit(id: Int)
 GET     /admin/disasters/:id/meta                 controllers.Disasters.editMeta(id: Int)
 POST    /admin/disasters/:id                      controllers.Disasters.update(id: Int)
 GET     /admin/types/project                      controllers.Admin.projectTypes
@@ -51,7 +51,7 @@ GET     /requests/:t/:p/:pid/:l/:s/:sD/:d/:a/meta controllers.Requests.indexMeta
 
 GET     /requests/new                             controllers.Requests.create
 GET     /requests/new/meta                        controllers.Requests.createMeta
-GET	    /requests/new/bucketKey			              controllers.Attachments.getNewBucketKey
+GET     /requests/new/bucketKey                   controllers.Attachments.getNewBucketKey
 POST    /requests/new/attach/:k/:rId              controllers.Attachments.addToBucket(k: String, rId: Int)
 GET     /requests/new/thumb/:k/:rId/:f            controllers.Attachments.bucketThumb(k: String, rId: Int, f: String)
 GET     /requests/new/preview/:k/:rId/:f          controllers.Attachments.bucketPreview(k: String, rId: Int, f: String)
@@ -73,9 +73,15 @@ POST    /requests/:id/comment                     controllers.Requests.comment(i
 POST    /requests/:id/edit/:f                     controllers.Requests.editField(id: Int, f: String)
 POST    /requests/:id/attach/:rId                 controllers.Attachments.add(id: Int, rId: Int)
 
-GET			/requests/:id/edit												controllers.Requests.edit(id: Int)
-GET			/requests/:id/edit/meta										controllers.Requests.editMeta(id: Int)
-POST		/requests/:id/edit												controllers.Requests.update(id: Int)
+GET     /requests/:id/edit                        controllers.Requests.edit(id: Int)
+GET     /requests/:id/edit/meta                   controllers.Requests.editMeta(id: Int)
+POST    /requests/:id/edit                        controllers.Requests.update(id: Int)
+
+GET     /projects                                 controllers.Projects.index
+GET     /projects/:p                              controllers.Projects.indexPage(p: Int)
+GET     /projects/:p/meta                         controllers.Projects.indexMeta(p: Int)
+GET     /project/:id                              controllers.Projects.view(id: Int)
+GET     /project/:id/meta                         controllers.Projects.viewMeta(id: Int)
 
 GET     /viz                                      controllers.Viz.index
 GET     /viz/meta                                 controllers.Viz.indexMeta
@@ -94,7 +100,7 @@ POST    /gov-units/new/agency                     controllers.GovUnits.insertAge
 GET     /gov-units/new/lgu/:l/:id                 controllers.GovUnits.createLgu(l: Int, id: Int)
 GET     /gov-units/new/lgu/:l/:id/meta            controllers.GovUnits.createLguMeta(l: Int, id: Int)
 POST    /gov-units/new/lgu/:l/:id                 controllers.GovUnits.insertLgu(l: Int, id: Int)
-GET			/gov-units/search/:s											controllers.GovUnits.search(s: String)
+GET     /gov-units/search/:s                      controllers.GovUnits.search(s: String)
 GET     /gov-units/:id                            controllers.GovUnits.view(id: Int)
 GET     /gov-units/:id/edit                       controllers.GovUnits.edit(id: Int)
 GET     /gov-units/:id/edit/meta                  controllers.GovUnits.editMeta(id: Int)

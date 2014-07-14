@@ -83,7 +83,8 @@ object Users extends Controller with Secured {
           "requests" -> {
             Json.toJson( requests.map(_.indexJson))
           },
-          "requestCount" -> requestCount
+          "requestCount" -> requestCount,
+          "pageLimit" -> Req.PAGE_LIMIT
         )
       } 
       case None => Rest.notFound()

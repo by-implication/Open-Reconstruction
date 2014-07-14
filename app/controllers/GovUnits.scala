@@ -24,6 +24,7 @@ object GovUnits extends Controller with Secured {
           "users" -> govUnit.users.map(_.infoJson),
           "requests" -> reqs.map(_.indexJson),
           "totalReqs" -> count,
+          "pageLimit" -> Req.PAGE_LIMIT,
           "lgu" -> Lgu.findById(id).map { lgu =>
 
             def relativeJson(g: GovUnit) = Json.obj(

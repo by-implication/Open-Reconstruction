@@ -442,7 +442,10 @@ common.modal.view = function(ctrl, content, optionalClasses){
   }
 }
 
-common.pagination = function(pageNum, pageCount, p2link){
+common.pagination = function(pageNum, count, pageLimit, p2link){
+
+  count = parseInt(count) || 0;
+  var pageCount = Math.ceil(count / pageLimit);
 
   var adjacentPages = 3;
   var displayedPages = 1 + 2 * adjacentPages + 2 + 2;
