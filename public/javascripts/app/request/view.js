@@ -426,14 +426,14 @@ request.view = function(ctrl){
                         ctrl.projects().map(function(p){
                           return m("tr", [
                             m("td", [
-                              m("a", {href: routes.controllers.Projects.view(p.id).url}, [
+                              // m("a", {href: routes.controllers.Projects.view(p.id).url}, [
                                 p.id
-                              ])
+                              // ])
                             ]),
                             m("td", [
-                              m("a", {href: routes.controllers.Projects.view(p.id).url}, [
+                              // m("a", {href: routes.controllers.Projects.view(p.id).url}, [
                                 p.name
-                              ])
+                              // ])
                             ]),
                             m("td", [
                               p.scope
