@@ -36,7 +36,10 @@ feedEvent.archiveAttachment = function(data){
   var c = data.content.split(" ");
   var attachmentId = c.pop();
   var filename = c.join(" ");
-  return m("a.event", {href: routes.controllers.Requests.view(data.req.id).url}, [
+  return m("a.event", {
+    href: routes.controllers.Requests.view(data.req.id).url,
+    className: data.isNew ? ".new" : ""
+  }, [
     m(".type.edit", [
       m("i.fa.fa-lg.fa-fw.fa-archive")
     ]),
@@ -56,7 +59,10 @@ feedEvent.editField = function(data){
   var c = data.content.split(" ");
   var field = c.pop();
   var value = c.join(" ");
-  return m("a.event", {href: routes.controllers.Requests.view(data.req.id).url}, [
+  return m("a.event", {
+    href: routes.controllers.Requests.view(data.req.id).url,
+    className: data.isNew ? ".new" : ""
+  }, [
     m(".type.edit", [
       m("i.fa.fa-lg.fa-fw.fa-edit")
     ]),
@@ -77,7 +83,10 @@ feedEvent.editField = function(data){
 
 feedEvent.newRequest = function(data){
   var date = new Date(data.date);
-  return m("a.event", {href: routes.controllers.Requests.view(data.req.id).url}, [
+  return m("a.event", {
+    href: routes.controllers.Requests.view(data.req.id).url,
+    className: data.isNew ? ".new" : ""
+  }, [
     m(".type.request", [
       m("i.fa.fa-lg.fa-fw.fa-bullhorn")
     ]),
@@ -105,7 +114,10 @@ feedEvent.assign = function(data){
 
   var prepPhrase = isAssign ? " to " + duty : " from " + duty + "ing"
 
-  return m("a.event", {href: routes.controllers.Requests.view(data.req.id).url}, [
+  return m("a.event", {
+    href: routes.controllers.Requests.view(data.req.id).url,
+    className: data.isNew ? ".new" : ""
+  }, [
     m(".type.edit", [
       m("i.fa.fa-lg.fa-fw.fa-mail-forward")
     ]),
@@ -133,7 +145,10 @@ feedEvent.signoff = function(data){
   var govUnitId = c.pop();
   var govUnitName = c.join(" ");
   var isDBM = govUnitName == "Department of Budget and Management";
-  return m("a.event", {href: routes.controllers.Requests.view(data.req.id).url}, [
+  return m("a.event", {
+    href: routes.controllers.Requests.view(data.req.id).url,
+    className: data.isNew ? ".new" : ""
+  }, [
     m(".type.request", [
       isDBM ? m("i.fa.fa-lg.fa-fw.fa-money") : m("i.fa.fa-lg.fa-fw.fa-check")
     ]),
@@ -153,7 +168,10 @@ feedEvent.attachment = function(data){
   var c = data.content.split(" ");
   var attachmentId = c.pop();
   var filename = c.join(" ");
-  return m("a.event", {href: routes.controllers.Requests.view(data.req.id).url}, [
+  return m("a.event", {
+    href: routes.controllers.Requests.view(data.req.id).url,
+    className: data.isNew ? ".new" : ""
+  }, [
     m(".type.edit", [
       m("i.fa.fa-lg.fa-fw.fa-paperclip")
     ]),
@@ -198,7 +216,10 @@ feedEvent.addProject = function(data){
   var c = data.content.split(" ");
   var projectId = c.pop();
   var projectName = c.join(" ");
-  return m("a.event", {href: routes.controllers.Requests.view(data.req.id).url}, [
+  return m("a.event", {
+    href: routes.controllers.Requests.view(data.req.id).url,
+    className: data.isNew ? ".new" : ""
+  }, [
     m(".type.comment", [
       m("i.fa.fa-lg.fa-fw.fa-plus")
     ]),
