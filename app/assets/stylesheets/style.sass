@@ -4,6 +4,7 @@
 @import neat/neat
 
 @import variables
+$desktopWidth: 1024px
 
 html, body
   padding: 0
@@ -987,6 +988,9 @@ body .select2-container
   border: 1px solid $accent
   border-radius: 1000px
   overflow: hidden
+  // +media($desktopWidth)
+  //   border-radius: 0px
+  //   background-color: red
   .active
     a
       color: white
