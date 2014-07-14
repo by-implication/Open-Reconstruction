@@ -593,45 +593,49 @@ common.attachmentFor = function(reqt, atts){
 
 common.collapsibleFilter = {}
 
-common.collapsibleFilter.controller = function(){
-  this.isExpanded = m.prop(false);
+common.collapsibleFilter.controller = function(label){
+
+  var cookey = "dropstate_" + label;
+
+  this.isExpanded = m.prop(m.cookie()[cookey]);
   this.toggleExpand = function(){
-    this.isExpanded(!this.isExpanded());
-  }.bind(this)
+    var newState = !this.isExpanded();
+    this.isExpanded(newState);
+    var o = {};
+    o[cookey] = newState;
+    m.cookie(o);
+  }.bind(this);
+
   this.maxHeight = m.prop();
   this.drawerConfig = function(elem, isInit){
-    // console.log($(elem).height());
     this.maxHeight($(elem).children(".row").height());
-      // this.isExpanded(false);
-  }.bind(this)
-}
-common.collapsibleFilter.view = function(ctrl, label, preview, drawer){
-  return m(".collapsible-filter", [
-    m(".collapsible-label", [
-      m("a.row", {onclick: ctrl.toggleExpand}, [
-        m(".columns.medium-12.end", [
-          // m("button.tiny.radius.right", {type: "button", onclick: ctrl.toggleExpand}, [
-          //   m("i.fa.fa-fw.fa-lg.fa-plus")
-          // ]),
-          preview ? 
-            m("span.label.right", [
-              preview
+  }.bind(this);
+
+  this.view = function(preview, drawer){
+    return m(".collapsible-filter", [
+      m(".collapsible-label", [
+        m("a.row", {onclick: this.toggleExpand}, [
+          m(".columns.medium-12.end", [
+            preview ? 
+              m("span.label.right", [
+                preview
+              ])
+            : null,
+            m("h4", [
+              label
             ])
-          : null,
-          m("h4", [
-            label
-          ]),
-          
-        ]),
+          ])
+        ])
       ]),
-    ]),
-    m(".collapsible-drawer", {
-      style: "max-height: " + (ctrl.isExpanded() ? ctrl.maxHeight() : 0) + "px",
-      config: ctrl.drawerConfig
-    }, [
-      m(".row", [
-        drawer()
-      ]),
+      m(".collapsible-drawer", {
+        style: "max-height: " + (this.isExpanded() ? this.maxHeight() : 0) + "px",
+        config: this.drawerConfig
+      }, [
+        m(".row", [
+          drawer()
+        ])
+      ])
     ])
-  ])
+  }
+
 }

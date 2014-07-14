@@ -5,9 +5,9 @@ import recon.support._
 
 sealed class ProjectScope(override val name: String) extends PGObject("project_scope", name) with ProjectScope.Value
 object ProjectScope extends Enum[ProjectScope] {
-  val OTHERS = new ProjectScope("Others")
   val RECONSTRUCTION = new ProjectScope("Reconstruction")
   val REPAIR = new ProjectScope("Repair")
   val PREVENTION = new ProjectScope("Prevention")
-  val list = List(OTHERS, RECONSTRUCTION, REPAIR, PREVENTION)
+  val OTHERS = new ProjectScope("Others")
+  val list = List(RECONSTRUCTION, REPAIR, PREVENTION, OTHERS)
 }

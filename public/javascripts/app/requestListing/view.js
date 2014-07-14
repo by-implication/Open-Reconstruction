@@ -64,9 +64,7 @@ requestListing.view = function(ctrl){
           ]),
         ]),
       ]),
-      common.collapsibleFilter.view(
-        ctrl.locationCF, 
-        "Location", 
+      ctrl.locationCF.view(
         null, 
         function(){
           return ctrl.locFilters.map(function (f){
@@ -77,25 +75,20 @@ requestListing.view = function(ctrl){
               ]),
             ])
           })
-        }),
-      common.collapsibleFilter.view(
-        ctrl.disasterCF, 
-        "Disaster", 
+        }
+      ),
+      ctrl.disasterCF.view(
         currentFilterNameFromArray(ctrl.disasters, ctrl.disaster), 
         filterColumns.bind(null, ctrl.disasters, 4, ctrl.disaster, "disaster")
-        ),
-      common.collapsibleFilter.view(
-        ctrl.agencyCF, 
-        "Agency", 
+      ),
+      ctrl.agencyCF.view(
         currentFilterNameFromArray(ctrl.agencies, ctrl.agencyFilterId),
         filterColumns.bind(null, ctrl.agencies, 4, ctrl.agencyFilterId, "agencyFilterId")
-        ),
-      common.collapsibleFilter.view(
-        ctrl.projectTypeCF, 
-        "Project Type", 
+      ),
+      ctrl.projectTypeCF.view(
         currentFilterNameFromArray(ctrl.projectFilters, ctrl.projectTypeId),
         filterColumns.bind(null, ctrl.projectFilters, 4, ctrl.projectTypeId, "projectTypeId")
-        ),
+      ),
     ]),
     m("section", [
       m.cookie().logged_in ?
