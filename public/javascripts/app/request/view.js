@@ -509,7 +509,7 @@ request.approval = function(ctrl){
               ]) :
               m("div", [
                 m("h4", [
-                  "Sign off on this request only if you feel the information is complete for your step in the approval process."
+                  "Sign off on this request only if the information is complete for your step in the approval process."
                 ]),
                 m("button", {onclick: ctrl.signoffModal.show}, [
                   m("i.fa.fa-fw.fa-check"),
