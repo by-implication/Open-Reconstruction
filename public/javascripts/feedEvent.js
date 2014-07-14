@@ -24,7 +24,6 @@ feedEvent.reject = function(data){
       m("i.fa.fa-lg.fa-fw.fa-times")
     ]),
     m(".details", [
-      m("h3", "Rejected"),
       m("p", [
         m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
         " rejected this request."
@@ -91,7 +90,6 @@ feedEvent.newRequest = function(data){
       m("i.fa.fa-lg.fa-fw.fa-bullhorn")
     ]),
     m(".details", [
-      // m("h3", "Request posted"),
       m("p", "Request posted: " + data.content),
       feedEvent.meta("Posted", data, date)
     ])
@@ -136,7 +134,6 @@ feedEvent.signoff = function(data){
       isDBM ? m("i.fa.fa-lg.fa-fw.fa-money") : m("i.fa.fa-lg.fa-fw.fa-check")
     ]),
     m(".details", [
-      m("h3", "Sign off"),
       m("p", [
         m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
         (isDBM ? " assigned a SARO to and" : "") + " signed off on this request."
@@ -183,7 +180,6 @@ feedEvent.addProject = function(data){
   return m(".event", [
     feedEvent.date(date),
     m(".details", [
-      m("h3", "New project"),
       m("p", [
         "Project " + "\""+ projectName +"\" has been added to this request."
       ]),

@@ -165,13 +165,8 @@ section.history
 
 .event
   +clearfix
-  padding: 10px 0px
   position: relative
-  // &:first-child
-    // padding-top: 40px
   &.new-comment
-    // .details
-    //   padding-bottom: 0
     padding-top: 20px
     padding-bottom: 0
     textarea
@@ -185,11 +180,10 @@ section.history
       border-bottom: none
   .type
     +box-sizing(border-box)
+    margin-top: 20px
     height: 54px
     width: 54px
     border-radius: 50%
-    // border-width: 4px
-    // border-style: solid
     text-align: center
     float: left
     color: white
@@ -203,19 +197,10 @@ section.history
       background-color: $silver
     &.comment
       background-color: $teal
-  .dateGroup
-    .divider
-      position: absolute
-      z-index: 0
-      top: 0
-      bottom: 0
-      left: 0
-      width: 36px + 2px
-      border-right: 4px solid white
 
   .details
     margin-left: 72px
-    padding-bottom: 20px
+    padding: 20px 0px
     border-bottom: 1px solid #eee
   // .comment
 

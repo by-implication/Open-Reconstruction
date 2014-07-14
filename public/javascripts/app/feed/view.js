@@ -8,7 +8,7 @@ feed.view = function(ctrl){
       common.banner("Feed"),
       m("section", [
         m(".row", [
-          m(".columns.medium-12", [
+          m(".card.columns.medium-6.medium-centered", [
             m("div",
               ctrl.events().map(function (e){
                 return feedEvent[e.kind](e);
