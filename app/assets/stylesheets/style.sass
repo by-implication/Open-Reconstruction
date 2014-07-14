@@ -988,9 +988,12 @@ body .select2-container
   border: 1px solid $accent
   border-radius: 1000px
   overflow: hidden
-  // +media($desktopWidth)
-  //   border-radius: 0px
-  //   background-color: red
+  +media(max-width $desktopWidth)
+    border-radius: 3px
+    display: block
+    dd
+      display: block
+      float: none
   .active
     a
       color: white
