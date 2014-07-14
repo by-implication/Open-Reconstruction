@@ -16,7 +16,14 @@ object Feed extends Controller with Secured {
   	user.copy(lastFeedVisit = Time.now).save()
   	Rest.success(
   		"lastVisit" -> user.lastFeedVisit,
-  		"events" -> Event.feed().map(_.listJson(withReqId = true))
+  		"events" -> Event.feed().map { case (event, req) => {
+  			event.listJson() ++ Json.obj(
+  				"req" -> Json.obj(
+  					"id" -> req.id,
+  					"description" -> req.description
+					)
+				)
+  		}}
 		)
   }
 

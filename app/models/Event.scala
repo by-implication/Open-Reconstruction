@@ -11,10 +11,18 @@ import recon.support._
 object Event extends EventGen {
 
   def feed()(implicit user: User) = DB.withConnection { implicit c =>
-    SQL("""
+
+    val r = SQL("""
       SELECT * FROM latest_events() NATURAL LEFT JOIN events
+      NATURAL LEFT JOIN reqs
       WHERE event_date = event_date;
-    """).list(simple)
+    """)
+
+    val events = r.list(simple)
+    val reqs = r.list(Req.simple)
+
+    events.zip(reqs)
+
   }
 
   private def generate(kind: String, content: String, legacy: Boolean = false)(implicit req: Req, user: User) = Event(
@@ -124,7 +132,7 @@ case class Event(
 // GENERATED case class end
 {
 
-  def listJson(withReqId: Boolean = false) = Json.obj(
+  def listJson() = Json.obj(
     "kind" -> kind,
     "content" -> content,
     "date" -> date.getTime,
@@ -136,7 +144,7 @@ case class Event(
       "id" -> u.govUnit.id,
       "name" -> u.govUnit.name
     )))
-  ) ++ (if(withReqId) Json.obj("reqId" -> reqId) else Json.obj())
+  )
 
 }
 

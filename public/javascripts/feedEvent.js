@@ -162,12 +162,13 @@ feedEvent.attachment = function(data){
 feedEvent.comment = function(data){
   var date = new Date(data.date);
   return m("a.event.comment" + (data.isNew ? ".new" : ""),
-    {href: routes.controllers.Requests.view(data.reqId).url},
+    {href: routes.controllers.Requests.view(data.req.id).url},
     [
       m(".type.comment", [
         m("i.fa.fa-lg.fa-fw.fa-comment")
       ]),
       m(".details", [
+        "Request #" + data.req.id + ": " + data.req.description,
         m("p", data.content),
         feedEvent.meta("Posted", data, date)
       ])
