@@ -38,7 +38,7 @@ object Projects extends Controller with Secured {
           Rest.formError(_),
           _.save().map { project => 
             Event.addProject(project).create().map {e =>
-              Rest.success("event" -> e.listJson)
+              Rest.success("event" -> e.listJson())
             }.getOrElse(Rest.serverError)
           }.getOrElse(Rest.serverError())
         )

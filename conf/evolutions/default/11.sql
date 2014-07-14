@@ -5,6 +5,7 @@ SET datestyle = "ISO, MDY";;
 CREATE TABLE oparr_bohol (
     group_id text,
     project_id text,
+    eplc_id text,
     region text,
     province text,
     municipality text,
@@ -24,6 +25,25 @@ CREATE TABLE oparr_bohol (
 );;
 
 COPY oparr_bohol FROM 'oparr_bohol.csv' CSV ENCODING 'ISO_8859_9';;
+
+CREATE TABLE dilg_ray (
+    group_id text,
+    project_id text,
+    project_name text,
+    project_type text,
+    amount text,
+    scope text,
+    req_date date,
+    implementing_agency text,
+    disaster_date date,
+    disaster_name text,
+    region text,
+    province text,
+    municipality text,
+    psgc text
+);;
+
+COPY dilg_ray FROM 'dilg_ray.csv' CSV ENCODING 'ISO_8859_9';;
 
 INSERT INTO project_types VALUES
   (DEFAULT, 'Mixed'),
@@ -239,12 +259,14 @@ COPY dpwh_eplc FROM 'dpwh_eplc.csv' CSV ENCODING 'ISO_8859_9';;
 CREATE TABLE saro_bureau_g (
     agency text,
     saro_number text,
-    saro_date timestamp,
+    saro_date date,
     month text,
     year integer,
     amount decimal,
+    fund_source text,
     project_quantity integer,
     disaster text,
+    disaster_date date,
     remarks text
 );;
 

@@ -69,7 +69,7 @@ object Attachments extends Controller with Secured {
               if(req.addToAttachments(a.id)){
                 Event.attachment(a).create().map { e => Rest.success(
                   "attachment" -> Attachment.insertJson(a, user),
-                  "event" -> e.listJson
+                  "event" -> e.listJson()
                 )}.getOrElse(Rest.serverError())
               } else Rest.serverError()
             }.getOrElse(Rest.serverError())
@@ -101,7 +101,7 @@ object Attachments extends Controller with Secured {
         if(a.archive(archive)){
           if(archive){
             Event.archiveAttachment(a).create().map { e =>
-              Rest.success("event" -> e.listJson)
+              Rest.success("event" -> e.listJson())
             }.getOrElse(Rest.serverError())
           } else if(Event.unarchiveAttachment(a)){
             Rest.success("attachment" -> a.insertJson)

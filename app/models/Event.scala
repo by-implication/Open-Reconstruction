@@ -124,7 +124,7 @@ case class Event(
 // GENERATED case class end
 {
 
-  def listJson = Json.obj(
+  def listJson(withReqId: Boolean = false) = Json.obj(
     "kind" -> kind,
     "content" -> content,
     "date" -> date.getTime,
@@ -136,7 +136,7 @@ case class Event(
       "id" -> u.govUnit.id,
       "name" -> u.govUnit.name
     )))
-  )
+  ) ++ (if(withReqId) Json.obj("reqId" -> reqId) else Json.obj())
 
 }
 

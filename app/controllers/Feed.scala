@@ -13,7 +13,11 @@ object Feed extends Controller with Secured {
   def index() = Application.index
 
   def indexMeta() = UserAction(){ implicit user => implicit request =>
-  	Rest.success("events" -> Event.feed().map(_.listJson))
+  	user.copy(lastFeedVisit = Time.now).save()
+  	Rest.success(
+  		"lastVisit" -> user.lastFeedVisit,
+  		"events" -> Event.feed().map(_.listJson(withReqId = true))
+		)
   }
 
 }

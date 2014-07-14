@@ -24,7 +24,11 @@ SELECT group_id,
     WHEN disaster_name ilike '%yolanda%' THEN '2013-11-8'::date
     ELSE now()
     END as disaster_date,
-  '2014-5-18'::date as req_date,
+  CASE 
+    WHEN disaster_name ilike '%bohol%' THEN '2013-12-10'::date
+    WHEN disaster_name ilike '%yolanda%' THEN '2014-5-18'::date
+    ELSE now()
+    END as req_date,
   CASE 
     WHEN disaster_name ilike '%bohol%' THEN 2
     WHEN disaster_name ilike '%yolanda%' THEN 1
@@ -49,7 +53,7 @@ GROUP BY group_id, disaster_name, oparr_bohol.psgc, agencies.gov_unit_id, oparr_
 INSERT INTO reqs (req_description, project_type_id, req_amount,
   author_id, req_location, disaster_type_id, 
   req_disaster_date, req_date, req_disaster_name, req_remarks,
-  assessing_agency_id, implementing_agency_id
+  assessing_agency_id, implementing_agency_id, req_level
   )
 SELECT project_description, 
   1 as project_type_id,
@@ -72,11 +76,12 @@ SELECT project_description,
   (SELECT gov_unit_id FROM gov_units 
     WHERE gov_unit_acronym ilike 'dpwh'
     LIMIT 1
-  ) as implementing_agency_id,
+  ) as assessing_agency_id,
   (SELECT gov_unit_id FROM gov_units 
     WHERE gov_unit_acronym ilike 'dpwh'
     LIMIT 1
-  ) as implementing_agency_id
+  ) as implementing_agency_id,
+  6 as req_level
 FROM dpwh_eplc;;
 
 # --- !Downs

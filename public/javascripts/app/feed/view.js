@@ -11,6 +11,7 @@ feed.view = function(ctrl){
           m(".card.columns.medium-6.medium-centered", [
             m("div",
               ctrl.events().map(function (e){
+                e.isNew = e.date > ctrl.lastVisit();
                 return feedEvent[e.kind](e);
               })
             )
