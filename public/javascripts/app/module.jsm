@@ -19,3 +19,4 @@ viz/module.jsm
 select2/module.jsm
 disasterEditing/module.jsm
 project/module.jsm
+projectIndex/module.jsm

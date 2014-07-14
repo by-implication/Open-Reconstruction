@@ -49,5 +49,7 @@ m.route(document, window.location.pathname, GATrackedRoutes({
   "/gov-units/:id/:page": govUnit,
   "/login": login,
   "/faq": faq,
-  "/projects/:id": project
+  "/projects": projectIndex,
+  "/projects/:p": projectIndex,
+  "/project/:id": project
 }));

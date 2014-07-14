@@ -2,7 +2,8 @@ govUnit.view = function(ctrl){
 
   var pagination = common.pagination(
     ctrl.page,
-    ctrl.maxPage(),
+    ctrl.totalReqs(),
+    ctrl.pageLimit(),
     function (p){
       return routes.controllers.GovUnits.viewPage(ctrl.id, p).url;
     }

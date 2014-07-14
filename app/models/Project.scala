@@ -8,7 +8,28 @@ import play.api.libs.json._
 import play.api.Play.current
 import recon.support._
 
-object Project extends ProjectGen {}
+object Project extends ProjectGen {
+
+  def PAGE_LIMIT = 20
+
+  def indexList(page: Int) = DB.withConnection { implicit c =>
+
+    val r = SQL("""
+      SELECT *, COUNT(*) OVER() FROM projects
+      LIMIT {limit} OFFSET {offset}
+    """).on(
+      'limit -> PAGE_LIMIT,
+      'offset -> (page-1) * PAGE_LIMIT
+    )
+
+    val list = r.list(simple)
+    val count: Long = r.list(get[Long]("count")).headOption.getOrElse(0)
+
+    (list, count)
+
+  }
+
+}
 
 // GENERATED case class start
 case class Project(
@@ -25,11 +46,11 @@ case class Project(
 {
   lazy val req: Req = Req.findById(reqId).get
 
-  def requestViewJson: JsObject = Json.obj(
+  def toJson: JsObject = Json.obj(
     "id" -> id,
     "name" -> name,
     "amount" -> amount,
-    "scope" -> scope.toString
+    "scope" -> scope.name
   )
 }
 // GENERATED object start
