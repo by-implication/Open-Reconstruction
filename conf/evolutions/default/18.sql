@@ -29,9 +29,6 @@ UPDATE users
 	SET gov_unit_id = 2 -- OCD
 	WHERE user_id = 1; -- Legacy Data
 
-ALTER TABLE projects
-	DROP COLUMN gov_unit_id;
-
 UPDATE reqs
 	SET gov_unit_id = 2 -- OCD
 	WHERE gov_unit_id = 1; -- Legacy Data
@@ -42,9 +39,6 @@ DELETE FROM gov_units
 # --- !Downs
 
 INSERT INTO gov_units VALUES (1, 'Legacy Data', null, 1);
-
-ALTER TABLE projects
-	ADD COLUMN gov_unit_id int NOT NULL REFERENCES gov_units DEFAULT 1;
 
 UPDATE users
 	SET gov_unit_id = 1 -- Legacy Data

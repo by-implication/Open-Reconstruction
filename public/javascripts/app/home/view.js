@@ -138,8 +138,6 @@ home.view = function(ctrl){
                       m(".caption", "Typhoon Yolanda"),
                     ]),
                     m("td", [
-                      // ctrl.vizData().yolanda.saro.qty + " ",
-                      // m("span", "SAROs"),
                       m("h6", [
                         m("span.dpwh-label", "DPWH:"),
                         " PHP ",
@@ -158,8 +156,6 @@ home.view = function(ctrl){
                       m(".caption", "Bohol Quake"),
                     ]),
                     m("td", [
-                      // ctrl.vizData().bohol.saro.qty + " ",
-                      // m("span", "SAROs"),
                       m("h6", [
                         m("span.dpwh-label", "DPWH:"),
                         " PHP ",
