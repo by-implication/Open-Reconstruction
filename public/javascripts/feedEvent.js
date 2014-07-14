@@ -137,14 +137,15 @@ feedEvent.signoff = function(data){
   var govUnitId = c.pop();
   var govUnitName = c.join(" ");
   var isDBM = govUnitName == "Department of Budget and Management";
-  return m(".event", [
+  return m("a.event", {href: routes.controllers.Requests.view(data.req.id).url}, [
     m(".type.request", [
       isDBM ? m("i.fa.fa-lg.fa-fw.fa-money") : m("i.fa.fa-lg.fa-fw.fa-check")
     ]),
     m(".details", [
-      m("p", [
-        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
-        (isDBM ? " assigned a SARO to and" : "") + " signed off on this request."
+      m("h6", [
+        m("strong", govUnitName),
+        " signed off on ",
+        m("strong", data.req.description)
       ]),
       feedEvent.meta("Signed off", data, date)
     ])
