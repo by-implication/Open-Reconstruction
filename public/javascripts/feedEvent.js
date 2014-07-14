@@ -174,10 +174,10 @@ feedEvent.comment = function(data){
       ]),
       m(".details", [
         m("h6", [
-          data.user.name,
+          m("strong", data.user.name),
           " commented on ",
-          data.req.description,
-          " :"
+          m("strong", data.req.description),
+          ":"
         ]),
         m("p", data.content),
         feedEvent.meta("Posted", data, date)
@@ -191,11 +191,17 @@ feedEvent.addProject = function(data){
   var c = data.content.split(" ");
   var projectId = c.pop();
   var projectName = c.join(" ");
-  return m(".event", [
-    feedEvent.date(date),
+  return m("a.event", {href: routes.controllers.Requests.view(data.req.id).url}, [
+    m(".type.comment", [
+      m("i.fa.fa-lg.fa-fw.fa-plus")
+    ]),
     m(".details", [
-      m("p", [
-        "Project " + "\""+ projectName +"\" has been added to this request."
+      m("h6", [
+        m("strong", data.user.name),
+        " referenced ",
+        m("strong", "\"" + projectName + "\""),
+        " in ",
+        m("strong", data.req.description)
       ]),
       feedEvent.meta("Added", data, date)
     ])

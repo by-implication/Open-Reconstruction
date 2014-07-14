@@ -186,7 +186,9 @@ historyEvent.addProject = function(data){
   var projectId = c.pop();
   var projectName = c.join(" ");
   return m(".event", [
-    historyEvent.date(date),
+    m(".type.comment", [
+      m("i.fa.fa-lg.fa-fw.fa-plus")
+    ]),
     m(".details", [
       // m("h3", "New project"),
       m("p", [
