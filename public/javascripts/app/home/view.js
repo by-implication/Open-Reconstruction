@@ -176,7 +176,7 @@ home.view = function(ctrl){
             ]),
             m("li", [
               m("a", {
-                href:"/requests",
+                href:"/viz",
                 config:m.route
               }, [
                 m("img", {src:"/assets/images/landing/4-ongoing projects.svg"}),
