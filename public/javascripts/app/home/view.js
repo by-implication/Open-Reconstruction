@@ -176,7 +176,7 @@ home.view = function(ctrl){
             ]),
             m("li", [
               m("a", {
-                href: routes.controllers.Viz.index().url,
+                href: routes.controllers.Projects.index().url,
                 config:m.route
               }, [
                 m("img", {src:"/assets/images/landing/4-ongoing projects.svg"}),

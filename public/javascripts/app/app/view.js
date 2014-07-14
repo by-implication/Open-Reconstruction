@@ -134,6 +134,13 @@ app.navbar = function(ctrl){
         ]),
         m("li", [
           m("a", {
+            href: routes.controllers.Projects.index().url,
+            config: m.route,
+            className: (m.route().startsWith(routes.controllers.Projects.index().url) ? "active" : "")
+          }, "Projects")
+        ]),
+        m("li", [
+          m("a", {
             href: routes.controllers.Application.faq().url,
             config: m.route,
             className: (m.route().startsWith(routes.controllers.Application.faq().url) ? "active" : "")
