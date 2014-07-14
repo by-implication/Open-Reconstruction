@@ -2,12 +2,12 @@ var feedEvent = {}
 
 feedEvent.meta = function(verbed, data, date){
   return m("p.meta", [
-    verbed,
-    " by ",
-    m("a", {href: routes.controllers.Users.view(data.user.id).url, config: m.route}, data.user.name),
-    ", of ",
-    m("a", {href: routes.controllers.GovUnits.view(data.govUnit.id).url, config: m.route}, data.govUnit.name),
-    " ",
+    // verbed,
+    // " by ",
+    // m("a", {href: routes.controllers.Users.view(data.user.id).url, config: m.route}, data.user.name),
+    // ", of ",
+    // m("a", {href: routes.controllers.GovUnits.view(data.govUnit.id).url, config: m.route}, data.govUnit.name),
+    // " ",
     helper.timeago(date),
     " on, ",
     date.toDateString()
@@ -114,10 +114,13 @@ feedEvent.assign = function(data){
       m("i.fa.fa-lg.fa-fw.fa-mail-forward")
     ]),
     m(".details", [
-      m("p", isAssign ? [
-        m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
-        " was assigned" + prepPhrase + " this request."
-      ] : duty.capitalize() + "ing agency was unassigned."),
+      isAssign ?
+        m("h6", [
+          data.govUnit.name + " assigned " + govUnitName + " " + prepPhrase + " " + data.req.description
+        ])
+      : m("h6", [
+          data.govUnit.name + " unassigned " + duty.capitalize() + "ing agency"
+        ]),
       feedEvent.meta(isAssign ? "Assigned" : "Unassigned", data, date)
     ])
   ])
@@ -168,7 +171,12 @@ feedEvent.comment = function(data){
         m("i.fa.fa-lg.fa-fw.fa-comment")
       ]),
       m(".details", [
-        "Request #" + data.req.id + ": " + data.req.description,
+        m("h6", [
+          data.user.name,
+          " commented on ",
+          data.req.description,
+          " :"
+        ]),
         m("p", data.content),
         feedEvent.meta("Posted", data, date)
       ])

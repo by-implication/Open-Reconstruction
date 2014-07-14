@@ -8,8 +8,8 @@ feed.view = function(ctrl){
       common.banner("Feed"),
       m("section", [
         m(".row", [
-          m(".card.columns.medium-6.medium-centered", [
-            m("div",
+          m(".columns.medium-6.medium-centered", [
+            m(".card",
               ctrl.events().map(function (e){
                 e.isNew = e.date > ctrl.lastVisit();
                 return feedEvent[e.kind](e);
