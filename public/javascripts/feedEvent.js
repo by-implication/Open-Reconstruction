@@ -2,12 +2,6 @@ var feedEvent = {}
 
 feedEvent.meta = function(verbed, data, date){
   return m("p.meta", [
-    // verbed,
-    // " by ",
-    // m("a", {href: routes.controllers.Users.view(data.user.id).url, config: m.route}, data.user.name),
-    // ", of ",
-    // m("a", {href: routes.controllers.GovUnits.view(data.govUnit.id).url, config: m.route}, data.govUnit.name),
-    // " ",
     helper.timeago(date),
     " on, ",
     date.toDateString()
@@ -38,12 +32,16 @@ feedEvent.archiveAttachment = function(data){
   var c = data.content.split(" ");
   var attachmentId = c.pop();
   var filename = c.join(" ");
-  return m(".event", [
+  return m("a.event", {href: routes.controllers.Requests.view(data.req.id).url}, [
     m(".type.edit", [
       m("i.fa.fa-lg.fa-fw.fa-archive")
     ]),
     m(".details", [
-      m("p", ["Attachment archived: " + filename]),
+      m("h6", [
+        m("strong", data.user.name),
+        " archived ",
+        m("strong", filename)
+      ]),
       feedEvent.meta("Archived", data, date)
     ])
   ])
@@ -54,43 +52,37 @@ feedEvent.editField = function(data){
   var c = data.content.split(" ");
   var field = c.pop();
   var value = c.join(" ");
-  return m(".event", [
+  return m("a.event", {href: routes.controllers.Requests.view(data.req.id).url}, [
     m(".type.edit", [
       m("i.fa.fa-lg.fa-fw.fa-edit")
     ]),
     m(".details", [
-      m("p", "Request " + field + " was set to \"" + value + "\""),
+      m("h6", [
+        m("strong", data.user.name),
+        " set the ",
+        field,
+        " of ",
+        m("strong", data.req.description + "'s"),
+        " to ",
+        m("strong", value)
+      ]),
       feedEvent.meta("Modified", data, date)
     ]),
   ]);
 }
 
-feedEvent.disaster = function(data){
-  var date = new Date(data.date);
-  var c = data.content.split(" ");
-  var disasterTypeId = c.pop();
-  var disasterType = request.getDTbyId(disasterTypeId);
-  var disasterName = c.join(" ");
-  var title = disasterName ? (disasterName + " (" + disasterType.name + ")") : disasterType.name
-  return m(".event", [
-    m(".type.disaster", [
-      m("i.fa.fa-lg.fa-fw.fa-warning")
-    ]),
-    m(".details", [
-      m("p", title),
-      m("p.meta", helper.timeago(date))
-    ]),
-  ])
-}
-
 feedEvent.newRequest = function(data){
   var date = new Date(data.date);
-  return m(".event", [
+  return m("a.event", {href: routes.controllers.Requests.view(data.req.id).url}, [
     m(".type.request", [
       m("i.fa.fa-lg.fa-fw.fa-bullhorn")
     ]),
     m(".details", [
-      m("p", "Request posted: " + data.content),
+      m("h6", [
+        m("strong", data.user.name),
+        " made a new request: ",
+        m("strong", data.req.description)
+      ]),
       feedEvent.meta("Posted", data, date)
     ])
   ])
@@ -157,12 +149,16 @@ feedEvent.attachment = function(data){
   var c = data.content.split(" ");
   var attachmentId = c.pop();
   var filename = c.join(" ");
-  return m(".event", [
+  return m("a.event", {href: routes.controllers.Requests.view(data.req.id).url}, [
     m(".type.edit", [
       m("i.fa.fa-lg.fa-fw.fa-paperclip")
     ]),
     m(".details", [
-      m("p", ["Attachment uploaded: " + filename]),
+      m("h6", [
+        m("strong", data.user.name),
+        " uploaded an attachment: ",
+        m("strong", filename)
+      ]),
       feedEvent.meta("Attached", data, date)
     ])
   ])
