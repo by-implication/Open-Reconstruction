@@ -6,7 +6,7 @@ ALTER TABLE reqs
 INSERT INTO reqs (req_description, project_type_id, req_amount, author_id, req_location,
 	req_date, disaster_id, assessing_agency_id, implementing_agency_id, req_level, gov_unit_id,
 	project_id)
-SELECT req_description, r.project_type_id, p.project_amount, author_id, req_location,
+SELECT p.project_name, r.project_type_id, p.project_amount, author_id, req_location,
 	req_date, disaster_id, assessing_agency_id, implementing_agency_id, req_level, gov_unit_id,
 	p.project_id
 FROM projects p LEFT JOIN reqs r ON p.req_id = r.req_id;
