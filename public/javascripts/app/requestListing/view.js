@@ -72,7 +72,13 @@ requestListing.view = function(ctrl){
             return m(".columns.medium-3", [
               m("label", [
                 f.label,
-                select2.view({data: f.data, value: f.value(), onchange: f.onchange})
+                select2.view({
+                  data: f.data, 
+                  value: f.value(), 
+                  onchange: f.onchange
+                }, {
+                  disabled: false // in preparation for disabling locfilters without prerequisite locfilters set.
+                })
               ]),
             ])
           })
