@@ -32,7 +32,7 @@ common.stagnation = function(reqCtrl, offset){
     var approval = history.filter(function (h){
       return h.kind == "signoff" && h.govUnit.name == "Office of the President";
     })[0];
-    return new Date(approval.date);
+    return approval && new Date(approval.date) || "[UNKNOWN]";
   }
 
   var timestamp = req.date;
