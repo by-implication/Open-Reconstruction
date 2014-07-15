@@ -68,7 +68,10 @@ requestListing.view = function(ctrl){
       ctrl.locationCF.view(
         null, 
         function(){
-          return ctrl.locFilters.map(function (f){
+          return ctrl.locFilters.map(function (f, index){
+            if (index) {
+              console.log();
+            }
             return m(".columns.medium-3", [
               m("label", [
                 f.label,
@@ -77,7 +80,7 @@ requestListing.view = function(ctrl){
                   value: f.value(), 
                   onchange: f.onchange
                 }, {
-                  disabled: false // in preparation for disabling locfilters without prerequisite locfilters set.
+                  disabled: (index && (ctrl.locFilters[index - 1].value() === "-"))  // in preparation for disabling locfilters without prerequisite locfilters set.
                 })
               ]),
             ])
