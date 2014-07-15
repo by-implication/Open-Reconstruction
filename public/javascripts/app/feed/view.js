@@ -10,7 +10,7 @@ feed.view = function(ctrl){
         m(".row", [
           m(".columns.medium-6.medium-centered", [
             m(".card",
-              ctrl.events().reverse().map(function (e){
+              ctrl.events().map(function (e){
                 e.isNew = e.date > ctrl.lastVisit();
                 return feedEvent[e.kind](e);
               })

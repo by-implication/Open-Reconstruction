@@ -1,9 +1,9 @@
 # --- !Ups
 
-CREATE OR REPLACE FUNCTION latest_events() RETURNS TABLE(req_id int, event_date timestamp) AS $$
-	SELECT req_id, MAX(event_date) FROM events GROUP BY req_id;;
-$$ LANGUAGE sql;
+ALTER TABLE users
+	ADD COLUMN user_last_feed_visit timestamp NOT NULL DEFAULT NOW();
 
 # --- !Downs
 
-DROP FUNCTION latest_events();
+ALTER TABLE users
+	DROP COLUMN user_last_feed_visit;
