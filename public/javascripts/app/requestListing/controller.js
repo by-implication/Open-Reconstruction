@@ -60,6 +60,8 @@ requestListing.controller = function(){
   }
   this.counts = {};
 
+  var hierarchy = ["Region", "Province", "City / Municipality", "Barangay"];
+
   function DefLocFilter(label, value){
     this.label = label;
     this.data = [];
@@ -67,14 +69,15 @@ requestListing.controller = function(){
     this.onchange = function(data){
       var v = data.id;
       var _qlf = self._queryLocFilters;
-      var qlf = v == '-' ? _qlf.slice(0, _qlf.lastIndexOf('.')) : v;
+      var i = hierarchy.indexOf(label);
+      var qlf = (v == '-' && i) ? _qlf.split(".").slice(0, i).join(".") : v;
       this.value(v);
       var targetRoute = nav({_queryLocFilters: qlf});
       m.route(targetRoute);
     }.bind(this);
   };
 
-  this.locFilters = ["Region", "Province", "City / Municipality", "Barangay"].map(function (label, index){
+  this.locFilters = hierarchy.map(function (label, index){
     var val;
     var qlf = self.queryLocFilters();
     if(qlf[index] != "-"){
