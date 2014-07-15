@@ -56,7 +56,10 @@ INSERT INTO reqs (req_description, project_type_id, req_amount,
   assessing_agency_id, implementing_agency_id, req_level
   )
 SELECT project_description, 
-  1 AS project_type_id,
+  COALESCE((SELECT project_type_id FROM project_types
+    WHERE project_type = project_type_name
+    LIMIT 1
+  ), 15) AS project_type_id, -- default to 'Others'
   coalesce(project_abc*1000, 0) AS amount,
   1 AS author_id,
   psgc, 

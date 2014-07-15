@@ -42,7 +42,10 @@ INSERT INTO projects (req_id, project_source_id,
 SELECT req_id, dpwh_eplc.project_id,
   project_description,
   coalesce(project_abc*1000, 0),
-  1 AS project_type_id,
+  COALESCE((SELECT project_type_id FROM project_types
+    WHERE project_type = project_type_name
+    LIMIT 1
+  ), 15) AS project_type_id, -- default to 'Others'
   'Others'::project_scope AS scope,
   true AS is_funded,
   bid_price,
