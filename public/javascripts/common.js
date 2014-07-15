@@ -596,9 +596,9 @@ common.attachmentFor = function(reqt, atts){
 
 common.collapsibleFilter = {}
 
-common.collapsibleFilter.controller = function(label){
+common.collapsibleFilter.controller = function(label, id){
 
-  var cookey = "dropstate_" + label;
+  var cookey = "dropstate_" + id;
 
   this.isExpanded = m.prop(m.cookie()[cookey]);
   this.toggleExpand = function(){
