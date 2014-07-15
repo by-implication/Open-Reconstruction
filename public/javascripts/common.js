@@ -600,7 +600,7 @@ common.collapsibleFilter.controller = function(label, id){
 
   var cookey = "dropstate_" + id;
 
-  this.isExpanded = m.prop(m.cookie()[cookey]);
+  this.isExpanded = m.prop(m.cookie()[cookey] == "true");
   this.toggleExpand = function(){
     var newState = !this.isExpanded();
     this.isExpanded(newState);
