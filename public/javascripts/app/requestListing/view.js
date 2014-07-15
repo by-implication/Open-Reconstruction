@@ -68,12 +68,24 @@ requestListing.view = function(ctrl){
       ctrl.locationCF.view(
         null, 
         function(){
-          return ctrl.locFilters.map(function (f){
+          return ctrl.locFilters.map(function (f, index){
+            // if (index){
+            //   console.log(ctrl.locFilters[index - 1].value());
+            // }
             return m(".columns.medium-3", [
               m("label", [
                 f.label,
-                select2.view({data: f.data, value: f.value(), onchange: f.onchange})
-              ]),
+                // m("span.label.alert", [
+                //   ctrl.hierarchy[index - 1] + " not yet set"
+                // ]),
+                select2.view({
+                  data: f.data, 
+                  value: f.value(), 
+                  onchange: f.onchange
+                }, {
+                  disabled: (index && (ctrl.locFilters[index - 1].value() === "-"))
+                })
+              ])
             ])
           })
         }

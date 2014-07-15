@@ -1,8 +1,15 @@
-select2.view = function(ctrl){
+select2.view = function(ctrl, additionalOptions){
+  var defaultOptions = {
+    config: select2.config(ctrl),
+    "data-customforms": "disabled"
+  }
+
+  var options = _.extend(defaultOptions, additionalOptions)
+
 	if(ctrl.query){
-		return m("input", {config: select2.config(ctrl), "data-customforms": "disabled"});
+		return m("input", options);
 	} else {
-	  return m("select", {config: select2.config(ctrl), "data-customforms": "disabled"}, ctrl.data.map(function(item){
+	  return m("select", options, ctrl.data.map(function(item){
 	    return m("option", {value: item.id}, item.name);
 	  }));
 	}
