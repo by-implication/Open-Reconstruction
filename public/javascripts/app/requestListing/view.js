@@ -69,9 +69,6 @@ requestListing.view = function(ctrl){
         null, 
         function(){
           return ctrl.locFilters.map(function (f, index){
-            if (index) {
-              console.log();
-            }
             return m(".columns.medium-3", [
               m("label", [
                 f.label,
