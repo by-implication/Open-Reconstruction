@@ -117,19 +117,22 @@ case class Event(
 // GENERATED case class end
 {
 
-  def listJson = Json.obj(
-    "kind" -> kind,
-    "content" -> content,
-    "date" -> date.getTime,
-    "user" -> userId.map(User.findById(_).map(u => Json.obj(
-      "id" -> u.id,
-      "name" -> u.name
-    ))),
-    "govUnit" -> userId.map(User.findById(_).map(u => Json.obj(
-      "id" -> u.govUnit.id,
-      "name" -> u.govUnit.name
-    )))
-  )
+  def listJson = {
+    val userOpt = userId.map(User.findById(_)).flatten
+    Json.obj(
+      "kind" -> kind,
+      "content" -> content,
+      "date" -> date.getTime,
+      "user" -> userOpt.map(u => Json.obj(
+        "id" -> u.id,
+        "name" -> u.name
+      )),
+      "govUnit" -> userOpt.map(u => Json.obj(
+        "id" -> u.govUnit.id,
+        "name" -> u.govUnit.name
+      ))
+    )
+  }
 
 }
 
