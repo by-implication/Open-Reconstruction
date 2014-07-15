@@ -69,17 +69,34 @@ requestListing.view = function(ctrl){
         null, 
         function(){
           return ctrl.locFilters.map(function (f, index){
+            // if (index){
+            //   console.log(ctrl.locFilters[index - 1].value());
+            // }
             return m(".columns.medium-3", [
-              m("label", [
-                f.label,
-                select2.view({
-                  data: f.data, 
-                  value: f.value(), 
-                  onchange: f.onchange
-                }, {
-                  disabled: (index && (ctrl.locFilters[index - 1].value() === "-"))  // in preparation for disabling locfilters without prerequisite locfilters set.
-                })
-              ]),
+              (index && (ctrl.locFilters[index - 1].value() === "-")) ?
+                m("label", [
+                  f.label,
+                  // m("span.label.alert", [
+                  //   ctrl.hierarchy[index - 1] + " not yet set"
+                  // ]),
+                  select2.view({
+                    data: f.data, 
+                    value: f.value(), 
+                    onchange: f.onchange
+                  }, {
+                    disabled: true
+                  })
+                ])
+              : m("label", [
+                  f.label,
+                  select2.view({
+                    data: f.data, 
+                    value: f.value(), 
+                    onchange: f.onchange
+                  }, {
+                    disabled: false
+                  })
+                ])
             ])
           })
         }

@@ -60,7 +60,7 @@ requestListing.controller = function(){
   }
   this.counts = {};
 
-  var hierarchy = ["Region", "Province", "City / Municipality", "Barangay"];
+  this.hierarchy = ["Region", "Province", "City / Municipality", "Barangay"];
 
   function DefLocFilter(label, value){
     this.label = label;
@@ -69,7 +69,7 @@ requestListing.controller = function(){
     this.onchange = function(data){
       var v = data.id;
       var _qlf = self._queryLocFilters;
-      var i = hierarchy.indexOf(label);
+      var i = self.hierarchy.indexOf(label);
       var qlf = (v == '-' && i) ? _qlf.split(".").slice(0, i).join(".") : v;
       this.value(v);
       var targetRoute = nav({_queryLocFilters: qlf});
@@ -77,7 +77,7 @@ requestListing.controller = function(){
     }.bind(this);
   };
 
-  this.locFilters = hierarchy.map(function (label, index){
+  this.locFilters = this.hierarchy.map(function (label, index){
     var val;
     var qlf = self.queryLocFilters();
     if(qlf[index] != "-"){
