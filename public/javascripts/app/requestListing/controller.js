@@ -3,10 +3,10 @@ requestListing.controller = function(){
   var self = this;
   this.app = new app.controller();
   this.tabs = new common.tabs.controller();
-  this.disasterCF = new common.collapsibleFilter.controller();
-  this.agencyCF = new common.collapsibleFilter.controller();
-  this.projectTypeCF = new common.collapsibleFilter.controller();
-  this.locationCF = new common.collapsibleFilter.controller();
+  this.locationCF = new common.collapsibleFilter.controller("Location", "location");
+  this.disasterCF = new common.collapsibleFilter.controller("Disaster", "disaster");
+  this.agencyCF = new common.collapsibleFilter.controller("Agency", "agency");
+  this.projectTypeCF = new common.collapsibleFilter.controller("Project Type", "project_type");
   this.tabFilters = {
     ALL: 'all',
     SIGNOFF: 'signoff',
@@ -21,6 +21,7 @@ requestListing.controller = function(){
 
   this.tab = m.route.param("tab") || "all";
   this.page = parseInt(m.route.param("page")) || 1;
+  this.pageLimit = 1;
   this.projectTypeId = m.route.param("projectTypeId") || 0;
   this.agencyFilterId = m.route.param("agencyFilterId") || 0;
   this._queryLocFilters = m.route.param("l") || "-";
@@ -59,6 +60,8 @@ requestListing.controller = function(){
   }
   this.counts = {};
 
+  this.hierarchy = ["Region", "Province", "City / Municipality", "Barangay"];
+
   function DefLocFilter(label, value){
     this.label = label;
     this.data = [];
@@ -66,14 +69,15 @@ requestListing.controller = function(){
     this.onchange = function(data){
       var v = data.id;
       var _qlf = self._queryLocFilters;
-      var qlf = v == '-' ? _qlf.slice(0, _qlf.lastIndexOf('.')) : v;
+      var i = self.hierarchy.indexOf(label);
+      var qlf = (v == '-' && i) ? _qlf.split(".").slice(0, i).join(".") : v;
       this.value(v);
       var targetRoute = nav({_queryLocFilters: qlf});
       m.route(targetRoute);
     }.bind(this);
   };
 
-  this.locFilters = ["Region", "Province", "City / Municipality", "Barangay"].map(function (label, index){
+  this.locFilters = this.hierarchy.map(function (label, index){
     var val;
     var qlf = self.queryLocFilters();
     if(qlf[index] != "-"){
@@ -156,10 +160,6 @@ requestListing.controller = function(){
   this.requestList = [];
   this.projectFilters = [{id: 0, name: "All"}];
   this.agencies = [{id: 0, name: "All", acronym: "All"}];
-  this.maxPage = function(){
-    var count = parseInt(this.counts[this.tab]) || 0;
-    return Math.ceil(count / 20);
-  };
 
   bi.ajax(nav(null, true)).then(function (r){
 
@@ -184,6 +184,7 @@ requestListing.controller = function(){
 
     this.requestList = r.list;
     this.counts = r.counts;
+    this.pageLimit = r.pageLimit;
     this.projectFilters = this.projectFilters.concat(r.filters);
     this.agencies = this.agencies.concat(r.agencies);
     this.disasters = [{id: 0, name: "All"}].concat(r.disasters);

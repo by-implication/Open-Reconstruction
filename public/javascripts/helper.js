@@ -170,11 +170,17 @@ m.switch = function(base){
   return new m.switchObject(base, null);
 }
 
-m.cookie = function(){
-  var cookieRaw = document.cookie.split("; ").map(function(c){
-    return c.split("=")
-  })
-  return _.object(cookieRaw);
+m.cookie = function(newVals){
+  if(newVals){
+    for(var k in newVals){
+      document.cookie = k + "=" + newVals[k];
+    }
+  } else {
+    var cookieRaw = document.cookie.split("; ").map(function (c){
+      return c.split("=");
+    })
+    return _.object(cookieRaw);
+  }
 }
 
 m.stringify = function(mObj){

@@ -19,3 +19,5 @@ viz/module.jsm
 select2/module.jsm
 disasterEditing/module.jsm
 feed/module.jsm
+project/module.jsm
+projectIndex/module.jsm

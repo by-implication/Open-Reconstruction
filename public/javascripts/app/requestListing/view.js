@@ -2,7 +2,8 @@ requestListing.view = function(ctrl){
   
   var pagination = common.pagination(
     ctrl.page,
-    ctrl.maxPage(),
+    ctrl.counts[ctrl.tab],
+    ctrl.pageLimit,
     function (p){
       return ctrl.nav({page: p});
     }
@@ -64,38 +65,43 @@ requestListing.view = function(ctrl){
           ]),
         ]),
       ]),
-      common.collapsibleFilter.view(
-        ctrl.locationCF, 
-        "Location", 
+      ctrl.locationCF.view(
         null, 
         function(){
-          return ctrl.locFilters.map(function (f){
+          return ctrl.locFilters.map(function (f, index){
+            // if (index){
+            //   console.log(ctrl.locFilters[index - 1].value());
+            // }
             return m(".columns.medium-3", [
               m("label", [
                 f.label,
-                select2.view({data: f.data, value: f.value(), onchange: f.onchange})
-              ]),
+                // m("span.label.alert", [
+                //   ctrl.hierarchy[index - 1] + " not yet set"
+                // ]),
+                select2.view({
+                  data: f.data, 
+                  value: f.value(), 
+                  onchange: f.onchange
+                }, {
+                  disabled: (index && (ctrl.locFilters[index - 1].value() === "-"))
+                })
+              ])
             ])
           })
-        }),
-      common.collapsibleFilter.view(
-        ctrl.disasterCF, 
-        "Disaster", 
+        }
+      ),
+      ctrl.disasterCF.view(
         currentFilterNameFromArray(ctrl.disasters, ctrl.disaster), 
         filterColumns.bind(null, ctrl.disasters, 4, ctrl.disaster, "disaster")
-        ),
-      common.collapsibleFilter.view(
-        ctrl.agencyCF, 
-        "Agency", 
+      ),
+      ctrl.agencyCF.view(
         currentFilterNameFromArray(ctrl.agencies, ctrl.agencyFilterId),
         filterColumns.bind(null, ctrl.agencies, 4, ctrl.agencyFilterId, "agencyFilterId")
-        ),
-      common.collapsibleFilter.view(
-        ctrl.projectTypeCF, 
-        "Project Type", 
+      ),
+      ctrl.projectTypeCF.view(
         currentFilterNameFromArray(ctrl.projectFilters, ctrl.projectTypeId),
         filterColumns.bind(null, ctrl.projectFilters, 4, ctrl.projectTypeId, "projectTypeId")
-        ),
+      ),
     ]),
     m("section", [
       m.cookie().logged_in ?

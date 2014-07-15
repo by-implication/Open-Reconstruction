@@ -25,7 +25,7 @@ home.view = function(ctrl){
             m("h2", [
               "Find projects and requests in your town, region, or area.",
               m("a.button",{
-                  href:"/requests",
+                  href: routes.controllers.Requests.index().url,
                   config:m.route
                 },[
                   "Search ",
@@ -84,7 +84,7 @@ home.view = function(ctrl){
             ]),
             m("li.arrow", [
               m("a", {
-                href:"/requests",
+                href: routes.controllers.Requests.index().url,
                 config:m.route
               }, [
                 m("img", {src:"/assets/images/landing/2-projects requested.svg"}),
@@ -138,12 +138,15 @@ home.view = function(ctrl){
                       m(".caption", "Typhoon Yolanda"),
                     ]),
                     m("td", [
-                      // ctrl.vizData().yolanda.saro.qty + " ",
-                      // m("span", "SAROs"),
                       m("h6", [
                         m("span.dpwh-label", "DPWH:"),
                         " PHP ",
                         m("span.fig", helper.truncate(ctrl.vizData().yolanda.dpwh.amt, 2))
+                      ]),
+                      m("h6", [
+                        m("span.dpwh-label", "DILG:"),
+                        " PHP ",
+                        m("span.fig", helper.truncate(ctrl.vizData().yolanda.dilg.amt, 2))
                       ]),
                       m("h6", [
                         "All Agencies: PHP ",
@@ -158,12 +161,15 @@ home.view = function(ctrl){
                       m(".caption", "Bohol Quake"),
                     ]),
                     m("td", [
-                      // ctrl.vizData().bohol.saro.qty + " ",
-                      // m("span", "SAROs"),
                       m("h6", [
                         m("span.dpwh-label", "DPWH:"),
                         " PHP ",
                         m("span.fig", helper.truncate(ctrl.vizData().bohol.dpwh.amt, 2))
+                      ]),
+                      m("h6", [
+                        m("span.dpwh-label", "DILG:"),
+                        " PHP ",
+                        m("span.fig", helper.truncate(ctrl.vizData().bohol.dilg.amt, 2))
                       ]),
                       m("h6", [
                         "All Agencies: PHP ",
@@ -176,7 +182,7 @@ home.view = function(ctrl){
             ]),
             m("li", [
               m("a", {
-                href:"/viz",
+                href: routes.controllers.Projects.index().url,
                 config:m.route
               }, [
                 m("img", {src:"/assets/images/landing/4-ongoing projects.svg"}),
@@ -191,8 +197,7 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h6", [
-                        m("span.dpwh-label", "DPWH:"),
-                        " PHP ",
+                        "PHP ",
                         m("span.fig", helper.truncate(ctrl.vizData().yolanda.fundedProjects.amt, 2))
                       ]),
                       m("h6", ctrl.vizData().yolanda.fundedProjects.qty + " Projects")
@@ -206,8 +211,7 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h6", [
-                        m("span.dpwh-label", "DPWH:"),
-                        " PHP ",
+                        "PHP ",
                         m("span.fig", helper.truncate(ctrl.vizData().bohol.fundedProjects.amt, 2))
                       ]),
                       m("h6", ctrl.vizData().bohol.fundedProjects.qty + " Projects")
@@ -342,7 +346,7 @@ home.view = function(ctrl){
               "."
               ]),
             m("a.button.micro", {
-              href:"/faq",
+              href: routes.controllers.Application.faq().url,
               config:m.route
             }, "Learn more about this project")
           ]),
