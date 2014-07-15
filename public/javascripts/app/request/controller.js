@@ -271,9 +271,9 @@ request.controller = function(){
       var c = data.govUnit.coords;
       var latlng = new L.LatLng(c.lat, c.lng);
       this.coords(latlng);
-      setTimeout(function(){
-        common.leaflet.addPopup(latlng, "No location defined but<br/>the requesting LGU is here.")
-      }, 100);
+      // setTimeout(function(){
+      //   common.leaflet.addPopup(latlng, "No location defined but<br/>the requesting LGU is here.")
+      // }, 100);
     }
 
   }.bind(this));
@@ -334,15 +334,14 @@ request.controller = function(){
         if(self.coords()){
           map.setView(self.coords(), 8);
           common.leaflet.addMarker(self.coords());
+          setTimeout(function(){
+            common.leaflet.addPopup(self.coords(), "No location defined but<br/>the requesting LGU is here.")
+          }, 100);
         }
       } else {
         setTimeout(tryMap, 100);
       }
     }()
-  }
-
-  this.progressConfig = function(elem, isInit){
-    
   }
 
   this.refreshHistory = function(){
