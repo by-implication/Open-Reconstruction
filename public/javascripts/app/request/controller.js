@@ -329,7 +329,9 @@ request.controller = function(){
   this.initMap = function(elem, isInit){
     !function tryMap(){
       if($(elem).height()){
+        
         var map = common.leaflet.map(elem);
+
         if(ctrl.coords()){
           map.setView(ctrl.coords(), 8);
           common.leaflet.addMarker(ctrl.coords());
@@ -339,6 +341,7 @@ request.controller = function(){
             }, 100);
           }
         }
+
       } else {
         setTimeout(tryMap, 100);
       }

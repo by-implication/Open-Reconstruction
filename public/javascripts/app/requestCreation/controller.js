@@ -18,41 +18,8 @@ requestCreation.controller = function(){
       if(!isInit){
         window.setTimeout(function(){
           var map = common.leaflet.map(elem);
-
-          var editableLayers = new L.FeatureGroup();
-          map.addLayer(editableLayers);
-
-          // Initialise the draw control and pass it the FeatureGroup of editable layers
-          var drawControl = new L.Control.Draw({
-            edit: {
-              featureGroup: editableLayers,
-              edit: false,
-              remove: false
-            },
-            draw: {
-              polyline: false,
-              polygon: false,
-              rectangle: false,
-              circle: false
-            },
-            // position: 'topright'
-          });
-          map.addControl(drawControl);
-
-          map.on('draw:created', function (e) {
-            var type = e.layerType,
-              layer = e.layer;
-            var coords = layer._latlng
-            var strCoords = coords.lat+","+coords.lng
-
-            layer.bindPopup("<h5>Location Saved!</h5>Your coordinates are<br/>" + strCoords);
-            editableLayers.clearLayers();
-            editableLayers.addLayer(layer);
-            editableLayers.openPopup();
-
-            ctrl.activeEntry().location(strCoords);
-          });
-        }, 100)
+          common.leaflet.addDrawControls(ctrl.activeEntry().location);
+        }, 100);
       }
     }
   });

@@ -548,6 +548,45 @@ common.leaflet = {
         this.addPopup(coords, content);
       }.bind(this), 100);
     }
+  },
+
+  addDrawControls: function(callback){
+
+    var editableLayers = new L.FeatureGroup();
+    this._map.addLayer(editableLayers);
+
+    // Initialise the draw control and pass it the FeatureGroup of editable layers
+    var drawControl = new L.Control.Draw({
+      edit: {
+        featureGroup: editableLayers,
+        edit: false,
+        remove: false
+      },
+      draw: {
+        polyline: false,
+        polygon: false,
+        rectangle: false,
+        circle: false
+      },
+      // position: 'topright'
+    });
+    this._map.addControl(drawControl);
+
+    this._map.on('draw:created', function (e) {
+      var type = e.layerType,
+        layer = e.layer;
+      var coords = layer._latlng
+      var strCoords = coords.lat+","+coords.lng
+
+      layer.bindPopup("<h5>Location Saved!</h5>Your coordinates are<br/>" + strCoords);
+      editableLayers.clearLayers();
+      editableLayers.addLayer(layer);
+      editableLayers.openPopup();
+
+      callback(strCoords);
+
+    });
+
   }
 
 }
