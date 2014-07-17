@@ -12,11 +12,32 @@ object Event extends EventGen {
 
   def feed()(implicit user: User) = DB.withConnection { implicit c =>
 
+    var conds = Seq.empty[String]
+
+    if(!user.isSuperAdmin){
+      
+      conds :+= ("""
+        WHERE assessing_agency_id = {govUnitId}
+        OR implementing_agency_id = {govUnitId}
+        OR executing_agency_id = {govUnitId}
+      """)
+
+      if(user.isOP){
+        conds :+= "req_level >= 3"
+      } else if(user.isDBM){
+        conds :+= "req_level >= 4"
+      } else if(user.lguOpt.isDefined){
+        conds :+= "gov_unit_id = {govUnitId}"
+      }
+
+    }
+
     val r = SQL("""
       SELECT * FROM events
       NATURAL LEFT JOIN reqs
-      ORDER BY event_date ASC
-    """)
+    """ + conds.mkString(" OR ") + """
+      ORDER BY event_date DESC
+    """).on('govUnitId -> user.govUnitId)
 
     val events = r.list(simple)
     val reqs = r.list(Req.simple)
