@@ -152,7 +152,7 @@ requestListing.controller = function(){
         m("span.label.secondary.round", self.counts[tab.identifier])
       ]
     }
-    tab.content = function(){ return request.listView(this.requests(), self.sortBy) }
+    tab.content = function(){ return request.listView(this.requests(), self.sortBy, self) }
     return tab;
   });
 
