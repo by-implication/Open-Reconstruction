@@ -475,39 +475,43 @@ common.pagination = function(pageNum, count, pageLimit, p2link){
     return pages;
   }
 
-  return m("ul.pagination", [
-    m("li.arrow",{className: pageNum === 0 ? "unavailable" : ""}, [
-      m("a", {
-        href: p2link(Math.max(pageNum - 1, 1)),
-        config: m.route
-      }, [
-        "«"
+  if (pagesToDisplay().length) {
+    return m("ul.pagination", [
+      m("li.arrow",{className: pageNum === 0 ? "unavailable" : ""}, [
+        m("a", {
+          href: p2link(Math.max(pageNum - 1, 1)),
+          config: m.route
+        }, [
+          "«"
+        ]),
       ]),
-    ]),
-    _.chain(pagesToDisplay())
-      .map(function (page){
-        if(page == "...") {
-          return m("li.unavailable", m("a", "..."));
-        }
-        else {
-          return m("li", {className: page === pageNum ? "current" : ""}, [
-            m("a", {
-              href: p2link(page),
-              config: m.route
-            }, page)
-          ])
-        }
-      })
-      .value(),
-    m("li.arrow",{className: pageNum === pageCount ? "unavailable" : ""}, [
-      m("a", {
-        href: p2link(Math.min(pageNum + 1, pageCount)),
-        config: m.route
-      },[
-        "»"
+      _.chain(pagesToDisplay())
+        .map(function (page){
+          if(page == "...") {
+            return m("li.unavailable", m("a", "..."));
+          }
+          else {
+            return m("li", {className: page === pageNum ? "current" : ""}, [
+              m("a", {
+                href: p2link(page),
+                config: m.route
+              }, page)
+            ])
+          }
+        })
+        .value(),
+      m("li.arrow",{className: pageNum === pageCount ? "unavailable" : ""}, [
+        m("a", {
+          href: p2link(Math.min(pageNum + 1, pageCount)),
+          config: m.route
+        },[
+          "»"
+        ]),
       ]),
-    ]),
-  ])
+    ])
+  } else {
+    return ""
+  }
 }
 
 common.leaflet = {
