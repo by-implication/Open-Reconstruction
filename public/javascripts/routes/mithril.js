@@ -50,6 +50,7 @@ m.route(document, window.location.pathname, GATrackedRoutes({
   "/login": login,
   "/faq": faq,
   "/feed": feed,
+  "/feed/:p": feed,
   "/projects": projectIndex,
   "/projects/:p": projectIndex,
   "/project/:id": project

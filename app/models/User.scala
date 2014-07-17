@@ -199,6 +199,7 @@ case class User(
   }
 
   lazy val govUnit = GovUnit.findById(govUnitId).get
+  lazy val lguOpt = Lgu.findById(govUnitId)
 
   lazy val permissions = role.permissions
 
