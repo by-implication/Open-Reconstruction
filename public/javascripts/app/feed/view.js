@@ -24,6 +24,11 @@ feed.view = function(ctrl){
               return feedEvent[e.kind](e);
             })),
             pagination,
+            !ctrl.events().length ?
+              m("h3.empty.center-text", [
+                "Nothing in your Feed yet. Do something!"
+              ])
+            : ""
           ]),
         ]),
       ]),
