@@ -617,14 +617,17 @@ request.miniProgress = function(request){
   ])
 }
 
-request.listView = function(reqs, sortBy){
+request.listView = function(reqs, sortBy, ctrl){
   return m("table.responsive", [
       m("thead", [
         m("tr", [
           m("th", "Name"),
           m("th", [
             m("a", {href: sortBy("id"), config: m.route}, [
-              "Id "
+              "Id ",
+              ctrl.sort === "id" ?
+                m("i.fa.fa-fw", {className: (ctrl.sortDir == "asc") ? "fa-angle-up" : "fa-angle-down"})
+              : ""
             ]),
           ]),
           m("th", [
@@ -636,7 +639,10 @@ request.listView = function(reqs, sortBy){
           m("th", "Status"),
           m("th.text-right", [
             m("a", {href: sortBy("amount"), config: m.route}, [
-              "Amount"
+              "Amount",
+              ctrl.sort === "amount" ?
+                m("i.fa.fa-fw", {className: (ctrl.sortDir == "asc") ? "fa-angle-up" : "fa-angle-down"})
+              : ""
             ]),
           ])
         ])
