@@ -110,5 +110,6 @@ POST    /gov-units/:id/new-user                   controllers.Users.insert(id: I
 GET     /gov-units/:id/:p                         controllers.GovUnits.viewPage(id: Int, p: Int)
 GET     /gov-units/:id/:p/meta                    controllers.GovUnits.viewMeta(id: Int, p: Int)
 
-GET			/feed																			controllers.Feed.index
-GET			/feed/meta																controllers.Feed.indexMeta
+GET     /feed                                     controllers.Feed.index
+GET     /feed/:p                                  controllers.Feed.indexPage(p: Int)
+GET     /feed/:p/meta                             controllers.Feed.indexMeta(p: Int)

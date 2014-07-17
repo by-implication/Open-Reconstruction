@@ -10,7 +10,7 @@ import recon.support._
 
 object Event extends EventGen {
 
-  def feed()(implicit user: User) = DB.withConnection { implicit c =>
+  def feed(page: Int, pageLimit: Int)(implicit user: User) = DB.withConnection { implicit c =>
 
     var conds = Seq.empty[String]
 
@@ -33,16 +33,23 @@ object Event extends EventGen {
     }
 
     val r = SQL("""
-      SELECT * FROM events
+      SELECT *, COUNT(*) OVER() FROM events
       NATURAL LEFT JOIN reqs
     """ + conds.mkString(" OR ") + """
       ORDER BY event_date DESC
-    """).on('govUnitId -> user.govUnitId)
+      LIMIT {limit}
+      OFFSET {offset}
+    """).on(
+      'govUnitId -> user.govUnitId,
+      'limit -> pageLimit,
+      'offset -> ((page-1) * pageLimit)
+    )
 
     val events = r.list(simple)
     val reqs = r.list(Req.simple)
+    val count: Long = r.list(get[Long]("count")).headOption.getOrElse(0)
 
-    events.zip(reqs)
+    (events.zip(reqs), count)
 
   }
 
