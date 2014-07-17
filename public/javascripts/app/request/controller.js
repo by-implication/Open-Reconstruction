@@ -1,5 +1,5 @@
 request.controller = function(){
-  var self = this;
+  var ctrl = this;
   this.app = new app.controller();
   this.signoffModal = new common.modal.controller();
   this.rejectModal = new common.modal.controller();
@@ -54,6 +54,7 @@ request.controller = function(){
 
   this.history = m.prop([]);
   this.location = m.prop("");
+  this.hasCoords = false;
   this.isInvolved = m.prop(false);
   this.canSignoff = m.prop(false);
   this.canEdit = m.prop(false);
@@ -62,14 +63,14 @@ request.controller = function(){
 
   this.addProjectModal.submitProject = function(e){
     e.preventDefault();
-    bi.ajax(routes.controllers.Projects.insert(self.id), {
+    bi.ajax(routes.controllers.Projects.insert(ctrl.id), {
       data: {
-        name: self.addProjectModal.project.name(),
-        amount: self.addProjectModal.project.amount()
+        name: ctrl.addProjectModal.project.name(),
+        amount: ctrl.addProjectModal.project.amount()
       }
     }).then(function (r){
       alert('Submitted!')
-      self.history().unshift(r.event);
+      ctrl.history().unshift(r.event);
     }, common.formErrorHandler);
   }
 
@@ -142,7 +143,7 @@ request.controller = function(){
     )),
 
     implement: new deg(function(){
-      return (self.app.isSuperAdmin() || self.app.isDBM());
+      return (ctrl.app.isSuperAdmin() || ctrl.app.isDBM());
     }, edit("implementingAgency"), save("implementingAgency",
       function (r){
         var agency = extractAgency(r);
@@ -155,7 +156,7 @@ request.controller = function(){
     )),
 
     execute: new deg(function(){
-      return (self.app.isSuperAdmin() || self.app.isDBM() || self.currentUserBelongsToImplementingAgency())
+      return (ctrl.app.isSuperAdmin() || ctrl.app.isDBM() || ctrl.currentUserBelongsToImplementingAgency())
     }, edit("executingAgency"), save("executingAgency",
       function (r){
         var agency = extractAgency(r);
@@ -264,16 +265,14 @@ request.controller = function(){
     }
 
     this.location(data.request.location);
-    var split = self.location().split(',').map(function(coord){return parseFloat(coord)});
-    if(!_.contains(split, NaN) && !(split.length % 2)){
+    var split = ctrl.location().split(',').map(function(coord){return parseFloat(coord)});
+    ctrl.hasCoords = !_.contains(split, NaN) && !(split.length % 2)
+    if(ctrl.hasCoords){
       this.coords(new L.LatLng(split[0], split[1]));
     } else if(data.govUnit.coords){
       var c = data.govUnit.coords;
       var latlng = new L.LatLng(c.lat, c.lng);
       this.coords(latlng);
-      // setTimeout(function(){
-      //   common.leaflet.addPopup(latlng, "No location defined but<br/>the requesting LGU is here.")
-      // }, 100);
     }
 
   }.bind(this));
@@ -331,12 +330,14 @@ request.controller = function(){
     !function tryMap(){
       if($(elem).height()){
         var map = common.leaflet.map(elem);
-        if(self.coords()){
-          map.setView(self.coords(), 8);
-          common.leaflet.addMarker(self.coords());
-          setTimeout(function(){
-            common.leaflet.addPopup(self.coords(), "No location defined but<br/>the requesting LGU is here.")
-          }, 100);
+        if(ctrl.coords()){
+          map.setView(ctrl.coords(), 8);
+          common.leaflet.addMarker(ctrl.coords());
+          if(!ctrl.hasCoords){
+            setTimeout(function(){
+              common.leaflet.addPopup(ctrl.coords(), "No location defined but<br/>the requesting LGU is here.")
+            }, 100);
+          }
         }
       } else {
         setTimeout(tryMap, 100);
