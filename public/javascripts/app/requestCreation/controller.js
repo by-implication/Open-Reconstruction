@@ -18,7 +18,20 @@ requestCreation.controller = function(){
       if(!isInit){
         window.setTimeout(function(){
           var map = common.leaflet.map(elem);
-          common.leaflet.addDrawControls(ctrl.activeEntry().location);
+          common.leaflet.addDrawControls(function (e, editableLayers){
+
+            var layer = e.layer;
+            var coords = layer._latlng
+            var strCoords = coords.lat+","+coords.lng
+
+            ctrl.activeEntry().location(strCoords);
+
+            layer.bindPopup("<h5>Location Saved!</h5>Your coordinates are<br/>" + strCoords);
+            editableLayers.clearLayers();
+            editableLayers.addLayer(layer);
+            editableLayers.openPopup();
+
+          });
         }, 100);
       }
     }

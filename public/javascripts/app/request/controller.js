@@ -329,8 +329,24 @@ request.controller = function(){
   this.initMap = function(elem, isInit){
     !function tryMap(){
       if($(elem).height()){
-        
+
         var map = common.leaflet.map(elem);
+
+        if(ctrl.canEdit){
+          common.leaflet.addDrawControls(function (e){
+
+            common.leaflet.clearMarkers();
+
+            var layer = e.layer;
+            var coords = layer._latlng
+            var strCoords = coords.lat+","+coords.lng
+
+            save("location").bind({input: m.prop(strCoords)})(function(){
+              ctrl.coords(coords);
+            });
+
+          });
+        }
 
         if(ctrl.coords()){
           map.setView(ctrl.coords(), 8);

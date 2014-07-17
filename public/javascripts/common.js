@@ -572,19 +572,8 @@ common.leaflet = {
     });
     this._map.addControl(drawControl);
 
-    this._map.on('draw:created', function (e) {
-      var type = e.layerType,
-        layer = e.layer;
-      var coords = layer._latlng
-      var strCoords = coords.lat+","+coords.lng
-
-      layer.bindPopup("<h5>Location Saved!</h5>Your coordinates are<br/>" + strCoords);
-      editableLayers.clearLayers();
-      editableLayers.addLayer(layer);
-      editableLayers.openPopup();
-
-      callback(strCoords);
-
+    this._map.on('draw:created', function (e){
+      callback(e, editableLayers);
     });
 
   }
