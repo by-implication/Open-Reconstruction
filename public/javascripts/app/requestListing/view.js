@@ -73,7 +73,7 @@ requestListing.view = function(ctrl){
             //   console.log(ctrl.locFilters[index - 1].value());
             // }
             return m(".columns.medium-3", [
-              m("label", [
+              m("label", {className: (index && (ctrl.locFilters[index - 1].value() === "-")) ? "disabled" : ""}, [
                 f.label,
                 // m("span.label.alert", [
                 //   ctrl.hierarchy[index - 1] + " not yet set"
