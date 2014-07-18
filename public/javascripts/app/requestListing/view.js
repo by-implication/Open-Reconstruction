@@ -50,7 +50,7 @@ requestListing.view = function(ctrl){
               ]),
             ]),
             m("dd", [
-              m("a", [
+              m("a", {href: routes.controllers.Projects.index().url, config: m.route}, [
                 "Projects"
               ]),
             ]),

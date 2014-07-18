@@ -15,7 +15,7 @@ projectIndex.view = function(ctrl){
         m(".columns.medium-12", [
           m("dl.tabs.switch.reverse.right", [
             m("dd", [
-              m("a", [
+              m("a", {href: routes.controllers.Requests.index().url, config: m.route}, [
                 "Requests"
               ]),
             ]),
