@@ -207,13 +207,14 @@ viz.create(
           value: ["name", "count", "amount"]
         },
         axes: {
-          "count": "y",
-          "amount": "y2"
+          "count": "y2",
+          "amount": "y"
         },
         type: "bar"
       },
       axis: {
-        y: {
+        y2: {
+          show: true,
           label: {
             text: "Number of Projects",
             position: "outer-center"
@@ -226,7 +227,7 @@ viz.create(
             position: "outer-middle"
           }
         },
-        y2: {
+        y: {
           show: true,
           tick: {
             format: function(t){
@@ -383,8 +384,8 @@ viz.create(
           value: ["agency", "count", "amount"]
         },
         axes: {
-          "count": "y",
-          "amount": "y2"
+          "count": "y2",
+          "amount": "y"
         },
         type: "bar"
       },
@@ -396,13 +397,14 @@ viz.create(
             position: "outer-middle"
           }
         },
-        y: {
+        y2: {
+          show: true,
           label: {
             text: "Number of SAROs assigned",
             position: "outer-center"
           }
         },
-        y2: {
+        y: {
           show: true,
           tick: {
             format: function(t){
@@ -510,8 +512,8 @@ viz.create(
           value: ["name", "count", "amount"]
         },
         axes: {
-          "count": "y",
-          "amount": "y2"
+          "count": "y2",
+          "amount": "y"
         },
         type: "bar",
       },
@@ -523,13 +525,14 @@ viz.create(
             position: "outer-middle"
           }
         },
-        y: {
+        y2: {
+          show: true,
           label: {
             text: "Count",
             position: "outer-center"
           }
         },
-        y2: {
+        y: {
           show: true,
           tick: {
             format: function(t){
