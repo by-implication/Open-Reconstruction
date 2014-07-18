@@ -145,6 +145,7 @@ object Application extends Controller with Secured {
       Projects.index,
       Projects.indexPage,
       Projects.indexMeta,
+      Projects.insert,
       Projects.view,
       Projects.viewMeta,
       Requests.comment,

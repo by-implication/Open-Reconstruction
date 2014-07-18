@@ -7,8 +7,12 @@ request.controller = function(){
   this.addProjectModal = new common.modal.controller();
   this.addProjectModal.project = {
     name: m.prop(),
-    amount: m.prop()
+    amount: m.prop(),
+    typeId: m.prop(),
+    scope: m.prop()
   }
+  this.addProjectModal.projectTypes = m.prop([]);
+  this.addProjectModal.projectScopes = m.prop([]);
 
   var requestId = m.route.param('id');
   this.requestTabs = new common.stickyTabs.controller();
@@ -61,16 +65,15 @@ request.controller = function(){
   this.hasSignedoff = m.prop(false);
   this.input = { comment: m.prop() };
 
-  this.addProjectModal.submitProject = function(e){
+  this.addProjectModal.submit = function(e){
     e.preventDefault();
     bi.ajax(routes.controllers.Projects.insert(ctrl.id), {
-      data: {
-        name: ctrl.addProjectModal.project.name(),
-        amount: ctrl.addProjectModal.project.amount()
-      }
+      data: ctrl.addProjectModal.project
     }).then(function (r){
       alert('Submitted!')
+      ctrl.projects().unshift(r.project);
       ctrl.history().unshift(r.event);
+      ctrl.addProjectModal.close();
     }, common.formErrorHandler);
   }
 
@@ -230,6 +233,7 @@ request.controller = function(){
 
     this.request(data.request);
     this.projects(data.projects);
+    console.log(this.projects());
 
     this.author(data.author);
     this.govUnit(data.govUnit);
@@ -249,6 +253,9 @@ request.controller = function(){
     this.canSignoff(data.canSignoff);
     this.canEdit(data.canEdit);
     request.disasterTypes(data.disasterTypes);
+
+    this.addProjectModal.projectTypes(data.projectTypes);
+    this.addProjectModal.projectScopes(data.projectScopes);
 
     this.request().stagnation = common.stagnation(this);
     if(data.request.level < 4 && !data.request.isRejected){

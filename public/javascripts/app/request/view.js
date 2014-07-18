@@ -80,8 +80,8 @@ request.view = function(ctrl){
       ),
       common.modal.view(
         ctrl.addProjectModal,
-        function(ctrl){
-          return m("form", {onsubmit: ctrl.submitProject}, [
+        function (ctrl){
+          return m("form", {onsubmit: ctrl.submit}, [
             m(".section", [
               m("h3", "Reference a Project"),
               m("p", [
@@ -97,6 +97,26 @@ request.view = function(ctrl){
               common.field(
                 "Amount",
                 m("input[type='text']", {onchange: m.withAttr("value", ctrl.project.amount), placeholder: "1750000"})
+              ),
+              common.field(
+                "Type",
+                m("select", {onchange: m.withAttr("value", ctrl.project.typeId)},
+                  [m("option", {value: 0, selected: true}, "--- Please pick one ---")].concat(
+                    ctrl.projectTypes().map(function (o){
+                      return m("option", {value: o.id}, o.name);
+                    })
+                  )
+                )
+              ),
+              common.field(
+                "Scope",
+                m("select", {onchange: m.withAttr("value", ctrl.project.scope)},
+                  [m("option", {value: 0, selected: true}, "--- Please pick one ---")].concat(
+                    ctrl.projectScopes().map(function (o){
+                      return m("option", {value: o.value}, o.label);
+                    })
+                  )
+                )
               ),
               m("button", [
                 "Submit"
