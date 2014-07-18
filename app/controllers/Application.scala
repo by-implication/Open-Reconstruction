@@ -78,6 +78,8 @@ object Application extends Controller with Secured {
   def adminLgus = index
   def adminAgencies = index
   def faq = index
+  def dashboard = index
+  def browse = index
 
   def process() = Action {
     Ok(views.html.js.process()).withHeaders("Content-Type" -> "text/javascript")
@@ -107,6 +109,8 @@ object Application extends Controller with Secured {
       routes.javascript.Application.faq,
       routes.javascript.Application.home,
       routes.javascript.Application.process,
+      routes.javascript.Application.dashboard,
+      routes.javascript.Application.browse,
       Users.authenticate,
       Users.create,
       Users.login,

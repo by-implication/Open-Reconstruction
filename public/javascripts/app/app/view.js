@@ -110,15 +110,13 @@ app.navbar = function(ctrl){
           ])
         ]),
         m("li.divider"),
-        // m("li", [
-        //   m("a", {
-        //     href: routes.controllers.Application.home().url,
-        //     config: m.route,
-        //     className: (routes.controllers.Application.home().url === m.route() ? "active" : "")
-        //   }, [
-        //     m("i.fa.fa-home.fa-lg")
-        //   ])
-        // ]),
+        m.cookie().logged_in ? m("li", [
+          m("a", {
+            href: routes.controllers.Application.dashboard().url,
+            config: m.route,
+            className: (m.route().startsWith(routes.controllers.Application.dashboard().url) ? "active" : "")
+          }, "Browse")
+        ]) : "",
         m("li", [
           m("a", {
             href: routes.controllers.Viz.index().url,
@@ -128,10 +126,10 @@ app.navbar = function(ctrl){
         ]),
         m("li", [
           m("a", {
-            href: routes.controllers.Requests.index().url,
+            href: routes.controllers.Application.browse().url,
             config: m.route,
-            className: (m.route().startsWith(routes.controllers.Requests.index().url) ? "active" : "")
-          }, "Requests")
+            className: (m.route().startsWith(routes.controllers.Application.browse().url) ? "active" : "")
+          }, "Browse")
         ]),
         m.cookie().logged_in ?
           m("li", [
@@ -142,13 +140,6 @@ app.navbar = function(ctrl){
             }, "Feed")
           ])
         : "",
-        m("li", [
-          m("a", {
-            href: routes.controllers.Projects.index().url,
-            config: m.route,
-            className: (m.route().startsWith(routes.controllers.Projects.index().url) ? "active" : "")
-          }, "Projects")
-        ]),
         m("li", [
           m("a", {
             href: routes.controllers.Application.faq().url,

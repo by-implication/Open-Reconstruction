@@ -21,3 +21,4 @@ disasterEditing/module.jsm
 feed/module.jsm
 project/module.jsm
 projectIndex/module.jsm
+dashboard/module.jsm

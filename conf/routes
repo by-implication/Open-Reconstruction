@@ -4,112 +4,115 @@
 
 # Home page
 
-GET     /                                         controllers.Application.index
-GET     /home                                     controllers.Application.home
-GET     /faq                                      controllers.Application.faq
-GET     /populate                                 controllers.Application.populate
-GET     /process                                  controllers.Application.process
-GET     /assets/javascripts/routes/play.js        controllers.Application.jsRoutes
-GET     /admin                                    controllers.Application.admin
-GET     /admin/lgus                               controllers.Application.adminLgus
-GET     /admin/lgus/meta                          controllers.GovUnits.listLgus
-GET     /admin/lgus/:psgc                         controllers.GovUnits.getChildren(psgc: String)
-GET     /admin/agencies                           controllers.Application.adminAgencies
-GET     /admin/agencies/meta                      controllers.GovUnits.listAgencies
-GET     /admin/disasters                          controllers.Disasters.index
-GET     /admin/disasters/meta                     controllers.Disasters.indexMeta
-GET     /admin/disasters/new                      controllers.Disasters.create
-GET     /admin/disasters/new/meta                 controllers.Disasters.createMeta
-POST    /admin/disasters/new                      controllers.Disasters.insert
-GET     /admin/disasters/:id                      controllers.Disasters.edit(id: Int)
-GET     /admin/disasters/:id/meta                 controllers.Disasters.editMeta(id: Int)
-POST    /admin/disasters/:id                      controllers.Disasters.update(id: Int)
-GET     /admin/types/project                      controllers.Admin.projectTypes
-GET     /admin/types/project/meta                 controllers.Admin.projectTypesMeta
-GET     /admin/types/disaster                     controllers.Admin.disasterTypes
-GET     /admin/types/disaster/meta                controllers.Admin.disasterTypesMeta
-POST    /admin/types/:k/new                       controllers.Admin.insertType(k: String)
-POST    /admin/types/:k/:id                       controllers.Admin.updateType(k: String, id: Int)
+GET     /                                                controllers.Application.index
+GET     /home                                            controllers.Application.home
+GET     /faq                                             controllers.Application.faq
+GET     /populate                                        controllers.Application.populate
+GET     /process                                         controllers.Application.process
+GET     /assets/javascripts/routes/play.js               controllers.Application.jsRoutes
+GET     /admin                                           controllers.Application.admin
+GET     /admin/lgus                                      controllers.Application.adminLgus
+GET     /admin/lgus/meta                                 controllers.GovUnits.listLgus
+GET     /admin/lgus/:psgc                                controllers.GovUnits.getChildren(psgc: String)
+GET     /admin/agencies                                  controllers.Application.adminAgencies
+GET     /admin/agencies/meta                             controllers.GovUnits.listAgencies
+GET     /admin/disasters                                 controllers.Disasters.index
+GET     /admin/disasters/meta                            controllers.Disasters.indexMeta
+GET     /admin/disasters/new                             controllers.Disasters.create
+GET     /admin/disasters/new/meta                        controllers.Disasters.createMeta
+POST    /admin/disasters/new                             controllers.Disasters.insert
+GET     /admin/disasters/:id                             controllers.Disasters.edit(id: Int)
+GET     /admin/disasters/:id/meta                        controllers.Disasters.editMeta(id: Int)
+POST    /admin/disasters/:id                             controllers.Disasters.update(id: Int)
+GET     /admin/types/project                             controllers.Admin.projectTypes
+GET     /admin/types/project/meta                        controllers.Admin.projectTypesMeta
+GET     /admin/types/disaster                            controllers.Admin.disasterTypes
+GET     /admin/types/disaster/meta                       controllers.Admin.disasterTypesMeta
+POST    /admin/types/:k/new                              controllers.Admin.insertType(k: String)
+POST    /admin/types/:k/:id                              controllers.Admin.updateType(k: String, id: Int)
+
+GET			/browse																		       controllers.Application.browse
+GET			/dashboard																       controllers.Application.dashboard
 
 # Map static resources from the /public folder to the /assets URL path
 
-GET     /favicon.ico                              controllers.Assets.at(path="/public", file="images/favicon.ico")
-GET     /assets/*file                             controllers.Assets.at(path="/public", file)
+GET     /favicon.ico                                     controllers.Assets.at(path="/public", file="images/favicon.ico")
+GET     /assets/*file                                    controllers.Assets.at(path="/public", file)
 
-GET     /login                                    controllers.Users.login
-POST    /login                                    controllers.Users.authenticate
-GET     /logout                                   controllers.Users.logout
+GET     /login                                           controllers.Users.login
+POST    /login                                           controllers.Users.authenticate
+GET     /logout                                          controllers.Users.logout
 
-GET     /users/meta                               controllers.Users.meta
-GET     /users/:id                                controllers.Users.view(id: Int)
-GET     /users/:id/:page/:s/:sD                   controllers.Users.viewPage(id: Int, page: Int, s: String, sD: String)
-GET     /users/:id/:page/:s/:sD/meta              controllers.Users.viewMeta(id: Int, page: Int, s: String, sD: String)
+GET     /users/meta                                      controllers.Users.meta
+GET     /users/:id                                       controllers.Users.view(id: Int)
+GET     /users/:id/:page/:s/:sD                          controllers.Users.viewPage(id: Int, page: Int, s: String, sD: String)
+GET     /users/:id/:page/:s/:sD/meta                     controllers.Users.viewMeta(id: Int, page: Int, s: String, sD: String)
 
-GET     /requests                                 controllers.Requests.index
-GET     /requests/:t/:p/:pid/:l/:s/:sD/:d/:a      controllers.Requests.indexPage(t: String, p: Int, pid: Int, l: String, s: String, sD: String, d: Int, a: Int)
-GET     /requests/:t/:p/:pid/:l/:s/:sD/:d/:a/meta controllers.Requests.indexMeta(t: String, p: Int, pid: Int, l: String, s: String, sD: String, d: Int, a: Int)
+GET     /browse/requests                                 controllers.Requests.index
+GET     /browse/requests/:t/:p/:pid/:l/:s/:sD/:d/:a      controllers.Requests.indexPage(t: String, p: Int, pid: Int, l: String, s: String, sD: String, d: Int, a: Int)
+GET     /browse/requests/:t/:p/:pid/:l/:s/:sD/:d/:a/meta controllers.Requests.indexMeta(t: String, p: Int, pid: Int, l: String, s: String, sD: String, d: Int, a: Int)
 
-GET     /requests/new                             controllers.Requests.create
-GET     /requests/new/meta                        controllers.Requests.createMeta
-GET     /requests/new/bucketKey                   controllers.Attachments.getNewBucketKey
-POST    /requests/new/attach/:k/:rId              controllers.Attachments.addToBucket(k: String, rId: Int)
-GET     /requests/new/thumb/:k/:rId/:f            controllers.Attachments.bucketThumb(k: String, rId: Int, f: String)
-GET     /requests/new/preview/:k/:rId/:f          controllers.Attachments.bucketPreview(k: String, rId: Int, f: String)
-GET     /requests/new/download/:k/:rId/:f         controllers.Attachments.bucketDownload(k: String, rId: Int, f: String)
-POST    /requests/new                             controllers.Requests.insert
+GET     /browse/requests/new                             controllers.Requests.create
+GET     /browse/requests/new/meta                        controllers.Requests.createMeta
+GET     /browse/requests/new/bucketKey                   controllers.Attachments.getNewBucketKey
+POST    /browse/requests/new/attach/:k/:rId              controllers.Attachments.addToBucket(k: String, rId: Int)
+GET     /browse/requests/new/thumb/:k/:rId/:f            controllers.Attachments.bucketThumb(k: String, rId: Int, f: String)
+GET     /browse/requests/new/preview/:k/:rId/:f          controllers.Attachments.bucketPreview(k: String, rId: Int, f: String)
+GET     /browse/requests/new/download/:k/:rId/:f         controllers.Attachments.bucketDownload(k: String, rId: Int, f: String)
+POST    /browse/requests/new                             controllers.Requests.insert
 
-GET     /requests/:id                             controllers.Requests.view(id: Int)
-GET     /requests/:id/assignments                 controllers.Requests.viewAssignments(id: Int)
-GET     /requests/:id/images                      controllers.Requests.viewImages(id: Int)
-GET     /requests/:id/documents                   controllers.Requests.viewDocuments(id: Int)
-GET     /requests/:id/activity                    controllers.Requests.viewActivity(id: Int)
-GET     /requests/:id/references                  controllers.Requests.viewReferences(id: Int)
-GET     /requests/:id/meta                        controllers.Requests.viewMeta(id: Int)
-POST    /requests/:id/new-project                 controllers.Projects.insert(id: Int)
+GET     /browse/requests/:id                             controllers.Requests.view(id: Int)
+GET     /browse/requests/:id/assignments                 controllers.Requests.viewAssignments(id: Int)
+GET     /browse/requests/:id/images                      controllers.Requests.viewImages(id: Int)
+GET     /browse/requests/:id/documents                   controllers.Requests.viewDocuments(id: Int)
+GET     /browse/requests/:id/activity                    controllers.Requests.viewActivity(id: Int)
+GET     /browse/requests/:id/references                  controllers.Requests.viewReferences(id: Int)
+GET     /browse/requests/:id/meta                        controllers.Requests.viewMeta(id: Int)
+POST    /browse/requests/:id/new-project                 controllers.Projects.insert(id: Int)
 
-POST    /requests/:id/signoff                     controllers.Requests.signoff(id: Int)
-POST    /requests/:id/reject                      controllers.Requests.reject(id: Int)
-POST    /requests/:id/comment                     controllers.Requests.comment(id: Int)
-POST    /requests/:id/edit/:f                     controllers.Requests.editField(id: Int, f: String)
-POST    /requests/:id/attach/:rId                 controllers.Attachments.add(id: Int, rId: Int)
+POST    /browse/requests/:id/signoff                     controllers.Requests.signoff(id: Int)
+POST    /browse/requests/:id/reject                      controllers.Requests.reject(id: Int)
+POST    /browse/requests/:id/comment                     controllers.Requests.comment(id: Int)
+POST    /browse/requests/:id/edit/:f                     controllers.Requests.editField(id: Int, f: String)
+POST    /browse/requests/:id/attach/:rId                 controllers.Attachments.add(id: Int, rId: Int)
 
-GET     /requests/:id/edit                        controllers.Requests.edit(id: Int)
-GET     /requests/:id/edit/meta                   controllers.Requests.editMeta(id: Int)
-POST    /requests/:id/edit                        controllers.Requests.update(id: Int)
+GET     /browse/requests/:id/edit                        controllers.Requests.edit(id: Int)
+GET     /browse/requests/:id/edit/meta                   controllers.Requests.editMeta(id: Int)
+POST    /browse/requests/:id/edit                        controllers.Requests.update(id: Int)
 
-GET     /projects                                 controllers.Projects.index
-GET     /projects/:p                              controllers.Projects.indexPage(p: Int)
-GET     /projects/:p/meta                         controllers.Projects.indexMeta(p: Int)
-GET     /project/:id                              controllers.Projects.view(id: Int)
-GET     /project/:id/meta                         controllers.Projects.viewMeta(id: Int)
+GET     /browse/projects                                 controllers.Projects.index
+GET     /browse/projects/:p                              controllers.Projects.indexPage(p: Int)
+GET     /browse/projects/:p/meta                         controllers.Projects.indexMeta(p: Int)
+GET     /browse/project/:id                              controllers.Projects.view(id: Int)
+GET     /browse/project/:id/meta                         controllers.Projects.viewMeta(id: Int)
 
-GET     /viz                                      controllers.Viz.index
-GET     /viz/meta                                 controllers.Viz.indexMeta
-GET     /viz/data/:v                              controllers.Viz.getData(v: String)
-GET     /viz/:v                                   controllers.Viz.view(v: String)
+GET     /viz                                             controllers.Viz.index
+GET     /viz/meta                                        controllers.Viz.indexMeta
+GET     /viz/data/:v                                     controllers.Viz.getData(v: String)
+GET     /viz/:v                                          controllers.Viz.view(v: String)
 
-GET     /attachments/:id/preview                  controllers.Attachments.preview(id: Int)
-GET     /attachments/:id/download                 controllers.Attachments.download(id: Int)
-GET     /attachments/:id/thumb                    controllers.Attachments.thumb(id: Int)
-POST    /attachments/:id/archive                  controllers.Attachments.archive(id: Int)
-POST    /attachments/:id/unarchive                controllers.Attachments.unarchive(id: Int)
+GET     /attachments/:id/preview                         controllers.Attachments.preview(id: Int)
+GET     /attachments/:id/download                        controllers.Attachments.download(id: Int)
+GET     /attachments/:id/thumb                           controllers.Attachments.thumb(id: Int)
+POST    /attachments/:id/archive                         controllers.Attachments.archive(id: Int)
+POST    /attachments/:id/unarchive                       controllers.Attachments.unarchive(id: Int)
 
-GET     /gov-units/new/agency                     controllers.GovUnits.createAgency
-GET     /gov-units/new/agency/meta                controllers.GovUnits.createAgencyMeta
-POST    /gov-units/new/agency                     controllers.GovUnits.insertAgency
-GET     /gov-units/new/lgu/:l/:id                 controllers.GovUnits.createLgu(l: Int, id: Int)
-GET     /gov-units/new/lgu/:l/:id/meta            controllers.GovUnits.createLguMeta(l: Int, id: Int)
-POST    /gov-units/new/lgu/:l/:id                 controllers.GovUnits.insertLgu(l: Int, id: Int)
-GET     /gov-units/search/:s                      controllers.GovUnits.search(s: String)
-GET     /gov-units/:id                            controllers.GovUnits.view(id: Int)
-GET     /gov-units/:id/edit                       controllers.GovUnits.edit(id: Int)
-GET     /gov-units/:id/edit/meta                  controllers.GovUnits.editMeta(id: Int)
-POST    /gov-units/:id/edit                       controllers.GovUnits.update(id: Int)
-GET     /gov-units/:id/new-user                   controllers.Users.create(id: Int)
-POST    /gov-units/:id/new-user                   controllers.Users.insert(id: Int)
-GET     /gov-units/:id/:p                         controllers.GovUnits.viewPage(id: Int, p: Int)
-GET     /gov-units/:id/:p/meta                    controllers.GovUnits.viewMeta(id: Int, p: Int)
+GET     /gov-units/new/agency                            controllers.GovUnits.createAgency
+GET     /gov-units/new/agency/meta                       controllers.GovUnits.createAgencyMeta
+POST    /gov-units/new/agency                            controllers.GovUnits.insertAgency
+GET     /gov-units/new/lgu/:l/:id                        controllers.GovUnits.createLgu(l: Int, id: Int)
+GET     /gov-units/new/lgu/:l/:id/meta                   controllers.GovUnits.createLguMeta(l: Int, id: Int)
+POST    /gov-units/new/lgu/:l/:id                        controllers.GovUnits.insertLgu(l: Int, id: Int)
+GET     /gov-units/search/:s                             controllers.GovUnits.search(s: String)
+GET     /gov-units/:id                                   controllers.GovUnits.view(id: Int)
+GET     /gov-units/:id/edit                              controllers.GovUnits.edit(id: Int)
+GET     /gov-units/:id/edit/meta                         controllers.GovUnits.editMeta(id: Int)
+POST    /gov-units/:id/edit                              controllers.GovUnits.update(id: Int)
+GET     /gov-units/:id/new-user                          controllers.Users.create(id: Int)
+POST    /gov-units/:id/new-user                          controllers.Users.insert(id: Int)
+GET     /gov-units/:id/:p                                controllers.GovUnits.viewPage(id: Int, p: Int)
+GET     /gov-units/:id/:p/meta                           controllers.GovUnits.viewMeta(id: Int, p: Int)
 
-GET     /feed                                     controllers.Feed.index
-GET     /feed/:p                                  controllers.Feed.indexPage(p: Int)
-GET     /feed/:p/meta                             controllers.Feed.indexMeta(p: Int)
+GET     /feed                                            controllers.Feed.index
+GET     /feed/:p                                         controllers.Feed.indexPage(p: Int)
+GET     /feed/:p/meta                                    controllers.Feed.indexMeta(p: Int)

@@ -22,12 +22,12 @@ function GATrackedRoutes(routes) {
 m.route.mode = "pathname";
 m.route(document, window.location.pathname, GATrackedRoutes({
   "/": home,
-  "/requests": requestListing,
-  "/requests/:tab/:page/:projectTypeId/:l/:sort/:sortDir/:disaster/:agencyFilterId": requestListing,
-  "/requests/new": requestCreation,
-  "/requests/:id": request,
-  "/requests/:id/edit": requestEdit,
-  "/requests/:id/:tab": request,
+  "/browse/requests": requestListing,
+  "/browse/requests/:tab/:page/:projectTypeId/:l/:sort/:sortDir/:disaster/:agencyFilterId": requestListing,
+  "/browse/requests/new": requestCreation,
+  "/browse/requests/:id": request,
+  "/browse/requests/:id/edit": requestEdit,
+  "/browse/requests/:id/:tab": request,
   "/viz/:v": viz,
   "/viz": vizIndex,
   "/home": home,
@@ -51,7 +51,9 @@ m.route(document, window.location.pathname, GATrackedRoutes({
   "/faq": faq,
   "/feed": feed,
   "/feed/:p": feed,
-  "/projects": projectIndex,
-  "/projects/:p": projectIndex,
-  "/project/:id": project
+  "/browse/projects": projectIndex,
+  "/browse/projects/:p": projectIndex,
+  "/browse/project/:id": project,
+  "/browse": requestListing,
+  "/dashboard": dashboard
 }));
