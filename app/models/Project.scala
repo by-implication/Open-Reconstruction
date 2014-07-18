@@ -15,12 +15,14 @@ object Project extends ProjectGen {
   def indexList(page: Int) = DB.withConnection { implicit c =>
 
     val r = SQL("""
-      SELECT *, COUNT(*) OVER() FROM projects
+      SELECT projects.*, COUNT(*) OVER() FROM projects
+      NATURAL JOIN reqs
+      WHERE reqs.req_level > 5
       LIMIT {limit} OFFSET {offset}
     """).on(
       'limit -> PAGE_LIMIT,
       'offset -> (page-1) * PAGE_LIMIT
-    )
+    ) 
 
     val list = r.list(simple)
     val count: Long = r.list(get[Long]("count")).headOption.getOrElse(0)
