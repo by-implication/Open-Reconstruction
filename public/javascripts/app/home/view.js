@@ -322,7 +322,7 @@ home.view = function(ctrl){
         m(".row.info", [
           m(".columns.medium-12", [
             m("h2",["Transparency to the People"]),
-            m("p", [
+            m("p.big", [
               "We have really cool graphs, charts, and lists that you can play with.",
               m("br"),
               "You can even get the raw data, if you want to dig deep and get your hands dirty. (coming soon)"]),
