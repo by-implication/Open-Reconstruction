@@ -229,87 +229,82 @@ home.view = function(ctrl){
             m("h2", [
               "One-Stop Shop"
             ]),
-            m("p", [
-              "Open Reconstruction streamlines the whole process from end to end, tracking a project throughout its lifecycle.",
-              m("br"),
-              "All sectors can take advantage of the system. See how."
+            // m("p", [
+            //   // "Open Reconstruction streamlines the whole process from end to end, tracking a project throughout its lifecycle.",
+            //   // m("br"),
+            //   "Both public and government sectors can take advantage of the system. See how."
+            // ]),
+          ]),
+        ]),
+        m(".row", [
+          m(".columns.medium-12.text-center", [
+            m("dl.tabs.switch", [
+              m("dd", {className: ctrl.infoDumpCurrentTab() === "public" ? "active" : ""}, [
+                m("a", {onclick: ctrl.infoDumpCurrentTab.bind(ctrl, "public")}, [
+                  "Public"
+                ]),
+              ]),
+              m("dd", {className: ctrl.infoDumpCurrentTab() === "govUnit" ? "active" : ""}, [
+                m("a", {onclick: ctrl.infoDumpCurrentTab.bind(ctrl, "govUnit")}, [
+                  "Government Units"
+                ]),
+              ]),
             ]),
           ]),
         ]),
-        m(".row.details", [
-          m(".columns.medium-6.large-gutters", [
-            m("h3.ruled", "Government Units"),
-            m(".row", [
-              m(".columns.medium-3", [
-                m("figure.small", [
-                  m("img",{src:"/assets/images/landing/5-request.svg"})
-                ]),
-              ]),
-              m(".columns.medium-9", [
-                m("h4", "Request"),
-                m("p", "You can check if your projects are already in the system, with our search and filtering. If they are not yet there, request access, and submit a new eTicket for it!"),
-              ]),
+        ctrl.infoDumpCurrentTab() === "govUnit" ?
+          m(".row", [
+            m("p.text-center", [
+              "We've streamlined the approval process so that the reconstruction gets from paper to brick—lightning fast."
             ]),
-            m(".row", [
-              m(".columns.medium-3", [
-                m("figure.small", [
-                  m("img",{src:"/assets/images/landing/6-approval.svg"}),
-                ]),
+            m(".columns.medium-4.feature", [
+              m("figure.small", [
+                m("img",{src:"/assets/images/landing/5-request.svg"})
               ]),
-              m(".columns.medium-9", [
-                m("h4", "Approval"),
-                m("p","Project approval now occurs digitally, without the need for physical mailing time or the risk of document loss.")
-              ]),
+              m("h4", "Request"),
+              m("p", "You can check if your projects are already in the system, with our search and filtering. If they are not yet there, request access, and submit a new eTicket for it!"),
             ]),
-            m(".row", [
-              m(".columns.medium-3", [
-                m("figure.small", [
-                  m("img",{src:"/assets/images/landing/7-tracking.svg"}),
-                ]),
+            m(".columns.medium-4.feature", [
+              m("figure.small", [
+                m("img",{src:"/assets/images/landing/6-approval.svg"}),
               ]),
-              m(".columns.medium-9", [
-                m("h4", "Tracking"),
-                m("p","Agencies and the public can keep track of requests and projects' overall progress.")
-              ]),
+              m("h4", "Approval"),
+              m("p","Project approval now occurs digitally, without the need for physical mailing time or the risk of document loss.")
             ]),
-          ]),
-          m(".columns.medium-6.large-gutters", [
-            m("h3.ruled", "Public"),
-            m(".row", [
-              m(".columns.medium-3", [
-                m("figure.small", [
-                  m("img",{src:"/assets/images/landing/7-tracking.svg"}),
-                ]),
+            m(".columns.medium-4.feature", [
+              m("figure.small", [
+                m("img",{src:"/assets/images/landing/7-tracking.svg"}),
               ]),
-              m(".columns.medium-9", [
-                m("h4", "Tracking"),
-                m("p","Agencies and the public can keep track of requests and projects' overall progress.")
-              ]),
-            ]),
-            m(".row", [
-              m(".columns.medium-3", [
-                m("figure.small", [
-                  m("img",{src:"/assets/images/landing/9-sharing.svg"}),
-                ]),
-              ]),
-              m(".columns.medium-9", [
-                m("h4", "Sharing"),
-                m("p", "Let people know about requests and projects that are important to you. Share your thoughts on Facebook and Twitter!")
-              ]),
-            ]),
-            m(".row", [
-              m(".columns.medium-3", [
-                m("figure.small", [
-                  m("img",{src:"/assets/images/landing/8-interact.svg"}),
-                ]),
-              ]),
-              m(".columns.medium-9", [
-                m("h4", "Interact"),
-                m("p", "Or if you'd prefer, you can simply leave comments and suggestions on the site itself.")
-              ]),
+              m("h4", "Tracking"),
+              m("p","Agencies and the public can keep track of requests and projects' overall progress.")
             ]),
           ])
-        ]),
+        : m(".row", [
+            m("p.text-center", [
+              "We've always said that transparency is essential for good governance. We're putting our foot where our mouth is, so we've made all this data public."
+            ]),
+            m(".columns.medium-4.feature", [
+              m("figure.small", [
+                m("img",{src:"/assets/images/landing/7-tracking.svg"}),
+              ]),
+              m("h4", "Tracking"),
+                m("p","Agencies and the public can keep track of requests and projects' overall progress.")
+            ]),
+            m(".columns.medium-4.feature", [
+              m("figure.small", [
+                m("img",{src:"/assets/images/landing/9-sharing.svg"}),
+              ]),
+              m("h4", "Sharing"),
+              m("p", "Let people know about requests and projects that are important to you. Share your thoughts on Facebook and Twitter!")
+            ]),
+            m(".columns.medium-4.feature", [
+              m("figure.small", [
+                m("img",{src:"/assets/images/landing/8-interact.svg"}),
+              ]),
+              m("h4", "Interact"),
+              m("p", "Or if you'd prefer, you can simply leave comments and suggestions on the site itself.")
+            ]),
+          ]),
       ]),
       m("section.public", [
         m(".row.info", [

@@ -7,6 +7,7 @@ home.controller = function(){
   this.byDisasterType = m.prop([]);
   this.byMonth = m.prop([]);
   this.byLevel = m.prop([]);
+  this.infoDumpCurrentTab = m.prop("public");
 
   function qtyAmt(){ return {qty: 0, amt: 0} }
 

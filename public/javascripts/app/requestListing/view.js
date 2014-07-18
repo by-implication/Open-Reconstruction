@@ -107,7 +107,7 @@ requestListing.view = function(ctrl){
       m.cookie().logged_in ?
         m(".row", [
           m(".columns.medium-12.text-center", [
-            common.tabs.menu(ctrl.tabs, {id: "relevance", config: ctrl.setCurrentTab})
+            common.tabs.menu(ctrl.tabs, {className: "switch", config: ctrl.setCurrentTab})
           ]),
         ]) : "",
       m(".row", [

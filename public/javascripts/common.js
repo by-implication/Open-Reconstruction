@@ -249,7 +249,7 @@ common.tabs.menu = function(ctrl, options){
       if(tab.href.charAt(0) != '#') {
         options.config = m.route;
       }
-      return m("dd", {class: tabClass(tab)}, [
+      return m("dd", {className: tabClass(tab)}, [
         m("a", options, tab.label())
       ]);
     })
@@ -396,6 +396,13 @@ common.sticky.config = function(ctrl){
     }
   }
 }
+// common.switch = {};
+// common.switch.controller = function(){
+
+// }
+// common.switch.view = function(ctrl){
+
+// }
 
 common.modal = {};
 common.modal.controller = function(options){
