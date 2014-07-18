@@ -611,7 +611,7 @@ request.progress = function(ctrl){
 request.miniProgress = function(request){
   return m(".progress.mini", [
     m(".step", {
-      style: {width: (100/6 * (request.level + 1) + '%')},
+      style: {width: (100/8 * (request.level + 1) + '%')},
       className: "done"
     })
   ])
