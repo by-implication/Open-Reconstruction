@@ -998,7 +998,7 @@ body .select2-container
 .tabs.switch
   display: inline-block
   border: 1px solid $accent
-  border-radius: 1000px
+  border-radius: 3px
   overflow: hidden
   &.reverse
     border: 1px solid white
@@ -1008,11 +1008,14 @@ body .select2-container
         background-color: white
         &:hover
           color: $accent
+          background-color: lighten($accent, 50%)
       .label
         color: $accent
         border-color: $accent
     dd > a
       color: white
+      &:hover
+        background-color: darken($accent, 10%)
       .label
         color: white
         border-color: white
@@ -1028,7 +1031,7 @@ body .select2-container
       background-color: $accent
       &:hover
         color: white
-        background-color: lighten($accent, 50%)
+        background-color: darken($accent, 10%)
     .label
       color: white
       border-color: white
@@ -1036,7 +1039,7 @@ body .select2-container
     border: 0
     color: $accent
     &:hover
-      background-color: darken($accent, 10%)
+      background-color: lighten($accent, 50%)
       // color: darken($accent, 10%)
       // .label
       //   color: darken($accent, 10%)
