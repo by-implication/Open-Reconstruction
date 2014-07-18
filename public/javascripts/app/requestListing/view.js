@@ -40,22 +40,42 @@ requestListing.view = function(ctrl){
   }
 // {disaster: f.id}
   return app.template(ctrl.app, "Requests", [
-    common.banner("Requests"),
-    m.cookie().logged_in ?
-      m("section#new-request-banner", [
-        m(".row", [
-          m(".columns.medium-12", [
-            m("h2.left", [
-              "Don't have an existing request? Make a new one."
+    m("section.banner", [
+      m(".row", [
+        m(".columns.medium-12", [
+          m("dl.tabs.switch.reverse.right", [
+            m("dd.active", [
+              m("a", [
+                "Requests"
+              ]),
             ]),
-            m("a.button.right",
-              {href: routes.controllers.Requests.create().url, config: m.route},
-              "New Request"
-            ),
+            m("dd", [
+              m("a", [
+                "Projects"
+              ]),
+            ]),
+          ]),
+          m("h1", [
+            "Browsing requests"
           ]),
         ]),
-      ])
-    : "",
+      ]),
+    ]),
+    // m.cookie().logged_in ?
+    //   m("section#new-request-banner", [
+    //     m(".row", [
+    //       m(".columns.medium-12", [
+    //         m("h2.left", [
+    //           "Don't have an existing request? Make a new one."
+    //         ]),
+    //         m("a.button.right",
+    //           {href: routes.controllers.Requests.create().url, config: m.route},
+    //           "New Request"
+    //         ),
+    //       ]),
+    //     ]),
+    //   ])
+    // : "",
     
     m("section#loc-filters", [
       m(".row", [
@@ -104,12 +124,12 @@ requestListing.view = function(ctrl){
       ),
     ]),
     m("section", [
-      m.cookie().logged_in ?
-        m(".row", [
-          m(".columns.medium-12.text-center", [
-            common.tabs.menu(ctrl.tabs, {className: "switch", config: ctrl.setCurrentTab})
-          ]),
-        ]) : "",
+      // m.cookie().logged_in ?
+      //   m(".row", [
+      //     m(".columns.medium-12.text-center", [
+      //       common.tabs.menu(ctrl.tabs, {className: "switch", config: ctrl.setCurrentTab})
+      //     ]),
+      //   ]) : "",
       m(".row", [
         m(".columns.medium-12", [
           pagination,

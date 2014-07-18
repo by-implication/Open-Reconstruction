@@ -1000,6 +1000,22 @@ body .select2-container
   border: 1px solid $accent
   border-radius: 1000px
   overflow: hidden
+  &.reverse
+    border: 1px solid white
+    .active
+      a
+        color: $accent
+        background-color: white
+        &:hover
+          color: $accent
+      .label
+        color: $accent
+        border-color: $accent
+    dd > a
+      color: white
+      .label
+        color: white
+        border-color: white
   +media(max-width $desktopWidth)
     border-radius: 3px
     display: block
@@ -1012,7 +1028,7 @@ body .select2-container
       background-color: $accent
       &:hover
         color: white
-        background-color: darken($accent, 10%)
+        background-color: lighten($accent, 50%)
     .label
       color: white
       border-color: white
@@ -1020,7 +1036,7 @@ body .select2-container
     border: 0
     color: $accent
     &:hover
-      background-color: lighten($accent, 50%)
+      background-color: darken($accent, 10%)
       // color: darken($accent, 10%)
       // .label
       //   color: darken($accent, 10%)
