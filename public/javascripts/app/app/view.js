@@ -115,7 +115,7 @@ app.navbar = function(ctrl){
             href: routes.controllers.Application.dashboard().url,
             config: m.route,
             className: (m.route().startsWith(routes.controllers.Application.dashboard().url) ? "active" : "")
-          }, "Browse")
+          }, "Dashboard")
         ]) : "",
         m("li", [
           m("a", {
