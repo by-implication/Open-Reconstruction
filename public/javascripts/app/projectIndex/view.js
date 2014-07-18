@@ -10,7 +10,27 @@ projectIndex.view = function(ctrl){
 	);
 
   return app.template(ctrl.app, "Projects", [
-    common.banner("Projects for implementation"),
+    m("section.banner", [
+      m(".row", [
+        m(".columns.medium-12", [
+          m("dl.tabs.switch.reverse.right", [
+            m("dd", [
+              m("a", [
+                "Requests"
+              ]),
+            ]),
+            m("dd.active", [
+              m("a", [
+                "Projects"
+              ]),
+            ]),
+          ]),
+          m("h1", [
+            "Browsing projects for implementation"
+          ]),
+        ]),
+      ]),
+    ]),
     m("section", [
       m(".row", [
         m(".columns.medium-12", [
