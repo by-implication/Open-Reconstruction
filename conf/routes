@@ -31,8 +31,8 @@ GET     /admin/types/disaster/meta                       controllers.Admin.disas
 POST    /admin/types/:k/new                              controllers.Admin.insertType(k: String)
 POST    /admin/types/:k/:id                              controllers.Admin.updateType(k: String, id: Int)
 
-GET			/browse																		       controllers.Application.browse
-GET			/dashboard																       controllers.Application.dashboard
+GET     /browse                                          controllers.Application.browse
+GET     /dashboard                                       controllers.Application.dashboard
 
 # Map static resources from the /public folder to the /assets URL path
 
@@ -49,8 +49,8 @@ GET     /users/:id/:page/:s/:sD                          controllers.Users.viewP
 GET     /users/:id/:page/:s/:sD/meta                     controllers.Users.viewMeta(id: Int, page: Int, s: String, sD: String)
 
 GET     /browse/requests                                 controllers.Requests.index
-GET     /browse/requests/:t/:p/:pid/:l/:s/:sD/:d/:a      controllers.Requests.indexPage(t: String, p: Int, pid: Int, l: String, s: String, sD: String, d: Int, a: Int)
-GET     /browse/requests/:t/:p/:pid/:l/:s/:sD/:d/:a/meta controllers.Requests.indexMeta(t: String, p: Int, pid: Int, l: String, s: String, sD: String, d: Int, a: Int)
+GET     /browse/requests/:p/:pid/:l/:s/:sD/:d/:a      controllers.Requests.indexPage(p: Int, pid: Int, l: String, s: String, sD: String, d: Int, a: Int)
+GET     /browse/requests/:p/:pid/:l/:s/:sD/:d/:a/meta controllers.Requests.indexMeta(p: Int, pid: Int, l: String, s: String, sD: String, d: Int, a: Int)
 
 GET     /browse/requests/new                             controllers.Requests.create
 GET     /browse/requests/new/meta                        controllers.Requests.createMeta

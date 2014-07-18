@@ -2,7 +2,7 @@ requestListing.view = function(ctrl){
   
   var pagination = common.pagination(
     ctrl.page,
-    ctrl.counts[ctrl.tab],
+    ctrl.count,
     ctrl.pageLimit,
     function (p){
       return ctrl.nav({page: p});
@@ -31,14 +31,13 @@ requestListing.view = function(ctrl){
     var obj = _.find(arr, function(e){
       return e.id === id;
     });
-    // console.log(obj);
     if(!_.isUndefined(obj)){
       return obj.name;
     } else {
       return null;
     }
   }
-// {disaster: f.id}
+
   return app.template(ctrl.app, "Requests", [
     m("section.banner", [
       m(".row", [
@@ -61,22 +60,6 @@ requestListing.view = function(ctrl){
         ]),
       ]),
     ]),
-    // m.cookie().logged_in ?
-    //   m("section#new-request-banner", [
-    //     m(".row", [
-    //       m(".columns.medium-12", [
-    //         m("h2.left", [
-    //           "Don't have an existing request? Make a new one."
-    //         ]),
-    //         m("a.button.right",
-    //           {href: routes.controllers.Requests.create().url, config: m.route},
-    //           "New Request"
-    //         ),
-    //       ]),
-    //     ]),
-    //   ])
-    // : "",
-    
     m("section#loc-filters", [
       m(".row", [
         m(".columns.medium-12", [
@@ -89,15 +72,9 @@ requestListing.view = function(ctrl){
         null, 
         function(){
           return ctrl.locFilters.map(function (f, index){
-            // if (index){
-            //   console.log(ctrl.locFilters[index - 1].value());
-            // }
             return m(".columns.medium-3", [
               m("label", {className: (index && (ctrl.locFilters[index - 1].value() === "-")) ? "disabled" : ""}, [
                 f.label,
-                // m("span.label.alert", [
-                //   ctrl.hierarchy[index - 1] + " not yet set"
-                // ]),
                 select2.view({
                   data: f.data, 
                   value: f.value(), 
@@ -124,16 +101,10 @@ requestListing.view = function(ctrl){
       ),
     ]),
     m("section", [
-      // m.cookie().logged_in ?
-      //   m(".row", [
-      //     m(".columns.medium-12.text-center", [
-      //       common.tabs.menu(ctrl.tabs, {className: "switch", config: ctrl.setCurrentTab})
-      //     ]),
-      //   ]) : "",
       m(".row", [
         m(".columns.medium-12", [
           pagination,
-          common.tabs.content(ctrl.tabs),
+          request.listView(ctrl.requestList, ctrl.sortBy, ctrl),
           pagination,
         ]),
       ])

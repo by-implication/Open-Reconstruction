@@ -186,7 +186,7 @@ object Req extends ReqGen {
     def add(vars: (Any, anorm.ParameterValue[_])*) = list = list ++ vars.toSeq
   }
 
-  private def getSqlParams(tab: String, projectTypeId: Option[Int], psgc: PGLTree, disasterId: Option[Int], agencyId: Option[Int])(implicit user: User) = {
+  private def getSqlParams(projectTypeId: Option[Int], psgc: PGLTree, disasterId: Option[Int], agencyId: Option[Int])(implicit user: User) = {
 
     var table = "reqs"
     var whereClauses = Seq.empty[String]
@@ -205,50 +205,6 @@ object Req extends ReqGen {
 
     projectTypeId.map(_ => addWhereClause("project_type_id = {projectTypeId}"))
 
-    tab match {
-      case "all" => {}
-      case "signoff" => {
-        if(!user.isAnon){
-          val targetRequestLevelOpt: Option[Int] = user.govUnit.role.name match {
-            case "OCD" => Some(2)
-            case "OP" => Some(3)
-            case "DBM" => Some(4)
-            case _ => None
-          }
-          addWhereClause("(" +
-            "(req_level = 1 AND assessing_agency_id = " + user.govUnitId + ")" +
-            targetRequestLevelOpt.map(t => " OR (req_level = " + t + ")")
-            .getOrElse("") +
-          ")")
-        }
-      }
-      case "assessor" => {
-        addWhereClause("req_level = 0")
-        addWhereClause("assessing_agency_id IS NULL")
-      }
-      case "executor" => {
-        addWhereClause("req_level = 5 AND implementing_agency_id = " + user.govUnitId)
-        addWhereClause("implementing_agency_id IS NOT NULL")
-        addWhereClause("executing_agency_id IS NULL")
-      }
-      case "mine" => {
-        if (!user.isAnon){
-          addWhereClause("author_id = " + user.id)
-        }
-      }
-      case "agency" => {
-        if (!user.isAnon){
-          addWhereClause("gov_unit_id = " + user.govUnit.id)
-        }
-      }
-      case "approval" => {
-        addWhereClause("req_level <= 4")
-      }
-      case "implementation" => {
-        addWhereClause("req_level > 4")
-      }
-    }
-
     if(!psgc.list.isEmpty){
       table = """
         reqs LEFT JOIN lgus ON lgus.lgu_id = gov_unit_id
@@ -260,8 +216,8 @@ object Req extends ReqGen {
 
   }
 
-  def indexCount(tab: String, projectTypeId: Option[Int], psgc: PGLTree, disasterId: Int, agencyId: Int)(implicit user: User): Long = {
-    val (table, whereClauses, varMap) = getSqlParams(tab, projectTypeId, psgc, if (disasterId == 0) None else Some(disasterId), if (agencyId == 0) None else Some(agencyId) )
+  def indexCount(projectTypeId: Option[Int], psgc: PGLTree, disasterId: Int, agencyId: Int)(implicit user: User): Long = {
+    val (table, whereClauses, varMap) = getSqlParams(projectTypeId, psgc, if (disasterId == 0) None else Some(disasterId), if (agencyId == 0) None else Some(agencyId) )
     DB.withConnection { implicit c =>
       SQL("SELECT COUNT(*) FROM " + table + {
         if (!whereClauses.isEmpty) " WHERE " + whereClauses.mkString(" AND ")
@@ -271,8 +227,8 @@ object Req extends ReqGen {
     }
   }
 
-  def indexList(tab: String, offset: Int, limit: Int, projectTypeId: Option[Int], psgc: PGLTree, sort: String, sortDir: String, disasterId: Int, agencyId: Int)(implicit user: User): Seq[Req] = {
-    var (table, whereClauses, varMap) = getSqlParams(tab, projectTypeId, psgc, if (disasterId == 0) None else Some(disasterId), if (agencyId == 0) None else Some(agencyId) )
+  def indexList(offset: Int, limit: Int, projectTypeId: Option[Int], psgc: PGLTree, sort: String, sortDir: String, disasterId: Int, agencyId: Int)(implicit user: User): Seq[Req] = {
+    var (table, whereClauses, varMap) = getSqlParams(projectTypeId, psgc, if (disasterId == 0) None else Some(disasterId), if (agencyId == 0) None else Some(agencyId) )
     val sortColumn = (sort match {
       case "id" => "req_id"
       case "status" => "req_level"
