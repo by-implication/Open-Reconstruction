@@ -43,14 +43,21 @@ object Projects extends Controller with Secured {
         val createForm: Form[Project] = Form(
           mapping(
             "name" -> nonEmptyText,
-            "amount" -> optional(projectAmount)
+            "amount" -> optional(projectAmount),
+            "typeId" -> number.verifying("No such project type.",
+              ProjectType.findById(_).isDefined
+            ),
+            "scope" -> nonEmptyText.verifying("No such scope.",
+              ProjectScope.contains(_)
+            )
           )
-          ((name, amount) => {
+          ((name, amount, projectTypeId, scope) => {
             Project(
               name = name,
               amount = amount.getOrElse(0),
               reqId = id,
-              projectTypeId = req.projectTypeId
+              projectTypeId = projectTypeId,
+              scope = ProjectScope.withName(scope)
             )
           })
           (_ => None)
@@ -59,7 +66,10 @@ object Projects extends Controller with Secured {
           Rest.formError(_),
           _.save().map { project => 
             Event.addProject(project).create().map {e =>
-              Rest.success("event" -> e.listJson())
+              Rest.success(
+                "event" -> e.listJson(),
+                "project" -> project.toJson
+              )
             }.getOrElse(Rest.serverError)
           }.getOrElse(Rest.serverError())
         )
