@@ -23,33 +23,19 @@ dashboard.controller = function(){
     {
       identifier: this.tabFilters.FEED,
       href: nav({tab: "feed"}),
-      _label: "Feed"
+      label: m.prop("Feed")
     },
     {
       identifier: this.tabFilters.PENDING,
       href: nav({tab: "pending"}),
-      _label: "Pending requests"
+      label: m.prop("Pending requests")
     },
     {
       identifier: this.tabFilters.MINE,
       href: nav({tab: "mine"}),
-      _label: "My requests"
+      label: m.prop("My requests")
     }
-  ].map(function (tab){
-    tab.requests = function(){
-      return ctrl.requestList
-        .filter(function (r){ return tab.filter ? !r.isRejected : true })
-        .filter(tab.filter || function(){ return true })
-    }
-    tab.label = function(){
-      return [
-        typeof tab._label == 'function' ? tab._label() : tab._label,
-        m("span.label.secondary.round", ctrl.counts[tab.identifier])
-      ]
-    }
-    tab.content = function(){ return request.listView(this.requests(), ctrl.sortBy, self) }
-    return tab;
-  });
+  ];
 
   this.tabs.tabs = m.prop(tabs);
   this.count = m.prop(0);
