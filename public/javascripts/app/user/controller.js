@@ -20,16 +20,14 @@ user.controller = function(){
   }
 
   this.page = parseInt(m.route.param("page")) || 1;
-  this.requestCount = m.prop();
-  this.maxPage = function(){
-    var count = parseInt(this.requestCount()) || 0;
-    return Math.ceil(count / 20);
-  };
+  this.requestCount = m.prop(0);
+  this.pageLimit = m.prop(1);
 
   bi.ajax(routes.controllers.Users.viewMeta(self.id, self.page, self.sort, self.sortDir)).then(function (r){
     this.user(r.user)
     this.requestList(r.requests);
     this.requestCount(r.requestCount);
+    this.pageLimit(r.pageLimit);
     this.filteredList = function(){
       return _.chain(this.requestList);
     }

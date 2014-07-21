@@ -4,6 +4,7 @@
 @import neat/neat
 
 @import variables
+$desktopWidth: 1024px
 
 html, body
   padding: 0
@@ -163,15 +164,22 @@ section.history
 .value
   font-weight: bold
 
+a.event
+  display: block
+  padding-left: 20px
+  padding-right: 20px
+  &:hover
+    background-color: #f8f8f8
+  p
+    color: #333
+  &.new
+    border-left: 4px solid $orange
+    padding-left: 16px
+
 .event
   +clearfix
-  padding: 10px 0px
   position: relative
-  // &:first-child
-    // padding-top: 40px
   &.new-comment
-    // .details
-    //   padding-bottom: 0
     padding-top: 20px
     padding-bottom: 0
     textarea
@@ -185,11 +193,10 @@ section.history
       border-bottom: none
   .type
     +box-sizing(border-box)
+    margin-top: 20px
     height: 54px
     width: 54px
     border-radius: 50%
-    // border-width: 4px
-    // border-style: solid
     text-align: center
     float: left
     color: white
@@ -203,19 +210,10 @@ section.history
       background-color: $silver
     &.comment
       background-color: $teal
-  .dateGroup
-    .divider
-      position: absolute
-      z-index: 0
-      top: 0
-      bottom: 0
-      left: 0
-      width: 36px + 2px
-      border-right: 4px solid white
 
   .details
     margin-left: 72px
-    padding-bottom: 20px
+    padding: 20px 0px
     border-bottom: 1px solid #eee
   // .comment
 
@@ -583,14 +581,25 @@ nav
       a
         background-color: $accent
         color: white
+p.big
+  font-weight: 300
+  font-size: 24px
+
+#infodump
+  h2
+    margin-bottom: 20px
 
 #home
+  .feature
+    padding: 0px 80px
+    h4
+      text-align: center
   section
-    padding: 30px 0px
+    padding: 60px 0px
   .for-everyone
     figure.small
       position: relative
-      top: -20px
+      // top: -20px
     .details p
       font-size: 0.85rem
   .banner
@@ -696,6 +705,7 @@ nav
       h6
         margin: 0
         margin-top: -4px
+        text-align: center
     .caption
       text-align: right
       text-transform: uppercase
@@ -721,7 +731,7 @@ nav
     color: $accent
     font-weight: bold
   // yes this is sad
-  li
+  .proposals li
     position: relative
     a
       display: inline-block
@@ -744,11 +754,6 @@ nav
     text-align: center
     h2, h4
       color: $accent
-    a
-      // padding: 0.75rem 1.5rem
-      margin-right: 2px
-      // background: $white
-      // color: $accent
   figure
     display: inline-block
     text-align: center
@@ -761,7 +766,7 @@ nav
     &.small
       height: 150px
     &.large
-      height: 320px
+      height: 200px
     .vis-panel
       box-shadow: none
       background-color: transparent
@@ -772,6 +777,9 @@ nav
     background: $white
     border: 1px solid #eee
     padding: 30px
+
+.button-group.centerize
+  display: inline-block
 
 #logo
   float: left
@@ -985,11 +993,36 @@ body .select2-container
   background-position: 97% center
   font-size: 0.875rem
 
-#relevance
+.tabs.switch
   display: inline-block
   border: 1px solid $accent
-  border-radius: 1000px
+  border-radius: 3px
   overflow: hidden
+  &.reverse
+    border: 1px solid white
+    .active
+      a
+        color: $accent
+        background-color: white
+        &:hover
+          color: $accent
+          background-color: lighten($accent, 50%)
+      .label
+        color: $accent
+        border-color: $accent
+    dd > a
+      color: white
+      &:hover
+        background-color: darken($accent, 10%)
+      .label
+        color: white
+        border-color: white
+  +media(max-width $desktopWidth)
+    border-radius: 3px
+    display: block
+    dd
+      display: block
+      float: none
   .active
     a
       color: white
@@ -1113,4 +1146,8 @@ thead
     width: 40%
     width: calc(50% - 20px)
     margin-bottom: 20px
+
+label
+  &.disabled
+    opacity: 0.5
 

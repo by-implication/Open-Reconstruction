@@ -142,7 +142,12 @@ object Application extends Controller with Secured {
       Attachments.download,
       Attachments.thumb,
       Assets.at,
+      Projects.index,
+      Projects.indexPage,
+      Projects.indexMeta,
       Projects.insert,
+      Projects.view,
+      Projects.viewMeta,
       Requests.comment,
       Requests.create,
       Requests.createMeta,
@@ -182,7 +187,10 @@ object Application extends Controller with Secured {
       GovUnits.createLgu,
       GovUnits.createLguMeta,
       GovUnits.insertLgu,
-      GovUnits.search
+      GovUnits.search,
+      Feed.index,
+      Feed.indexMeta,
+      Feed.indexPage
     )).as("text/javascript")
   }
 

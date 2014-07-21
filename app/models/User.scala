@@ -49,14 +49,16 @@ object User extends UserGen {
             user_name,
             user_password,
             gov_unit_id,
-            user_admin
+            user_admin,
+            user_last_feed_visit
           ) VALUES (
             DEFAULT,
             {handle},
             {name},
             crypt({password}, gen_salt('bf')),
             {govUnitId},
-            {isAdmin}
+            {isAdmin},
+            {lastFeedVisit}
           )
         """).on(
           'id -> o.id,
@@ -64,7 +66,8 @@ object User extends UserGen {
           'name -> o.name,
           'password -> o.password,
           'govUnitId -> o.govUnitId,
-          'isAdmin -> o.isAdmin
+          'isAdmin -> o.isAdmin,
+          'lastFeedVisit -> o.lastFeedVisit
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -102,15 +105,17 @@ object User extends UserGen {
       update users set
         user_handle={handle},
         user_name={name},
-        gov_unit_id={govUnitId}
-        user_admin={isAdmin}
+        gov_unit_id={govUnitId},
+        user_admin={isAdmin},
+        user_last_feed_visit={lastFeedVisit}
       where user_id={id}
     """).on(
       'id -> o.id,
       'handle -> o.handle,
       'name -> o.name,
       'govUnitId -> o.govUnitId,
-      'isAdmin -> o.isAdmin
+      'isAdmin -> o.isAdmin,
+      'lastFeedVisit -> o.lastFeedVisit
     ).executeUpdate() > 0
   }
 
@@ -168,7 +173,8 @@ case class User(
   name: String = "",
   password: String = "",
   govUnitId: Int = 0,
-  isAdmin: Boolean = false
+  isAdmin: Boolean = false,
+  lastFeedVisit: Timestamp = Time.now
 ) extends UserCCGen with Entity[User]
 // GENERATED case class end
 {
@@ -193,6 +199,7 @@ case class User(
   }
 
   lazy val govUnit = GovUnit.findById(govUnitId).get
+  lazy val lguOpt = Lgu.findById(govUnitId)
 
   lazy val permissions = role.permissions
 
@@ -300,9 +307,10 @@ trait UserGen extends EntityCompanion[User] {
     get[String]("user_name") ~
     get[String]("user_password") ~
     get[Int]("gov_unit_id") ~
-    get[Boolean]("user_admin") map {
-      case id~handle~name~password~govUnitId~isAdmin =>
-        User(id, handle, name, password, govUnitId, isAdmin)
+    get[Boolean]("user_admin") ~
+    get[Timestamp]("user_last_feed_visit") map {
+      case id~handle~name~password~govUnitId~isAdmin~lastFeedVisit =>
+        User(id, handle, name, password, govUnitId, isAdmin, lastFeedVisit)
     }
   }
 
@@ -336,14 +344,16 @@ trait UserGen extends EntityCompanion[User] {
             user_name,
             user_password,
             gov_unit_id,
-            user_admin
+            user_admin,
+            user_last_feed_visit
           ) VALUES (
             DEFAULT,
             {handle},
             {name},
             {password},
             {govUnitId},
-            {isAdmin}
+            {isAdmin},
+            {lastFeedVisit}
           )
         """).on(
           'id -> o.id,
@@ -351,7 +361,8 @@ trait UserGen extends EntityCompanion[User] {
           'name -> o.name,
           'password -> o.password,
           'govUnitId -> o.govUnitId,
-          'isAdmin -> o.isAdmin
+          'isAdmin -> o.isAdmin,
+          'lastFeedVisit -> o.lastFeedVisit
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -363,14 +374,16 @@ trait UserGen extends EntityCompanion[User] {
             user_name,
             user_password,
             gov_unit_id,
-            user_admin
+            user_admin,
+            user_last_feed_visit
           ) VALUES (
             {id},
             {handle},
             {name},
             {password},
             {govUnitId},
-            {isAdmin}
+            {isAdmin},
+            {lastFeedVisit}
           )
         """).on(
           'id -> o.id,
@@ -378,7 +391,8 @@ trait UserGen extends EntityCompanion[User] {
           'name -> o.name,
           'password -> o.password,
           'govUnitId -> o.govUnitId,
-          'isAdmin -> o.isAdmin
+          'isAdmin -> o.isAdmin,
+          'lastFeedVisit -> o.lastFeedVisit
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -391,7 +405,8 @@ trait UserGen extends EntityCompanion[User] {
         user_name={name},
         user_password={password},
         gov_unit_id={govUnitId},
-        user_admin={isAdmin}
+        user_admin={isAdmin},
+        user_last_feed_visit={lastFeedVisit}
       where user_id={id}
     """).on(
       'id -> o.id,
@@ -399,7 +414,8 @@ trait UserGen extends EntityCompanion[User] {
       'name -> o.name,
       'password -> o.password,
       'govUnitId -> o.govUnitId,
-      'isAdmin -> o.isAdmin
+      'isAdmin -> o.isAdmin,
+      'lastFeedVisit -> o.lastFeedVisit
     ).executeUpdate() > 0
   }
 

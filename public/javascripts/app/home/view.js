@@ -25,7 +25,7 @@ home.view = function(ctrl){
             m("h2", [
               "Find projects and requests in your town, region, or area.",
               m("a.button",{
-                  href:"/requests",
+                  href: routes.controllers.Requests.index().url,
                   config:m.route
                 },[
                   "Search ",
@@ -84,7 +84,7 @@ home.view = function(ctrl){
             ]),
             m("li.arrow", [
               m("a", {
-                href:"/requests",
+                href: routes.controllers.Requests.index().url,
                 config:m.route
               }, [
                 m("img", {src:"/assets/images/landing/2-projects requested.svg"}),
@@ -138,12 +138,15 @@ home.view = function(ctrl){
                       m(".caption", "Typhoon Yolanda"),
                     ]),
                     m("td", [
-                      // ctrl.vizData().yolanda.saro.qty + " ",
-                      // m("span", "SAROs"),
                       m("h6", [
                         m("span.dpwh-label", "DPWH:"),
                         " PHP ",
                         m("span.fig", helper.truncate(ctrl.vizData().yolanda.dpwh.amt, 2))
+                      ]),
+                      m("h6", [
+                        m("span.dpwh-label", "DILG:"),
+                        " PHP ",
+                        m("span.fig", helper.truncate(ctrl.vizData().yolanda.dilg.amt, 2))
                       ]),
                       m("h6", [
                         "All Agencies: PHP ",
@@ -158,12 +161,15 @@ home.view = function(ctrl){
                       m(".caption", "Bohol Quake"),
                     ]),
                     m("td", [
-                      // ctrl.vizData().bohol.saro.qty + " ",
-                      // m("span", "SAROs"),
                       m("h6", [
                         m("span.dpwh-label", "DPWH:"),
                         " PHP ",
                         m("span.fig", helper.truncate(ctrl.vizData().bohol.dpwh.amt, 2))
+                      ]),
+                      m("h6", [
+                        m("span.dpwh-label", "DILG:"),
+                        " PHP ",
+                        m("span.fig", helper.truncate(ctrl.vizData().bohol.dilg.amt, 2))
                       ]),
                       m("h6", [
                         "All Agencies: PHP ",
@@ -176,7 +182,7 @@ home.view = function(ctrl){
             ]),
             m("li", [
               m("a", {
-                href:"/viz",
+                href: routes.controllers.Projects.index().url,
                 config:m.route
               }, [
                 m("img", {src:"/assets/images/landing/4-ongoing projects.svg"}),
@@ -191,8 +197,7 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h6", [
-                        m("span.dpwh-label", "DPWH:"),
-                        " PHP ",
+                        "PHP ",
                         m("span.fig", helper.truncate(ctrl.vizData().yolanda.fundedProjects.amt, 2))
                       ]),
                       m("h6", ctrl.vizData().yolanda.fundedProjects.qty + " Projects")
@@ -206,8 +211,7 @@ home.view = function(ctrl){
                     ]),
                     m("td", [
                       m("h6", [
-                        m("span.dpwh-label", "DPWH:"),
-                        " PHP ",
+                        "PHP ",
                         m("span.fig", helper.truncate(ctrl.vizData().bohol.fundedProjects.amt, 2))
                       ]),
                       m("h6", ctrl.vizData().bohol.fundedProjects.qty + " Projects")
@@ -225,107 +229,120 @@ home.view = function(ctrl){
             m("h2", [
               "One-Stop Shop"
             ]),
-            m("p", [
-              "Open Reconstruction streamlines the whole process from end to end, tracking a project throughout its lifecycle.",
-              m("br"),
-              "All sectors can take advantage of the system. See how."
+            // m("p", [
+            //   // "Open Reconstruction streamlines the whole process from end to end, tracking a project throughout its lifecycle.",
+            //   // m("br"),
+            //   "Both public and government sectors can take advantage of the system. See how."
+            // ]),
+          ]),
+        ]),
+        m(".row", [
+          m(".columns.medium-12.text-center", [
+            m("dl.tabs.switch", [
+              m("dd", {className: ctrl.infoDumpCurrentTab() === "public" ? "active" : ""}, [
+                m("a", {onclick: ctrl.infoDumpCurrentTab.bind(ctrl, "public")}, [
+                  "Public"
+                ]),
+              ]),
+              m("dd", {className: ctrl.infoDumpCurrentTab() === "govUnit" ? "active" : ""}, [
+                m("a", {onclick: ctrl.infoDumpCurrentTab.bind(ctrl, "govUnit")}, [
+                  "Government Units"
+                ]),
+              ]),
             ]),
           ]),
         ]),
-        m(".row.details", [
-          m(".columns.medium-6.large-gutters", [
-            m("h3.ruled", "Government Units"),
+        ctrl.infoDumpCurrentTab() === "govUnit" ?
+          m(".div", [
             m(".row", [
-              m(".columns.medium-3", [
+              m(".columns.medium-6.medium-centered", [
+                m("p.text-center.big", [
+                  "We've streamlined the approval process so that the reconstruction gets from paper to brick—lightning fast."
+                ]),
+              ]),
+            ]),
+            m(".row", [
+              m(".columns.medium-4.feature", [
                 m("figure.small", [
                   m("img",{src:"/assets/images/landing/5-request.svg"})
                 ]),
-              ]),
-              m(".columns.medium-9", [
                 m("h4", "Request"),
                 m("p", "You can check if your projects are already in the system, with our search and filtering. If they are not yet there, request access, and submit a new eTicket for it!"),
               ]),
-            ]),
-            m(".row", [
-              m(".columns.medium-3", [
+              m(".columns.medium-4.feature", [
                 m("figure.small", [
                   m("img",{src:"/assets/images/landing/6-approval.svg"}),
                 ]),
-              ]),
-              m(".columns.medium-9", [
                 m("h4", "Approval"),
                 m("p","Project approval now occurs digitally, without the need for physical mailing time or the risk of document loss.")
               ]),
-            ]),
-            m(".row", [
-              m(".columns.medium-3", [
+              m(".columns.medium-4.feature", [
                 m("figure.small", [
                   m("img",{src:"/assets/images/landing/7-tracking.svg"}),
                 ]),
-              ]),
-              m(".columns.medium-9", [
                 m("h4", "Tracking"),
                 m("p","Agencies and the public can keep track of requests and projects' overall progress.")
+              ]),
+            ])
+          ])
+        : m("div", [
+            m(".row", [
+              m(".columns.medium-6.medium-centered", [
+                m("p.text-center.big", [
+                  "We've always said that transparency is essential for good governance. We're putting our foot where our mouth is, so we've made all this data public."
+                ]),
+              ]),
+            ]),
+            m(".row", [
+                m(".columns.medium-4.feature", [
+                  m("figure.small", [
+                    m("img",{src:"/assets/images/landing/7-tracking.svg"}),
+                  ]),
+                  m("h4", "Tracking"),
+                    m("p","Agencies and the public can keep track of requests and projects' overall progress.")
+                ]),
+                m(".columns.medium-4.feature", [
+                  m("figure.small", [
+                    m("img",{src:"/assets/images/landing/9-sharing.svg"}),
+                  ]),
+                  m("h4", "Sharing"),
+                  m("p", "Let people know about requests and projects that are important to you. Share your thoughts on Facebook and Twitter!")
+                ]),
+                m(".columns.medium-4.feature", [
+                  m("figure.small", [
+                    m("img",{src:"/assets/images/landing/8-interact.svg"}),
+                  ]),
+                  m("h4", "Interact"),
+                  m("p", "Or if you'd prefer, you can simply leave comments and suggestions on the site itself.")
+                ]),
               ]),
             ]),
           ]),
-          m(".columns.medium-6.large-gutters", [
-            m("h3.ruled", "Public"),
-            m(".row", [
-              m(".columns.medium-3", [
-                m("figure.small", [
-                  m("img",{src:"/assets/images/landing/7-tracking.svg"}),
-                ]),
-              ]),
-              m(".columns.medium-9", [
-                m("h4", "Tracking"),
-                m("p","Agencies and the public can keep track of requests and projects' overall progress.")
-              ]),
-            ]),
-            m(".row", [
-              m(".columns.medium-3", [
-                m("figure.small", [
-                  m("img",{src:"/assets/images/landing/9-sharing.svg"}),
-                ]),
-              ]),
-              m(".columns.medium-9", [
-                m("h4", "Sharing"),
-                m("p", "Let people know about requests and projects that are important to you. Share your thoughts on Facebook and Twitter!")
-              ]),
-            ]),
-            m(".row", [
-              m(".columns.medium-3", [
-                m("figure.small", [
-                  m("img",{src:"/assets/images/landing/8-interact.svg"}),
-                ]),
-              ]),
-              m(".columns.medium-9", [
-                m("h4", "Interact"),
-                m("p", "Or if you'd prefer, you can simply leave comments and suggestions on the site itself.")
-              ]),
-            ]),
-          ])
-        ]),
-      ]),
       m("section.public", [
         m(".row.info", [
           m(".columns.medium-12", [
             m("h2",["Transparency to the People"]),
-            m("p", [
+            m("p.big", [
               "We have really cool graphs, charts, and lists that you can play with.",
               m("br"),
               "You can even get the raw data, if you want to dig deep and get your hands dirty. (coming soon)"]),
-            m("a.button.micro", "List of all requests"),
-            m("a.button.micro", "Stats, Graphs, and Visuals"),
-            m("a.button.micro", "Data dumps, CSVs, and APIs"),
+            m("ul.button-group.centerize.radius", [
+              m("li", [
+                m("a.button.tiny", "List of all requests"),
+              ]),
+              m("li", [
+                m("a.button.tiny", "Stats, Graphs, and Visuals"),
+              ]),
+              m("li", [
+                m("a.button.tiny", "Data dumps, CSVs, and APIs"),
+              ]),
+            ]),
             m("figure.large", [
               visPanel.view(ctrl.yolandaSaroVis)
             ]),
             m("h3.graph-title", "SARO Releases, Value and Quantity, per month")
           ])
         ]),
-        m(".row", [
-        ])
       ]),
       m("section.etc.alt", [
         m(".row.info", [
@@ -341,8 +358,8 @@ home.view = function(ctrl){
               m("a", {href:"http://byimplication.com"}, "By Implication"),
               "."
               ]),
-            m("a.button.micro", {
-              href:"/faq",
+            m("a.button.tiny.radius", {
+              href: routes.controllers.Application.faq().url,
               config:m.route
             }, "Learn more about this project")
           ]),
@@ -352,8 +369,14 @@ home.view = function(ctrl){
             ]),
             m("h4", "Spread the word"),
             m("p","Tweet us, Like us, Follow us! Spread the word, and let us know what else you'd like to see! You can also comment on individual charts and projects, and embedding is coming soon."),
-            m("a.button.micro", "Facebook Link"),
-            m("a.button.micro", "Twitter Link")
+            m("ul.button-group.centerize.radius", [
+              m("li", [
+                m("a.button.tiny", "Facebook Link"),
+              ]),
+              m("li", [
+                m("a.button.tiny", "Twitter Link")
+              ]),
+            ]),
           ]),
           m(".columns.medium-4", [
             m("figure.small", [
@@ -361,7 +384,7 @@ home.view = function(ctrl){
             ]),
             m("h4", "Open Source"),
             m("p","This system proudly builds upon and contributes to several open-source projects, and is open source itself. Check out the code, submit issues, or even contribute patches!"),
-            m("a.button.micro", {
+            m("a.button.tiny.radius", {
               href:"https://github.com/by-implication/Open-Reconstruction"
             }, "Fork us on GitHub")
             // (twss)

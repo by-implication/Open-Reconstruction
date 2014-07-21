@@ -80,8 +80,8 @@ request.view = function(ctrl){
       ),
       common.modal.view(
         ctrl.addProjectModal,
-        function(ctrl){
-          return m("form", {onsubmit: ctrl.submitProject}, [
+        function (ctrl){
+          return m("form", {onsubmit: ctrl.submit}, [
             m(".section", [
               m("h3", "Reference a Project"),
               m("p", [
@@ -97,6 +97,26 @@ request.view = function(ctrl){
               common.field(
                 "Amount",
                 m("input[type='text']", {onchange: m.withAttr("value", ctrl.project.amount), placeholder: "1750000"})
+              ),
+              common.field(
+                "Type",
+                m("select", {onchange: m.withAttr("value", ctrl.project.typeId)},
+                  [m("option", {value: 0, selected: true}, "--- Please pick one ---")].concat(
+                    ctrl.projectTypes().map(function (o){
+                      return m("option", {value: o.id}, o.name);
+                    })
+                  )
+                )
+              ),
+              common.field(
+                "Scope",
+                m("select", {onchange: m.withAttr("value", ctrl.project.scope)},
+                  [m("option", {value: 0, selected: true}, "--- Please pick one ---")].concat(
+                    ctrl.projectScopes().map(function (o){
+                      return m("option", {value: o.value}, o.label);
+                    })
+                  )
+                )
               ),
               m("button", [
                 "Submit"
@@ -426,10 +446,14 @@ request.view = function(ctrl){
                         ctrl.projects().map(function(p){
                           return m("tr", [
                             m("td", [
-                              p.id
+                              // m("a", {href: routes.controllers.Projects.view(p.id).url}, [
+                                p.id
+                              // ])
                             ]),
                             m("td", [
-                              p.name
+                              // m("a", {href: routes.controllers.Projects.view(p.id).url}, [
+                                p.name
+                              // ])
                             ]),
                             m("td", [
                               p.scope
@@ -509,7 +533,7 @@ request.approval = function(ctrl){
               ]) :
               m("div", [
                 m("h4", [
-                  "Sign off on this request only if you feel the information is complete for your step in the approval process."
+                  "Sign off on this request only if the information is complete for your step in the approval process."
                 ]),
                 m("button", {onclick: ctrl.signoffModal.show}, [
                   m("i.fa.fa-fw.fa-check"),
@@ -607,32 +631,38 @@ request.progress = function(ctrl){
 request.miniProgress = function(request){
   return m(".progress.mini", [
     m(".step", {
-      style: {width: (100/6 * (request.level + 1) + '%')},
+      style: {width: (100/8 * (request.level + 1) + '%')},
       className: "done"
     })
   ])
 }
 
-request.listView = function(reqs, sortBy){
-  return m("table", [
+request.listView = function(reqs, sortBy, ctrl){
+  return m("table.responsive", [
       m("thead", [
         m("tr", [
+          m("th", "Name"),
           m("th", [
             m("a", {href: sortBy("id"), config: m.route}, [
-              "Id "
+              "Id ",
+              ctrl.sort === "id" ?
+                m("i.fa.fa-fw", {className: (ctrl.sortDir == "asc") ? "fa-angle-up" : "fa-angle-down"})
+              : ""
             ]),
           ]),
           m("th", [
             "Stagnation",
             common.help("This is how long the project has been waiting at the current stage.")
           ]),
-          m("th", "Name"),
           m("th", "Gov Unit"),
           m("th", "Implementing Agency"),
           m("th", "Status"),
           m("th.text-right", [
             m("a", {href: sortBy("amount"), config: m.route}, [
-              "Amount"
+              "Amount",
+              ctrl.sort === "amount" ?
+                m("i.fa.fa-fw", {className: (ctrl.sortDir == "asc") ? "fa-angle-up" : "fa-angle-down"})
+              : ""
             ]),
           ])
         ])
@@ -642,14 +672,14 @@ request.listView = function(reqs, sortBy){
           reqs
             .map(function(p){
               return m("tr", [
-                m("td", p.id),
-                m("td", [common.day(p.age)]),
                 m("td", [
                   m("a.name", {
                     href: routes.controllers.Requests.view(p.id).url,
                     config: m.route
                   }, p.description)
                 ]),
+                m("td", p.id),
+                m("td", [common.day(p.age)]),
                 m("td", [m("a",
                   {href: routes.controllers.GovUnits.view(p.author.govUnit.id).url, config: m.route},
                   p.author.govUnit.name)]),

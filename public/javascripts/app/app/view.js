@@ -22,7 +22,8 @@ app.template = function(){
       m("link[href='/assets/bower_components/leaflet-draw/leaflet.draw.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/bower_components/c3/c3.css'][rel='stylesheet'][type='text/css']"),
       // m("link[href='/assets/bower_components/select2/select2.css'][rel='stylesheet'][type='text/css']"),
-      m("link[href='/assets/stylesheets/select2-foundation5.css'][rel='stylesheet'][type='text/css']")
+      m("link[href='/assets/stylesheets/select2-foundation5.css'][rel='stylesheet'][type='text/css']"),
+      m("link[href='/assets/bower_components/responsive-tables/responsive-tables.css'][rel='stylesheet'][type='text/css']")
     ]),
     m("body", attrs, modals.concat(app.navbar(ctrl), m(".container", content), app.footer(ctrl), app.feedback(ctrl)))
   ])
@@ -131,6 +132,22 @@ app.navbar = function(ctrl){
             config: m.route,
             className: (m.route().startsWith(routes.controllers.Requests.index().url) ? "active" : "")
           }, "Requests")
+        ]),
+        m.cookie().logged_in ?
+          m("li", [
+            m("a", {
+              href: routes.controllers.Feed.index().url,
+              config: m.route,
+              className: (m.route().startsWith(routes.controllers.Feed.index().url) ? "active" : "")
+            }, "Feed")
+          ])
+        : "",
+        m("li", [
+          m("a", {
+            href: routes.controllers.Projects.index().url,
+            config: m.route,
+            className: (m.route().startsWith(routes.controllers.Projects.index().url) ? "active" : "")
+          }, "Projects")
         ]),
         m("li", [
           m("a", {

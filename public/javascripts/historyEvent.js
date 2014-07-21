@@ -24,7 +24,7 @@ historyEvent.reject = function(data){
       m("i.fa.fa-lg.fa-fw.fa-times")
     ]),
     m(".details", [
-      m("h3", "Rejected"),
+      // m("h3", "Rejected"),
       m("p", [
         m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
         " rejected this request."
@@ -138,7 +138,7 @@ historyEvent.signoff = function(data){
       isDBM ? m("i.fa.fa-lg.fa-fw.fa-money") : m("i.fa.fa-lg.fa-fw.fa-check")
     ]),
     m(".details", [
-      m("h3", "Sign off"),
+      // m("h3", "Sign off"),
       m("p", [
         m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
         (isDBM ? " assigned a SARO to and" : "") + " signed off on this request."
@@ -186,9 +186,11 @@ historyEvent.addProject = function(data){
   var projectId = c.pop();
   var projectName = c.join(" ");
   return m(".event", [
-    historyEvent.date(date),
+    m(".type.comment", [
+      m("i.fa.fa-lg.fa-fw.fa-plus")
+    ]),
     m(".details", [
-      m("h3", "New project"),
+      // m("h3", "New project"),
       m("p", [
         "Project " + "\""+ projectName +"\" has been added to this request."
       ]),

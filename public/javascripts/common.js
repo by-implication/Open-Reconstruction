@@ -32,7 +32,7 @@ common.stagnation = function(reqCtrl, offset){
     var approval = history.filter(function (h){
       return h.kind == "signoff" && h.govUnit.name == "Office of the President";
     })[0];
-    return new Date(approval.date);
+    return approval && new Date(approval.date) || "[UNKNOWN]";
   }
 
   var timestamp = req.date;
@@ -249,7 +249,7 @@ common.tabs.menu = function(ctrl, options){
       if(tab.href.charAt(0) != '#') {
         options.config = m.route;
       }
-      return m("dd", {class: tabClass(tab)}, [
+      return m("dd", {className: tabClass(tab)}, [
         m("a", options, tab.label())
       ]);
     })
@@ -396,6 +396,13 @@ common.sticky.config = function(ctrl){
     }
   }
 }
+// common.switch = {};
+// common.switch.controller = function(){
+
+// }
+// common.switch.view = function(ctrl){
+
+// }
 
 common.modal = {};
 common.modal.controller = function(options){
@@ -442,7 +449,10 @@ common.modal.view = function(ctrl, content, optionalClasses){
   }
 }
 
-common.pagination = function(pageNum, pageCount, p2link){
+common.pagination = function(pageNum, count, pageLimit, p2link){
+
+  count = parseInt(count) || 0;
+  var pageCount = Math.ceil(count / pageLimit);
 
   var adjacentPages = 3;
   var displayedPages = 1 + 2 * adjacentPages + 2 + 2;
@@ -472,39 +482,43 @@ common.pagination = function(pageNum, pageCount, p2link){
     return pages;
   }
 
-  return m("ul.pagination", [
-    m("li.arrow",{className: pageNum === 0 ? "unavailable" : ""}, [
-      m("a", {
-        href: p2link(Math.max(pageNum - 1, 1)),
-        config: m.route
-      }, [
-        "«"
+  if (pagesToDisplay().length) {
+    return m("ul.pagination", [
+      m("li.arrow",{className: pageNum === 0 ? "unavailable" : ""}, [
+        m("a", {
+          href: p2link(Math.max(pageNum - 1, 1)),
+          config: m.route
+        }, [
+          "«"
+        ]),
       ]),
-    ]),
-    _.chain(pagesToDisplay())
-      .map(function (page){
-        if(page == "...") {
-          return m("li.unavailable", m("a", "..."));
-        }
-        else {
-          return m("li", {className: page === pageNum ? "current" : ""}, [
-            m("a", {
-              href: p2link(page),
-              config: m.route
-            }, page)
-          ])
-        }
-      })
-      .value(),
-    m("li.arrow",{className: pageNum === pageCount ? "unavailable" : ""}, [
-      m("a", {
-        href: p2link(Math.min(pageNum + 1, pageCount)),
-        config: m.route
-      },[
-        "»"
+      _.chain(pagesToDisplay())
+        .map(function (page){
+          if(page == "...") {
+            return m("li.unavailable", m("a", "..."));
+          }
+          else {
+            return m("li", {className: page === pageNum ? "current" : ""}, [
+              m("a", {
+                href: p2link(page),
+                config: m.route
+              }, page)
+            ])
+          }
+        })
+        .value(),
+      m("li.arrow",{className: pageNum === pageCount ? "unavailable" : ""}, [
+        m("a", {
+          href: p2link(Math.min(pageNum + 1, pageCount)),
+          config: m.route
+        },[
+          "»"
+        ]),
       ]),
-    ]),
-  ])
+    ])
+  } else {
+    return ""
+  }
 }
 
 common.leaflet = {
@@ -545,6 +559,34 @@ common.leaflet = {
         this.addPopup(coords, content);
       }.bind(this), 100);
     }
+  },
+
+  addDrawControls: function(callback){
+
+    var editableLayers = new L.FeatureGroup();
+    this._map.addLayer(editableLayers);
+
+    // Initialise the draw control and pass it the FeatureGroup of editable layers
+    var drawControl = new L.Control.Draw({
+      edit: {
+        featureGroup: editableLayers,
+        edit: false,
+        remove: false
+      },
+      draw: {
+        polyline: false,
+        polygon: false,
+        rectangle: false,
+        circle: false
+      },
+      // position: 'topright'
+    });
+    this._map.addControl(drawControl);
+
+    this._map.on('draw:created', function (e){
+      callback(e, editableLayers);
+    });
+
   }
 
 }
@@ -593,45 +635,49 @@ common.attachmentFor = function(reqt, atts){
 
 common.collapsibleFilter = {}
 
-common.collapsibleFilter.controller = function(){
-  this.isExpanded = m.prop(false);
+common.collapsibleFilter.controller = function(label, id){
+
+  var cookey = "dropstate_" + id;
+
+  this.isExpanded = m.prop(m.cookie()[cookey] == "true");
   this.toggleExpand = function(){
-    this.isExpanded(!this.isExpanded());
-  }.bind(this)
+    var newState = !this.isExpanded();
+    this.isExpanded(newState);
+    var o = {};
+    o[cookey] = newState;
+    m.cookie(o);
+  }.bind(this);
+
   this.maxHeight = m.prop();
   this.drawerConfig = function(elem, isInit){
-    // console.log($(elem).height());
     this.maxHeight($(elem).children(".row").height());
-      // this.isExpanded(false);
-  }.bind(this)
-}
-common.collapsibleFilter.view = function(ctrl, label, preview, drawer){
-  return m(".collapsible-filter", [
-    m(".collapsible-label", [
-      m("a.row", {onclick: ctrl.toggleExpand}, [
-        m(".columns.medium-12.end", [
-          // m("button.tiny.radius.right", {type: "button", onclick: ctrl.toggleExpand}, [
-          //   m("i.fa.fa-fw.fa-lg.fa-plus")
-          // ]),
-          preview ? 
-            m("span.label.right", [
-              preview
+  }.bind(this);
+
+  this.view = function(preview, drawer){
+    return m(".collapsible-filter", [
+      m(".collapsible-label", [
+        m("a.row", {onclick: this.toggleExpand}, [
+          m(".columns.medium-12.end", [
+            preview ? 
+              m("span.label.right", [
+                preview
+              ])
+            : null,
+            m("h4", [
+              label
             ])
-          : null,
-          m("h4", [
-            label
-          ]),
-          
-        ]),
+          ])
+        ])
       ]),
-    ]),
-    m(".collapsible-drawer", {
-      style: "max-height: " + (ctrl.isExpanded() ? ctrl.maxHeight() : 0) + "px",
-      config: ctrl.drawerConfig
-    }, [
-      m(".row", [
-        drawer()
-      ]),
+      m(".collapsible-drawer", {
+        style: "max-height: " + (this.isExpanded() ? this.maxHeight() : 0) + "px",
+        config: this.drawerConfig
+      }, [
+        m(".row", [
+          drawer()
+        ])
+      ])
     ])
-  ])
+  }
+
 }

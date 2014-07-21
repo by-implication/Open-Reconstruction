@@ -1,5 +1,5 @@
 request.controller = function(){
-  var self = this;
+  var ctrl = this;
   this.app = new app.controller();
   this.signoffModal = new common.modal.controller();
   this.rejectModal = new common.modal.controller();
@@ -7,8 +7,12 @@ request.controller = function(){
   this.addProjectModal = new common.modal.controller();
   this.addProjectModal.project = {
     name: m.prop(),
-    amount: m.prop()
+    amount: m.prop(),
+    typeId: m.prop(),
+    scope: m.prop()
   }
+  this.addProjectModal.projectTypes = m.prop([]);
+  this.addProjectModal.projectScopes = m.prop([]);
 
   var requestId = m.route.param('id');
   this.requestTabs = new common.stickyTabs.controller();
@@ -54,22 +58,22 @@ request.controller = function(){
 
   this.history = m.prop([]);
   this.location = m.prop("");
+  this.hasCoords = false;
   this.isInvolved = m.prop(false);
   this.canSignoff = m.prop(false);
   this.canEdit = m.prop(false);
   this.hasSignedoff = m.prop(false);
   this.input = { comment: m.prop() };
 
-  this.addProjectModal.submitProject = function(e){
+  this.addProjectModal.submit = function(e){
     e.preventDefault();
-    bi.ajax(routes.controllers.Projects.insert(self.id), {
-      data: {
-        name: self.addProjectModal.project.name(),
-        amount: self.addProjectModal.project.amount()
-      }
+    bi.ajax(routes.controllers.Projects.insert(ctrl.id), {
+      data: ctrl.addProjectModal.project
     }).then(function (r){
       alert('Submitted!')
-      self.history().unshift(r.event);
+      ctrl.projects().unshift(r.project);
+      ctrl.history().unshift(r.event);
+      ctrl.addProjectModal.close();
     }, common.formErrorHandler);
   }
 
@@ -142,7 +146,7 @@ request.controller = function(){
     )),
 
     implement: new deg(function(){
-      return (self.app.isSuperAdmin() || self.app.isDBM());
+      return (ctrl.app.isSuperAdmin() || ctrl.app.isDBM());
     }, edit("implementingAgency"), save("implementingAgency",
       function (r){
         var agency = extractAgency(r);
@@ -155,7 +159,7 @@ request.controller = function(){
     )),
 
     execute: new deg(function(){
-      return (self.app.isSuperAdmin() || self.app.isDBM() || self.currentUserBelongsToImplementingAgency())
+      return (ctrl.app.isSuperAdmin() || ctrl.app.isDBM() || ctrl.currentUserBelongsToImplementingAgency())
     }, edit("executingAgency"), save("executingAgency",
       function (r){
         var agency = extractAgency(r);
@@ -229,6 +233,7 @@ request.controller = function(){
 
     this.request(data.request);
     this.projects(data.projects);
+    console.log(this.projects());
 
     this.author(data.author);
     this.govUnit(data.govUnit);
@@ -249,6 +254,9 @@ request.controller = function(){
     this.canEdit(data.canEdit);
     request.disasterTypes(data.disasterTypes);
 
+    this.addProjectModal.projectTypes(data.projectTypes);
+    this.addProjectModal.projectScopes(data.projectScopes);
+
     this.request().stagnation = common.stagnation(this);
     if(data.request.level < 4 && !data.request.isRejected){
       var baseTime = new Date().getTime();
@@ -264,16 +272,14 @@ request.controller = function(){
     }
 
     this.location(data.request.location);
-    var split = self.location().split(',').map(function(coord){return parseFloat(coord)});
-    if(!_.contains(split, NaN) && !(split.length % 2)){
+    var split = ctrl.location().split(',').map(function(coord){return parseFloat(coord)});
+    ctrl.hasCoords = !_.contains(split, NaN) && !(split.length % 2)
+    if(ctrl.hasCoords){
       this.coords(new L.LatLng(split[0], split[1]));
     } else if(data.govUnit.coords){
       var c = data.govUnit.coords;
       var latlng = new L.LatLng(c.lat, c.lng);
       this.coords(latlng);
-      setTimeout(function(){
-        common.leaflet.addPopup(latlng, "No location defined but<br/>the requesting LGU is here.")
-      }, 100);
     }
 
   }.bind(this));
@@ -330,19 +336,39 @@ request.controller = function(){
   this.initMap = function(elem, isInit){
     !function tryMap(){
       if($(elem).height()){
+
         var map = common.leaflet.map(elem);
-        if(self.coords()){
-          map.setView(self.coords(), 8);
-          common.leaflet.addMarker(self.coords());
+
+        if(ctrl.canEdit){
+          common.leaflet.addDrawControls(function (e){
+
+            common.leaflet.clearMarkers();
+
+            var layer = e.layer;
+            var coords = layer._latlng
+            var strCoords = coords.lat+","+coords.lng
+
+            save("location").bind({input: m.prop(strCoords)})(function(){
+              ctrl.coords(coords);
+            });
+
+          });
         }
+
+        if(ctrl.coords()){
+          map.setView(ctrl.coords(), 8);
+          common.leaflet.addMarker(ctrl.coords());
+          if(!ctrl.hasCoords){
+            setTimeout(function(){
+              common.leaflet.addPopup(ctrl.coords(), "No location defined but<br/>the requesting LGU is here.")
+            }, 100);
+          }
+        }
+
       } else {
         setTimeout(tryMap, 100);
       }
     }()
-  }
-
-  this.progressConfig = function(elem, isInit){
-    
   }
 
   this.refreshHistory = function(){

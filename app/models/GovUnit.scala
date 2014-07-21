@@ -90,10 +90,7 @@ case class GovUnit(
     }
   }.getOrElse(name)))
 
-  lazy val lguOpt = DB.withConnection { implicit c =>
-    SQL("SELECT * FROM lgus WHERE lgu_id = {id}")
-    .on('id -> id).singleOpt(Lgu.simple)
-  }
+  lazy val lguOpt = Lgu.findById(id)
 
   def coords: Option[Map[String, BigDecimal]] = {
     for {

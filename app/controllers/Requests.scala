@@ -35,14 +35,14 @@ object Requests extends Controller with Secured {
     Req.findById(id).map { req =>
       Rest.success(
         "request" -> req.viewJson,
-        "canEdit" -> Json.toJson(user.canEditRequest(req)),
-        "isInvolved" -> Json.toJson(user.isInvolvedWith(req)),
-        "hasSignedoff" -> Json.toJson(user.hasSignedoff(req)),
-        "canSignoff" -> Json.toJson(user.canSignoff(req)),
+        "canEdit" -> user.canEditRequest(req),
+        "isInvolved" -> user.isInvolvedWith(req),
+        "hasSignedoff" -> user.hasSignedoff(req),
+        "canSignoff" -> user.canSignoff(req),
         "author" -> req.author.infoJson,
         "govUnit" -> req.govUnit.toJson,
-        "assessingAgencies" -> Json.toJson(GovUnit.withPermission(Permission.VALIDATE_REQUESTS).map(_.toJson)),
-        "implementingAgencies" -> Json.toJson(GovUnit.withPermission(Permission.IMPLEMENT_REQUESTS).map(_.toJson)),
+        "assessingAgencies" -> GovUnit.withPermission(Permission.VALIDATE_REQUESTS).map(_.toJson),
+        "implementingAgencies" -> GovUnit.withPermission(Permission.IMPLEMENT_REQUESTS).map(_.toJson),
         "assessingAgency" -> req.assessingAgencyId.map { aid =>
           GovUnit.findById(aid).map(_.toJson)
         },
@@ -53,10 +53,12 @@ object Requests extends Controller with Secured {
         "executingAgency" -> req.executingAgencyId.map { aid =>
           GovUnit.findById(aid).map(_.toJson)
         },
-        "history" -> Json.toJson(Event.findForRequest(id).map(_.listJson)),
-        "projects" -> Json.toJson(req.projects.map(_.requestViewJson)),
+        "history" -> Event.findForRequest(id).map(_.listJson()),
+        "projects" -> req.projects.map(_.toJson),
         "disasterTypes" -> DisasterType.jsonList,
-        "requirements" -> Requirement.getFor(req.govUnit.role).map(_.toJson)
+        "requirements" -> Requirement.getFor(req.govUnit.role).map(_.toJson),
+        "projectTypes" -> ProjectType.jsonList,
+        "projectScopes" -> ProjectScope.toSelectJson
       )
     }.getOrElse(Rest.notFound())
     
@@ -169,7 +171,7 @@ object Requests extends Controller with Secured {
             r.copy(level = newLevel).save().map( implicit r =>
               Event.signoff(user.govUnit).create().map { e =>
                 Checkpoint.push(user)
-                Rest.success("event" -> e.listJson)
+                Rest.success("event" -> e.listJson())
               }.getOrElse(Rest.serverError())
             )
           }.getOrElse(Rest.serverError())
@@ -203,7 +205,7 @@ object Requests extends Controller with Secured {
             Event.comment(content).create().map { _ =>
               Event.reject(user.govUnit).create().map { e =>
                 Checkpoint.push(user)
-                Rest.success("event" -> e.listJson)
+                Rest.success("event" -> e.listJson())
               }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())
           ).getOrElse(Rest.serverError())}
@@ -244,6 +246,7 @@ object Requests extends Controller with Secured {
         "locFilters" -> Lgu.getLocFilters(psgc),
         "agencies" -> GovUnit.withPermission(Permission.IMPLEMENT_REQUESTS).map(_.toJson),
         "disasters" -> Disaster.jsonList,
+        "pageLimit" -> Req.PAGE_LIMIT,
         "counts" -> Json.obj(
           "all" -> Req.indexCount("all", projectTypeIdOption, psgc, disasterId, agencyId),
           "approval" -> Req.indexCount("approval", projectTypeIdOption, psgc, disasterId, agencyId),
@@ -351,7 +354,7 @@ object Requests extends Controller with Secured {
                 case "executingAgency" => Event.assign("execute", req.executingAgency)
                 case _ => Event.editField(field)
               }).create().map { e =>
-                Rest.success("event" -> e.listJson)
+                Rest.success("event" -> e.listJson())
               }.getOrElse(Rest.serverError())
             }.getOrElse(Rest.serverError())
           )

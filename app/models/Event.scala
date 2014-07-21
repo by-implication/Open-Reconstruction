@@ -10,6 +10,49 @@ import recon.support._
 
 object Event extends EventGen {
 
+  def feed(page: Int, pageLimit: Int)(implicit user: User) = DB.withConnection { implicit c =>
+
+    var conds = Seq.empty[String]
+
+    if(!user.isSuperAdmin){
+      
+      conds :+= ("""
+        WHERE assessing_agency_id = {govUnitId}
+        OR implementing_agency_id = {govUnitId}
+        OR executing_agency_id = {govUnitId}
+      """)
+
+      if(user.isOP){
+        conds :+= "req_level >= 3"
+      } else if(user.isDBM){
+        conds :+= "req_level >= 4"
+      } else if(user.lguOpt.isDefined){
+        conds :+= "gov_unit_id = {govUnitId}"
+      }
+
+    }
+
+    val r = SQL("""
+      SELECT *, COUNT(*) OVER() FROM events
+      NATURAL LEFT JOIN reqs
+    """ + conds.mkString(" OR ") + """
+      ORDER BY event_date DESC
+      LIMIT {limit}
+      OFFSET {offset}
+    """).on(
+      'govUnitId -> user.govUnitId,
+      'limit -> pageLimit,
+      'offset -> ((page-1) * pageLimit)
+    )
+
+    val events = r.list(simple)
+    val reqs = r.list(Req.simple)
+    val count: Long = r.list(get[Long]("count")).headOption.getOrElse(0)
+
+    (events.zip(reqs), count)
+
+  }
+
   private def generate(kind: String, content: String, legacy: Boolean = false)(implicit req: Req, user: User) = Event(
     kind = kind,
     content = Some(content),
@@ -117,19 +160,22 @@ case class Event(
 // GENERATED case class end
 {
 
-  def listJson = Json.obj(
-    "kind" -> kind,
-    "content" -> content,
-    "date" -> date.getTime,
-    "user" -> userId.map(User.findById(_).map(u => Json.obj(
-      "id" -> u.id,
-      "name" -> u.name
-    ))),
-    "govUnit" -> userId.map(User.findById(_).map(u => Json.obj(
-      "id" -> u.govUnit.id,
-      "name" -> u.govUnit.name
-    )))
-  )
+  def listJson() = {
+    val userOpt = userId.map(User.findById(_)).flatten
+    Json.obj(
+      "kind" -> kind,
+      "content" -> content,
+      "date" -> date.getTime,
+      "user" -> userOpt.map(u => Json.obj(
+        "id" -> u.id,
+        "name" -> u.name
+      )),
+      "govUnit" -> userOpt.map(u => Json.obj(
+        "id" -> u.govUnit.id,
+        "name" -> u.govUnit.name
+      ))
+    )
+  }
 
 }
 
