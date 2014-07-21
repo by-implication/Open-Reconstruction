@@ -46,18 +46,37 @@ object Req extends ReqGen {
   }
 
   def pending(filter: String, page: Int, pageLimit: Int)(implicit user: User) = DB.withConnection { implicit c =>
+
+    var conds = CondSet()
+    var varMap = VarMap('limit -> pageLimit, 'offset -> (page-1) * pageLimit)
+
+    filter match {
+      case "signoff" => {
+        if(user.isDBM){
+          conds.add("req_level = 4")
+        } else if(user.isOP){
+          conds.add("req_level = 3")
+        } else if(user.isSuperAdmin){
+          conds.add("req_level = 2")
+        } else {
+          conds.add("req_level = 1")
+          conds.add("assessing_agency_id = {govUnitId}")
+          varMap.add('govUnitId -> user.govUnitId)
+        }
+      }
+      case "assessor" => {
+        conds.add("req_level = 0")
+      }
+      case "executor" => {
+        conds.add("executing_agency_id IS NULL")
+        conds.add("implementing_agency_id = {govUnitId}")
+        varMap.add('govUnitId -> user.govUnitId)
+      }
+    }
     
-    val r = SQL("""
-      SELECT *, COUNT(*) OVER() FROM reqs
-      WHERE author_id = {userId}
-      OR gov_unit_id = {govUnitId}
-      LIMIT {limit} OFFSET {offset}
-    """).on(
-      'userId -> user.id,
-      'govUnitId -> user.govUnitId,
-      'limit -> pageLimit,
-      'offset -> (page-1) * pageLimit
-    )
+    val r = SQL("SELECT *, COUNT(*) OVER() FROM reqs "
+      + conds +
+    " LIMIT {limit} OFFSET {offset}").on(varMap.list:_*)
 
     val reqs = r.list(simple)
     val count: Long = r.list(get[Long]("count")).headOption.getOrElse(0)
@@ -223,6 +242,14 @@ object Req extends ReqGen {
     )
   }
 
+  case class CondSet(){
+    var conds = Seq.empty[String]
+    def add(cond: String) = conds = conds :+ cond
+    override def toString = {
+      if(conds.isEmpty) " " else " WHERE " + conds.mkString(" AND ") + " "
+    }
+  }
+
   case class VarMap(vars: (Any, anorm.ParameterValue[_])*){
     var list: Seq[(Any, anorm.ParameterValue[_])] = vars.toSeq
     def add(vars: (Any, anorm.ParameterValue[_])*) = list = list ++ vars.toSeq
@@ -231,46 +258,42 @@ object Req extends ReqGen {
   private def getSqlParams(projectTypeId: Option[Int], psgc: PGLTree, disasterId: Option[Int], agencyId: Option[Int])(implicit user: User) = {
 
     var table = "reqs"
-    var whereClauses = Seq.empty[String]
+    var conds = CondSet()
     var varMap = VarMap('projectTypeId -> projectTypeId, 'psgc -> psgc)
-    def addWhereClause(clause: String) = whereClauses = whereClauses :+ clause
 
     disasterId.map { id =>
-      addWhereClause("disaster_id = {disasterId}")
+      conds.add("disaster_id = {disasterId}")
       varMap.add('disasterId -> id)
     }
 
     agencyId.map { id =>
-      addWhereClause("implementing_agency_id = {agencyId}")
+      conds.add("implementing_agency_id = {agencyId}")
       varMap.add('agencyId -> id)
     }
 
-    projectTypeId.map(_ => addWhereClause("project_type_id = {projectTypeId}"))
+    projectTypeId.map(_ => conds.add("project_type_id = {projectTypeId}"))
 
     if(!psgc.list.isEmpty){
       table = """
         reqs LEFT JOIN lgus ON lgus.lgu_id = gov_unit_id
       """
-      addWhereClause("lgu_psgc <@ {psgc}")
+      conds.add("lgu_psgc <@ {psgc}")
     }
 
-    (table, whereClauses, varMap)
+    (table, conds, varMap)
 
   }
 
   def indexCount(projectTypeId: Option[Int], psgc: PGLTree, disasterId: Int, agencyId: Int)(implicit user: User): Long = {
-    val (table, whereClauses, varMap) = getSqlParams(projectTypeId, psgc, if (disasterId == 0) None else Some(disasterId), if (agencyId == 0) None else Some(agencyId) )
+    val (table, conds, varMap) = getSqlParams(projectTypeId, psgc, if (disasterId == 0) None else Some(disasterId), if (agencyId == 0) None else Some(agencyId) )
     DB.withConnection { implicit c =>
-      SQL("SELECT COUNT(*) FROM " + table + {
-        if (!whereClauses.isEmpty) " WHERE " + whereClauses.mkString(" AND ")
-        else ""
-      })
+      SQL("SELECT COUNT(*) FROM " + table + conds)
       .on(varMap.list:_*).as(scalar[Long].single)
     }
   }
 
   def indexList(offset: Int, limit: Int, projectTypeId: Option[Int], psgc: PGLTree, sort: String, sortDir: String, disasterId: Int, agencyId: Int)(implicit user: User): Seq[Req] = {
-    var (table, whereClauses, varMap) = getSqlParams(projectTypeId, psgc, if (disasterId == 0) None else Some(disasterId), if (agencyId == 0) None else Some(agencyId) )
+    var (table, conds, varMap) = getSqlParams(projectTypeId, psgc, if (disasterId == 0) None else Some(disasterId), if (agencyId == 0) None else Some(agencyId) )
     val sortColumn = (sort match {
       case "id" => "req_id"
       case "status" => "req_level"
@@ -286,10 +309,7 @@ object Req extends ReqGen {
     varMap.add('offset -> offset, 'limit -> limit)
 
     DB.withConnection { implicit c =>
-      SQL("SELECT * FROM " + table + {
-        if (!whereClauses.isEmpty) " WHERE " + whereClauses.mkString(" AND ")
-        else ""
-      } + """
+      SQL("SELECT * FROM " + table + conds + """
         ORDER BY """ + sortColumn  + " " + sortColumnDir + """
         OFFSET {offset}
         LIMIT {limit}

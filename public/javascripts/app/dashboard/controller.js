@@ -19,56 +19,74 @@ dashboard.controller = function(){
     return routes.controllers.Dashboard[params.tab]().url
   }
 
-  var tabs = [
-    {
-      identifier: this.tabFilters.FEED,
+  this.tabs.tabs = function(){
+    return [{
+      identifier: ctrl.tabFilters.FEED,
       href: nav({tab: "feed"}),
       label: m.prop("Feed")
-    },
-    {
-      identifier: this.tabFilters.PENDING,
+    }].concat(ctrl.app.isSuperAdmin() ? {
+      identifier: ctrl.tabFilters.PENDING,
       href: nav({tab: "pending"}),
       label: m.prop("Pending requests")
-    },
-    {
-      identifier: this.tabFilters.MINE,
+    } : []).concat({
+      identifier: ctrl.tabFilters.MINE,
       href: nav({tab: "mine"}),
       label: m.prop("My requests")
-    }
-  ];
-
-  this.tabs.tabs = m.prop(tabs);
+    });
+  };
   this.count = m.prop(0);
   this.pageLimit = m.prop(1);
 
   switch(this.tab){
 
     case "feed": {
+
       this.events = m.prop([]);
       this.lastVisit = m.prop();
-      break;
-    }
 
-    default: this.reqs = m.prop([]);
-
-  }
-
-  bi.ajax(routes.controllers.Dashboard[ctrl.tab + "Meta"](this.page)).then(function (r){
-
-    ctrl.count(r.count);
-    ctrl.pageLimit(r.pageLimit);
-
-    switch(ctrl.tab){
-      case "feed": {
+      bi.ajax(routes.controllers.Dashboard.feedMeta(this.page)).then(function (r){
+        ctrl.count(r.count);
+        ctrl.pageLimit(r.pageLimit);
         ctrl.events(r.events);
         ctrl.lastVisit(r.lastVisit);
-        break;
-      }
-      default: {
-        ctrl.reqs(r.reqs);
-      }
+      });
+
+      break;
+
     }
 
-  });
+    case "mine": {
+
+      this.reqs = m.prop([]);
+
+      bi.ajax(routes.controllers.Dashboard.mineMeta(this.page)).then(function (r){
+
+        ctrl.count(r.count);
+        ctrl.pageLimit(r.pageLimit);
+        ctrl.reqs(r.reqs);
+
+      });
+
+      break;
+
+    }
+
+    case "pending": {
+
+
+      this.filter = m.route.param("f") || "signoff";
+      this.reqs = m.prop([]);
+
+      bi.ajax(routes.controllers.Dashboard.pendingMeta(this.filter, this.page)).then(function (r){
+        ctrl.count(r.count);
+        ctrl.pageLimit(r.pageLimit);
+        ctrl.reqs(r.reqs);
+      });
+
+      break;
+
+    }
+
+  }
   
 }

@@ -43,9 +43,14 @@ app.controller = function(){
     return this.currentUser().isSuperAdmin;
   }.bind(this);
 
-  this.isDBM = function(){
-    return (this.currentUser().govUnit.role == "DBM");
-  }.bind(this);
+  var isRole = function(role){
+    return function(){
+      return (this.currentUser().govUnit.role == role);
+    }
+  }
+
+  this.isDBM = isRole("DBM");
+  this.isOP = isRole("OP");
 
   this.isGovUnitAdmin = function(govUnitId){
     return this.isSuperAdmin() || this.currentUser().isAdmin && this.currentUser().govUnit.id === govUnitId;

@@ -1,18 +1,17 @@
 dashboard.view = function(ctrl){
 
+  function initPagination(f){
+    return common.pagination(ctrl.page, ctrl.count(), ctrl.pageLimit(), f);
+  }
+
   var tabContent;
   switch(ctrl.tab){
 
     case "feed": {
 
-      var pagination = common.pagination(
-        ctrl.page,
-        ctrl.count(),
-        ctrl.pageLimit(),
-        function (p){
-          return routes.controllers.Dashboard[ctrl.tab + 'Page'](p).url;
-        }
-      );
+      var pagination = initPagination(function (p){
+        return routes.controllers.Dashboard.feedPage(p).url;
+      });
 
       tabContent = [
         pagination,
@@ -34,14 +33,9 @@ dashboard.view = function(ctrl){
 
     case "mine": {
 
-      var pagination = common.pagination(
-        ctrl.page,
-        ctrl.count(),
-        ctrl.pageLimit(),
-        function (p){
-          return routes.controllers.Dashboard[ctrl.tab + 'Page'](p).url;
-        }
-      );
+      var pagination = initPagination(function (p){
+        return routes.controllers.Dashboard.minePage(p).url;
+      });
 
       tabContent = [
         pagination,
@@ -60,16 +54,30 @@ dashboard.view = function(ctrl){
 
     case "pending": {
 
-      var pagination = common.pagination(
-        ctrl.page,
-        ctrl.count(),
-        ctrl.pageLimit(),
-        function (p){
-          return routes.controllers.Dashboard[ctrl.tab + 'Page'](p).url;
-        }
-      );
+      var filters = [];
+      filters.ASSESSOR = {id: "assessor", label: "Needs assessor"};
+      filters.EXECUTOR = {id: "executor", label: "Needs executor"};
+      filters.SIGNOFF = {id: "signoff", label: "Needs signoff"};
+
+      filters.push(filters.SIGNOFF);
+      if(ctrl.app.isSuperAdmin()){
+        filters.push(filters.ASSESSOR);
+      } else if(!(ctrl.app.isDBM() || ctrl.app.isOP())){
+        filters.push(filters.EXECUTOR);
+      }
+
+      var pagination = initPagination(function (p){
+        return routes.controllers.Dashboard.pendingPage(ctrl.filter, p).url;
+      });
 
       tabContent = [
+        filters.map(function (f){
+          return m("a", {
+            className: (ctrl.filter == f.id) ? "active" : "",
+            config: m.route,
+            href: routes.controllers.Dashboard.pendingPage(f.id, 1).url
+          }, f.label);
+        }),
         pagination,
         request.listView(ctrl.reqs()),
         pagination,
@@ -112,7 +120,7 @@ dashboard.view = function(ctrl){
           ]),
         ]),
         m(".row", [
-          m(".columns.medium-6.medium-centered", tabContent),
+          m(".columns.medium-6.medium-centered", tabContent)
         ]),
       ]),
     ]

@@ -233,7 +233,6 @@ request.controller = function(){
 
     this.request(data.request);
     this.projects(data.projects);
-    console.log(this.projects());
 
     this.author(data.author);
     this.govUnit(data.govUnit);
