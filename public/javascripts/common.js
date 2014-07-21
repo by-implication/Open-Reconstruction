@@ -483,7 +483,7 @@ common.pagination = function(pageNum, count, pageLimit, p2link){
   }
 
   if (pagesToDisplay().length) {
-    return m("ul.pagination", [
+    return m("ul.pagination.text-center", [
       m("li.arrow",{className: pageNum === 0 ? "unavailable" : ""}, [
         m("a", {
           href: p2link(Math.max(pageNum - 1, 1)),
