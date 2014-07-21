@@ -78,7 +78,6 @@ object Application extends Controller with Secured {
   def adminLgus = index
   def adminAgencies = index
   def faq = index
-  def dashboard = index
   def browse = index
 
   def process() = Action {
@@ -109,7 +108,6 @@ object Application extends Controller with Secured {
       routes.javascript.Application.faq,
       routes.javascript.Application.home,
       routes.javascript.Application.process,
-      routes.javascript.Application.dashboard,
       routes.javascript.Application.browse,
       Users.authenticate,
       Users.create,
@@ -192,9 +190,10 @@ object Application extends Controller with Secured {
       GovUnits.createLguMeta,
       GovUnits.insertLgu,
       GovUnits.search,
-      Feed.index,
-      Feed.indexMeta,
-      Feed.indexPage
+      Dashboard.index,
+      Dashboard.tab,
+      Dashboard.tabMeta,
+      Dashboard.tabPage
     )).as("text/javascript")
   }
 

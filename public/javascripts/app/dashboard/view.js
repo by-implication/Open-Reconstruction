@@ -1,5 +1,45 @@
 dashboard.view = function(ctrl){
 
+  var tabContent;
+  switch(ctrl.tab){
+    case "feed": {
+
+      var pagination = common.pagination(
+        ctrl.page,
+        ctrl.count(),
+        ctrl.pageLimit(),
+        function (p){
+          return routes.controllers.Dashboard.tabPage(ctrl.tab, p).url;
+        }
+      );
+
+      tabContent = [
+        pagination,
+        m(".card", ctrl.events().map(function (e){
+          e.isNew = e.date > ctrl.lastVisit();
+          return feedEvent[e.kind](e);
+        })),
+        pagination,
+        !ctrl.events().length ?
+          m("h3.empty.center-text", [
+            "Nothing in your Feed yet. Do something!"
+          ])
+        : ""
+      ];
+      
+      break;
+
+    }
+    case "pending": {
+      tabContent = "";
+      break;
+    }
+    case "mine": {
+      tabContent = "";
+      break;
+    }
+  }
+
   return app.template(
     ctrl.app,
     "Dashboard",
@@ -26,9 +66,7 @@ dashboard.view = function(ctrl){
           ]),
         ]),
         m(".row", [
-          m(".columns.medium-6.medium-centered", [
-            "DASHBOARD"
-          ]),
+          m(".columns.medium-6.medium-centered", tabContent),
         ]),
       ]),
     ]

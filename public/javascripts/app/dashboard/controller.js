@@ -2,89 +2,89 @@ dashboard.controller = function(){
 
   var ctrl = this;
   this.app = new app.controller();
+
+  this.tab = m.route.param("t") || "pending";
+  this.page = parseInt(m.route.param("p")) || 1;
+
   this.tabs = new common.tabs.controller();
+  this.counts = {};
 
   this.tabFilters = {
-    ALL: 'all',
-    SIGNOFF: 'signoff',
-    ASSESSOR: 'assessor',
-    EXECUTOR: 'executor',
-    MINE: 'mine',
-    AGENCY: 'agency',
-    APPROVAL: 'approval',
-    IMPLEMENTATION: 'implementation'
+    FEED: 'feed',
+    PENDING: 'pending',
+    MINE: 'mine'
   }
-  
-  this.tab = m.route.param("tab") || "all";
+
+  var nav = function(params){
+    return routes.controllers.Dashboard.index(params.tab).url
+  }
 
   var tabs = [
     {
-      identifier: this.tabFilters.ALL,
-      href: nav({tab: "all"}),
-      _label: "All"
+      identifier: this.tabFilters.FEED,
+      href: nav({tab: "feed"}),
+      _label: "Feed"
     },
     {
-      identifier: this.tabFilters.SIGNOFF,
-      href: nav({tab: "signoff"}),
-      when: function(){ return _.contains(self.app.currentUser().permissions, process.permissions.SIGNOFF) },
-      _label: "Needs signoff"
-    },
-    {
-      identifier: this.tabFilters.ASSESSOR,
-      href: nav({tab: "assessor"}),
-      when: function(){ return self.app.isSuperAdmin() },
-      _label: "Needs assessor"
-    },
-    {
-      identifier: this.tabFilters.AGENCY,
-      href: nav({tab: "agency"}),
-      _label: function(){
-        if(self.app.currentUser().govUnit && self.app.currentUser().govUnit.role == "LGU") {
-          return "My LGU's requests";
-        } else {
-          return "My agency's requests";
-        }
-      }
+      identifier: this.tabFilters.PENDING,
+      href: nav({tab: "pending"}),
+      _label: "Pending requests"
     },
     {
       identifier: this.tabFilters.MINE,
       href: nav({tab: "mine"}),
       _label: "My requests"
-    },
-    {
-      identifier: this.tabFilters.EXECUTOR,
-      href: nav({tab: "executor"}),
-      when: function(){ return _.contains(self.app.currentUser().permissions, process.permissions.IMPLEMENT_REQUESTS) },
-      _label: "Needs executor"
-    },
-    {
-      identifier: this.tabFilters.APPROVAL,
-      href: nav({tab: "approval"}),
-      when: function(){ return !self.app.currentUser() },
-      _label: "Pending Approval"
-    },
-    {
-      identifier: this.tabFilters.IMPLEMENTATION,
-      href: nav({tab: "implementation"}),
-      when: function(){ return !self.app.currentUser() },
-      _label: "Implementation"
-    },
+    }
   ].map(function (tab){
     tab.requests = function(){
-      return self.requestList
+      return ctrl.requestList
         .filter(function (r){ return tab.filter ? !r.isRejected : true })
         .filter(tab.filter || function(){ return true })
     }
     tab.label = function(){
       return [
         typeof tab._label == 'function' ? tab._label() : tab._label,
-        m("span.label.secondary.round", self.counts[tab.identifier])
+        m("span.label.secondary.round", ctrl.counts[tab.identifier])
       ]
     }
-    tab.content = function(){ return request.listView(this.requests(), self.sortBy, self) }
+    tab.content = function(){ return request.listView(this.requests(), ctrl.sortBy, self) }
     return tab;
   });
 
   this.tabs.tabs = m.prop(tabs);
+
+  switch(this.tab){
+
+    case "feed": {
+      this.events = m.prop([]);
+      this.lastVisit = m.prop();
+      this.count = m.prop(0);
+      this.pageLimit = m.prop(1);
+      break;
+    }
+
+    case "pending": {
+      break;
+    }
+
+    case "mine": {
+      break;
+    }
+    
+  }
+
+  bi.ajax(routes.controllers.Dashboard.tabMeta(this.tab, this.page)).then(function (r){
+
+    switch(ctrl.tab){
+      case "feed": {
+        ctrl.events(r.events);
+        ctrl.lastVisit(r.lastVisit);
+        ctrl.count(r.count);
+        ctrl.pageLimit(r.pageLimit);
+        break;
+      }
+    }
+
+  });
   
 }

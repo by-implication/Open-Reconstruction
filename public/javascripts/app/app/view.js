@@ -112,9 +112,9 @@ app.navbar = function(ctrl){
         m("li.divider"),
         m.cookie().logged_in ? m("li", [
           m("a", {
-            href: routes.controllers.Application.dashboard().url,
+            href: routes.controllers.Dashboard.index().url,
             config: m.route,
-            className: (m.route().startsWith(routes.controllers.Application.dashboard().url) ? "active" : "")
+            className: (m.route().startsWith(routes.controllers.Dashboard.index().url) ? "active" : "")
           }, "Dashboard")
         ]) : "",
         m("li", [
@@ -131,15 +131,6 @@ app.navbar = function(ctrl){
             className: (m.route().startsWith(routes.controllers.Application.browse().url) ? "active" : "")
           }, "Browse")
         ]),
-        m.cookie().logged_in ?
-          m("li", [
-            m("a", {
-              href: routes.controllers.Feed.index().url,
-              config: m.route,
-              className: (m.route().startsWith(routes.controllers.Feed.index().url) ? "active" : "")
-            }, "Feed")
-          ])
-        : "",
         m("li", [
           m("a", {
             href: routes.controllers.Application.faq().url,

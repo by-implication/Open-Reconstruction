@@ -49,11 +49,11 @@ m.route(document, window.location.pathname, GATrackedRoutes({
   "/gov-units/:id/:page": govUnit,
   "/login": login,
   "/faq": faq,
-  "/feed": feed,
-  "/feed/:p": feed,
   "/browse/projects": projectIndex,
   "/browse/projects/:p": projectIndex,
   "/browse/project/:id": project,
   "/browse": requestListing,
-  "/dashboard": dashboard
+  "/dashboard": dashboard,
+  "/dashboard/:t": dashboard,
+  "/dashboard/:t/:p": dashboard
 }));

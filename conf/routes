@@ -32,7 +32,6 @@ POST    /admin/types/:k/new                              controllers.Admin.inser
 POST    /admin/types/:k/:id                              controllers.Admin.updateType(k: String, id: Int)
 
 GET     /browse                                          controllers.Application.browse
-GET     /dashboard                                       controllers.Application.dashboard
 
 # Map static resources from the /public folder to the /assets URL path
 
@@ -113,6 +112,7 @@ POST    /gov-units/:id/new-user                          controllers.Users.inser
 GET     /gov-units/:id/:p                                controllers.GovUnits.viewPage(id: Int, p: Int)
 GET     /gov-units/:id/:p/meta                           controllers.GovUnits.viewMeta(id: Int, p: Int)
 
-GET     /feed                                            controllers.Feed.index
-GET     /feed/:p                                         controllers.Feed.indexPage(p: Int)
-GET     /feed/:p/meta                                    controllers.Feed.indexMeta(p: Int)
+GET     /dashboard                                       controllers.Dashboard.index
+GET     /dashboard/:t                                    controllers.Dashboard.tab(t: String)
+GET     /dashboard/:t/:p                                 controllers.Dashboard.tabPage(t: String, p: Int)
+GET     /dashboard/:t/:p/meta                            controllers.Dashboard.tabMeta(t: String, p: Int)
