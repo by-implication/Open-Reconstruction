@@ -15,16 +15,15 @@ dashboard.view = function(ctrl){
 
       tabContent = [
         pagination,
-        m(".card", ctrl.events().map(function (e){
-          e.isNew = e.date > ctrl.lastVisit();
-          return feedEvent[e.kind](e);
-        })),
-        pagination,
-        !ctrl.events().length ?
-          m("h3.empty.center-text", [
+        ctrl.events().length ?
+          m(".card", ctrl.events().map(function (e){
+            e.isNew = e.date > ctrl.lastVisit();
+            return feedEvent[e.kind](e);
+          }))
+        : m("h3.empty.center-text", [
             "Nothing in your Feed yet. Do something!"
-          ])
-        : ""
+          ]),
+        pagination,
       ];
       
       break;
@@ -39,13 +38,12 @@ dashboard.view = function(ctrl){
 
       tabContent = [
         pagination,
-        request.listView(ctrl.reqs()),
-        pagination,
-        !ctrl.reqs().length ?
-          m("h3.empty.center-text", [
+        ctrl.reqs().length ?
+          request.listView(ctrl.reqs())
+        : m("h3.empty.center-text", [
             "No requests to list."
-          ])
-        : ""
+          ]),
+        pagination,
       ];
 
       break;
@@ -71,21 +69,23 @@ dashboard.view = function(ctrl){
       });
 
       tabContent = [
-        filters.map(function (f){
-          return m("a", {
-            className: (ctrl.filter == f.id) ? "active" : "",
-            config: m.route,
-            href: routes.controllers.Dashboard.pendingPage(f.id, 1).url
-          }, f.label);
-        }),
+        m("ul.filters", filters.map(function (f){
+          return m("li.filter", {
+            className: (ctrl.filter == f.id) ? "active" : ""
+          }, [
+            m("a", {
+              config: m.route,
+              href: routes.controllers.Dashboard.pendingPage(f.id, 1).url
+            }, f.label)
+          ]);
+        })),
         pagination,
-        request.listView(ctrl.reqs()),
-        pagination,
-        !ctrl.reqs().length ?
-          m("h3.empty.center-text", [
+        ctrl.reqs().length ?
+          request.listView(ctrl.reqs())
+        : m("h3.empty.center-text", [
             "No requests to list."
-          ])
-        : ""
+          ]),
+        pagination,
       ];
 
       break;
@@ -120,7 +120,7 @@ dashboard.view = function(ctrl){
           ]),
         ]),
         m(".row", [
-          m(".columns.medium-6.medium-centered", tabContent)
+          m(".columns.medium-12", tabContent)
         ]),
       ]),
     ]
