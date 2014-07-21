@@ -23,8 +23,9 @@ FROM (SELECT req_id, group_id, project_name,
     LEFT JOIN gov_units AS gov_agencies on reqs.implementing_agency_id = gov_agencies.gov_unit_id
     LEFT JOIN project_types on initcap(project_type_name) = initcap(project_type)
     WHERE oparr_bohol.psgc = reqs.req_location
+    AND implementation_pms_id IS NULL
   ) AS new_projects
- WHERE (implementing_agency ilike gov_unit_acronym OR
+WHERE (implementing_agency ilike gov_unit_acronym OR
     (implementing_agency NOT ILIKE coalesce(gov_unit_acronym, '') 
     AND implementing_agency ilike any(agencies) IS NULL
     AND gov_unit_acronym IS NULL)) AND
