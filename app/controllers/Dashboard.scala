@@ -36,7 +36,20 @@ object Dashboard extends Controller with Secured {
     		)
       }
 
-      case _ => Rest.success("lel" -> "wat")
+      case "pending" => {
+        Rest.success()
+      }
+
+      case "mine" => {
+        val (reqs, count) = Req.mine(page, PAGE_LIMIT)
+        Rest.success(
+          "reqs" -> reqs.map(_.indexJson),
+          "count" -> count,
+          "pageLimit" -> PAGE_LIMIT
+        )
+      }
+
+      case _ => Rest.error("Invalid tab")
 
     }
   }

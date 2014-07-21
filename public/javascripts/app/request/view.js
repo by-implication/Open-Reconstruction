@@ -638,6 +638,8 @@ request.miniProgress = function(request){
 }
 
 request.listView = function(reqs, sortBy, ctrl){
+  sortBy = sortBy || function(){ return m.route(); };
+  ctrl = ctrl || {sort: "id", sortDir: "asc"};
   return m("table.responsive", [
       m("thead", [
         m("tr", [

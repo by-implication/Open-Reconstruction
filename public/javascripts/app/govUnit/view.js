@@ -119,7 +119,7 @@ govUnit.view = function(ctrl){
         m(".columns.medium-9", [
           m("h1", "Requests"),
           pagination,
-          request.listView(ctrl.requests(), function(){ return m.route(); })
+          request.listView(ctrl.requests())
         ]),
       ]),
       ctrl.children().length ?

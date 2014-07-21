@@ -52,36 +52,34 @@ dashboard.controller = function(){
   });
 
   this.tabs.tabs = m.prop(tabs);
+  this.count = m.prop(0);
+  this.pageLimit = m.prop(1);
 
   switch(this.tab){
 
     case "feed": {
       this.events = m.prop([]);
       this.lastVisit = m.prop();
-      this.count = m.prop(0);
-      this.pageLimit = m.prop(1);
       break;
     }
 
-    case "pending": {
-      break;
-    }
-
-    case "mine": {
-      break;
-    }
+    default: this.reqs = m.prop([]);
 
   }
 
   bi.ajax(routes.controllers.Dashboard.tabMeta(this.tab, this.page)).then(function (r){
 
+    ctrl.count(r.count);
+    ctrl.pageLimit(r.pageLimit);
+
     switch(ctrl.tab){
       case "feed": {
         ctrl.events(r.events);
         ctrl.lastVisit(r.lastVisit);
-        ctrl.count(r.count);
-        ctrl.pageLimit(r.pageLimit);
         break;
+      }
+      default: {
+        ctrl.reqs(r.reqs);
       }
     }
 
