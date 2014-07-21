@@ -55,5 +55,6 @@ m.route(document, window.location.pathname, GATrackedRoutes({
   "/browse": requestListing,
   "/dashboard": dashboard,
   "/dashboard/:t": dashboard,
-  "/dashboard/:t/:p": dashboard
+  "/dashboard/:t/:p": dashboard,
+  "/dashboard/:t/:f/:p": dashboard
 }));

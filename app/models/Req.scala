@@ -45,6 +45,27 @@ object Req extends ReqGen {
 
   }
 
+  def pending(filter: String, page: Int, pageLimit: Int)(implicit user: User) = DB.withConnection { implicit c =>
+    
+    val r = SQL("""
+      SELECT *, COUNT(*) OVER() FROM reqs
+      WHERE author_id = {userId}
+      OR gov_unit_id = {govUnitId}
+      LIMIT {limit} OFFSET {offset}
+    """).on(
+      'userId -> user.id,
+      'govUnitId -> user.govUnitId,
+      'limit -> pageLimit,
+      'offset -> (page-1) * pageLimit
+    )
+
+    val reqs = r.list(simple)
+    val count: Long = r.list(get[Long]("count")).headOption.getOrElse(0)
+
+    (reqs, count)
+
+  }
+
   private def byProjectType = DB.withConnection { implicit c =>
     SQL("""
       SELECT project_type_name, 

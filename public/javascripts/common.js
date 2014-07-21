@@ -271,7 +271,7 @@ common.tabs.controller = function(basePath){
       if(window.location.hash){
         return tab.href === window.location.hash;
       } else {
-        return tab.href == m.route() 
+        return m.route().startsWith(tab.href);
       }
     });
     if(item == undefined) {

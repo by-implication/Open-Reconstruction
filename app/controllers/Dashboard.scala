@@ -13,45 +13,46 @@ object Dashboard extends Controller with Secured {
   def PAGE_LIMIT = 20
 
   def index = Application.index
-  def tab(tab: String) = Application.index
-  def tabPage(tab: String, page: Int) = Application.index1(page)
-  def tabMeta(tab: String, page: Int) = UserAction(){ implicit user => implicit request =>
-    tab match {
-
-      case "feed" => {
-      	user.copy(lastFeedVisit = Time.now).save()
-        val (eventReq, count) = Event.feed(page, PAGE_LIMIT)
-      	Rest.success(
-      		"lastVisit" -> user.lastFeedVisit,
-          "count" -> count,
-          "pageLimit" -> PAGE_LIMIT,
-      		"events" -> eventReq.map { case (event, req) => {
-      			event.listJson() ++ Json.obj(
-      				"req" -> Json.obj(
-      					"id" -> req.id,
-      					"description" -> req.description
-    					)
-    				)
-      		}}
-    		)
-      }
-
-      case "pending" => {
-        Rest.success()
-      }
-
-      case "mine" => {
-        val (reqs, count) = Req.mine(page, PAGE_LIMIT)
-        Rest.success(
-          "reqs" -> reqs.map(_.indexJson),
-          "count" -> count,
-          "pageLimit" -> PAGE_LIMIT
+  def feed = Application.index
+  def feedPage = Application.index1 _
+  def feedMeta(page: Int) = UserAction(){ implicit user => implicit request =>
+    user.copy(lastFeedVisit = Time.now).save()
+    val (eventReq, count) = Event.feed(page, PAGE_LIMIT)
+    Rest.success(
+      "lastVisit" -> user.lastFeedVisit,
+      "count" -> count,
+      "pageLimit" -> PAGE_LIMIT,
+      "events" -> eventReq.map { case (event, req) => {
+        event.listJson() ++ Json.obj(
+          "req" -> Json.obj(
+            "id" -> req.id,
+            "description" -> req.description
+          )
         )
-      }
+      }}
+    )
+  }
 
-      case _ => Rest.error("Invalid tab")
+  def mine = Application.index
+  def minePage = Application.index1 _
+  def mineMeta(page: Int) = UserAction(){ implicit user => implicit request =>
+    val (reqs, count) = Req.mine(page, PAGE_LIMIT)
+    Rest.success(
+      "reqs" -> reqs.map(_.indexJson),
+      "count" -> count,
+      "pageLimit" -> PAGE_LIMIT
+    )
+  }
 
-    }
+  def pending = Application.index
+  def pendingPage(filter: String, page:Int) = Application.index
+  def pendingMeta(filter: String, page: Int) = UserAction(){ implicit user => implicit request =>
+    val (reqs, count) = Req.pending(filter, page, PAGE_LIMIT)
+    Rest.success(
+      "reqs" -> reqs.map(_.indexJson),
+      "count" -> count,
+      "pageLimit" -> PAGE_LIMIT
+    )
   }
 
 }

@@ -16,7 +16,7 @@ dashboard.controller = function(){
   }
 
   var nav = function(params){
-    return routes.controllers.Dashboard.tab(params.tab).url
+    return routes.controllers.Dashboard[params.tab]().url
   }
 
   var tabs = [
@@ -53,7 +53,7 @@ dashboard.controller = function(){
 
   }
 
-  bi.ajax(routes.controllers.Dashboard.tabMeta(this.tab, this.page)).then(function (r){
+  bi.ajax(routes.controllers.Dashboard[ctrl.tab + "Meta"](this.page)).then(function (r){
 
     ctrl.count(r.count);
     ctrl.pageLimit(r.pageLimit);

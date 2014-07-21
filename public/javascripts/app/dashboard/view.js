@@ -1,18 +1,18 @@
 dashboard.view = function(ctrl){
 
-  var pagination = common.pagination(
-    ctrl.page,
-    ctrl.count(),
-    ctrl.pageLimit(),
-    function (p){
-      return routes.controllers.Dashboard.tabPage(ctrl.tab, p).url;
-    }
-  );
-
   var tabContent;
   switch(ctrl.tab){
 
     case "feed": {
+
+      var pagination = common.pagination(
+        ctrl.page,
+        ctrl.count(),
+        ctrl.pageLimit(),
+        function (p){
+          return routes.controllers.Dashboard[ctrl.tab + 'Page'](p).url;
+        }
+      );
 
       tabContent = [
         pagination,
@@ -32,7 +32,16 @@ dashboard.view = function(ctrl){
 
     }
 
-    default: {
+    case "mine": {
+
+      var pagination = common.pagination(
+        ctrl.page,
+        ctrl.count(),
+        ctrl.pageLimit(),
+        function (p){
+          return routes.controllers.Dashboard[ctrl.tab + 'Page'](p).url;
+        }
+      );
 
       tabContent = [
         pagination,
@@ -44,6 +53,34 @@ dashboard.view = function(ctrl){
           ])
         : ""
       ];
+
+      break;
+
+    }
+
+    case "pending": {
+
+      var pagination = common.pagination(
+        ctrl.page,
+        ctrl.count(),
+        ctrl.pageLimit(),
+        function (p){
+          return routes.controllers.Dashboard[ctrl.tab + 'Page'](p).url;
+        }
+      );
+
+      tabContent = [
+        pagination,
+        request.listView(ctrl.reqs()),
+        pagination,
+        !ctrl.reqs().length ?
+          m("h3.empty.center-text", [
+            "No requests to list."
+          ])
+        : ""
+      ];
+
+      break;
 
     }
 

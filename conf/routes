@@ -113,6 +113,12 @@ GET     /gov-units/:id/:p                                controllers.GovUnits.vi
 GET     /gov-units/:id/:p/meta                           controllers.GovUnits.viewMeta(id: Int, p: Int)
 
 GET     /dashboard                                       controllers.Dashboard.index
-GET     /dashboard/:t                                    controllers.Dashboard.tab(t: String)
-GET     /dashboard/:t/:p                                 controllers.Dashboard.tabPage(t: String, p: Int)
-GET     /dashboard/:t/:p/meta                            controllers.Dashboard.tabMeta(t: String, p: Int)
+GET     /dashboard/feed                                  controllers.Dashboard.feed
+GET     /dashboard/feed/:p                               controllers.Dashboard.feedPage(p: Int)
+GET     /dashboard/feed/:p/meta                          controllers.Dashboard.feedMeta(p: Int)
+GET     /dashboard/mine                                  controllers.Dashboard.mine
+GET     /dashboard/mine/:p                               controllers.Dashboard.minePage(p: Int)
+GET     /dashboard/mine/:p/meta                          controllers.Dashboard.mineMeta(p: Int)
+GET     /dashboard/pending                               controllers.Dashboard.pending
+GET     /dashboard/pending/:f/:p                         controllers.Dashboard.pendingPage(f: String, p: Int)
+GET     /dashboard/pending/:f/:p/meta                    controllers.Dashboard.pendingMeta(f: String, p: Int)

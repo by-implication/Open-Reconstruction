@@ -191,9 +191,15 @@ object Application extends Controller with Secured {
       GovUnits.insertLgu,
       GovUnits.search,
       Dashboard.index,
-      Dashboard.tab,
-      Dashboard.tabMeta,
-      Dashboard.tabPage
+      Dashboard.feed,
+      Dashboard.feedMeta,
+      Dashboard.feedPage,
+      Dashboard.mine,
+      Dashboard.mineMeta,
+      Dashboard.minePage,
+      Dashboard.pending,
+      Dashboard.pendingMeta,
+      Dashboard.pendingPage
     )).as("text/javascript")
   }
 
