@@ -69,7 +69,7 @@ dashboard.view = function(ctrl){
       });
 
       tabContent = [
-        m("ul.filters.inline", filters.map(function (f){
+        m("ul.filters.inline.text-center", filters.map(function (f){
           return m("li.filter", {
             className: (ctrl.filter == f.id) ? "active" : ""
           }, [
