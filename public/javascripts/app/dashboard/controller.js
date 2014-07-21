@@ -16,7 +16,7 @@ dashboard.controller = function(){
   }
 
   var nav = function(params){
-    return routes.controllers.Dashboard.index(params.tab).url
+    return routes.controllers.Dashboard.tab(params.tab).url
   }
 
   var tabs = [
@@ -70,7 +70,7 @@ dashboard.controller = function(){
     case "mine": {
       break;
     }
-    
+
   }
 
   bi.ajax(routes.controllers.Dashboard.tabMeta(this.tab, this.page)).then(function (r){
