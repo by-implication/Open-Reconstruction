@@ -19,11 +19,11 @@ home.view = function(ctrl){
             ]),
           ])
         ]),
-        m("a.search",[
-          m(".row", {
-            href: routes.controllers.Requests.index().url,
-            config:m.route
-          }, [
+        m("a.search", {
+          href: routes.controllers.Requests.index().url,
+          config:m.route
+        },[
+          m(".row",[
             m(".columns.medium-8.medium-centered",[
               m("h2.text-center", [
                 m("i.fa.fa-search"),
