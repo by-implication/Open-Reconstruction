@@ -374,7 +374,7 @@ home.view = function(ctrl){
             m("p", [
               "Open Recon is spearheaded by the ",
               m("a", {href:"http://data.gov.ph"}, "Open Data Task Force"),
-              "and is a joint initiative by OPARR, DBM, and DPWH. The site was built and designed by a team from ",
+              " and is a joint initiative by OPARR, DBM, and DPWH. The site was built and designed by a team from ",
               m("a", {href:"http://byimplication.com"}, "By Implication"),
               "."
               ]),
