@@ -7,8 +7,8 @@ home.view = function(ctrl){
             m("div#logo", {config: ctrl.drawLogo}, [m.trust(home.Logo)]),
           ]),
           m(".columns.medium-9", [
-            m("h1", "Open Reconstruction"),
-            m("p", [
+            m("h1.small-text-center.medium-text-left", ["Open Reconstruction"]),
+            m("p.small-text-center.medium-text-left", [
               "Tracking taxpayer money spent on post-disaster reconstruction in the Philippines",
             ]),
             m("a.button",{href:"#infodump"},[
