@@ -322,21 +322,27 @@ home.view = function(ctrl){
         m(".row.info", [
           m(".columns.medium-12", [
             m("h2",["Transparency to the People"]),
-            m("p", [
+            m("p.big", [
               "We have really cool graphs, charts, and lists that you can play with.",
               m("br"),
               "You can even get the raw data, if you want to dig deep and get your hands dirty. (coming soon)"]),
-            m("a.button.micro", "List of all requests"),
-            m("a.button.micro", "Stats, Graphs, and Visuals"),
-            m("a.button.micro", "Data dumps, CSVs, and APIs"),
+            m("ul.button-group.centerize.radius", [
+              m("li", [
+                m("a.button.tiny", "List of all requests"),
+              ]),
+              m("li", [
+                m("a.button.tiny", "Stats, Graphs, and Visuals"),
+              ]),
+              m("li", [
+                m("a.button.tiny", "Data dumps, CSVs, and APIs"),
+              ]),
+            ]),
             m("figure.large", [
               visPanel.view(ctrl.yolandaSaroVis)
             ]),
             m("h3.graph-title", "SARO Releases, Value and Quantity, per month")
           ])
         ]),
-        m(".row", [
-        ])
       ]),
       m("section.etc.alt", [
         m(".row.info", [
@@ -352,7 +358,7 @@ home.view = function(ctrl){
               m("a", {href:"http://byimplication.com"}, "By Implication"),
               "."
               ]),
-            m("a.button.micro", {
+            m("a.button.tiny.radius", {
               href: routes.controllers.Application.faq().url,
               config:m.route
             }, "Learn more about this project")
@@ -363,8 +369,14 @@ home.view = function(ctrl){
             ]),
             m("h4", "Spread the word"),
             m("p","Tweet us, Like us, Follow us! Spread the word, and let us know what else you'd like to see! You can also comment on individual charts and projects, and embedding is coming soon."),
-            m("a.button.micro", "Facebook Link"),
-            m("a.button.micro", "Twitter Link")
+            m("ul.button-group.centerize.radius", [
+              m("li", [
+                m("a.button.tiny", "Facebook Link"),
+              ]),
+              m("li", [
+                m("a.button.tiny", "Twitter Link")
+              ]),
+            ]),
           ]),
           m(".columns.medium-4", [
             m("figure.small", [
@@ -372,7 +384,7 @@ home.view = function(ctrl){
             ]),
             m("h4", "Open Source"),
             m("p","This system proudly builds upon and contributes to several open-source projects, and is open source itself. Check out the code, submit issues, or even contribute patches!"),
-            m("a.button.micro", {
+            m("a.button.tiny.radius", {
               href:"https://github.com/by-implication/Open-Reconstruction"
             }, "Fork us on GitHub")
             // (twss)
