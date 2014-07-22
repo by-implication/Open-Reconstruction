@@ -3,7 +3,7 @@ home.view = function(ctrl){
     m("div#home", [
       m("section.banner", [
         m(".row", [
-          m(".columns.medium-3", [
+          m(".columns.medium-3.medium-text-right.small-text-center", [
             m("div#logo", {config: ctrl.drawLogo}, [m.trust(home.Logo)]),
           ]),
           m(".columns.medium-9", [
