@@ -349,6 +349,7 @@ request.controller = function(){
 
             save("location").bind({input: m.prop(strCoords)})(function(){
               ctrl.coords(coords);
+              ctrl.hasCoords = true;
             });
 
           });
