@@ -119,17 +119,17 @@ app.navbar = function(ctrl){
         ]) : "",
         m("li", [
           m("a", {
-            href: routes.controllers.Viz.index().url,
-            config: m.route,
-            className: (routes.controllers.Viz.index().url === m.route() ? "active" : "")
-          }, "Visualizations")
-        ]),
-        m("li", [
-          m("a", {
             href: routes.controllers.Application.browse().url,
             config: m.route,
             className: (m.route().startsWith(routes.controllers.Application.browse().url) ? "active" : "")
           }, "Browse")
+        ]),
+        m("li", [
+          m("a", {
+            href: routes.controllers.Viz.index().url,
+            config: m.route,
+            className: (routes.controllers.Viz.index().url === m.route() ? "active" : "")
+          }, "Visualize")
         ]),
         m("li", [
           m("a", {
