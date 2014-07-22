@@ -27,7 +27,7 @@ home.view = function(ctrl){
             m(".columns.medium-8.medium-centered",[
               m("h2.text-center", [
                 m("i.fa.fa-search"),
-                "Find projects and requests in your town, region, or area.",
+                "Browse for projects and requests in your town, region, or area.",
                 // m("a.button",{
                 //     href: routes.controllers.Requests.index().url,
                 //     config:m.route
