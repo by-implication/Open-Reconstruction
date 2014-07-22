@@ -613,6 +613,10 @@ p.big
     .details p
       font-size: 0.85rem
   .banner
+    +background(url("/assets/images/bg.jpg") )
+    background-attachment: scroll, fixed
+    background-size: cover
+    background-position: center bottom
     h1
       margin-bottom: 0
     .row
@@ -627,7 +631,7 @@ p.big
       font-size: 14px
       font-weight: 300
       padding: 16px 20px
-      background: darken($accent, 5%)
+      background: $accent
       border: 1px solid darken($accent, 10%)
       +transition(all 0.2s)
       i
@@ -639,10 +643,11 @@ p.big
           +transform(rotate(0deg))
   .search
     padding: 45px 0
-    +background(linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.15) 100%), url("/assets/images/search-bg.jpg") )
-    background-attachment: scroll, fixed
-    background-size: cover
-    background-position: center bottom
+    // +background(linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.15) 100%), url("/assets/images/search-bg.jpg") )
+    // background-attachment: scroll, fixed
+    // background-size: cover
+    // background-position: center bottom
+    background-color: $accent
     h2
       color: #fff
       font-size: 22px
