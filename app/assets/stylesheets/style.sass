@@ -613,12 +613,21 @@ p.big
     .details p
       font-size: 0.85rem
   .banner
-    +background(url("/assets/images/bg.jpg") )
+    +background(url("/assets/images/bg-blur.jpg") )
     background-attachment: scroll, fixed
     background-size: cover
     background-position: center bottom
+    padding: 0px
+    .banner-content
+      padding: 60px 0px
     h1
       margin-bottom: 0
+      text-shadow: 0px 0px 20px rgba(#411939, 0.6)
+      font-size: 48px
+    p
+      font-weight: 300
+      font-size: 18px
+      text-shadow: 0px 0px 20px rgba(#411939, 0.6)
     .row
       position: relative
     .info
@@ -627,7 +636,7 @@ p.big
         right: 0
         // min-height: 100%
       background: darken($accent, 12%)
-    .button
+    .button.learn
       font-size: 14px
       font-weight: 300
       padding: 16px 20px
@@ -642,15 +651,22 @@ p.big
         i
           +transform(rotate(0deg))
   .search
-    padding: 45px 0
+    +transition(all 0.2s)
+    display: block
+    padding: 45px 0px
+    i.fa
+      margin-right: 10px
     // +background(linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.15) 100%), url("/assets/images/search-bg.jpg") )
     // background-attachment: scroll, fixed
     // background-size: cover
     // background-position: center bottom
-    background-color: $accent
+    // background-color: $accent
+    background-color: rgba(0,0,0,0.4)
+    &:hover
+      background-color: rgba(0,0,0,0.6)
     h2
       color: #fff
-      font-size: 22px
+      font-size: 24px
       font-weight: 100
       .button
         font-size: 20px
@@ -668,7 +684,7 @@ p.big
   // TODO: clean this up. blame kai.
   .proposals
     text-align: center
-    padding-top: 0
+    // padding-top: 0
     ul
       margin: 0
       li:nth-child(1)
