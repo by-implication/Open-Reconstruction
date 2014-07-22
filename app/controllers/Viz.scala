@@ -8,6 +8,8 @@ import recon.support._
 object Viz extends Controller with Secured {
 
   def index = Application.index
+
+  def indexFilter(fgName: String, f: String) = Application.index
 	 
   def indexMeta() = Action {
     Ok(Req.vizData)

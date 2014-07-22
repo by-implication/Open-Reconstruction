@@ -123,7 +123,7 @@ home.view = function(ctrl){
             ]),
             m("li.arrow", [
               m("a", {
-                href: routes.controllers.Viz.index().url,
+                href: routes.controllers.Viz.indexFilter("dataset", "SARO").url,
                 config:m.route
               }, [
                 m("img", {src:"/assets/images/landing/3-budget releases.svg"}),

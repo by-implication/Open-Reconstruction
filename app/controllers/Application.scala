@@ -171,6 +171,7 @@ object Application extends Controller with Secured {
       Requests.viewReferences,
       Requests.viewMeta,
       Viz.index,
+      Viz.indexFilter,
       Viz.indexMeta,
       Viz.view,
       Viz.getData,

@@ -16,6 +16,10 @@ vizIndex.controller = function(){
   this.requests().byLevel = m.prop([]);
   this.requests().byNamedDisaster = m.prop();
 
+  this.presort = {};
+  this.presort.fgName = m.route.param("fgName");
+  this.presort.f = m.route.param("f");
+
   var projectTabs = function(){
     return _.chain(viz.library)
       .groupBy(function(v){
@@ -100,6 +104,15 @@ vizIndex.controller = function(){
           gutter: 20
         }
       })
+      if(self.presort.fgName && self.presort.f){
+        var fgName = self.presort.fgName ;
+        var f = self.presort.f;
+        var className = "." + fgName + "-" + f;
+
+        self.isotopeFilter(fgName, className);
+        m.redraw();
+        
+      }
     }
     setTimeout(function(){
       container.isotope('layout');
@@ -129,4 +142,5 @@ vizIndex.controller = function(){
     $("#vis-isotope-container").isotope({filter: strFilt});
     visPanel.onresizer.queue();
   }
+
 }
