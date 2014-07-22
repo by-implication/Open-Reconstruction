@@ -632,15 +632,14 @@ p.big
       font-weight: 300
       margin: 25px 0 0 0
       padding: 10px
-      background: none
-      border: 1px solid #fff
+      background: darken($accent, 5%)
+      border: 1px solid darken($accent, 10%)
       +transition(all 0.2s)
       i
         +transition(all 0.2s)
         +transform(rotate(-90deg))
       &:hover
-        background: white
-        color: $accent
+        background: darken($accent, 10%)
         i
           +transform(rotate(0deg))
   .search
