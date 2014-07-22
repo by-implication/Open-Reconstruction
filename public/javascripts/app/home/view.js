@@ -3,9 +3,10 @@ home.view = function(ctrl){
     m("div#home", [
       m("section.banner", [
         m(".row", [
-          m(".columns.medium-1"),
-          m(".columns.medium-11", [
+          m(".columns.medium-3", [
             m("div#logo", {config: ctrl.drawLogo}, [m.trust(home.Logo)]),
+          ]),
+          m(".columns.medium-9", [
             m("h1", "Open Reconstruction"),
             m("p", [
               "Tracking taxpayer money spent on post-disaster reconstruction in the Philippines",
@@ -20,9 +21,8 @@ home.view = function(ctrl){
       ]),
       m("section.search",[
         m(".row",[
-          m(".columns.medium-1"),
-          m(".columns.medium-11",[
-            m("h2", [
+          m(".columns.medium-8.medium-centered",[
+            m("h2.text-center", [
               "Find projects and requests in your town, region, or area.",
               m("a.button",{
                   href: routes.controllers.Requests.index().url,
