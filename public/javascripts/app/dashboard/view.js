@@ -56,7 +56,9 @@ dashboard.view = function(ctrl){
       filters.ASSESSOR = {id: "assessor", label: "Needs assessor"};
       filters.EXECUTOR = {id: "executor", label: "Needs executor"};
       filters.SIGNOFF = {id: "signoff", label: "Needs signoff"};
+      filters.ALL = {id: "all", label: "All"};
 
+      filters.push(filters.ALL);
       filters.push(filters.SIGNOFF);
       if(ctrl.app.isSuperAdmin()){
         filters.push(filters.ASSESSOR);
