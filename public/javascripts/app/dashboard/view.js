@@ -116,7 +116,7 @@ dashboard.view = function(ctrl){
       m("section", [
         m(".row", [
           m(".columns.medium-12.text-center", [
-            common.tabs.menu(ctrl.tabs, {className: "switch", config: ctrl.setCurrentTab})
+            common.tabs.menu(ctrl.tabs, {className: "switch"})
           ]),
         ]),
         m(".row", [

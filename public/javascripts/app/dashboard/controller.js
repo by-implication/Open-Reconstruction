@@ -2,11 +2,14 @@ dashboard.controller = function(){
 
   var ctrl = this;
   this.app = new app.controller();
-
   this.tab = m.route.param("t") || "pending";
   this.page = parseInt(m.route.param("p")) || 1;
 
   this.tabs = new common.tabs.controller();
+  this.tabs.currentTab = function(){
+    return ctrl.tab;
+  }
+  
   this.counts = {};
 
   this.tabFilters = {
