@@ -2,42 +2,65 @@ home.view = function(ctrl){
   return app.template(ctrl.app, "Home", [
     m("div#home", [
       m("section.banner", [
-        m(".row", [
-          m(".columns.medium-3.medium-text-right.small-text-center", [
-            m("div#logo", {config: ctrl.drawLogo}, [m.trust(home.Logo)]),
-          ]),
-          m(".columns.medium-9", [
-            m("h1.small-text-center.medium-text-left", ["Open Reconstruction"]),
-            m("p.small-text-center.medium-text-left", [
-              "Tracking taxpayer money spent on post-disaster reconstruction in the Philippines",
+        m(".banner-content", [
+          m(".row", [
+            m(".columns.medium-12.text-center", [
+              m("div#logo", {config: ctrl.drawLogo}, [m.trust(home.Logo)]),
             ]),
-            m("a.button",{href:"#infodump"},[
-              "Learn how Open Reconstruction promotes transparency and improves efficiency. ",
-              m("i.fa.fa-chevron-circle-down")
-            ])
-          ]),
-        ])
-      ]),
-      m("section.search",[
-        m(".row",[
-          m(".columns.medium-8.medium-centered",[
-            m("h2.text-center", [
-              "Find projects and requests in your town, region, or area.",
-              m("a.button",{
-                  href: routes.controllers.Requests.index().url,
-                  config:m.route
-                },[
-                  "Search ",
-                  m("i.fa.fa-search")
+            m(".columns.medium-12.text-center", [
+              m("h1", ["Open Reconstruction"]),
+              m("p", [
+                "Tracking taxpayer money spent on post-disaster reconstruction in the Philippines",
+              ]),
+              m("a.button.learn",{href:"#infodump"},[
+                "Learn how Open Reconstruction promotes transparency and improves efficiency. ",
+                m("i.fa.fa-chevron-circle-down")
+              ])
+            ]),
+          ])
+        ]),
+        m("a.search", {
+          href: routes.controllers.Requests.index().url,
+          config:m.route
+        },[
+          m(".row",[
+            m(".columns.medium-8.medium-centered",[
+              m("h2.text-center", [
+                m("i.fa.fa-search"),
+                "Browse for projects and requests in your town, region, or area.",
+                // m("a.button",{
+                //     href: routes.controllers.Requests.index().url,
+                //     config:m.route
+                //   },[
+                //     "Search ",
+                    
+                // ])
               ])
             ])
           ])
-        ])
+        ]),
       ]),
-      m("section", [
-        m(".row", [
+      // m("section", [
+      //   m(".row", [
+      //     m(".columns.medium-12", [
+      //       m(".notice", [
+      //         m("i.fa.fa-exclamation-triangle"),
+      //         "Note: This system is very new, and not all legacy data has been imported. Please check back for updates, and let us ",
+      //         m("a", {target:"potato", href:"https://docs.google.com/forms/d/1GUdE6Si1QnnMtVJ8ig8rwECo9DK9BloOXiGVVnj_efw/viewform"},
+      //           "know what you think"
+      //         ),
+      //         "!"
+      //       ])
+      //     ])
+      //   ]),
+      // ]),
+      m("section.proposals", [
+        m(".row.info", [
           m(".columns.medium-12", [
-            m(".notice", [
+            m("h2", [
+              "Real Data"
+            ]),
+            m("p.notice", [
               m("i.fa.fa-exclamation-triangle"),
               "Note: This system is very new, and not all legacy data has been imported. Please check back for updates, and let us ",
               m("a", {target:"potato", href:"https://docs.google.com/forms/d/1GUdE6Si1QnnMtVJ8ig8rwECo9DK9BloOXiGVVnj_efw/viewform"},
@@ -45,10 +68,8 @@ home.view = function(ctrl){
               ),
               "!"
             ])
-          ])
+          ]),
         ]),
-      ]),
-      m("section.proposals", [
         m(".row", [
           m("ul.medium-block-grid-4#derp", [
             m("li", [
