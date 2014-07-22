@@ -289,7 +289,7 @@ home.view = function(ctrl){
             m(".row", [
               m(".columns.medium-6.medium-centered", [
                 m("p.text-center.big", [
-                  "We've always said that transparency is essential for good governance. We're putting our foot where our mouth is, so we've made all this data public."
+                  "We've always said that transparency is essential for good governance. We're putting our money where our mouth is, so we've made all this data public."
                 ]),
               ]),
             ]),
