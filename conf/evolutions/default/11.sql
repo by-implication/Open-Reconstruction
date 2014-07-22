@@ -3,44 +3,49 @@
 SET datestyle = "ISO, MDY";;
 
 CREATE TABLE oparr_bohol (
-    group_id text,
-    project_id text,
-    eplc_id text,
-    region text,
-    province text,
-    municipality text,
-    project_name text,
-    project_type text,
-    scope text,
-    amount text,
-    disaster_name text,
-    disaster_date timestamp,
-    implementing_agency text,
-    psgc text,
-    latitude decimal,
-    longitude decimal,
-    source text,
-    status text,
-    version text
+  group_id text,
+  project_id text,
+  implementation_pms_id text,
+  implementation_pms text,
+  uacs_code text,
+  region text,
+  province text,
+  municipality text,
+  project_name text,
+  project_type text,
+  scope text,
+  amount text,
+  disaster_name text,
+  disaster_date timestamp,
+  implementing_agency text,
+  psgc text,
+  latitude decimal,
+  longitude decimal,
+  province_municipality text,
+  psgc_level text,
+  source text,
+  status text,
+  version text
 );;
 
 COPY oparr_bohol FROM 'oparr_bohol.csv' CSV ENCODING 'ISO_8859_9';;
 
 CREATE TABLE dilg_ray (
-    group_id text,
-    project_id text,
-    project_name text,
-    project_type text,
-    amount numeric(12,2),
-    scope project_scope,
-    req_date date,
-    implementing_agency text,
-    disaster_date date,
-    disaster_name text,
-    region text,
-    province text,
-    municipality text,
-    psgc text
+  dilg_id text,
+  group_id text,
+  project_id text,
+  project_name text,
+  project_type text,
+  amount numeric(12,2),
+  scope project_scope,
+  req_date date,
+  implementing_agency text,
+  disaster_date date,
+  disaster_name text,
+  region text,
+  province text,
+  municipality text,
+  psgc text
 );;
 
 COPY dilg_ray FROM 'dilg_ray.csv' CSV ENCODING 'ISO_8859_9';;
@@ -197,11 +202,11 @@ CREATE TABLE dpwh_eplc (
   months_of_completion integer,
   disaster text,
   psgc text,
-  SAA_number text,
-  saro_abm_number  text,
-  financial_allotment  decimal,
-  financial_obligation decimal,
-  financial_disbursement decimal,
+  SAA_NO text,
+  SAA_DATE timestamp,
+  SAA_AMOUNT decimal,
+  SARO_NUMBER text,
+  obligation_amount decimal,
   physical_planned decimal,
   physical_revised decimal,
   physical_actual decimal,
@@ -251,7 +256,8 @@ CREATE TABLE dpwh_eplc (
   actual_dec_2014 decimal,
   latitude decimal,
   longitude decimal,
-  allotment_date timestamp
+  allotment_date timestamp,
+  psgc_level text
 );;
 
 COPY dpwh_eplc FROM 'dpwh_eplc.csv' CSV ENCODING 'ISO_8859_9';;

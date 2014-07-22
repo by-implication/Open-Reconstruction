@@ -46,6 +46,7 @@ LEFT JOIN (
   SELECT gov_unit_id, gov_unit_acronym FROM gov_units 
   WHERE gov_unit_acronym IS NOT NULL
 ) AS agencies on oparr_bohol.implementing_agency ilike agencies.gov_unit_acronym
+WHERE implementation_pms_id IS NULL
 GROUP BY group_id, disaster_name, oparr_bohol.psgc, agencies.gov_unit_id, oparr_bohol.status;;
 
 -- create DPWH EPLC requests
