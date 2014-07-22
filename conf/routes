@@ -86,6 +86,7 @@ GET     /browse/project/:id                              controllers.Projects.vi
 GET     /browse/project/:id/meta                         controllers.Projects.viewMeta(id: Int)
 
 GET     /viz                                             controllers.Viz.index
+GET     /viz/filter/:fgName/:f                           controllers.Viz.indexFilter(fgName: String, f: String)
 GET     /viz/meta                                        controllers.Viz.indexMeta
 GET     /viz/data/:v                                     controllers.Viz.getData(v: String)
 GET     /viz/:v                                          controllers.Viz.view(v: String)

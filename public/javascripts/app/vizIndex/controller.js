@@ -129,4 +129,17 @@ vizIndex.controller = function(){
     $("#vis-isotope-container").isotope({filter: strFilt});
     visPanel.onresizer.queue();
   }
+
+  this.presort = {};
+  this.presort.fgName = m.route.param("fgName");
+  this.presort.f = m.route.param("f");
+
+  if(this.presort.fgName && this.presort.f){
+    var fgName = this.presort.fgName ;
+    var f = this.presort.f;
+    var className = "." + fgName + "-" + f;
+
+    this.isotopeFilter(fgName, className);
+    
+  }
 }

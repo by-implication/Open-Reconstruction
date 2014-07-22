@@ -28,6 +28,7 @@ m.route(document, window.location.pathname, GATrackedRoutes({
   "/browse/requests/:id": request,
   "/browse/requests/:id/edit": requestEdit,
   "/browse/requests/:id/:tab": request,
+  "/viz/filter/:fgName/:f": vizIndex,
   "/viz/:v": viz,
   "/viz": vizIndex,
   "/home": home,
