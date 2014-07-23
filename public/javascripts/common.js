@@ -634,11 +634,11 @@ common.attachmentFor = function(reqt, atts){
 }
 
 common.collapsibleFilter = {}
-
 common.collapsibleFilter.controller = function(label, id){
 
   var cookey = "dropstate_" + id;
-
+  this.label = label;
+  this.id = id;
   this.isExpanded = m.prop(m.cookie()[cookey] == "true");
   this.toggleExpand = function(){
     var newState = !this.isExpanded();
@@ -647,13 +647,19 @@ common.collapsibleFilter.controller = function(label, id){
     o[cookey] = newState;
     m.cookie(o);
   }.bind(this);
-
+  this.close = function(){
+    this.isExpanded(false);
+    var o = {};
+    o[cookey] = false;
+    m.cookie(o);
+  }
   this.maxHeight = m.prop();
   this.drawerConfig = function(elem, isInit){
     this.maxHeight($(elem).children(".row").height());
   }.bind(this);
 
   this.view = function(preview, drawer){
+    var columnNum = 4;
     return m(".collapsible-filter", [
       m(".collapsible-label", [
         m("a.row", {onclick: this.toggleExpand}, [
@@ -679,5 +685,50 @@ common.collapsibleFilter.controller = function(label, id){
       ])
     ])
   }
-
+}
+common.accordion = {}
+common.accordion.controller = function(){
+  this.drawers = m.prop([]);
+  this.closeAllOthersExcept = function(e){
+    this.drawers().forEach(function(d){
+      if(d != e){
+        d.ctrl.close();
+      }
+    });
+  }
+}
+common.accordion.view = function(ctrl){
+  return m("ul", ctrl.drawers().map(function(d){
+    // d is each drawer.
+    return m("li", [
+      // collapsibleFilter
+      m(".collapsible-filter", [
+        m(".collapsible-label", [
+          m("a.row", {onclick: function(){
+            ctrl.closeAllOthersExcept(d);
+            d.ctrl.toggleExpand();
+          }}, [
+            m(".columns.medium-12.end", [
+              d.preview ? 
+                m("span.label.right", [
+                  d.preview
+                ])
+              : null,
+              m("h4", [
+                d.ctrl.label
+              ])
+            ])
+          ])
+        ]),
+        m(".collapsible-drawer", {
+          style: "max-height: " + (d.ctrl.isExpanded() ? d.ctrl.maxHeight() : 0) + "px",
+          config: d.ctrl.drawerConfig
+        }, [
+          m(".row", [
+            d.drawer()
+          ])
+        ])
+      ]),
+    ]);
+  }));
 }
