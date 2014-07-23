@@ -42,18 +42,6 @@ requestListing.view = function(ctrl){
     }
   }
 
-  // var currentFilterNameFromArray = function(arr, id){
-  //   id = id * 1;
-  //   var obj = _.find(arr, function(e){
-  //     return e.id === id;
-  //   });
-  //   if(!_.isUndefined(obj)){
-  //     return obj.name;
-  //   } else {
-  //     return null;
-  //   }
-  // }
-
   return app.template(ctrl.app, "Requests", [
     m("section.banner", [
       m(".row", [
@@ -84,7 +72,6 @@ requestListing.view = function(ctrl){
           ]),
         ]),
       ]),
-      // common.accordion.view(ctrl.filterAccordion),
       ctrl.locationCF.view(
         null, 
         function(){
