@@ -50,7 +50,10 @@ object Disasters extends Controller with Secured {
   }
   
   def indexMeta = Action {
-    Ok(Disaster.jsonList)
+    Rest.success(
+      "disasterTypes" -> DisasterType.jsonList,
+      "disasters" -> Disaster.jsonList
+    )
   }
 
 }

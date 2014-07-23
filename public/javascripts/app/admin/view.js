@@ -115,7 +115,7 @@ admin.view = function(ctrl){
                           a.totalUsers
                         ]),
                         m("td", [
-                          ctrl.roles()[a.role]
+                          a.role
                         ])
                       ]);
                     }),
@@ -219,6 +219,43 @@ admin.view = function(ctrl){
                           return dt.id == d.typeId;
                         })[0].name),
                         m("td", new Date(d.date).toDateString())
+                      ]);
+                    }),
+                  ]),
+                ]),
+              ])
+            })
+            .case("Requirements", function(){
+              return m(".tabs-content.vertical", [
+                m("a.button", {href: routes.controllers.Disasters.create().url, config: m.route}, [
+                  "New requirement"
+                ]),
+                m("table", [
+                  m("thead", [
+                    m("tr", [
+                      m("td", ["Name"]),
+                      m("td", ["Description"]),
+                      m("td", ["Level"]),
+                      m("td", ["Image"]),
+                      m("td", ["Deprecate"])
+                    ]),
+                  ]),
+                  m("tbody", [
+                    ctrl.reqts().map(function (r){
+                      return m("tr", [
+                        m("td", [
+                          m("a", {onclick: function(){
+                            console.log('edit ' + r.id);
+                          }}, r.name),
+                        ]),
+                        m("td", [r.description]),
+                        m("td", [process.levelDict[r.level]]),
+                        m("td", [r.isImage ? "YES" : "NO"]),
+                        m("td", [
+                          m("a", {onclick: function(){
+                            console.log('deprecate ' + r.id);
+                          }}, "Deprecate")
+                        ])
                       ]);
                     }),
                   ]),

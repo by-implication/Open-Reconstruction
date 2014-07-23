@@ -42,6 +42,7 @@ m.route(document, window.location.pathname, GATrackedRoutes({
   "/admin/disasters/:id": disasterEditing,
   "/admin/types/project": admin,
   "/admin/types/disaster": admin,
+  "/admin/requirements": admin,
   "/gov-units/new/agency": agencyCreation,
   "/gov-units/new/lgu/:level/:parentId": lguCreation,
   "/gov-units/:id": govUnit,
