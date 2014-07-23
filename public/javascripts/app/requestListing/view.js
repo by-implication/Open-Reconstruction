@@ -97,19 +97,19 @@ requestListing.view = function(ctrl){
       ctrl.disasterCF.view(
         currentDrawerValueFromArray(ctrl.disasters, ctrl.disaster),
         filterColumns.bind(null, ctrl.disasters, ctrl.disaster, "disaster")
-        ),
+      ),
       ctrl.agencyCF.view(
         currentDrawerValueFromArray(ctrl.agencies, ctrl.agencyFilterId),
         filterColumns.bind(null, ctrl.agencies, ctrl.agencyFilterId, "agencyFilterId")
-        ),
+      ),
       ctrl.projectTypeCF.view(
         currentDrawerValueFromArray(ctrl.projectFilters, ctrl.projectTypeId),
         filterColumns.bind(null, ctrl.projectFilters, ctrl.projectTypeId, "projectTypeId")
-        ),
+      ),
       ctrl.rejectStatusCF.view(
         currentDrawerValueFromArray(ctrl.rejectStatuses, ctrl.rejectStatus),
         filterColumns.bind(null, ctrl.rejectStatuses, ctrl.rejectStatus, "rejectStatus")
-        )
+      )
     ]),
     m("section", [
       m(".row", [
