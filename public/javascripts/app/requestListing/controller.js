@@ -81,7 +81,7 @@ requestListing.controller = function(){
   this.requestList = [];
   this.projectFilters = [{id: 0, name: "All"}];
   this.agencies = [{id: 0, name: "All", acronym: "All"}];
-  this.rejectStatuses = [{id: 'all', name: "Show All"}, {id: 'rejected', name: 'Rejected Only'}, {id: '-', name: "Exclude Rejected"}];
+  this.rejectStatuses = [{id: 'all', name: "All"}, {id: 'rejected', name: 'Rejected Only'}, {id: '-', name: "Exclude Rejected"}];
 
   bi.ajax(nav(null, true)).then(function (r){
 
@@ -91,6 +91,7 @@ requestListing.controller = function(){
     this.projectFilters = this.projectFilters.concat(r.filters);
     this.agencies = this.agencies.concat(r.agencies);
     this.disasters = [{id: 0, name: "All"}].concat(r.disasters);
+    console.log(this.disasters);
     for(var i in r.locFilters){
       this.locFilters[i].data = [{id: '-', name: 'All'}].concat(r.locFilters[i].sort(function (a, b){
         return a.id - b.id;

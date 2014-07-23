@@ -27,8 +27,9 @@ requestListing.view = function(ctrl){
   }
 
   var currentFilterNameFromArray = function(arr, id){
-    if(id * 1){
-      id = id * 1;  // Update int only if id can be converted.
+    var parsed = id * 1
+    if(parsed || (parsed == 0)){
+      id = parsed;  // Update int only if id can be converted.
     }
     var obj = _.find(arr, function(e){
       return e.id === id;
