@@ -2,82 +2,83 @@ requestListing.controller = function(){
 
   var self = this;
   this.app = new app.controller();
-  this.locationCF = new common.collapsibleFilter.controller("Location", "location");
-  this.disasterCF = new common.collapsibleFilter.controller("Disaster", "disaster");
-  this.agencyCF = new common.collapsibleFilter.controller("Agency", "agency");
-  this.projectTypeCF = new common.collapsibleFilter.controller("Project Type", "project_type");
-
   this.filterAccordion = new common.accordion.controller();
-  // this.filterAccordion.drawers([
-  //   new common.collapsibleFilter.controller("Location", "location"),
-  //   new common.collapsibleFilter.controller("Disaster", "disaster"),
-  //   new common.collapsibleFilter.controller("Agency", "agency"),
-  //   new common.collapsibleFilter.controller("Project Type", "project_type")
-  //   ])
 
-  var filterColumns = function(filterArr, filterId, filterNav){
-    console.log(filterArr);
-    var columnNum = 4;
-    if(filterArr.length){
-      return helper.splitArrayTo(filterArr, columnNum)
-        .map(function(fg, index){
-          var threshold = Math.min(columnNum, filterArr.length);
-          var isLast = index + 1 >= threshold;
-          return m(".columns", {className: (isLast ? "end " : "") + "medium-" + (12/columnNum)}, [
-            m("ul.filters", fg.map(function(f){
-              var navObj = {};
-              navObj[filterNav] = f.id
-              return m("li.filter", {className: (f.id == filterId) ? "active" : ""}, [
-                m("a", {href: ctrl.nav(navObj), config: m.route}, f.name)
-              ]);
-            })),
-          ])
-        });
-    }
-  }
-  var currentDrawerValueFromArray = function(arr, id){
-    if(arr){
-      id = id * 1; // force id into a number
-      var obj = _.find(arr, function(e){
-        return e.id === id;
-      }); // find an element with id of 'id' inside arr.
-      if(!_.isUndefined(obj)){
-        return obj.name;
-      } else {
-        return null;
-      }
-    } else {
-      return null;
-    }
-  }
+  this.locationCF = new common.collapsibleFilter.controller("Location", "location", this.filterAccordion);
+  this.disasterCF = new common.collapsibleFilter.controller("Disaster", "disaster", this.filterAccordion);
+  this.agencyCF = new common.collapsibleFilter.controller("Agency", "agency", this.filterAccordion);
+  this.projectTypeCF = new common.collapsibleFilter.controller("Project Type", "project_type", this.filterAccordion);
 
   this.filterAccordion.drawers([
-    {
-      ctrl: self.locationCF,
-      preview: null,
-      drawer: function(){
-        return self.locFilters.map(function (f, index){
-          return m(".columns.medium-3", [
-            m("label", {className: (index && (self.locFilters[index - 1].value() === "-")) ? "disabled" : ""}, [
-              f.label,
-              select2.view({
-                data: f.data, 
-                value: f.value(), 
-                onchange: f.onchange
-              }, {
-                disabled: (index && (self.locFilters[index - 1].value() === "-"))
-              })
-            ])
-          ])
-        })
-      }
-    },
-    {
-      ctrl: self.disasterCF,
-      preview: currentDrawerValueFromArray(self.disasters, self.disaster),
-      drawer: filterColumns.bind(null, self.disasters, self.disaster, "disaster")
-    }
-  ]);
+    self.locationCF, 
+    self.disasterCF, 
+    self.agencyCF,
+    self.projectTypeCF
+  ])
+
+  // var filterColumns = function(filterArr, filterId, filterNav){
+  //   console.log(filterArr);
+  //   var columnNum = 4;
+  //   if(filterArr.length){
+  //     return helper.splitArrayTo(filterArr, columnNum)
+  //       .map(function(fg, index){
+  //         var threshold = Math.min(columnNum, filterArr.length);
+  //         var isLast = index + 1 >= threshold;
+  //         return m(".columns", {className: (isLast ? "end " : "") + "medium-" + (12/columnNum)}, [
+  //           m("ul.filters", fg.map(function(f){
+  //             var navObj = {};
+  //             navObj[filterNav] = f.id
+  //             return m("li.filter", {className: (f.id == filterId) ? "active" : ""}, [
+  //               m("a", {href: ctrl.nav(navObj), config: m.route}, f.name)
+  //             ]);
+  //           })),
+  //         ])
+  //       });
+  //   }
+  // }
+  // var currentDrawerValueFromArray = function(arr, id){
+  //   if(arr){
+  //     id = id * 1; // force id into a number
+  //     var obj = _.find(arr, function(e){
+  //       return e.id === id;
+  //     }); // find an element with id of 'id' inside arr.
+  //     if(!_.isUndefined(obj)){
+  //       return obj.name;
+  //     } else {
+  //       return null;
+  //     }
+  //   } else {
+  //     return null;
+  //   }
+  // }
+
+  // this.filterAccordion.drawers([
+  //   {
+  //     ctrl: self.locationCF,
+  //     preview: null,
+  //     drawer: function(){
+  //       return self.locFilters.map(function (f, index){
+  //         return m(".columns.medium-3", [
+  //           m("label", {className: (index && (self.locFilters[index - 1].value() === "-")) ? "disabled" : ""}, [
+  //             f.label,
+  //             select2.view({
+  //               data: f.data, 
+  //               value: f.value(), 
+  //               onchange: f.onchange
+  //             }, {
+  //               disabled: (index && (self.locFilters[index - 1].value() === "-"))
+  //             })
+  //           ])
+  //         ])
+  //       })
+  //     }
+  //   },
+  //   {
+  //     ctrl: self.disasterCF,
+  //     preview: currentDrawerValueFromArray(self.disasters, self.disaster),
+  //     drawer: filterColumns.bind(null, self.disasters, self.disaster, "disaster")
+  //   }
+  // ]);
   
   this.disasters = [];
 

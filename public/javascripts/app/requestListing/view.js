@@ -84,7 +84,7 @@ requestListing.view = function(ctrl){
           ]),
         ]),
       ]),
-      common.accordion.view(ctrl.filterAccordion),
+      // common.accordion.view(ctrl.filterAccordion),
       ctrl.locationCF.view(
         null, 
         function(){

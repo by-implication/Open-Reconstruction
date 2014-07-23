@@ -634,23 +634,27 @@ common.attachmentFor = function(reqt, atts){
 }
 
 common.collapsibleFilter = {}
-common.collapsibleFilter.controller = function(label, id){
+common.collapsibleFilter.controller = function(label, id, parentCtrl){
 
-  var cookey = "dropstate_" + id;
+  this.cookey = "dropstate_" + id;
   this.label = label;
   this.id = id;
-  this.isExpanded = m.prop(m.cookie()[cookey] == "true");
+  this.isExpanded = m.prop(m.cookie()[this.cookey] == "true");
   this.toggleExpand = function(){
+    if(!_.isUndefined(parentCtrl)){
+      // accordion
+      parentCtrl.closeAllOthersExcept(this)
+    }
     var newState = !this.isExpanded();
     this.isExpanded(newState);
     var o = {};
-    o[cookey] = newState;
+    o[this.cookey] = newState;
     m.cookie(o);
   }.bind(this);
   this.close = function(){
     this.isExpanded(false);
     var o = {};
-    o[cookey] = false;
+    o[this.cookey] = false;
     m.cookie(o);
   }
   this.maxHeight = m.prop();
@@ -689,46 +693,53 @@ common.collapsibleFilter.controller = function(label, id){
 common.accordion = {}
 common.accordion.controller = function(){
   this.drawers = m.prop([]);
-  this.closeAllOthersExcept = function(e){
-    this.drawers().forEach(function(d){
-      if(d != e){
-        d.ctrl.close();
+  this.closeAllOthersExcept = function(exemptionCtrl){
+    this.drawers().forEach(function(drawerCtrl){
+      if(drawerCtrl != exemptionCtrl){
+        drawerCtrl.close();
       }
     });
   }
 }
-common.accordion.view = function(ctrl){
-  return m("ul", ctrl.drawers().map(function(d){
-    // d is each drawer.
-    return m("li", [
-      // collapsibleFilter
-      m(".collapsible-filter", [
-        m(".collapsible-label", [
-          m("a.row", {onclick: function(){
-            ctrl.closeAllOthersExcept(d);
-            d.ctrl.toggleExpand();
-          }}, [
-            m(".columns.medium-12.end", [
-              d.preview ? 
-                m("span.label.right", [
-                  d.preview
-                ])
-              : null,
-              m("h4", [
-                d.ctrl.label
-              ])
-            ])
-          ])
-        ]),
-        m(".collapsible-drawer", {
-          style: "max-height: " + (d.ctrl.isExpanded() ? d.ctrl.maxHeight() : 0) + "px",
-          config: d.ctrl.drawerConfig
-        }, [
-          m(".row", [
-            d.drawer()
-          ])
-        ])
-      ]),
-    ]);
-  }));
-}
+// common.accordion.view = function(ctrl){
+//   return m("ul", ctrl.drawers().map(function(d){
+//     // d is each drawer.
+//     return m("li", [
+//       // collapsibleFilter
+//       m(".collapsible-filter", [
+//         m(".collapsible-label", [
+//           m("a.row", {onclick: function(){
+//             ctrl.closeAllOthersExcept(d);
+//             ctrl.toggleExpand(d);
+//           }}, [
+//             m(".columns.medium-12.end", [
+//               d.preview ? 
+//                 m("span.label.right", [
+//                   d.preview
+//                 ])
+//               : null,
+//               m("h4", [
+//                 d.ctrl.label
+//               ])
+//             ])
+//           ])
+//         ]),
+//         m(".collapsible-drawer", {
+//           style: "max-height: " + (d.ctrl.isExpanded() ? d.ctrl.maxHeight() : 0) + "px",
+//           config: d.ctrl.drawerConfig
+//         }, [
+//           m(".row", [
+//             d.drawer()
+//           ])
+//         ])
+//       ]),
+//     ]);
+//   }));
+// }
+// common.accordion.cell = function(ctrl){
+//   return m(".collapsible-filter", [
+//     m(".collapsible-label", [
+//       children
+//     ]),
+//   ])
+// }
