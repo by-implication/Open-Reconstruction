@@ -144,7 +144,10 @@ request.view = function(ctrl){
                   m("h1", ["Summary"]),
                   ctrl.request().isLegacy ? "This is a LEGACY request. " : "",
                   ctrl.app.isAuthorized(process.permissions.CREATE_LEGACY_REQUESTS) ?
-                    m("a", {href: routes.controllers.Requests.edit(ctrl.id).url}, "Click here to edit special fields.") : ""
+                    m("a", {
+                      href: routes.controllers.Requests.edit(ctrl.id).url,
+                      config: m.route
+                    }, "Click here to edit special fields.") : ""
                 ]),
                 m(".content", [
                   

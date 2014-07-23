@@ -47,11 +47,11 @@ object Req extends ReqGen {
 
   def pending(filter: String, page: Int, pageLimit: Int)(implicit user: User) = DB.withConnection { implicit c =>
 
-    var conds = CondSet()
+    var conds = CondSet(disjunction = true)
     var varMap = VarMap('limit -> pageLimit, 'offset -> (page-1) * pageLimit)
 
-    filter match {
-      case "signoff" => {
+    val condMap: Map[String, () => Any] = Map(
+      "signoff" -> (() => {
         if(user.isDBM){
           conds.add("req_level = 4")
         } else if(user.isOP){
@@ -59,19 +59,20 @@ object Req extends ReqGen {
         } else if(user.isSuperAdmin){
           conds.add("req_level = 2")
         } else {
-          conds.add("req_level = 1")
-          conds.add("assessing_agency_id = {govUnitId}")
+          conds.add("req_level = 1", "assessing_agency_id = {govUnitId}")
           varMap.add('govUnitId -> user.govUnitId)
         }
-      }
-      case "assessor" => {
-        conds.add("req_level = 0")
-      }
-      case "executor" => {
-        conds.add("executing_agency_id IS NULL")
-        conds.add("implementing_agency_id = {govUnitId}")
+      }),
+      "assessor" -> (() => conds.add("req_level = 0")),
+      "executor" -> (() => {
+        conds.add("executing_agency_id IS NULL", "implementing_agency_id = {govUnitId}")
         varMap.add('govUnitId -> user.govUnitId)
-      }
+      })
+    )
+
+    filter match {
+      case "all" => condMap.values.foreach(_())
+      case f => condMap(f)()
     }
     
     val r = SQL("SELECT *, COUNT(*) OVER() FROM reqs "
@@ -242,11 +243,12 @@ object Req extends ReqGen {
     )
   }
 
-  case class CondSet(){
+  case class CondSet(disjunction: Boolean = false){
+    val connector = if (disjunction) " OR " else " AND "
     var conds = Seq.empty[String]
-    def add(cond: String) = conds = conds :+ cond
+    def add(newConds: String*) = conds :+= newConds.mkString(" AND ")
     override def toString = {
-      if(conds.isEmpty) " " else " WHERE " + conds.mkString(" AND ") + " "
+      if(conds.isEmpty) " " else " WHERE " + conds.mkString(connector) + " "
     }
   }
 

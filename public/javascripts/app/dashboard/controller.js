@@ -77,7 +77,7 @@ dashboard.controller = function(){
     case "pending": {
 
 
-      this.filter = m.route.param("f") || "signoff";
+      this.filter = m.route.param("f") || "all";
       this.reqs = m.prop([]);
 
       bi.ajax(routes.controllers.Dashboard.pendingMeta(this.filter, this.page)).then(function (r){
