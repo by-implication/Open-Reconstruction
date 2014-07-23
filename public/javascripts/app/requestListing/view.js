@@ -28,7 +28,10 @@ requestListing.view = function(ctrl){
   }
   var currentDrawerValueFromArray = function(arr, id){
     if(arr){
-      id = id * 1; // force id into a number
+      var parsed = id * 1
+      if(parsed || (parsed == 0)){
+        id = parsed;  // Force id into int only if id can be converted.
+      }
       var obj = _.find(arr, function(e){
         return e.id === id;
       }); // find an element with id of 'id' inside arr.
