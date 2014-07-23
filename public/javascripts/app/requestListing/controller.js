@@ -6,6 +6,7 @@ requestListing.controller = function(){
   this.disasterCF = new common.collapsibleFilter.controller("Disaster", "disaster");
   this.agencyCF = new common.collapsibleFilter.controller("Agency", "agency");
   this.projectTypeCF = new common.collapsibleFilter.controller("Project Type", "project_type");
+  this.rejectStatusCF = new common.collapsibleFilter.controller("Rejected Requests", "reject_status");
   this.disasters = [];
 
   this.page = parseInt(m.route.param("page")) || 1;
@@ -80,6 +81,7 @@ requestListing.controller = function(){
   this.requestList = [];
   this.projectFilters = [{id: 0, name: "All"}];
   this.agencies = [{id: 0, name: "All", acronym: "All"}];
+  this.rejectStatuses = [{id: 'all', name: "Show All"}, {id: 'rejected', name: 'Rejected Only'}, {id: '-', name: "Exclude Rejected"}];
 
   bi.ajax(nav(null, true)).then(function (r){
 

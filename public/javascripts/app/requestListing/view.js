@@ -27,7 +27,9 @@ requestListing.view = function(ctrl){
   }
 
   var currentFilterNameFromArray = function(arr, id){
-    id = id * 1;
+    if(id * 1){
+      id = id * 1;  // Update int only if id can be converted.
+    }
     var obj = _.find(arr, function(e){
       return e.id === id;
     });
@@ -99,6 +101,10 @@ requestListing.view = function(ctrl){
         currentFilterNameFromArray(ctrl.projectFilters, ctrl.projectTypeId),
         filterColumns.bind(null, ctrl.projectFilters, 4, ctrl.projectTypeId, "projectTypeId")
       ),
+      ctrl.rejectStatusCF.view(
+        currentFilterNameFromArray(ctrl.rejectStatuses, ctrl.rejectStatus),
+        filterColumns.bind(null, ctrl.rejectStatuses, 4, ctrl.rejectStatus, "rejectStatus")
+      )
     ]),
     m("section", [
       m(".row", [
