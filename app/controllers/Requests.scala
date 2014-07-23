@@ -56,7 +56,7 @@ object Requests extends Controller with Secured {
         "history" -> Event.findForRequest(id).map(_.listJson()),
         "projects" -> req.projects.map(_.toJson),
         "disasterTypes" -> DisasterType.jsonList,
-        "requirements" -> Requirement.getFor(req.govUnit.role).map(_.toJson),
+        "requirements" -> req.requirements.map(_.toJson),
         "projectTypes" -> ProjectType.jsonList,
         "projectScopes" -> ProjectScope.toSelectJson
       )
@@ -92,7 +92,8 @@ object Requests extends Controller with Secured {
             projectTypeId = projectTypeId,
             location = location,
             govUnitId = govUnitId,
-            authorId = user.id
+            authorId = user.id,
+            requirementIds = Requirement.idList()
           ), bucketKey)
         }
       })
