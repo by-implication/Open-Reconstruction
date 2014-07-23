@@ -218,9 +218,9 @@ object Requests extends Controller with Secured {
 
   def index = Application.index
 
-  def indexPage(page: Int, projectTypeId: Int, locFilters: String, sort: String, sortDir: String, disasterId: Int, agencyId: Int) = Application.index
+  def indexPage(page: Int, projectTypeId: Int, locFilters: String, sort: String, sortDir: String, disasterId: Int, agencyId: Int, rejectStatus: String) = Application.index
 
-  def indexMeta(page: Int, projectTypeId: Int, locFilters: String, sort: String, sortDir: String, disasterId: Int, agencyId: Int) = UserAction(){ implicit user => implicit request =>
+  def indexMeta(page: Int, projectTypeId: Int, locFilters: String, sort: String, sortDir: String, disasterId: Int, agencyId: Int, rejectStatus: String) = UserAction(){ implicit user => implicit request =>
 
     val limit = Req.PAGE_LIMIT
     val offset = (page-1) * limit
@@ -232,7 +232,7 @@ object Requests extends Controller with Secured {
       PGLTree.fromString(locFilters)
     }
 
-    val reqList = Req.indexList(offset, limit, projectTypeIdOption, psgc, sort, sortDir, disasterId, agencyId)
+    val reqList = Req.indexList(offset, limit, projectTypeIdOption, psgc, sort, sortDir, disasterId, agencyId, rejectStatus)
 
     Ok(Json.obj(
       "list" -> reqList.map(_.indexJson),
@@ -241,7 +241,7 @@ object Requests extends Controller with Secured {
       "agencies" -> GovUnit.withPermission(Permission.IMPLEMENT_REQUESTS).map(_.toJson),
       "disasters" -> Disaster.jsonList,
       "pageLimit" -> Req.PAGE_LIMIT,
-      "count" -> Req.indexCount(projectTypeIdOption, psgc, disasterId, agencyId)
+      "count" -> Req.indexCount(projectTypeIdOption, psgc, disasterId, agencyId, rejectStatus)
     ))
 
   }

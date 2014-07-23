@@ -100,9 +100,13 @@ requestListing.view = function(ctrl){
         filterColumns.bind(null, ctrl.agencies, ctrl.agencyFilterId, "agencyFilterId")
         ),
       ctrl.projectTypeCF.view(
-        currentDrawerValueFromArray(ctrl.projectFilters, ctrl.projectTypeId),
+        currentFilterNameFromArray(ctrl.projectFilters, ctrl.projectTypeId),
         filterColumns.bind(null, ctrl.projectFilters, ctrl.projectTypeId, "projectTypeId")
         ),
+      ctrl.rejectStatusCF.view(
+        currentFilterNameFromArray(ctrl.rejectStatuses, ctrl.rejectStatus),
+        filterColumns.bind(null, ctrl.rejectStatuses, ctrl.rejectStatus, "rejectStatus")
+        )
     ]),
     m("section", [
       m(".row", [
