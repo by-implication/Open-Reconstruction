@@ -16,9 +16,10 @@ requestListing.controller = function(){
   this.sort = m.route.param("sort") || "id";
   this.sortDir = m.route.param("sortDir") || "asc";
   this.disaster = m.route.param("disaster") || 0;
+  this.rejectStatus = m.route.param("rejectStatus") || "-";
 
   var nav = this.nav = function(params, meta){
-    var keys = ["page", "projectTypeId", "_queryLocFilters", "sort", "sortDir", "disaster", "agencyFilterId"];
+    var keys = ["page", "projectTypeId", "_queryLocFilters", "sort", "sortDir", "disaster", "agencyFilterId", "rejectStatus"];
     var p = {};
     keys.forEach(function (k){
       p[k] = self[k];
