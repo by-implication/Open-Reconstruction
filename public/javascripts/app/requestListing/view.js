@@ -11,9 +11,9 @@ requestListing.view = function(ctrl){
 
   var filterColumns = function(filterArr, filterId, filterNav){
     var columnNum = 4;
-    return helper.splitArrayTo(filterArr, columnNum)
-      .map(function(fg, index){
-        var threshold = Math.min(columnNum, filterArr.length);
+    var splitArray = helper.splitArrayTo(filterArr, columnNum)
+    return splitArray.map(function(fg, index){
+        var threshold = Math.min(splitArray.length, filterArr.length);
         var isLast = index + 1 >= threshold;
         return m(".columns", {className: (isLast ? "end " : "") + "medium-" + (12/columnNum)}, [
           m("ul.filters", fg.map(function(f){
@@ -28,12 +28,8 @@ requestListing.view = function(ctrl){
   }
   var currentDrawerValueFromArray = function(arr, id){
     if(arr){
-      var parsed = id * 1
-      if(parsed || (parsed == 0)){
-        id = parsed;  // Force id into int only if id can be converted.
-      }
       var obj = _.find(arr, function(e){
-        return e.id === id;
+        return e.id == id;
       }); // find an element with id of 'id' inside arr.
       if(!_.isUndefined(obj)){
         return obj.name;
@@ -43,6 +39,18 @@ requestListing.view = function(ctrl){
     } else {
       return null;
     }
+  }
+
+  var locFilterPreview = function(){
+    var names = ctrl.locFilters.map(function(f){
+      var name = currentDrawerValueFromArray(f.data, f.value())
+      if(name == "All") {
+        return;
+      } else {
+        return name;
+      }
+    }).filter(function(v){return v}).reverse()
+    return names.length ? names.join(", ") : "All";
   }
 
   return app.template(ctrl.app, "Requests", [
@@ -76,7 +84,7 @@ requestListing.view = function(ctrl){
         ]),
       ]),
       ctrl.locationCF.view(
-        null, 
+        locFilterPreview(),
         function(){
           return ctrl.locFilters.map(function (f, index){
             return m(".columns.medium-3", [
@@ -97,19 +105,23 @@ requestListing.view = function(ctrl){
       ctrl.disasterCF.view(
         currentDrawerValueFromArray(ctrl.disasters, ctrl.disaster),
         filterColumns.bind(null, ctrl.disasters, ctrl.disaster, "disaster")
-        ),
+      ),
       ctrl.agencyCF.view(
         currentDrawerValueFromArray(ctrl.agencies, ctrl.agencyFilterId),
         filterColumns.bind(null, ctrl.agencies, ctrl.agencyFilterId, "agencyFilterId")
-        ),
+      ),
       ctrl.projectTypeCF.view(
         currentDrawerValueFromArray(ctrl.projectFilters, ctrl.projectTypeId),
         filterColumns.bind(null, ctrl.projectFilters, ctrl.projectTypeId, "projectTypeId")
-        ),
+      ),
       ctrl.rejectStatusCF.view(
         currentDrawerValueFromArray(ctrl.rejectStatuses, ctrl.rejectStatus),
         filterColumns.bind(null, ctrl.rejectStatuses, ctrl.rejectStatus, "rejectStatus")
-        )
+      ),
+      ctrl.requestLevelCF.view(
+        currentDrawerValueFromArray(ctrl.requestPipeline, ctrl.requestLevel),
+        filterColumns.bind(null, ctrl.requestPipeline, ctrl.requestLevel, "requestLevel")
+      )
     ]),
     m("section", [
       m(".row", [

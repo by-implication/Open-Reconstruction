@@ -48,8 +48,8 @@ GET     /users/:id/:page/:s/:sD                          controllers.Users.viewP
 GET     /users/:id/:page/:s/:sD/meta                     controllers.Users.viewMeta(id: Int, page: Int, s: String, sD: String)
 
 GET     /browse/requests                                 controllers.Requests.index
-GET     /browse/requests/:p/:pid/:l/:s/:sD/:d/:a/:rS      controllers.Requests.indexPage(p: Int, pid: Int, l: String, s: String, sD: String, d: Int, a: Int, rS: String)
-GET     /browse/requests/:p/:pid/:l/:s/:sD/:d/:a/:rS/meta controllers.Requests.indexMeta(p: Int, pid: Int, l: String, s: String, sD: String, d: Int, a: Int, rS: String)
+GET     /browse/requests/:p/:pid/:l/:s/:sD/:d/:a/:rS/:rL      controllers.Requests.indexPage(p: Int, pid: Int, l: String, s: String, sD: String, d: Int, a: Int, rS: String, rL: String)
+GET     /browse/requests/:p/:pid/:l/:s/:sD/:d/:a/:rS/:rL/meta controllers.Requests.indexMeta(p: Int, pid: Int, l: String, s: String, sD: String, d: Int, a: Int, rS: String, rL: String)
 
 GET     /browse/requests/new                             controllers.Requests.create
 GET     /browse/requests/new/meta                        controllers.Requests.createMeta

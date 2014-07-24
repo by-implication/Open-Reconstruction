@@ -234,6 +234,7 @@ helper.docHeight = function(){
 
 helper.splitArrayToLen = function(array, substrlen){
   // var substrLength = Math.ceil(array.length / num);
+  // console.log(array.length, substrlen);
   var tempArray = array.slice();
   if(tempArray.length > 0){
     var temp = [tempArray.splice(0, substrlen)];
