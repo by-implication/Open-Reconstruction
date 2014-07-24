@@ -246,7 +246,6 @@ helper.splitArrayToLen = function(array, substrlen){
 
 helper.splitArrayTo = function(array, count){
   var length = Math.ceil(array.length / count);
-  console.log(array.length, count, length);
   return helper.splitArrayToLen(array, length);
 }
 
