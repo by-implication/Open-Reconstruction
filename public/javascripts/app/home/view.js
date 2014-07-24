@@ -317,7 +317,27 @@ home.view = function(ctrl){
               ]),
             ]),
           ]),
-      m("section.public", [
+      m("section#eyecandy.map-container", [
+        m(".map.large", {config: ctrl.initMap}),
+        m(".info-container", [
+          m(".row.info", [
+            m(".columns.medium-12", [
+              m("h2", [
+                "Location aware"
+              ]),
+              m(".columns.medium-6.medium-centered", [
+                m("p.big", [
+                  "A wise man once said: 'location, location, location'. All LGUs have GPS coordinates, and this allows us to easily show areas with damaged infrastructure, etc..."
+                ]),
+              ]),
+            ]),
+          ]),
+        ]),
+      ]),
+      // m("section.map-container", [
+        
+      // ]),
+      m("section.alt.public", [
         m(".row.info", [
           m(".columns.medium-12", [
             m("h2",["Transparency to the People"]),
@@ -343,7 +363,7 @@ home.view = function(ctrl){
           ])
         ]),
       ]),
-      m("section.etc.alt", [
+      m("section.etc", [
         m(".row.info", [
           m(".columns.medium-4", [
             m("figure.small", [

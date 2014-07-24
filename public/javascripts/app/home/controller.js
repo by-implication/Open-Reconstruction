@@ -105,5 +105,19 @@ home.controller = function(){
     phiDraw(".lines path", "l", 250, 50);
   }
 
+  this.initMap = function(elem, isInit){
+    !function tryMap(){
+      if($(elem).height()){
 
+        var map = common.leaflet.map(elem);
+        map.setZoom(6);
+
+        // map.setView(ctrl.coords(), 8);
+        // common.leaflet.addMarker(ctrl.coords());
+
+      } else {
+        setTimeout(tryMap, 100);
+      }
+    }()
+  }
 }

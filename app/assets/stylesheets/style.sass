@@ -96,9 +96,11 @@ section
   &.map-container
     padding: 0
 
-#map, #detailMap
+#map, #detailMap, .map
   height: 256px
   width: 100%
+  &.large
+    height: 512px
 
 .label
   margin-right: 10px
@@ -608,6 +610,21 @@ p.big
       text-align: center
   section
     padding: 60px 0px
+    position: relative
+    &#eyecandy
+      height: 768px
+      .info-container
+        position: relative
+        padding: 30px 0px
+        background-color: rgba(black, 0.5)
+        color: white
+        h2
+          color: white
+      .map
+        position: absolute
+        height: 769px
+    &.map-container
+      padding: 0
   .for-everyone
     figure.small
       position: relative
