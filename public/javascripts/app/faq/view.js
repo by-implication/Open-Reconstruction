@@ -1,16 +1,14 @@
 faq.view = function(ctrl){
   return app.template(ctrl.app, "Home", [
-    m("div#home", [
-      m("section.banner", [
-        m(".row", [
-          m(".columns.medium-12", [
-            m("div#logo"),
-            m("h1", "FAQ"),
-            m("p", [
-              "Frequently Asked Questions"
-            ])
-          ]),
-        ])
+    m("section.banner", [
+      m(".row", [
+        m(".columns.medium-12", [
+          m("div#logo"),
+          m("h1", "FAQ"),
+          m("p", [
+            "Frequently Asked Questions"
+          ])
+        ]),
       ])
     ]),
     m("section", [

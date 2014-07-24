@@ -28,12 +28,8 @@ requestListing.view = function(ctrl){
   }
   var currentDrawerValueFromArray = function(arr, id){
     if(arr){
-      var parsed = id * 1
-      if(parsed || (parsed == 0)){
-        id = parsed;  // Force id into int only if id can be converted.
-      }
       var obj = _.find(arr, function(e){
-        return e.id === id;
+        return e.id == id;
       }); // find an element with id of 'id' inside arr.
       if(!_.isUndefined(obj)){
         return obj.name;
@@ -43,6 +39,18 @@ requestListing.view = function(ctrl){
     } else {
       return null;
     }
+  }
+
+  var locFilterPreview = function(){
+    var names = ctrl.locFilters.map(function(f){
+      var name = currentDrawerValueFromArray(f.data, f.value())
+      if(name == "All") {
+        return;
+      } else {
+        return name;
+      }
+    }).filter(function(v){return v}).reverse()
+    return names.length ? names.join(", ") : "All";
   }
 
   return app.template(ctrl.app, "Requests", [
@@ -76,7 +84,7 @@ requestListing.view = function(ctrl){
         ]),
       ]),
       ctrl.locationCF.view(
-        null, 
+        locFilterPreview(),
         function(){
           return ctrl.locFilters.map(function (f, index){
             return m(".columns.medium-3", [

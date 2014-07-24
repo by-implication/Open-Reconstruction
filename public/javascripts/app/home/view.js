@@ -60,6 +60,11 @@ home.view = function(ctrl){
             m("h2", [
               "Real Data"
             ]),
+            m(".columns.medium-6.medium-centered", [
+              m("p.big.text-center", [
+                "We like to keep everyone updated. This is the progress we've made in addressing the requests made in response to past disasters."
+              ]),
+            ]),
             m("p.notice", [
               m("i.fa.fa-exclamation-triangle"),
               "Note: This system is very new, and not all legacy data has been imported. Please check back for updates, and let us ",
