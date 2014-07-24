@@ -72,9 +72,8 @@ admin.view = function(ctrl){
     )
   }
 
-  return app.template(ctrl.app, "Admin", [
-    common.banner("Administrative Interface"),
-    ctrl.modal ? common.modal.view(ctrl.modal, function (ctrl){
+  return app.template(ctrl.app, "Admin", {},
+    [common.modal.view(ctrl.modal, function (ctrl){
       return m("form", {onsubmit: ctrl.submit}, [
         m(".section", [
           m("h3", ctrl.input.id() ? "Editing Requirement" : "New Requirement")
@@ -113,7 +112,10 @@ admin.view = function(ctrl){
           ]),
         ]),
       ]);
-    }) : "",
+    })
+  ], 
+  [
+    common.banner("Administrative Interface"),
     ctrl.app.isSuperAdmin()?
       m("section", [
         m(".row", [
@@ -267,9 +269,7 @@ admin.view = function(ctrl){
             })
             .case("Requirements", function(){
               return m(".tabs-content.vertical", [
-                m("a.button", {onclick: function(){
-                  ctrl.modal.openWithValues();
-                }}, [
+                m("a.button", {onclick: ctrl.modal.openWithValues.bind(ctrl.modal)}, [
                   "New requirement"
                 ]),
                 m("table", [
