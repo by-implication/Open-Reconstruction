@@ -109,6 +109,10 @@ requestListing.view = function(ctrl){
       ctrl.rejectStatusCF.view(
         currentDrawerValueFromArray(ctrl.rejectStatuses, ctrl.rejectStatus),
         filterColumns.bind(null, ctrl.rejectStatuses, ctrl.rejectStatus, "rejectStatus")
+      ),
+      ctrl.requestLevelCF.view(
+        currentDrawerValueFromArray(ctrl.requestPipeline, ctrl.requestLevel),
+        filterColumns.bind(null, ctrl.requestPipeline, ctrl.requestLevel, "requestLevel")
       )
     ]),
     m("section", [
