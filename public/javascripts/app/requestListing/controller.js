@@ -97,7 +97,7 @@ requestListing.controller = function(){
   this.projectFilters = [{id: 0, name: "All"}];
   this.agencies = [{id: 0, name: "All", acronym: "All"}];
   this.rejectStatuses = [{id: 'all', name: "All"}, {id: 'rejected', name: 'Rejected Only'}, {id: '-', name: "Exclude Rejected"}];
-  this.requestPipeline = [{id: '-', name: "All"}, {id: 0, name: "0"}, {id: 1, name: "1"}, {id: 2, name: "2"}, {id: 3, name: "3"}, {id: 4, name: "4"}];
+  this.requestPipeline = [{id: '-', name: "All"}];
 
   bi.ajax(nav(null, true)).then(function (r){
 
@@ -112,7 +112,9 @@ requestListing.controller = function(){
         return a.id - b.id;
       }));
     }
-
+    for(var i in r.requestPipeline){
+      this.requestPipeline.push({id: parseInt(i), name: r.requestPipeline[i]});
+    }
   }.bind(this));
 
 }

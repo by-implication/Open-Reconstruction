@@ -246,6 +246,7 @@ object Requests extends Controller with Secured {
       "locFilters" -> Lgu.getLocFilters(psgc),
       "agencies" -> GovUnit.withPermission(Permission.IMPLEMENT_REQUESTS).map(_.toJson),
       "disasters" -> Disaster.jsonList,
+      "requestPipeline" -> Req.levels,
       "pageLimit" -> Req.PAGE_LIMIT,
       "count" -> Req.indexCount(projectTypeIdOption, psgc, disasterId, agencyId, rejectStatus, requestLevelOpt)
     ))
