@@ -23,6 +23,33 @@ object Requirements extends Controller with Secured {
     }.getOrElse(Rest.error("No such requirement"))
   }
 
-  def upsert = Application.index
+  private lazy val form = Form(
+    mapping(
+      "id" -> optional(number),
+      "name" -> nonEmptyText,
+      "description" -> nonEmptyText,
+      "level" -> number(min = 0, max = Req.levels.size - 1),
+      "target" -> nonEmptyText,
+      "isImage" -> boolean
+    )((id, name, description, level, target, isImage) => {
+      Requirement(
+        id = id,
+        name = name,
+        description = description,
+        reqLevel = level,
+        target = target,
+        isImage = isImage
+      )
+    })(_ => None)
+  )
+
+  def upsert = IsSuperAdmin(){ implicit request => implicit user =>
+    form.bindFromRequest.fold(
+      Rest.formError(_),
+      _.save().map { reqt =>
+        Rest.success("reqt" -> reqt.toJson)
+      }.getOrElse(Rest.serverError())
+    )
+  }
 
 }

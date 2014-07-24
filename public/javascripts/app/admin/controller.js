@@ -151,8 +151,23 @@ admin.controller = function(){
           };
           ctrl.modal.open();
         },
-        submit: function(){
-          console.log('submit');
+        submit: function(e){
+          e.preventDefault();
+          bi.ajax(routes.controllers.Requirements.upsert(), {data: ctrl.modal.input}).then(function (r){
+            var id = ctrl.modal.input.id()
+            var rs = ctrl.reqts();
+            if(id){
+              for(var i in rs){
+                if(rs[i].id == id){
+                  rs[i] = r.reqt;
+                  break;
+                }
+              }
+            } else {
+              rs.push(r.reqt);
+            }
+            ctrl.modal.close();
+          });
         }
       });
       function Reqt(init){
