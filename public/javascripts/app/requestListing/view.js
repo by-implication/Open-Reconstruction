@@ -11,9 +11,9 @@ requestListing.view = function(ctrl){
 
   var filterColumns = function(filterArr, filterId, filterNav){
     var columnNum = 4;
-    return helper.splitArrayTo(filterArr, columnNum)
-      .map(function(fg, index){
-        var threshold = Math.min(columnNum, filterArr.length);
+    var splitArray = helper.splitArrayTo(filterArr, columnNum)
+    return splitArray.map(function(fg, index){
+        var threshold = Math.min(splitArray.length, filterArr.length);
         var isLast = index + 1 >= threshold;
         return m(".columns", {className: (isLast ? "end " : "") + "medium-" + (12/columnNum)}, [
           m("ul.filters", fg.map(function(f){
