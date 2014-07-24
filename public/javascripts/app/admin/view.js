@@ -102,11 +102,19 @@ admin.view = function(ctrl){
             onchange: m.withAttr("value", ctrl.input.target),
             value: ctrl.input.target()
           })),
-          common.field("Image", m("input", { // Boolean = false,
-            type: "checkbox",
-            onchange: m.withAttr("checked", ctrl.input.isImage),
-            checked: ctrl.input.isImage()
-          })),
+          common.field("Image", 
+            m("label", [
+              m("input", { // Boolean = false,
+                type: "checkbox",
+                id: "can-image",
+                onchange: m.withAttr("checked", ctrl.input.isImage),
+                checked: ctrl.input.isImage()
+                }),
+              m("label", {"for": "can-image"}, [
+                "Check this if the file needs to be an image. e.g. Blueprints, photographs, etc..."
+              ])
+            ])
+          ),
           m("button", [
             "Submit"
           ]),
