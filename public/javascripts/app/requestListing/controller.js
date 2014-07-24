@@ -35,7 +35,7 @@ requestListing.controller = function(){
   this.requestLevel = m.route.param("requestLevel") || 0;
 
   var nav = this.nav = function(params, meta){
-    var keys = ["page", "projectTypeId", "_queryLocFilters", "sort", "sortDir", "disaster", "agencyFilterId", "rejectStatus"];
+    var keys = ["page", "projectTypeId", "_queryLocFilters", "sort", "sortDir", "disaster", "agencyFilterId", "rejectStatus", "requestLevel"];
     var p = {};
     keys.forEach(function (k){
       p[k] = self[k];
