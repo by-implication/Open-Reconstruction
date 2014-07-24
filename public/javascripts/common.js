@@ -185,9 +185,6 @@ common.field = function(name, content, help, outsideLabel){
     m("div.columns.medium-12", [
       content
     ]),
-    // m("div.columns.medium-4.help-container", [
-    //   m("p.help", help)
-    // ])
   ]);
 
   if(outsideLabel){
