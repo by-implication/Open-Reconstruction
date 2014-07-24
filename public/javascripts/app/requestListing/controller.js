@@ -10,13 +10,15 @@ requestListing.controller = function(){
   this.agencyCF = new common.collapsibleFilter.controller("Agency", "agency", this.filterAccordion);
   this.projectTypeCF = new common.collapsibleFilter.controller("Project Type", "project_type", this.filterAccordion);
   this.rejectStatusCF = new common.collapsibleFilter.controller("Rejected Requests", "reject_status", this.filterAccordion);
+  this.pipelineCF = new common.collapsibleFilter.controller("Request Progress", "request_pipeline", this.filterAccordion);
 
   this.filterAccordion.drawers([
     self.locationCF, 
     self.disasterCF, 
     self.agencyCF,
     self.projectTypeCF,
-    self.rejectStatusCF
+    self.rejectStatusCF,
+    self.pipelineCF
   ])
 
   this.disasters = [];
@@ -30,6 +32,7 @@ requestListing.controller = function(){
   this.sortDir = m.route.param("sortDir") || "asc";
   this.disaster = m.route.param("disaster") || 0;
   this.rejectStatus = m.route.param("rejectStatus") || "-";
+  this.requestLevel = m.route.param("requestLevel") || 0;
 
   var nav = this.nav = function(params, meta){
     var keys = ["page", "projectTypeId", "_queryLocFilters", "sort", "sortDir", "disaster", "agencyFilterId", "rejectStatus"];
@@ -94,6 +97,7 @@ requestListing.controller = function(){
   this.projectFilters = [{id: 0, name: "All"}];
   this.agencies = [{id: 0, name: "All", acronym: "All"}];
   this.rejectStatuses = [{id: 'all', name: "All"}, {id: 'rejected', name: 'Rejected Only'}, {id: '-', name: "Exclude Rejected"}];
+  this.pipeline = [{id: 0, name: "0"}, {id: 1, name: "1"}, {id: 2, name: "2"}, {id: 3, name: "3"}, {id: 4, name: "4"}];
 
   bi.ajax(nav(null, true)).then(function (r){
 
