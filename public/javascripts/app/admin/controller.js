@@ -138,8 +138,39 @@ admin.controller = function(){
 
     case "Requirements": {
       this.reqts = m.prop([]);
+      this.modal = new common.modal.controller({
+        openWithValues: function(reqt){
+          reqt = reqt || {};
+          ctrl.modal.input = {
+            id: m.prop(reqt.id),
+            name: m.prop(reqt.name || ""),
+            description: m.prop(reqt.description || ""),
+            level: m.prop(reqt.level || 0),
+            target: m.prop(reqt.target || ""),
+            isImage: m.prop(reqt.isImage)
+          };
+          ctrl.modal.open();
+        },
+        submit: function(){
+          console.log('submit');
+        }
+      });
+      function Reqt(init){
+        var reqt = this;
+        _.extend(this, init);
+        this.deprecate = function(){
+          bi.ajax(routes.controllers.Requirements.deprecate(reqt.id)).then(function (r){
+            var rs = ctrl.reqts();
+            rs.splice(rs.indexOf(reqt), 1);
+          });
+        };
+        this.edit = function(){
+          ctrl.modal.openWithValues(reqt);
+        }
+        return this;
+      }
       bi.ajax(routes.controllers.Requirements.indexMeta()).then(function (r){
-        ctrl.reqts(r.reqts);
+        ctrl.reqts(r.reqts.map(function (init){ return new Reqt(init); }));
       });
       break;
     }

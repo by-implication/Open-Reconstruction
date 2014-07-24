@@ -407,7 +407,7 @@ common.sticky.config = function(ctrl){
 common.modal = {};
 common.modal.controller = function(options){
   this.isVisible = m.prop(false);
-  this.show = function(){
+  this.open = function(){
     this.isVisible(true);
     this.height = helper.docHeight;
   }.bind(this);

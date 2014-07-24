@@ -74,6 +74,46 @@ admin.view = function(ctrl){
 
   return app.template(ctrl.app, "Admin", [
     common.banner("Administrative Interface"),
+    common.modal.view(ctrl.modal, function (ctrl){
+      return m("form", {onsubmit: ctrl.submit}, [
+        m(".section", [
+          m("h3", ctrl.input.id() ? "Editing Requirement" : "New Requirement")
+        ]),
+        m("hr"),
+        m(".section", [
+          common.field("Name", m("input", {
+            type: "text",
+            onchange: m.withAttr("value", ctrl.input.name),
+            value: ctrl.input.name()
+          })),
+          common.field("Description", m("input", {
+            type: "text",
+            onchange: m.withAttr("value", ctrl.input.description),
+            value: ctrl.input.description()
+          })),
+          common.field("Level", select2.view({
+            data: process.levelDict.toSelectValues(),
+            value: ctrl.input.level(),
+            onchange: function(data){
+              ctrl.input.level(data.id);
+            }}
+          )),
+          common.field("Target", m("input", {
+            type: "text",
+            onchange: m.withAttr("value", ctrl.input.target),
+            value: ctrl.input.target()
+          })),
+          common.field("Image", m("input", { // Boolean = false,
+            type: "checkbox",
+            onchange: m.withAttr("checked", ctrl.input.isImage),
+            checked: ctrl.input.isImage()
+          })),
+          m("button", [
+            "Submit"
+          ]),
+        ]),
+      ]);
+    }),
     ctrl.app.isSuperAdmin()?
       m("section", [
         m(".row", [
@@ -227,7 +267,9 @@ admin.view = function(ctrl){
             })
             .case("Requirements", function(){
               return m(".tabs-content.vertical", [
-                m("a.button", {href: routes.controllers.Disasters.create().url, config: m.route}, [
+                m("a.button", {onclick: function(){
+                  ctrl.modal.openWithValues();
+                }}, [
                   "New requirement"
                 ]),
                 m("table", [
@@ -236,6 +278,7 @@ admin.view = function(ctrl){
                       m("td", ["Name"]),
                       m("td", ["Description"]),
                       m("td", ["Level"]),
+                      m("td", ["Target"]),
                       m("td", ["Image"]),
                       m("td", ["Deprecate"])
                     ]),
@@ -244,17 +287,14 @@ admin.view = function(ctrl){
                     ctrl.reqts().map(function (r){
                       return m("tr", [
                         m("td", [
-                          m("a", {onclick: function(){
-                            console.log('edit ' + r.id);
-                          }}, r.name),
+                          m("a", {onclick: r.edit}, r.name),
                         ]),
                         m("td", [r.description]),
                         m("td", [process.levelDict[r.level]]),
+                        m("td", [r.target]),
                         m("td", [r.isImage ? "YES" : "NO"]),
                         m("td", [
-                          m("a", {onclick: function(){
-                            console.log('deprecate ' + r.id);
-                          }}, "Deprecate")
+                          m("a", {onclick: r.deprecate}, "Deprecate")
                         ])
                       ]);
                     }),

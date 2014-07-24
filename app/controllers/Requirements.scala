@@ -15,8 +15,14 @@ object Requirements extends Controller with Secured {
     Rest.success("reqts" -> Requirement.listAll.map(_.toJson))
   }
 
-  def insert = Application.index
-  def update = Application.index1 _
-  def deprecate = Application.index1 _
+  def deprecate(id: Int) = IsSuperAdmin(){ implicit user => implicit request =>
+    Requirement.findById(id).map {
+      _.copy(isDeprecated = true).save().map { _ =>
+        Rest.success()
+      }.getOrElse(Rest.serverError())
+    }.getOrElse(Rest.error("No such requirement"))
+  }
+
+  def upsert = Application.index
 
 }

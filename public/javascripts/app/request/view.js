@@ -423,7 +423,7 @@ request.view = function(ctrl){
                   ]),
                   m("h4", ((ctrl.request().level > 4 && ctrl.currentUserBelongsToImplementingAgency()) ? [
                     "Project Monitoring",
-                    m("button.tiny.right", {type: "button", onclick: ctrl.addProjectModal.show}, [
+                    m("button.tiny.right", {type: "button", onclick: ctrl.addProjectModal.open}, [
                       "Reference a Project"
                     ]),
                   ] : ("Projects"))),
@@ -525,11 +525,11 @@ request.approval = function(ctrl){
                 m("h4", [
                   "Please assign a SARO to this request."
                 ]),
-                m("button", {onclick: ctrl.saroModal.show}, [
+                m("button", {onclick: ctrl.saroModal.open}, [
                   m("i.fa.fa-fw.fa-check"),
                   "Assign SARO"
                 ]),
-                m("button.alert", {onclick: ctrl.rejectModal.show}, [
+                m("button.alert", {onclick: ctrl.rejectModal.open}, [
                   m("i.fa.fa-fw.fa-times"),
                   "Reject"
                 ])
@@ -538,11 +538,11 @@ request.approval = function(ctrl){
                 m("h4", [
                   "Sign off on this request only if the information is complete for your step in the approval process."
                 ]),
-                m("button", {onclick: ctrl.signoffModal.show}, [
+                m("button", {onclick: ctrl.signoffModal.open}, [
                   m("i.fa.fa-fw.fa-check"),
                   "Sign off"
                 ]),
-                m("button.alert", {onclick: ctrl.rejectModal.show}, [
+                m("button.alert", {onclick: ctrl.rejectModal.open}, [
                   m("i.fa.fa-fw.fa-times"),
                   "Reject"
                 ])
@@ -578,7 +578,7 @@ request.approval = function(ctrl){
               ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
                 ctrl.app.isSuperAdmin() ?
                   [
-                    m("button.alert", {onclick: ctrl.rejectModal.show}, [
+                    m("button.alert", {onclick: ctrl.rejectModal.open}, [
                       m("i.fa.fa-fw.fa-times"),
                       "Reject"
                     ])
