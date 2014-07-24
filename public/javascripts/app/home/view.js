@@ -233,11 +233,6 @@ home.view = function(ctrl){
             m("h2", [
               "One-Stop Shop"
             ]),
-            // m("p", [
-            //   // "Open Reconstruction streamlines the whole process from end to end, tracking a project throughout its lifecycle.",
-            //   // m("br"),
-            //   "Both public and government sectors can take advantage of the system. See how."
-            // ]),
           ]),
         ]),
         m(".row", [
