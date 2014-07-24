@@ -28,32 +28,11 @@ home.view = function(ctrl){
               m("h2.text-center", [
                 m("i.fa.fa-search"),
                 "Browse for projects and requests in your town, region, or area.",
-                // m("a.button",{
-                //     href: routes.controllers.Requests.index().url,
-                //     config:m.route
-                //   },[
-                //     "Search ",
-                    
-                // ])
               ])
             ])
           ])
         ]),
       ]),
-      // m("section", [
-      //   m(".row", [
-      //     m(".columns.medium-12", [
-      //       m(".notice", [
-      //         m("i.fa.fa-exclamation-triangle"),
-      //         "Note: This system is very new, and not all legacy data has been imported. Please check back for updates, and let us ",
-      //         m("a", {target:"potato", href:"https://docs.google.com/forms/d/1GUdE6Si1QnnMtVJ8ig8rwECo9DK9BloOXiGVVnj_efw/viewform"},
-      //           "know what you think"
-      //         ),
-      //         "!"
-      //       ])
-      //     ])
-      //   ]),
-      // ]),
       m("section.proposals", [
         m(".row.info", [
           m(".columns.medium-12", [
