@@ -73,7 +73,7 @@ admin.view = function(ctrl){
   }
 
   return app.template(ctrl.app, "Admin", {},
-    [common.modal.view(ctrl.modal, function (ctrl){
+    [ctrl.modal ? common.modal.view(ctrl.modal, function (ctrl){
       return m("form", {onsubmit: ctrl.submit}, [
         m(".section", [
           m("h3", ctrl.input.id() ? "Editing Requirement" : "New Requirement")
@@ -112,7 +112,7 @@ admin.view = function(ctrl){
           ]),
         ]),
       ]);
-    })
+    }) : ""
   ], 
   [
     common.banner("Administrative Interface"),
