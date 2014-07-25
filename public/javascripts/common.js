@@ -659,28 +659,29 @@ common.collapsibleFilter.controller = function(label, id, parentCtrl){
   }
   this.maxHeight = m.prop();
   this.drawerConfig = function(elem, isInit){
-    if(!isInit){
-      this.maxHeight($(elem).children(".row").height());
+    // console.log($(elem).children(".drawer-contents").outerHeight());
+    // if(!isInit){
+      // console.log($(elem).children(".drawer-contents").outerHeight());
+      this.maxHeight($(elem).children(".drawer-contents").outerHeight());
+      // console.log(this.isExpanded());
       if(this.isExpanded()){
         $(elem).css("max-height", this.maxHeight());
       }
-    }
+    // }
   }.bind(this);
 
   this.view = function(preview, drawer){
     var columnNum = 4;
     return m(".collapsible-filter", [
       m(".collapsible-label", [
-        m("a.row", {onclick: this.toggleExpand}, [
-          m(".columns.medium-12.end", [
-            preview ? 
-              m("span.label.right", [
-                preview
-              ])
-            : null,
-            m("h4", [
-              label
+        m("a", {onclick: this.toggleExpand}, [
+          preview ? 
+            m("span.label.right", [
+              preview
             ])
+          : null,
+          m("h5", [
+            label
           ])
         ])
       ]),
@@ -688,7 +689,7 @@ common.collapsibleFilter.controller = function(label, id, parentCtrl){
         config: this.drawerConfig,
         style: "max-height: " + (this.isExpanded() ? this.maxHeight() : 0) + "px"
       }, [
-        m(".row", [
+        m(".drawer-contents", [
           drawer()
         ])
       ])

@@ -579,7 +579,7 @@ nav
         margin: 0px
   .filter
     a
-      margin: 0px -10px
+      // margin: 0px -10px
       padding: 4px 10px
       border-radius: 1000px
       font-size: 12px
@@ -1171,16 +1171,26 @@ thead
 
 .collapsible-filter
   .collapsible-label
-    a.row
+    & > a
       display: block
-      border-radius: 3px
-      margin-bottom: 10px
+      // border-radius: 3px
+      margin-bottom: 1px
+      padding: 10px
       background-color: rgba(black, 0.05)
       &:hover
         background-color: rgba(black, 0.1)
+      h5
+        margin: 0
+      .label
+        background-color: #ddd
+        color: #333
   .collapsible-drawer
     +transition(max-height 0.4s)
     overflow: hidden
+    padding: 0px 10px
+    ul
+      margin-bottom: 0
+      padding: 10px 0px 20px
     // &.expanded
     //   max-height: 512px
     // &.collapsed
