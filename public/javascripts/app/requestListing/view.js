@@ -10,11 +10,7 @@ requestListing.view = function(ctrl){
   );
 
   var filterColumns = function(filterArr, filterId, filterNav){
-    var columnNum = 1;
-    var splitArray = helper.splitArrayTo(filterArr, columnNum)
-    return splitArray.map(function(fg, index){
-        var threshold = Math.min(splitArray.length, filterArr.length);
-        var isLast = index + 1 >= threshold;
+    return filterArr.map(function(fg, index){
         return m("ul.filters", fg.map(function(f){
           var navObj = {};
           navObj[filterNav] = f.id
