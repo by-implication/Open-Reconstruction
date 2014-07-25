@@ -20,13 +20,19 @@ request.view = function(ctrl){
             ]),
             m("hr"),
             m(".section", ctrl.requirements().map(function (reqts, level){
-              return m("div", [levelDict[level]].concat(reqts.map(function (reqt){
-                return common.field(reqt.name, m("input", {
-                  type: "checkbox",
-                  onchange: m.withAttr("checked", ctrl.requiredMap[reqt.id]),
-                  checked: ctrl.requiredMap[reqt.id]()
-                }));
-              })));
+              return m("div", [
+                m("h4", levelDict[level]),
+                m("ul", reqts.map(function(reqt){
+                  return m("label", [
+                    m("input", {
+                      type: "checkbox",
+                      onchange: m.withAttr("checked", ctrl.requiredMap[reqt.id]),
+                      checked: ctrl.requiredMap[reqt.id]()
+                    }),
+                    reqt.name
+                  ])
+                })),
+              ]);
             }).concat(m("button", [
               "Submit"
             ])))
