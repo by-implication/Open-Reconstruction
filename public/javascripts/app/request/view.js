@@ -352,10 +352,12 @@ request.view = function(ctrl){
               m("hr"),
               m(".big.section#documents", [
                 m(".header", [
+                  ctrl.app.isSuperAdmin() ? 
+                    m("a.button.right", {onclick: ctrl.requirementsModal.initAndOpen}, [
+                      "Click here to edit requirements"
+                    ]) 
+                  : "",
                   m("h1", ["Documents"]),
-                  ctrl.app.isSuperAdmin() ? m("a", {onclick: ctrl.requirementsModal.initAndOpen}, [
-                    "Click here to edit requirements"
-                  ]) : ""
                 ]),
                 m(".content", [
                   m(".row", [
