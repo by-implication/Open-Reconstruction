@@ -35,6 +35,22 @@ object Visualization {
       )
     }
 
+    def requestLocations(): Seq[(String, BigDecimal, BigDecimal)] = {
+      SQL("""
+        SELECT project_types.project_type_name, lgus.lgu_lat, lgus.lgu_lng FROM reqs
+        LEFT JOIN lgus ON reqs.gov_unit_id = lgus.lgu_id
+        LEFT JOIN project_types ON reqs.project_type_id = project_types.project_type_id
+      """)list(
+        get[String]("project_type_name") ~
+        get[Option[BigDecimal]]("lgu_lat") ~
+        get[Option[BigDecimal]]("lgu_lng") map {
+          case projectType~lat~lng => {
+            (projectType, lat.getOrElse(0), lng.getOrElse(0))
+          }
+        }
+      )
+    }
+
     SQL("""
       SELECT yolanda.count as yolanda_req_qty, yolanda.sum as yolanda_req_amt,
         bohol.count as bohol_req_qty, bohol.sum as bohol_req_amt,
@@ -145,9 +161,16 @@ object Visualization {
               "fundedProjects" -> (qtyAmt _ tupled bohol_funded),
               "dpwh" -> qtyAmt(bohol_dpwh_saro_qty, bohol_dpwh_saro_amt),
               "dilg" -> qtyAmt(bohol_dilg_saro_qty, bohol_dilg_saro_amt)
-            )
+            ),
+            "requests" -> Json.toJson(
+              requestLocations().map { case (projectType, lat, lng) =>
+              Json.obj(
+                "projectType" -> projectType,
+                "lat" -> lat,
+                "lng" -> lng
+              )
+            })
           )
-
         }
       }
     )
