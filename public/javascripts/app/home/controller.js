@@ -123,7 +123,11 @@ home.controller = function(){
             }, 0)
             // console.log(counts);
             
-            return new L.DivIcon({ html: counts, iconSize: [iconScale(counts), iconScale(counts)], className: "map-data-point" });
+            return new L.DivIcon({ 
+              html: counts, 
+              iconSize: [iconScale(counts), iconScale(counts)], 
+              className: "map-data-point"
+            });
           }
         });
 
