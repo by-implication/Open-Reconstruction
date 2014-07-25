@@ -635,7 +635,7 @@ common.attachmentFor = function(reqt, atts){
 
 common.collapsibleFilter = {}
 common.collapsibleFilter.controller = function(label, id, parentCtrl){
-
+  var self = this;
   this.cookey = "dropstate_" + id;
   this.label = label;
   this.id = id;
@@ -659,14 +659,20 @@ common.collapsibleFilter.controller = function(label, id, parentCtrl){
   }
   this.maxHeight = m.prop();
   this.drawerConfig = function(elem, isInit){
-    // console.log($(elem).children(".drawer-contents").outerHeight());
-    // if(!isInit){
-      // console.log($(elem).children(".drawer-contents").outerHeight());
-      this.maxHeight($(elem).children("ul").outerHeight());
-      if(this.isExpanded()){
-        $(elem).css("max-height", this.maxHeight());
-      }
-    // }
+    // THIS IS FUCKED UP, BUT THIS IS THE ONLY WAY. I AM SO SORRY
+    if(!isInit){
+      setTimeout(function(){
+        this.maxHeight($(elem).children("ul").outerHeight());
+        if(this.isExpanded()){
+          $(elem).css("max-height", this.maxHeight() + "px");
+        }
+      }.bind(this), 100)
+    }
+
+    this.maxHeight($(elem).children("ul").outerHeight());
+    if(this.isExpanded()){
+      $(elem).css("max-height", this.maxHeight() + "px");
+    }
   }.bind(this);
 
   this.view = function(preview, drawer){
