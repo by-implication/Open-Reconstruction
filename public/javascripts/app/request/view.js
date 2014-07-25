@@ -14,11 +14,14 @@ request.view = function(ctrl){
             ]),
             m("hr"),
             m(".section", ctrl.requirements().map(function (reqt){
-              return common.field(reqt.name, m("input", {
-                type: "checkbox",
-                onchange: m.withAttr("checked", ctrl.requiredMap[reqt.id]),
-                checked: ctrl.requiredMap[reqt.id]()
-              }));
+              return m("label", [
+                m("input", {
+                  type: "checkbox",
+                  onchange: m.withAttr("checked", ctrl.requiredMap[reqt.id]),
+                  checked: ctrl.requiredMap[reqt.id]()
+                }),
+                reqt.name
+              ]);
             }).concat(m("button", [
               "Submit"
             ])))
