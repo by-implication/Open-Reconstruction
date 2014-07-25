@@ -102,12 +102,20 @@ section
   &.large
     height: 512px
   .map-data-point
-    +display(flex)
-    +justify-content(center)
-    +align-items(center)
-    border-radius: 50%
-    background-color: rgba($red, 0.8)
-    color: white
+    .marker
+      +display(flex)
+      +justify-content(center)
+      +align-items(center)
+      +transform( scale(1) )
+      +transition( all 0.1s )
+      border-radius: 50%
+      background-color: rgba($red, 0.8)
+      color: white
+      height: 100%
+      width: 100%
+      &:hover
+        +transition( all 0.2s cubic-bezier(0, 0.72, 0.64906, 1.35) )
+        +transform( scale(1.5) )
 
 .label
   margin-right: 10px

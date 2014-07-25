@@ -115,7 +115,7 @@ home.controller = function(){
       return L.divIcon({
         className: "map-data-point",
         iconSize: [iconScale(count), iconScale(count)],
-        html: count
+        html: "<div class='marker'>" + count + "</div>"
       })
     }
     !function tryMap(){
@@ -137,14 +137,10 @@ home.controller = function(){
         self.requests().forEach(function(r){
           var divIcon = makeDivIcon(r.count);
           var c = L.marker([r.lat, r.lng], {fillColor: "red", color: "red", data: r.count, icon: divIcon});
-          // c.setRadius(r.count);
           markers.addLayer(c);
         });
 
         map.addLayer(markers);
-
-        // map.setView(ctrl.coords(), 8);
-        // common.leaflet.addMarker(ctrl.coords());
 
       } else {
         setTimeout(tryMap, 100);
