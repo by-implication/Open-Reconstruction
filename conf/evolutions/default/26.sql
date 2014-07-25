@@ -6,17 +6,17 @@ ALTER TABLE reqs
 ALTER TABLE requirements
 	ADD COLUMN requirement_deprecated boolean NOT NULL DEFAULT false;
 
-CREATE OR REPLACE FUNCTION requirement_ids() RETURNS int[] AS $$
-	BEGIN
-		RETURN ARRAY(SELECT requirement_id FROM requirements WHERE NOT requirement_deprecated);;
-	END;;
-$$ LANGUAGE plpgsql;
-
-UPDATE reqs SET requirement_ids = requirement_ids();
+UPDATE reqs req SET requirement_ids = (
+	SELECT array_agg(requirement_id)
+	FROM requirements, gov_units g NATURAL JOIN roles
+		WHERE req.gov_unit_id = g.gov_unit_id
+		AND requirement_target = (CASE
+		  WHEN role_name = 'LGU' THEN 'LGU'
+		  ELSE 'NGA'
+		END)
+	);
 
 # --- !Downs
-
-DROP FUNCTION IF EXISTS requirement_ids();
 
 ALTER TABLE requirements
 	DROP COLUMN requirement_deprecated;

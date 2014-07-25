@@ -93,7 +93,7 @@ object Requests extends Controller with Secured {
             location = location,
             govUnitId = govUnitId,
             authorId = user.id,
-            requirementIds = Requirement.idList()
+            requirementIds = Requirement.getIdsForGovUnitId(govUnitId)
           ), bucketKey)
         }
       })

@@ -10,8 +10,15 @@ import recon.support._
 
 object Requirement extends RequirementGen {
 
-  def idList() = DB.withConnection { implicit c =>
-    SQL("SELECT requirement_ids()").single(get[PGIntList]("requirement_ids"))
+  def getIdsForGovUnitId(govUnitId: Int) = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT array_agg(requirement_id) FROM requirements, gov_units NATURAL JOIN roles
+      WHERE gov_unit_id = {govUnitId}
+      AND requirement_target = (CASE
+        WHEN role_name = 'LGU' THEN 'LGU'
+        ELSE 'NGA'
+      END)
+    """).on('govUnitId -> govUnitId).single(get[PGIntList]("array_agg"))
   }
 
   def getFor(role: Role, submissionOnly: Boolean = false) = DB.withConnection { implicit c =>
