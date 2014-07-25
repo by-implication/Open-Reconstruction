@@ -10,15 +10,14 @@ requestListing.view = function(ctrl){
   );
 
   var filterColumns = function(filterArr, filterId, filterNav){
-    return filterArr.map(function(fg, index){
-        return m("ul.filters", fg.map(function(f){
-          var navObj = {};
-          navObj[filterNav] = f.id
-          return m("li.filter", {className: (f.id == filterId) ? "active" : ""}, [
-            m("a", {href: ctrl.nav(navObj), config: m.route}, f.name)
-          ]);
-        }))
-      });
+    console.log(filterArr);
+    return m("ul.filters", filterArr.map(function(f){
+      var navObj = {};
+      navObj[filterNav] = f.id
+      return m("li.filter", {className: (f.id == filterId) ? "active" : ""}, [
+        m("a", {href: ctrl.nav(navObj), config: m.route}, f.name)
+      ]);
+    }));
   }
   var currentDrawerValueFromArray = function(arr, id){
     if(arr){
