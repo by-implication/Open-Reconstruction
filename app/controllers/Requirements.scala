@@ -10,9 +10,9 @@ import recon.support._
 
 object Requirements extends Controller with Secured {
 
-  def index = Application.index
-  def indexMeta = Action {
-    Rest.success("reqts" -> Requirement.listAll.map(_.toJson))
+  def index(tab: String) = Application.index
+  def indexMeta(tab: String) = Action {
+    Rest.success("reqts" -> Requirement.findAll("requirement_target", tab).map(_.toJson))
   }
 
   def deprecate(id: Int) = IsSuperAdmin(){ implicit user => implicit request =>

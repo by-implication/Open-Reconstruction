@@ -1,4 +1,40 @@
 admin.view = function(ctrl){
+
+  function requirementsView(tab){
+    return function(){
+      return m(".tabs-content.vertical", [
+        m("a.button", {onclick: ctrl.modal.openWithValues.bind(ctrl.modal)}, [
+          "New requirement"
+        ]),
+        m("table", [
+          m("thead", [
+            m("tr", [
+              m("td", ["Name"]),
+              m("td", ["Description"]),
+              m("td", ["Level"]),
+              m("td", ["Image"]),
+              m("td", ["Deprecate"])
+            ]),
+          ]),
+          m("tbody", [
+            ctrl.reqts().map(function (r){
+              return m("tr", [
+                m("td", [
+                  m("a", {onclick: r.edit}, r.name),
+                ]),
+                m("td", [r.description]),
+                m("td", [process.levelDict[r.level]]),
+                m("td", [r.isImage ? "YES" : "NO"]),
+                m("td", [
+                  m("a", {onclick: r.deprecate}, "Deprecate")
+                ])
+              ]);
+            }),
+          ]),
+        ]),
+      ])
+    }
+  }
   
   function renderLGU(lgu){
     var level = lgu.level();
@@ -97,11 +133,6 @@ admin.view = function(ctrl){
               ctrl.input.level(data.id);
             }}
           )),
-          common.field("Target", m("input", {
-            type: "text",
-            onchange: m.withAttr("value", ctrl.input.target),
-            value: ctrl.input.target()
-          })),
           common.field("Image", 
             m("label", [
               m("input", { // Boolean = false,
@@ -275,41 +306,8 @@ admin.view = function(ctrl){
                 ]),
               ])
             })
-            .case("Requirements", function(){
-              return m(".tabs-content.vertical", [
-                m("a.button", {onclick: ctrl.modal.openWithValues.bind(ctrl.modal)}, [
-                  "New requirement"
-                ]),
-                m("table", [
-                  m("thead", [
-                    m("tr", [
-                      m("td", ["Name"]),
-                      m("td", ["Description"]),
-                      m("td", ["Level"]),
-                      m("td", ["Target"]),
-                      m("td", ["Image"]),
-                      m("td", ["Deprecate"])
-                    ]),
-                  ]),
-                  m("tbody", [
-                    ctrl.reqts().map(function (r){
-                      return m("tr", [
-                        m("td", [
-                          m("a", {onclick: r.edit}, r.name),
-                        ]),
-                        m("td", [r.description]),
-                        m("td", [process.levelDict[r.level]]),
-                        m("td", [r.target]),
-                        m("td", [r.isImage ? "YES" : "NO"]),
-                        m("td", [
-                          m("a", {onclick: r.deprecate}, "Deprecate")
-                        ])
-                      ]);
-                    }),
-                  ]),
-                ]),
-              ])
-            })
+            .case("LGU Requirements", requirementsView("LGU"))
+            .case("NGA Requirements", requirementsView("NGA"))
             .render()
         ]),
       ])

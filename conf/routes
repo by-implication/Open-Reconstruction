@@ -30,8 +30,8 @@ GET     /admin/types/disaster                            controllers.Admin.disas
 GET     /admin/types/disaster/meta                       controllers.Admin.disasterTypesMeta
 POST    /admin/types/:k/new                              controllers.Admin.insertType(k: String)
 POST    /admin/types/:k/:id                              controllers.Admin.updateType(k: String, id: Int)
-GET     /admin/requirements                              controllers.Requirements.index
-GET     /admin/requirements/meta                         controllers.Requirements.indexMeta
+GET     /admin/requirements/:t                           controllers.Requirements.index(t: String)
+GET     /admin/requirements/:t/meta                      controllers.Requirements.indexMeta(t: String)
 POST    /admin/requirements/upsert			                 controllers.Requirements.upsert
 POST    /admin/requirements/:id/deprecate                controllers.Requirements.deprecate(id: Int)
 

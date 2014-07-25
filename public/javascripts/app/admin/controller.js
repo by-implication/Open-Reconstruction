@@ -1,6 +1,7 @@
 admin.controller = function(){
   var ctrl = this;
   this.app = new app.controller();
+  this.tab = m.route.param("t");
   this.tabs = new common.tabs.controller();
   this.tabs.tabs = m.prop([
     {label: m.prop("Agencies"), href: routes.controllers.Application.adminAgencies().url}, 
@@ -8,7 +9,8 @@ admin.controller = function(){
     {label: m.prop("Project Types"), href: routes.controllers.Admin.projectTypes().url},
     {label: m.prop("Disaster Types"), href: routes.controllers.Admin.disasterTypes().url},
     {label: m.prop("Disasters"), href: routes.controllers.Disasters.index().url},
-    {label: m.prop("Requirements"), href: routes.controllers.Requirements.index().url}
+    {label: m.prop("LGU Requirements"), href: routes.controllers.Requirements.index("LGU").url},
+    {label: m.prop("NGA Requirements"), href: routes.controllers.Requirements.index("NGA").url}
   ]);
 
   if(m.route().split("/")[2] == "types"){
@@ -136,7 +138,8 @@ admin.controller = function(){
       break;
     }
 
-    case "Requirements": {
+    case "LGU Requirements":
+    case "NGA Requirements": {
       this.reqts = m.prop([]);
       this.modal = new common.modal.controller({
         openWithValues: function(reqt){
@@ -146,7 +149,7 @@ admin.controller = function(){
             name: m.prop(reqt.name || ""),
             description: m.prop(reqt.description || ""),
             level: m.prop(reqt.level || 0),
-            target: m.prop(reqt.target || ""),
+            target: ctrl.tab,
             isImage: m.prop(reqt.isImage)
           };
           ctrl.modal.open();
@@ -184,7 +187,7 @@ admin.controller = function(){
         }
         return this;
       }
-      bi.ajax(routes.controllers.Requirements.indexMeta()).then(function (r){
+      bi.ajax(routes.controllers.Requirements.indexMeta(ctrl.tab)).then(function (r){
         ctrl.reqts(r.reqts.map(function (init){ return new Reqt(init); }));
       });
       break;
