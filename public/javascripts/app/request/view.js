@@ -19,7 +19,7 @@ request.view = function(ctrl){
               m("h3", "Requirements")
             ]),
             m("hr"),
-            ctrl.requirements().map(function (reqts, level){
+            m(".section", ctrl.requirements().map(function (reqts, level){
               return m("div", [levelDict[level]].concat(reqts.map(function (reqt){
                 return common.field(reqt.name, m("input", {
                   type: "checkbox",
@@ -27,11 +27,9 @@ request.view = function(ctrl){
                   checked: ctrl.requiredMap[reqt.id]()
                 }));
               })));
-            }).concat(
-              m("button", [
-                "Submit"
-              ])
-            )
+            }).concat(m("button", [
+              "Submit"
+            ])))
           ]);
         }
       ),
