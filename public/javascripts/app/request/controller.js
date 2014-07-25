@@ -6,10 +6,10 @@ request.controller = function(){
   this.requirements = m.prop([]);
   this.required = m.prop([]);
   this.requirementsModal = new common.modal.controller({
-    requirements: ctrl._requirements,
+    requirements: ctrl.requirements,
     initAndOpen: function(){
       var map = [];
-      var reqts = ctrl.requirementsModal.requirements();
+      var reqts = ctrl._requirements();
       for(var i in reqts){
         map[reqts[i].id] = m.prop(ctrl.required().indexOf(reqts[i].id) != -1);
       }

@@ -1,5 +1,11 @@
 request.view = function(ctrl){
 
+  var levelDict = [
+    "Submission",
+    "Agency Validation",
+    "OCD Validation"
+  ];
+
   return app.template(
     ctrl.app,
     "Request — " + ctrl.request().description,
@@ -13,15 +19,19 @@ request.view = function(ctrl){
               m("h3", "Requirements")
             ]),
             m("hr"),
-            m(".section", ctrl.requirements().map(function (reqt){
-              return common.field(reqt.name, m("input", {
-                type: "checkbox",
-                onchange: m.withAttr("checked", ctrl.requiredMap[reqt.id]),
-                checked: ctrl.requiredMap[reqt.id]()
-              }));
-            }).concat(m("button", [
-              "Submit"
-            ])))
+            ctrl.requirements().map(function (reqts, level){
+              return m("div", [levelDict[level]].concat(reqts.map(function (reqt){
+                return common.field(reqt.name, m("input", {
+                  type: "checkbox",
+                  onchange: m.withAttr("checked", ctrl.requiredMap[reqt.id]),
+                  checked: ctrl.requiredMap[reqt.id]()
+                }));
+              })));
+            }).concat(
+              m("button", [
+                "Submit"
+              ])
+            )
           ]);
         }
       ),
@@ -339,20 +349,14 @@ request.view = function(ctrl){
               m(".big.section#documents", [
                 m(".header", [
                   m("h1", ["Documents"]),
-                  m("a", {onclick: ctrl.requirementsModal.initAndOpen}, [
+                  ctrl.app.isSuperAdmin() ? m("a", {onclick: ctrl.requirementsModal.initAndOpen}, [
                     "Click here to edit requirements"
-                  ])
+                  ]) : ""
                 ]),
                 m(".content", [
                   m(".row", [
                     m(".columns.medium-12", [
                       ctrl.requirements().map(function (reqts, level){
-
-                        var levelDict = [
-                          "Submission",
-                          "Agency Validation",
-                          "OCD Validation"
-                        ];
 
                         return m("div", {class: level == (ctrl.request().level+1) ? "current" : ""},
                           [
