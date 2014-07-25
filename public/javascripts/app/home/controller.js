@@ -7,6 +7,7 @@ home.controller = function(){
   this.byDisasterType = m.prop([]);
   this.byMonth = m.prop([]);
   this.byLevel = m.prop([]);
+  this.requests = m.prop([]);
   this.infoDumpCurrentTab = m.prop("public");
 
   function qtyAmt(){ return {qty: 0, amt: 0} }
@@ -72,6 +73,7 @@ home.controller = function(){
     self.byLevel(r.byLevel);
     self.byMonth(padMonths(r.byMonth));
     self.byDisasterType(r.byDisasterType);
+    self.requests(r.requests);
   });
 
   bi.ajax(routes.controllers.Viz.getData("landing")).then(function (r){
