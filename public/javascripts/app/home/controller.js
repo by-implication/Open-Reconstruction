@@ -73,11 +73,11 @@ home.controller = function(){
     self.byLevel(r.byLevel);
     self.byMonth(padMonths(r.byMonth));
     self.byDisasterType(r.byDisasterType);
-    self.requests(r.requests);
   });
 
   bi.ajax(routes.controllers.Viz.getData("landing")).then(function (r){
     self.vizData(r.data);
+    self.requests(r.data.requests);
   });
 
   this.yolandaSaroVis = _.extend({}, viz.library["saroHistory"](self));
