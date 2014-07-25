@@ -10,7 +10,6 @@ requestListing.view = function(ctrl){
   );
 
   var filterColumns = function(filterArr, filterId, filterNav){
-    console.log(filterArr);
     return m("ul.filters", filterArr.map(function(f){
       var navObj = {};
       navObj[filterNav] = f.id
