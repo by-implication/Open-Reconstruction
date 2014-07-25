@@ -301,7 +301,7 @@ common.stickyTabs.menu = function(ctrl, options){
         href: tab.href, 
         onclick: function(e){
           e.preventDefault();
-          $("html, body").animate({scrollTop: $(tab.href).position().top + "px"});
+          $("html, body").animate({scrollTop: $(tab.href).offset().top + "px"});
         }
       };
       return m("dd", {class: (location.hash === tab.href) ? "active" : ""}, [
