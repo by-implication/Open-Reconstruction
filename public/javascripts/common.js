@@ -631,26 +631,36 @@ common.attachmentFor = function(reqt, atts){
 }
 
 common.collapsibleFilter = {}
+common.collapsibleFilter.controller = function(label, id, parentCtrl){
 
-common.collapsibleFilter.controller = function(label, id){
-
-  var cookey = "dropstate_" + id;
-
-  this.isExpanded = m.prop(m.cookie()[cookey] == "true");
+  this.cookey = "dropstate_" + id;
+  this.label = label;
+  this.id = id;
+  this.isExpanded = m.prop(m.cookie()[this.cookey] == "true");
   this.toggleExpand = function(){
+    if(!_.isUndefined(parentCtrl)){
+      // accordion
+      parentCtrl.closeAllOthersExcept(this)
+    }
     var newState = !this.isExpanded();
     this.isExpanded(newState);
     var o = {};
-    o[cookey] = newState;
+    o[this.cookey] = newState;
     m.cookie(o);
   }.bind(this);
-
+  this.close = function(){
+    this.isExpanded(false);
+    var o = {};
+    o[this.cookey] = false;
+    m.cookie(o);
+  }
   this.maxHeight = m.prop();
   this.drawerConfig = function(elem, isInit){
     this.maxHeight($(elem).children(".row").height());
   }.bind(this);
 
   this.view = function(preview, drawer){
+    var columnNum = 4;
     return m(".collapsible-filter", [
       m(".collapsible-label", [
         m("a.row", {onclick: this.toggleExpand}, [
@@ -676,5 +686,15 @@ common.collapsibleFilter.controller = function(label, id){
       ])
     ])
   }
-
+}
+common.accordion = {}
+common.accordion.controller = function(){
+  this.drawers = m.prop([]);
+  this.closeAllOthersExcept = function(exemptionCtrl){
+    this.drawers().forEach(function(drawerCtrl){
+      if(drawerCtrl != exemptionCtrl){
+        drawerCtrl.close();
+      }
+    });
+  }
 }
