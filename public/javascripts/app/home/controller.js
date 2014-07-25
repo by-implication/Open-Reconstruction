@@ -109,10 +109,14 @@ home.controller = function(){
 
   this.initMap = function(elem, isInit){
     var iconScale = function(count){
-      // area = pi * r * r
-      // area -> r.
-      // r = sqrt(area / pi)
       return 24 + Math.sqrt(count / Math.PI);
+    }
+    var makeDivIcon = function(count){
+      return L.divIcon({
+        className: "map-data-point",
+        iconSize: [iconScale(count), iconScale(count)],
+        html: count
+      })
     }
     !function tryMap(){
       if($(elem).height()){
@@ -126,20 +130,12 @@ home.controller = function(){
             }, 0)
             // console.log(counts);
             
-            return new L.DivIcon({ 
-              html: counts, 
-              iconSize: [iconScale(counts), iconScale(counts)], 
-              className: "map-data-point"
-            });
+            return makeDivIcon(counts);
           }
         });
 
         self.requests().forEach(function(r){
-          var divIcon = L.divIcon({
-            className: "map-data-point",
-            iconSize: [iconScale(r.count), iconScale(r.count)],
-            html: r.count
-          });
+          var divIcon = makeDivIcon(r.count);
           var c = L.marker([r.lat, r.lng], {fillColor: "red", color: "red", data: r.count, icon: divIcon});
           // c.setRadius(r.count);
           markers.addLayer(c);
