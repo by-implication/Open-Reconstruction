@@ -109,7 +109,10 @@ home.controller = function(){
 
   this.initMap = function(elem, isInit){
     var iconScale = function(count){
-      return 24 + 5 * Math.log(count);
+      // area = pi * r * r
+      // area -> r.
+      // r = sqrt(area / pi)
+      return 24 + Math.sqrt(count / Math.PI);
     }
     !function tryMap(){
       if($(elem).height()){
