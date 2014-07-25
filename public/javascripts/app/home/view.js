@@ -12,9 +12,9 @@ home.view = function(ctrl){
               m("p", [
                 "Tracking taxpayer money spent on post-disaster reconstruction in the Philippines",
               ]),
-              m("a.button.learn",{href:"#infodump", onclick: function(e){
+              m("a.button.learn",{href:"#real-data", onclick: function(e){
                 e.preventDefault();
-                $("html, body").animate({scrollTop: $("#infodump").position().top + "px"})
+                $("html, body").animate({scrollTop: $("#real-data").offset().top + "px"})
               }},[
                 "Learn how Open Reconstruction promotes transparency and improves efficiency. ",
                 m("i.fa.fa-chevron-circle-down")
@@ -24,7 +24,7 @@ home.view = function(ctrl){
         ]),
         m("a.search", {
           href: routes.controllers.Requests.index().url,
-          config:m.route
+          config: m.route
         },[
           m(".row",[
             m(".columns.medium-8.medium-centered",[
@@ -36,7 +36,7 @@ home.view = function(ctrl){
           ])
         ]),
       ]),
-      m("section.proposals", [
+      m("section.proposals#real-data", [
         m(".row.info", [
           m(".columns.medium-12", [
             m("h2", [
