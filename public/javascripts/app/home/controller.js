@@ -115,7 +115,7 @@ home.controller = function(){
       if($(elem).height()){
 
         var map = common.leaflet.map(elem);
-        map.setZoom(6);
+        map.setZoom(7);
         var markers = new L.MarkerClusterGroup({
           iconCreateFunction: function(cluster){
             var counts = cluster.getAllChildMarkers().reduce(function(acc, head){
