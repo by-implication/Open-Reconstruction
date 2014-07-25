@@ -108,11 +108,37 @@ home.controller = function(){
   }
 
   this.initMap = function(elem, isInit){
+    var iconScale = function(count){
+      return 24 + 5 * Math.log(count);
+    }
     !function tryMap(){
       if($(elem).height()){
 
         var map = common.leaflet.map(elem);
         map.setZoom(6);
+        var markers = new L.MarkerClusterGroup({
+          iconCreateFunction: function(cluster){
+            var counts = cluster.getAllChildMarkers().reduce(function(acc, head){
+              return acc + head.options.data;
+            }, 0)
+            // console.log(counts);
+            
+            return new L.DivIcon({ html: counts, iconSize: [iconScale(counts), iconScale(counts)], className: "map-data-point" });
+          }
+        });
+
+        self.requests().forEach(function(r){
+          var divIcon = L.divIcon({
+            className: "map-data-point",
+            iconSize: [iconScale(r.count), iconScale(r.count)],
+            html: r.count
+          });
+          var c = L.marker([r.lat, r.lng], {fillColor: "red", color: "red", data: r.count, icon: divIcon});
+          // c.setRadius(r.count);
+          markers.addLayer(c);
+        });
+
+        map.addLayer(markers);
 
         // map.setView(ctrl.coords(), 8);
         // common.leaflet.addMarker(ctrl.coords());

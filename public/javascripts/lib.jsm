@@ -15,5 +15,6 @@ polyfill.js
 ../bower_components/select2/select2.min.js
 ../bower_components/isotope/dist/isotope.pkgd.min.js
 ../bower_components/responsive-tables/responsive-tables.js
+../bower_components/leaflet.markercluster/dist/leaflet.markercluster.js
 # hahahaha
 leaflet-conf.js
