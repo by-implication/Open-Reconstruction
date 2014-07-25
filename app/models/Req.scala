@@ -257,11 +257,21 @@ object Req extends ReqGen {
     def add(vars: (Any, anorm.ParameterValue[_])*) = list = list ++ vars.toSeq
   }
 
-  private def getSqlParams(projectTypeId: Option[Int], psgc: PGLTree, disasterId: Option[Int], agencyId: Option[Int])(implicit user: User) = {
+  private def getSqlParams(projectTypeId: Option[Int], psgc: PGLTree, disasterId: Option[Int], agencyId: Option[Int], rejectStatus: String, requestLevel: Option[Int])(implicit user: User) = {
 
     var table = "reqs"
     var conds = CondSet()
     var varMap = VarMap('projectTypeId -> projectTypeId, 'psgc -> psgc)
+
+    val allowRejected = rejectStatus match {
+      case "all" => None
+      case "rejected" => Some("req_rejected")
+      case _ => Some("NOT req_rejected")
+    }
+
+    allowRejected.map { allowRejected =>
+      conds.add(allowRejected)
+    }
 
     disasterId.map { id =>
       conds.add("disaster_id = {disasterId}")
@@ -271,6 +281,11 @@ object Req extends ReqGen {
     agencyId.map { id =>
       conds.add("implementing_agency_id = {agencyId}")
       varMap.add('agencyId -> id)
+    }
+
+    requestLevel.map { requestLevel =>
+      conds.add("req_level = {requestLevel}")
+      varMap.add('requestLevel -> requestLevel)
     }
 
     projectTypeId.map(_ => conds.add("project_type_id = {projectTypeId}"))
@@ -286,16 +301,26 @@ object Req extends ReqGen {
 
   }
 
-  def indexCount(projectTypeId: Option[Int], psgc: PGLTree, disasterId: Int, agencyId: Int)(implicit user: User): Long = {
-    val (table, conds, varMap) = getSqlParams(projectTypeId, psgc, if (disasterId == 0) None else Some(disasterId), if (agencyId == 0) None else Some(agencyId) )
+  def indexCount(projectTypeId: Option[Int], psgc: PGLTree, disasterId: Int, agencyId: Int, rejectStatus: String, requestLevel: Option[Int])(implicit user: User): Long = {
+    val (table, conds, varMap) = getSqlParams(projectTypeId, psgc, 
+      if (disasterId == 0) None else Some(disasterId), 
+      if (agencyId == 0) None else Some(agencyId), 
+      rejectStatus,
+      requestLevel)
     DB.withConnection { implicit c =>
       SQL("SELECT COUNT(*) FROM " + table + conds)
       .on(varMap.list:_*).as(scalar[Long].single)
     }
   }
 
-  def indexList(offset: Int, limit: Int, projectTypeId: Option[Int], psgc: PGLTree, sort: String, sortDir: String, disasterId: Int, agencyId: Int)(implicit user: User): Seq[Req] = {
-    var (table, conds, varMap) = getSqlParams(projectTypeId, psgc, if (disasterId == 0) None else Some(disasterId), if (agencyId == 0) None else Some(agencyId) )
+  def indexList(offset: Int, limit: Int, projectTypeId: Option[Int], psgc: PGLTree, sort: String, sortDir: String, disasterId: Int, agencyId: Int, rejectStatus: String, requestLevel: Option[Int])(implicit user: User): Seq[Req] = {
+    var (table, conds, varMap) = getSqlParams(projectTypeId, psgc, 
+      if (disasterId == 0) None else Some(disasterId), 
+      if (agencyId == 0) None else Some(agencyId), 
+      rejectStatus,
+      requestLevel
+    )
+
     val sortColumn = (sort match {
       case "id" => "req_id"
       case "status" => "req_level"

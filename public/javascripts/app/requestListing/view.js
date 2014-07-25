@@ -9,33 +9,48 @@ requestListing.view = function(ctrl){
     }
   );
 
-  var filterColumns = function(filterArr, columnNum, currentFilter, filterNav){
-    return helper.splitArrayTo(filterArr, columnNum)
-      .map(function(fg, index){
-        var threshold = Math.min(columnNum, filterArr.length);
+  var filterColumns = function(filterArr, filterId, filterNav){
+    var columnNum = 4;
+    var splitArray = helper.splitArrayTo(filterArr, columnNum)
+    return splitArray.map(function(fg, index){
+        var threshold = Math.min(splitArray.length, filterArr.length);
         var isLast = index + 1 >= threshold;
         return m(".columns", {className: (isLast ? "end " : "") + "medium-" + (12/columnNum)}, [
           m("ul.filters", fg.map(function(f){
             var navObj = {};
             navObj[filterNav] = f.id
-            return m("li.filter", {className: (f.id == currentFilter) ? "active" : ""}, [
+            return m("li.filter", {className: (f.id == filterId) ? "active" : ""}, [
               m("a", {href: ctrl.nav(navObj), config: m.route}, f.name)
             ]);
           })),
         ])
       });
   }
-
-  var currentFilterNameFromArray = function(arr, id){
-    id = id * 1;
-    var obj = _.find(arr, function(e){
-      return e.id === id;
-    });
-    if(!_.isUndefined(obj)){
-      return obj.name;
+  var currentDrawerValueFromArray = function(arr, id){
+    if(arr){
+      var obj = _.find(arr, function(e){
+        return e.id == id;
+      }); // find an element with id of 'id' inside arr.
+      if(!_.isUndefined(obj)){
+        return obj.name;
+      } else {
+        return null;
+      }
     } else {
       return null;
     }
+  }
+
+  var locFilterPreview = function(){
+    var names = ctrl.locFilters.map(function(f){
+      var name = currentDrawerValueFromArray(f.data, f.value())
+      if(name == "All") {
+        return;
+      } else {
+        return name;
+      }
+    }).filter(function(v){return v}).reverse()
+    return names.length ? names.join(", ") : "All";
   }
 
   return app.template(ctrl.app, "Requests", [
@@ -69,7 +84,7 @@ requestListing.view = function(ctrl){
         ]),
       ]),
       ctrl.locationCF.view(
-        null, 
+        locFilterPreview(),
         function(){
           return ctrl.locFilters.map(function (f, index){
             return m(".columns.medium-3", [
@@ -88,17 +103,25 @@ requestListing.view = function(ctrl){
         }
       ),
       ctrl.disasterCF.view(
-        currentFilterNameFromArray(ctrl.disasters, ctrl.disaster), 
-        filterColumns.bind(null, ctrl.disasters, 4, ctrl.disaster, "disaster")
+        currentDrawerValueFromArray(ctrl.disasters, ctrl.disaster),
+        filterColumns.bind(null, ctrl.disasters, ctrl.disaster, "disaster")
       ),
       ctrl.agencyCF.view(
-        currentFilterNameFromArray(ctrl.agencies, ctrl.agencyFilterId),
-        filterColumns.bind(null, ctrl.agencies, 4, ctrl.agencyFilterId, "agencyFilterId")
+        currentDrawerValueFromArray(ctrl.agencies, ctrl.agencyFilterId),
+        filterColumns.bind(null, ctrl.agencies, ctrl.agencyFilterId, "agencyFilterId")
       ),
       ctrl.projectTypeCF.view(
-        currentFilterNameFromArray(ctrl.projectFilters, ctrl.projectTypeId),
-        filterColumns.bind(null, ctrl.projectFilters, 4, ctrl.projectTypeId, "projectTypeId")
+        currentDrawerValueFromArray(ctrl.projectFilters, ctrl.projectTypeId),
+        filterColumns.bind(null, ctrl.projectFilters, ctrl.projectTypeId, "projectTypeId")
       ),
+      ctrl.rejectStatusCF.view(
+        currentDrawerValueFromArray(ctrl.rejectStatuses, ctrl.rejectStatus),
+        filterColumns.bind(null, ctrl.rejectStatuses, ctrl.rejectStatus, "rejectStatus")
+      ),
+      ctrl.requestLevelCF.view(
+        currentDrawerValueFromArray(ctrl.requestPipeline, ctrl.requestLevel),
+        filterColumns.bind(null, ctrl.requestPipeline, ctrl.requestLevel, "requestLevel")
+      )
     ]),
     m("section", [
       m(".row", [

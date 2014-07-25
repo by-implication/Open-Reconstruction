@@ -23,7 +23,7 @@ m.route.mode = "pathname";
 m.route(document, window.location.pathname, GATrackedRoutes({
   "/": home,
   "/browse/requests": requestListing,
-  "/browse/requests/:page/:projectTypeId/:l/:sort/:sortDir/:disaster/:agencyFilterId": requestListing,
+  "/browse/requests/:page/:projectTypeId/:l/:sort/:sortDir/:disaster/:agencyFilterId/:rejectStatus/:requestLevel": requestListing,
   "/browse/requests/new": requestCreation,
   "/browse/requests/:id": request,
   "/browse/requests/:id/edit": requestEdit,
