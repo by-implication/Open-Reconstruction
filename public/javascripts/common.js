@@ -635,7 +635,7 @@ common.attachmentFor = function(reqt, atts){
 
 common.collapsibleFilter = {}
 common.collapsibleFilter.controller = function(label, id, parentCtrl){
-
+  var self = this;
   this.cookey = "dropstate_" + id;
   this.label = label;
   this.id = id;
@@ -659,11 +659,19 @@ common.collapsibleFilter.controller = function(label, id, parentCtrl){
   }
   this.maxHeight = m.prop();
   this.drawerConfig = function(elem, isInit){
+    // THIS IS FUCKED UP, BUT THIS IS THE ONLY WAY. I AM SO SORRY
     if(!isInit){
-      this.maxHeight($(elem).children(".row").height());
-      if(this.isExpanded()){
-        $(elem).css("max-height", this.maxHeight());
-      }
+      setTimeout(function(){
+        this.maxHeight($(elem).children("ul").outerHeight());
+        if(this.isExpanded()){
+          $(elem).css("max-height", this.maxHeight() + "px");
+        }
+      }.bind(this), 100)
+    }
+
+    this.maxHeight($(elem).children("ul").outerHeight());
+    if(this.isExpanded()){
+      $(elem).css("max-height", this.maxHeight() + "px");
     }
   }.bind(this);
 
@@ -671,16 +679,14 @@ common.collapsibleFilter.controller = function(label, id, parentCtrl){
     var columnNum = 4;
     return m(".collapsible-filter", [
       m(".collapsible-label", [
-        m("a.row", {onclick: this.toggleExpand}, [
-          m(".columns.medium-12.end", [
-            preview ? 
-              m("span.label.right", [
-                preview
-              ])
-            : null,
-            m("h4", [
-              label
+        m("a", {onclick: this.toggleExpand}, [
+          preview ? 
+            m("span.label.right", [
+              preview
             ])
+          : null,
+          m("h5", [
+            label
           ])
         ])
       ]),
@@ -688,9 +694,7 @@ common.collapsibleFilter.controller = function(label, id, parentCtrl){
         config: this.drawerConfig,
         style: "max-height: " + (this.isExpanded() ? this.maxHeight() : 0) + "px"
       }, [
-        m(".row", [
-          drawer()
-        ])
+        drawer()
       ])
     ])
   }

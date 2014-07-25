@@ -10,21 +10,13 @@ requestListing.view = function(ctrl){
   );
 
   var filterColumns = function(filterArr, filterId, filterNav){
-    var columnNum = 4;
-    var splitArray = helper.splitArrayTo(filterArr, columnNum)
-    return splitArray.map(function(fg, index){
-        var threshold = Math.min(splitArray.length, filterArr.length);
-        var isLast = index + 1 >= threshold;
-        return m(".columns", {className: (isLast ? "end " : "") + "medium-" + (12/columnNum)}, [
-          m("ul.filters", fg.map(function(f){
-            var navObj = {};
-            navObj[filterNav] = f.id
-            return m("li.filter", {className: (f.id == filterId) ? "active" : ""}, [
-              m("a", {href: ctrl.nav(navObj), config: m.route}, f.name)
-            ]);
-          })),
-        ])
-      });
+    return m("ul.filters", filterArr.map(function(f){
+      var navObj = {};
+      navObj[filterNav] = f.id
+      return m("li.filter", {className: (f.id == filterId) ? "active" : ""}, [
+        m("a", {href: ctrl.nav(navObj), config: m.route}, f.name)
+      ]);
+    }));
   }
   var currentDrawerValueFromArray = function(arr, id){
     if(arr){
@@ -75,57 +67,53 @@ requestListing.view = function(ctrl){
         ]),
       ]),
     ]),
-    m("section#loc-filters", [
-      m(".row", [
-        m(".columns.medium-12", [
-          m("h2", [
-            "Looking for something specific? Try our filters."
-          ]),
-        ]),
-      ]),
-      ctrl.locationCF.view(
-        locFilterPreview(),
-        function(){
-          return ctrl.locFilters.map(function (f, index){
-            return m(".columns.medium-3", [
-              m("label", {className: (index && (ctrl.locFilters[index - 1].value() === "-")) ? "disabled" : ""}, [
-                f.label,
-                select2.view({
-                  data: f.data, 
-                  value: f.value(), 
-                  onchange: f.onchange
-                }, {
-                  disabled: (index && (ctrl.locFilters[index - 1].value() === "-"))
-                })
-              ])
-            ])
-          })
-        }
-      ),
-      ctrl.disasterCF.view(
-        currentDrawerValueFromArray(ctrl.disasters, ctrl.disaster),
-        filterColumns.bind(null, ctrl.disasters, ctrl.disaster, "disaster")
-      ),
-      ctrl.agencyCF.view(
-        currentDrawerValueFromArray(ctrl.agencies, ctrl.agencyFilterId),
-        filterColumns.bind(null, ctrl.agencies, ctrl.agencyFilterId, "agencyFilterId")
-      ),
-      ctrl.projectTypeCF.view(
-        currentDrawerValueFromArray(ctrl.projectFilters, ctrl.projectTypeId),
-        filterColumns.bind(null, ctrl.projectFilters, ctrl.projectTypeId, "projectTypeId")
-      ),
-      ctrl.rejectStatusCF.view(
-        currentDrawerValueFromArray(ctrl.rejectStatuses, ctrl.rejectStatus),
-        filterColumns.bind(null, ctrl.rejectStatuses, ctrl.rejectStatus, "rejectStatus")
-      ),
-      ctrl.requestLevelCF.view(
-        currentDrawerValueFromArray(ctrl.requestPipeline, ctrl.requestLevel),
-        filterColumns.bind(null, ctrl.requestPipeline, ctrl.requestLevel, "requestLevel")
-      )
-    ]),
     m("section", [
       m(".row", [
-        m(".columns.medium-12", [
+        m(".columns.medium-4", [
+          m("h4", [
+            "Filters"
+          ]),
+          ctrl.locationCF.view(
+            locFilterPreview(),
+            function(){
+              return m("ul", ctrl.locFilters.map(function (f, index){
+                return m("li", [
+                  m("label", {className: (index && (ctrl.locFilters[index - 1].value() === "-")) ? "disabled" : ""}, [
+                    f.label,
+                    select2.view({
+                      data: f.data, 
+                      value: f.value(), 
+                      onchange: f.onchange
+                    }, {
+                      disabled: (index && (ctrl.locFilters[index - 1].value() === "-"))
+                    })
+                  ])
+                ])
+              }));
+            }
+          ),
+          ctrl.disasterCF.view(
+            currentDrawerValueFromArray(ctrl.disasters, ctrl.disaster),
+            filterColumns.bind(null, ctrl.disasters, ctrl.disaster, "disaster")
+          ),
+          ctrl.agencyCF.view(
+            currentDrawerValueFromArray(ctrl.agencies, ctrl.agencyFilterId),
+            filterColumns.bind(null, ctrl.agencies, ctrl.agencyFilterId, "agencyFilterId")
+          ),
+          ctrl.projectTypeCF.view(
+            currentDrawerValueFromArray(ctrl.projectFilters, ctrl.projectTypeId),
+            filterColumns.bind(null, ctrl.projectFilters, ctrl.projectTypeId, "projectTypeId")
+          ),
+          ctrl.rejectStatusCF.view(
+            currentDrawerValueFromArray(ctrl.rejectStatuses, ctrl.rejectStatus),
+            filterColumns.bind(null, ctrl.rejectStatuses, ctrl.rejectStatus, "rejectStatus")
+          ),
+          ctrl.requestLevelCF.view(
+            currentDrawerValueFromArray(ctrl.requestPipeline, ctrl.requestLevel),
+            filterColumns.bind(null, ctrl.requestPipeline, ctrl.requestLevel, "requestLevel")
+          )
+        ]),
+        m(".columns.medium-8", [
           pagination,
           request.listView(ctrl.requestList, ctrl.sortBy, ctrl),
           pagination,
