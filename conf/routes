@@ -82,6 +82,7 @@ POST    /browse/requests/:id/attach/:rId                 controllers.Attachments
 GET     /browse/requests/:id/edit                        controllers.Requests.edit(id: Int)
 GET     /browse/requests/:id/edit/meta                   controllers.Requests.editMeta(id: Int)
 POST    /browse/requests/:id/edit                        controllers.Requests.update(id: Int)
+POST    /browse/requests/:id/reqts                       controllers.Requests.updateRequirements(id: Int)
 
 GET     /browse/projects                                 controllers.Projects.index
 GET     /browse/projects/:p                              controllers.Projects.indexPage(p: Int)

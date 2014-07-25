@@ -405,12 +405,7 @@ case class Req(
 // GENERATED case class end
 {
 
-  lazy val requirements = DB.withConnection { implicit c =>
-    SQL("""
-      SELECT * FROM requirements
-      WHERE requirement_id = ANY({requirementIds})
-    """).on('requirementIds -> requirementIds).list(Requirement.simple)
-  }
+  lazy val requirements = Requirement.getForGovUnitId(govUnitId)
 
   lazy val disaster = Disaster.findById(disasterId).get
   lazy val projectType = ProjectType.findById(projectTypeId).get

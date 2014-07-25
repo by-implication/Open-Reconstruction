@@ -6,6 +6,26 @@ request.view = function(ctrl){
     {className: "detail"},
     [ // modals
       common.modal.view(
+        ctrl.requirementsModal,
+        function (ctrl){
+          return m("form", {onsubmit: ctrl.submit}, [
+            m(".section", [
+              m("h3", "Requirements")
+            ]),
+            m("hr"),
+            m(".section", ctrl.requirements().map(function (reqt){
+              return common.field(reqt.name, m("input", {
+                type: "checkbox",
+                onchange: m.withAttr("checked", ctrl.requiredMap[reqt.id]),
+                checked: ctrl.requiredMap[reqt.id]()
+              }));
+            }).concat(m("button", [
+              "Submit"
+            ])))
+          ]);
+        }
+      ),
+      common.modal.view(
         ctrl.saroModal,
         function(ctrl){
           return m("form", {onsubmit: ctrl.submit}, [
@@ -319,6 +339,9 @@ request.view = function(ctrl){
               m(".big.section#documents", [
                 m(".header", [
                   m("h1", ["Documents"]),
+                  m("a", {onclick: ctrl.requirementsModal.initAndOpen}, [
+                    "Click here to edit requirements"
+                  ])
                 ]),
                 m(".content", [
                   m(".row", [
@@ -334,7 +357,9 @@ request.view = function(ctrl){
                         return m("div", {class: level == (ctrl.request().level+1) ? "current" : ""},
                           [
                             m("h2", levelDict[level]),
-                            m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
+                            m("ul.large-block-grid-3.medium-block-grid-2", [reqts
+                                .filter(function (reqt){ return _.contains(ctrl.required(), reqt.id); })
+                                .map(function (reqt){
                               var att = ctrl.attachmentFor(reqt, ctrl.attachments());
                               var uploadDate = att && new Date(att.dateUploaded);
                               var canUpload = ctrl.curUserCanUpload();

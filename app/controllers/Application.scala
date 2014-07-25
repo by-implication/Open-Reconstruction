@@ -163,6 +163,7 @@ object Application extends Controller with Secured {
       Requests.reject,
       Requests.signoff,
       Requests.update,
+      Requests.updateRequirements,
       Requests.view,
       Requests.viewAssignments,
       Requests.viewImages,
