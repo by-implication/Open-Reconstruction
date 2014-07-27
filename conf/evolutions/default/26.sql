@@ -1,15 +1,25 @@
 # --- !Ups
 
--- UPDATE lgus l
---   SET lgu_lat = ls.avg_lat, lgu_lng = ls.avg_lng
---   FROM (SELECT lgus.lgu_psgc,
---       COALESCE(AVG(lgus_ref.lgu_lat), 0) as avg_lat,
---       COALESCE(AVG(lgus_ref.lgu_lng), 0) as avg_lng
---     FROM lgus
---     LEFT JOIN (SELECT * FROM lgus) as lgus_ref ON lgus_ref.lgu_psgc <@ lgus.lgu_psgc
---     WHERE nlevel(lgus.lgu_psgc) < 4
---     AND nlevel(lgus_ref.lgu_psgc) = 4
---     GROUP BY lgus.lgu_id) as ls
---   WHERE l.lgu_psgc = ls.lgu_psgc
+ALTER TABLE reqs
+	ADD COLUMN requirement_ids int[] NOT NULL DEFAULT '{}';
+
+ALTER TABLE requirements
+	ADD COLUMN requirement_deprecated boolean NOT NULL DEFAULT false;
+
+UPDATE reqs req SET requirement_ids = (
+	SELECT array_agg(requirement_id)
+	FROM requirements, gov_units g NATURAL JOIN roles
+		WHERE req.gov_unit_id = g.gov_unit_id
+		AND requirement_target = (CASE
+		  WHEN role_name = 'LGU' THEN 'LGU'
+		  ELSE 'NGA'
+		END)
+	);
 
 # --- !Downs
+
+ALTER TABLE requirements
+	DROP COLUMN requirement_deprecated;
+
+ALTER TABLE reqs
+	DROP COLUMN requirement_ids;

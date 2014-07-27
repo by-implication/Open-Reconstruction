@@ -1,18 +1,101 @@
 request.controller = function(){
   var ctrl = this;
   this.app = new app.controller();
-  this.signoffModal = new common.modal.controller();
-  this.rejectModal = new common.modal.controller();
-  this.saroModal = new common.modal.controller();
-  this.addProjectModal = new common.modal.controller();
-  this.addProjectModal.project = {
-    name: m.prop(),
-    amount: m.prop(),
-    typeId: m.prop(),
-    scope: m.prop()
-  }
-  this.addProjectModal.projectTypes = m.prop([]);
-  this.addProjectModal.projectScopes = m.prop([]);
+  
+  this._requirements = m.prop([]);
+  this.requirements = m.prop([]);
+  this.required = m.prop([]);
+  this.requirementsModal = new common.modal.controller({
+    requirements: ctrl.requirements,
+    initAndOpen: function(){
+      var map = [];
+      var reqts = ctrl._requirements();
+      for(var i in reqts){
+        map[reqts[i].id] = m.prop(ctrl.required().indexOf(reqts[i].id) != -1);
+      }
+      ctrl.requirementsModal.requiredMap = map;
+      ctrl.requirementsModal.open();
+    },
+    submit: function(e){
+      e.preventDefault();
+      var map = ctrl.requirementsModal.requiredMap;
+      var reqtIds = [];
+      for(var i in map){
+        if(map[i]()) reqtIds.push(parseInt(i));
+      }
+      bi.ajax(routes.controllers.Requests.updateRequirements(ctrl.id),
+        {data: {requirementIds: reqtIds}}
+      ).then(function (r){
+        ctrl.required(reqtIds);
+        ctrl.history(r.events.concat(ctrl.history()));
+        ctrl.requirementsModal.close();
+      });
+    }
+  });
+
+  this.signoffModal = new common.modal.controller({
+    signoff: function(e){
+      e.preventDefault();
+      bi.ajax(routes.controllers.Requests.signoff(ctrl.id), {
+        data: {password: ctrl.signoffModal.password}
+      }).then(function (r){
+        signoffActions(r);
+        alert('Signoff successful!');
+        ctrl.signoffModal.close();
+      }, common.formErrorHandler);
+    }
+  });
+
+  this.rejectModal = new common.modal.controller({
+    reject: function(e){
+      e.preventDefault();
+      bi.ajax(routes.controllers.Requests.reject(ctrl.id), {
+        data: {password: ctrl.rejectModal.password, content: ctrl.rejectModal.content}
+      }).then(function (r){
+        ctrl.canSignoff(false);
+        ctrl.request().isRejected = true;
+        alert('Request rejected.');
+        ctrl.rejectModal.close();
+        ctrl.history().unshift(r.event);
+      }, common.formErrorHandler);
+    }
+  });
+
+  this.saroModal = new common.modal.controller({
+    submit: function(e){
+      e.preventDefault();
+      bi.ajax(routes.controllers.Requests.signoff(ctrl.id), {
+        data: {password: ctrl.saroModal.password, content: ctrl.saroModal.content}
+      }).then(function (r){
+        signoffActions(r);
+        ctrl.request().isSaroAssigned = true;
+        ctrl.saroModal.close();
+        alert('SARO assigned.');
+      }, common.formErrorHandler);
+    }
+  });
+
+  this.addProjectModal = new common.modal.controller({
+    projectTypes: m.prop([]),
+    projectScopes: m.prop([]),
+    project: {
+      name: m.prop(),
+      amount: m.prop(),
+      typeId: m.prop(),
+      scope: m.prop()
+    },
+    submit: function(e){
+      e.preventDefault();
+      bi.ajax(routes.controllers.Projects.insert(ctrl.id), {
+        data: ctrl.addProjectModal.project
+      }).then(function (r){
+        alert('Submitted!')
+        ctrl.projects().unshift(r.project);
+        ctrl.history().unshift(r.event);
+        ctrl.addProjectModal.close();
+      }, common.formErrorHandler);
+    }
+  });
 
   var requestId = m.route.param('id');
   this.requestTabs = new common.stickyTabs.controller();
@@ -53,7 +136,6 @@ request.controller = function(){
     name: ""
   });
 
-  this.requirements = m.prop([]);
   this.attachments = m.prop([]);
 
   this.history = m.prop([]);
@@ -64,18 +146,6 @@ request.controller = function(){
   this.canEdit = m.prop(false);
   this.hasSignedoff = m.prop(false);
   this.input = { comment: m.prop() };
-
-  this.addProjectModal.submit = function(e){
-    e.preventDefault();
-    bi.ajax(routes.controllers.Projects.insert(ctrl.id), {
-      data: ctrl.addProjectModal.project
-    }).then(function (r){
-      alert('Submitted!')
-      ctrl.projects().unshift(r.project);
-      ctrl.history().unshift(r.event);
-      ctrl.addProjectModal.close();
-    }, common.formErrorHandler);
-  }
 
   this.unassignedAgency = {id: 0};
   this.assessingAgency = m.prop(this.unassignedAgency);
@@ -236,7 +306,9 @@ request.controller = function(){
 
     this.author(data.author);
     this.govUnit(data.govUnit);
+    this._requirements(data.requirements);
     this.requirements(common.processReqts(data.requirements));
+    this.required(data.required);
 
     this.attachments(data.attachments);
     this.history(data.history);
@@ -295,42 +367,6 @@ request.controller = function(){
       ctrl.request().level++;
     }
   }
-
-  this.signoffModal.signoff = function(e){
-    e.preventDefault();
-    bi.ajax(routes.controllers.Requests.signoff(this.id), {
-      data: {password: this.signoffModal.password}
-    }).then(function (r){
-      signoffActions(r);
-      alert('Signoff successful!');
-      this.signoffModal.close();
-    }.bind(this), common.formErrorHandler);
-  }.bind(this);
-
-  this.rejectModal.reject = function(e){
-    e.preventDefault();
-    bi.ajax(routes.controllers.Requests.reject(this.id), {
-      data: {password: this.rejectModal.password, content: this.rejectModal.content}
-    }).then(function (r){
-      this.canSignoff(false);
-      this.request().isRejected = true;
-      alert('Request rejected.');
-      this.rejectModal.close();
-      this.history().unshift(r.event);
-    }.bind(this), common.formErrorHandler);
-  }.bind(this);
-
-  this.saroModal.submit = function(e){
-    e.preventDefault();
-    bi.ajax(routes.controllers.Requests.signoff(ctrl.id), {
-      data: {password: this.saroModal.password, content: this.saroModal.content}
-    }).then(function (r){
-      signoffActions(r);
-      ctrl.request().isSaroAssigned = true;
-      this.saroModal.close();
-      alert('SARO assigned.');
-    }.bind(this), common.formErrorHandler);
-  }.bind(this);
 
   this.initMap = function(elem, isInit){
     !function tryMap(){

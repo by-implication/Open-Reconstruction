@@ -30,6 +30,10 @@ GET     /admin/types/disaster                            controllers.Admin.disas
 GET     /admin/types/disaster/meta                       controllers.Admin.disasterTypesMeta
 POST    /admin/types/:k/new                              controllers.Admin.insertType(k: String)
 POST    /admin/types/:k/:id                              controllers.Admin.updateType(k: String, id: Int)
+GET     /admin/requirements/:t                           controllers.Requirements.index(t: String)
+GET     /admin/requirements/:t/meta                      controllers.Requirements.indexMeta(t: String)
+POST    /admin/requirements/upsert			                 controllers.Requirements.upsert
+POST    /admin/requirements/:id/deprecate                controllers.Requirements.deprecate(id: Int)
 
 GET     /browse                                          controllers.Application.browse
 
@@ -78,6 +82,7 @@ POST    /browse/requests/:id/attach/:rId                 controllers.Attachments
 GET     /browse/requests/:id/edit                        controllers.Requests.edit(id: Int)
 GET     /browse/requests/:id/edit/meta                   controllers.Requests.editMeta(id: Int)
 POST    /browse/requests/:id/edit                        controllers.Requests.update(id: Int)
+POST    /browse/requests/:id/reqts                       controllers.Requests.updateRequirements(id: Int)
 
 GET     /browse/projects                                 controllers.Projects.index
 GET     /browse/projects/:p                              controllers.Projects.indexPage(p: Int)

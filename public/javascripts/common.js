@@ -185,9 +185,6 @@ common.field = function(name, content, help, outsideLabel){
     m("div.columns.medium-12", [
       content
     ]),
-    // m("div.columns.medium-4.help-container", [
-    //   m("p.help", help)
-    // ])
   ]);
 
   if(outsideLabel){
@@ -407,7 +404,7 @@ common.sticky.config = function(ctrl){
 common.modal = {};
 common.modal.controller = function(options){
   this.isVisible = m.prop(false);
-  this.show = function(){
+  this.open = function(){
     this.isVisible(true);
     this.height = helper.docHeight;
   }.bind(this);

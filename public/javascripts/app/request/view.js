@@ -1,10 +1,44 @@
 request.view = function(ctrl){
 
+  var levelDict = [
+    "Submission",
+    "Agency Validation",
+    "OCD Validation"
+  ];
+
   return app.template(
     ctrl.app,
     "Request — " + ctrl.request().description,
     {className: "detail"},
     [ // modals
+      common.modal.view(
+        ctrl.requirementsModal,
+        function (ctrl){
+          return m("form", {onsubmit: ctrl.submit}, [
+            m(".section", [
+              m("h3", "Requirements")
+            ]),
+            m("hr"),
+            m(".section", ctrl.requirements().map(function (reqts, level){
+              return m("div", [
+                m("h4", levelDict[level]),
+                m("ul", reqts.map(function(reqt){
+                  return m("label", [
+                    m("input", {
+                      type: "checkbox",
+                      onchange: m.withAttr("checked", ctrl.requiredMap[reqt.id]),
+                      checked: ctrl.requiredMap[reqt.id]()
+                    }),
+                    reqt.name
+                  ])
+                })),
+              ]);
+            }).concat(m("button", [
+              "Submit"
+            ])))
+          ]);
+        }
+      ),
       common.modal.view(
         ctrl.saroModal,
         function(ctrl){
@@ -318,6 +352,11 @@ request.view = function(ctrl){
               m("hr"),
               m(".big.section#documents", [
                 m(".header", [
+                  ctrl.app.isSuperAdmin() ? 
+                    m("a.button.right", {onclick: ctrl.requirementsModal.initAndOpen}, [
+                      "Click here to edit requirements"
+                    ]) 
+                  : "",
                   m("h1", ["Documents"]),
                 ]),
                 m(".content", [
@@ -325,16 +364,12 @@ request.view = function(ctrl){
                     m(".columns.medium-12", [
                       ctrl.requirements().map(function (reqts, level){
 
-                        var levelDict = [
-                          "Submission",
-                          "Agency Validation",
-                          "OCD Validation"
-                        ];
-
                         return m("div", {class: level == (ctrl.request().level+1) ? "current" : ""},
                           [
                             m("h2", levelDict[level]),
-                            m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
+                            m("ul.large-block-grid-3.medium-block-grid-2", [reqts
+                                .filter(function (reqt){ return _.contains(ctrl.required(), reqt.id); })
+                                .map(function (reqt){
                               var att = ctrl.attachmentFor(reqt, ctrl.attachments());
                               var uploadDate = att && new Date(att.dateUploaded);
                               var canUpload = ctrl.curUserCanUpload();
@@ -423,7 +458,7 @@ request.view = function(ctrl){
                   ]),
                   m("h4", ((ctrl.request().level > 4 && ctrl.currentUserBelongsToImplementingAgency()) ? [
                     "Project Monitoring",
-                    m("button.tiny.right", {type: "button", onclick: ctrl.addProjectModal.show}, [
+                    m("button.tiny.right", {type: "button", onclick: ctrl.addProjectModal.open}, [
                       "Reference a Project"
                     ]),
                   ] : ("Projects"))),
@@ -525,11 +560,11 @@ request.approval = function(ctrl){
                 m("h4", [
                   "Please assign a SARO to this request."
                 ]),
-                m("button", {onclick: ctrl.saroModal.show}, [
+                m("button", {onclick: ctrl.saroModal.open}, [
                   m("i.fa.fa-fw.fa-check"),
                   "Assign SARO"
                 ]),
-                m("button.alert", {onclick: ctrl.rejectModal.show}, [
+                m("button.alert", {onclick: ctrl.rejectModal.open}, [
                   m("i.fa.fa-fw.fa-times"),
                   "Reject"
                 ])
@@ -538,11 +573,11 @@ request.approval = function(ctrl){
                 m("h4", [
                   "Sign off on this request only if the information is complete for your step in the approval process."
                 ]),
-                m("button", {onclick: ctrl.signoffModal.show}, [
+                m("button", {onclick: ctrl.signoffModal.open}, [
                   m("i.fa.fa-fw.fa-check"),
                   "Sign off"
                 ]),
-                m("button.alert", {onclick: ctrl.rejectModal.show}, [
+                m("button.alert", {onclick: ctrl.rejectModal.open}, [
                   m("i.fa.fa-fw.fa-times"),
                   "Reject"
                 ])
@@ -578,7 +613,7 @@ request.approval = function(ctrl){
               ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
                 ctrl.app.isSuperAdmin() ?
                   [
-                    m("button.alert", {onclick: ctrl.rejectModal.show}, [
+                    m("button.alert", {onclick: ctrl.rejectModal.open}, [
                       m("i.fa.fa-fw.fa-times"),
                       "Reject"
                     ])

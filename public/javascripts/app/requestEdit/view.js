@@ -10,9 +10,7 @@ requestEdit.view = function(ctrl){
           m(".columns.medium-12", [
             m("form", {onsubmit: ctrl.submit}, [
               common.field("Status",
-                select2.view({data: process.levelDict.map(function (l, i){
-                  return {id: i, name: l};
-                }), value: ctrl.status(), onchange: function(data){
+                select2.view({data: process.levelDict.toSelectValues(), value: ctrl.status(), onchange: function(data){
                   ctrl.status(data.id);
                 }})
               ),

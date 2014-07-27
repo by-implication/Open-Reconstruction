@@ -16,6 +16,12 @@ process.levelToAgencyName = m.prop([
 
 process.levelDict = [
   @Html(Req.levels.map(l => "\"" + l + "\"").reduce( (x,y) => x + ", \n" + y ))
-]
+];
+
+process.levelDict.toSelectValues = function(){
+	return this.map(function (l, i){
+    return {id: i, name: l};
+  });
+}
 
 process.permissions = @Html(Permission.json.toString);

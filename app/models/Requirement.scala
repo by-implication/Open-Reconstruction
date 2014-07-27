@@ -10,6 +10,17 @@ import recon.support._
 
 object Requirement extends RequirementGen {
 
+  def getForGovUnitId(govUnitId: Int) = DB.withConnection { implicit c =>
+    SQL("""
+      SELECT * FROM requirements, gov_units NATURAL JOIN roles
+      WHERE gov_unit_id = {govUnitId}
+      AND requirement_target = (CASE
+        WHEN role_name = 'LGU' THEN 'LGU'
+        ELSE 'NGA'
+      END)
+    """).on('govUnitId -> govUnitId).list(simple)
+  }
+
   def getFor(role: Role, submissionOnly: Boolean = false) = DB.withConnection { implicit c =>
     SQL("""
       SELECT * FROM requirements
@@ -28,7 +39,8 @@ case class Requirement(
   description: String = "",
   reqLevel: Int = 0,
   target: String = "",
-  isImage: Boolean = false
+  isImage: Boolean = false,
+  isDeprecated: Boolean = false
 ) extends RequirementCCGen with Entity[Requirement]
 // GENERATED case class end
 {
@@ -37,6 +49,7 @@ case class Requirement(
     "name" -> name,
     "description" -> description,
     "level" -> reqLevel,
+    "target" -> target,
     "isImage" -> isImage
   )
 }
@@ -49,9 +62,10 @@ trait RequirementGen extends EntityCompanion[Requirement] {
     get[String]("requirement_description") ~
     get[Int]("req_level") ~
     get[String]("requirement_target") ~
-    get[Boolean]("requirement_image") map {
-      case id~name~description~reqLevel~target~isImage =>
-        Requirement(id, name, description, reqLevel, target, isImage)
+    get[Boolean]("requirement_image") ~
+    get[Boolean]("requirement_deprecated") map {
+      case id~name~description~reqLevel~target~isImage~isDeprecated =>
+        Requirement(id, name, description, reqLevel, target, isImage, isDeprecated)
     }
   }
 
@@ -85,14 +99,16 @@ trait RequirementGen extends EntityCompanion[Requirement] {
             requirement_description,
             req_level,
             requirement_target,
-            requirement_image
+            requirement_image,
+            requirement_deprecated
           ) VALUES (
             DEFAULT,
             {name},
             {description},
             {reqLevel},
             {target},
-            {isImage}
+            {isImage},
+            {isDeprecated}
           )
         """).on(
           'id -> o.id,
@@ -100,7 +116,8 @@ trait RequirementGen extends EntityCompanion[Requirement] {
           'description -> o.description,
           'reqLevel -> o.reqLevel,
           'target -> o.target,
-          'isImage -> o.isImage
+          'isImage -> o.isImage,
+          'isDeprecated -> o.isDeprecated
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -112,14 +129,16 @@ trait RequirementGen extends EntityCompanion[Requirement] {
             requirement_description,
             req_level,
             requirement_target,
-            requirement_image
+            requirement_image,
+            requirement_deprecated
           ) VALUES (
             {id},
             {name},
             {description},
             {reqLevel},
             {target},
-            {isImage}
+            {isImage},
+            {isDeprecated}
           )
         """).on(
           'id -> o.id,
@@ -127,7 +146,8 @@ trait RequirementGen extends EntityCompanion[Requirement] {
           'description -> o.description,
           'reqLevel -> o.reqLevel,
           'target -> o.target,
-          'isImage -> o.isImage
+          'isImage -> o.isImage,
+          'isDeprecated -> o.isDeprecated
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -140,7 +160,8 @@ trait RequirementGen extends EntityCompanion[Requirement] {
         requirement_description={description},
         req_level={reqLevel},
         requirement_target={target},
-        requirement_image={isImage}
+        requirement_image={isImage},
+        requirement_deprecated={isDeprecated}
       where requirement_id={id}
     """).on(
       'id -> o.id,
@@ -148,7 +169,8 @@ trait RequirementGen extends EntityCompanion[Requirement] {
       'description -> o.description,
       'reqLevel -> o.reqLevel,
       'target -> o.target,
-      'isImage -> o.isImage
+      'isImage -> o.isImage,
+      'isDeprecated -> o.isDeprecated
     ).executeUpdate() > 0
   }
 

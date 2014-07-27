@@ -63,6 +63,11 @@ object Event extends EventGen {
 
   private def asContent(a: Attachment) = Seq(a.filename, a.requirementId, a.id).mkString(" ")
 
+  def reqt(reqtId: Int, remove: Boolean = false)(implicit req: Req, user: User) = {
+    val op = if (remove) "remove" else "add"
+    generate("reqt", reqtId + " " + op)
+  }
+
   def legacyEdit()(implicit req: Req, user: User) = {
     generate("legacyEdit", Seq(req.level, req.date.getTime(), req.saroNo.getOrElse("")).mkString(" "), true)
   }

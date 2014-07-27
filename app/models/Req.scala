@@ -399,10 +399,13 @@ case class Req(
   disasterId: Int = 0,
   govUnitId: Int = 0,
   isLegacy: Boolean = false,
-  executingAgencyId: Option[Int] = None
+  executingAgencyId: Option[Int] = None,
+  requirementIds: PGIntList = Nil
 ) extends ReqCCGen with Entity[Req]
 // GENERATED case class end
 {
+
+  lazy val requirements = Requirement.getForGovUnitId(govUnitId)
 
   lazy val disaster = Disaster.findById(disasterId).get
   lazy val projectType = ProjectType.findById(projectTypeId).get
@@ -527,9 +530,10 @@ trait ReqGen extends EntityCompanion[Req] {
     get[Int]("disaster_id") ~
     get[Int]("gov_unit_id") ~
     get[Boolean]("req_legacy") ~
-    get[Option[Int]]("executing_agency_id") map {
-      case id~description~projectTypeId~amount~date~level~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~attachmentIds~saroNo~disasterId~govUnitId~isLegacy~executingAgencyId =>
-        Req(id, description, projectTypeId, amount, date, level, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, attachmentIds, saroNo, disasterId, govUnitId, isLegacy, executingAgencyId)
+    get[Option[Int]]("executing_agency_id") ~
+    get[PGIntList]("requirement_ids") map {
+      case id~description~projectTypeId~amount~date~level~isRejected~authorId~assessingAgencyId~implementingAgencyId~location~attachmentIds~saroNo~disasterId~govUnitId~isLegacy~executingAgencyId~requirementIds =>
+        Req(id, description, projectTypeId, amount, date, level, isRejected, authorId, assessingAgencyId, implementingAgencyId, location, attachmentIds, saroNo, disasterId, govUnitId, isLegacy, executingAgencyId, requirementIds)
     }
   }
 
@@ -574,7 +578,8 @@ trait ReqGen extends EntityCompanion[Req] {
             disaster_id,
             gov_unit_id,
             req_legacy,
-            executing_agency_id
+            executing_agency_id,
+            requirement_ids
           ) VALUES (
             DEFAULT,
             {description},
@@ -592,7 +597,8 @@ trait ReqGen extends EntityCompanion[Req] {
             {disasterId},
             {govUnitId},
             {isLegacy},
-            {executingAgencyId}
+            {executingAgencyId},
+            {requirementIds}
           )
         """).on(
           'id -> o.id,
@@ -611,7 +617,8 @@ trait ReqGen extends EntityCompanion[Req] {
           'disasterId -> o.disasterId,
           'govUnitId -> o.govUnitId,
           'isLegacy -> o.isLegacy,
-          'executingAgencyId -> o.executingAgencyId
+          'executingAgencyId -> o.executingAgencyId,
+          'requirementIds -> o.requirementIds
         ).executeInsert()
         id.map(i => o.copy(id=Id(i.toInt)))
       }
@@ -634,7 +641,8 @@ trait ReqGen extends EntityCompanion[Req] {
             disaster_id,
             gov_unit_id,
             req_legacy,
-            executing_agency_id
+            executing_agency_id,
+            requirement_ids
           ) VALUES (
             {id},
             {description},
@@ -652,7 +660,8 @@ trait ReqGen extends EntityCompanion[Req] {
             {disasterId},
             {govUnitId},
             {isLegacy},
-            {executingAgencyId}
+            {executingAgencyId},
+            {requirementIds}
           )
         """).on(
           'id -> o.id,
@@ -671,7 +680,8 @@ trait ReqGen extends EntityCompanion[Req] {
           'disasterId -> o.disasterId,
           'govUnitId -> o.govUnitId,
           'isLegacy -> o.isLegacy,
-          'executingAgencyId -> o.executingAgencyId
+          'executingAgencyId -> o.executingAgencyId,
+          'requirementIds -> o.requirementIds
         ).executeInsert().flatMap(x => Some(o))
       }
     }
@@ -695,7 +705,8 @@ trait ReqGen extends EntityCompanion[Req] {
         disaster_id={disasterId},
         gov_unit_id={govUnitId},
         req_legacy={isLegacy},
-        executing_agency_id={executingAgencyId}
+        executing_agency_id={executingAgencyId},
+        requirement_ids={requirementIds}
       where req_id={id}
     """).on(
       'id -> o.id,
@@ -714,7 +725,8 @@ trait ReqGen extends EntityCompanion[Req] {
       'disasterId -> o.disasterId,
       'govUnitId -> o.govUnitId,
       'isLegacy -> o.isLegacy,
-      'executingAgencyId -> o.executingAgencyId
+      'executingAgencyId -> o.executingAgencyId,
+      'requirementIds -> o.requirementIds
     ).executeUpdate() > 0
   }
 

@@ -14,6 +14,29 @@ historyEvent.meta = function(verbed, data, date){
   ])
 }
 
+historyEvent.reqt = function(data){
+  var date = new Date(data.date);
+  var c = data.content.split(" ");
+  var op = c.pop();
+  var pastOp = op + (op == "add" ? "ed" : "d");
+  var reqtId = c.pop();
+  var reqt = _.find(this._requirements(), function (reqt){
+    return reqt.id == reqtId;
+  });
+  return m(".event", [
+    m(".type.reqt", [
+      m("i.fa.fa-lg.fa-fw.fa-times")
+    ]),
+    m(".details", [
+      m("p", [
+        m("a", {href: routes.controllers.GovUnits.view(data.govUnit.id).url, config: m.route}, data.govUnit.Name),
+        reqt.name + " requirement was " + pastOp + "."
+      ]),
+      historyEvent.meta("Requirement " + pastOp, data, date),
+    ])
+  ])
+}
+
 historyEvent.reject = function(data){
   var date = new Date(data.date);
   var c = data.content.split(" ");
@@ -24,7 +47,6 @@ historyEvent.reject = function(data){
       m("i.fa.fa-lg.fa-fw.fa-times")
     ]),
     m(".details", [
-      // m("h3", "Rejected"),
       m("p", [
         m("a", {href: routes.controllers.GovUnits.view(govUnitId).url, config: m.route}, govUnitName),
         " rejected this request."

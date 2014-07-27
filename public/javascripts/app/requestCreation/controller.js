@@ -82,11 +82,11 @@ requestCreation.controller = function(){
         remove: function(){ ctrl.removeEntry(this); },
         openLocationModal: function(){
           ctrl.activeEntry(entry);
-          ctrl.locModal.show();
+          ctrl.locModal.open();
         },
         openAttachmentsModal: function(){
           ctrl.activeEntry(entry);
-          ctrl.attModal.show();
+          ctrl.attModal.open();
         }
       }
 

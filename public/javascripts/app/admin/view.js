@@ -1,4 +1,40 @@
 admin.view = function(ctrl){
+
+  function requirementsView(tab){
+    return function(){
+      return m(".tabs-content.vertical", [
+        m("a.button", {onclick: ctrl.modal.openWithValues.bind(ctrl.modal)}, [
+          "New requirement"
+        ]),
+        m("table", [
+          m("thead", [
+            m("tr", [
+              m("td", ["Name"]),
+              m("td", ["Description"]),
+              m("td", ["Level"]),
+              m("td", ["Image"]),
+              m("td", ["Deprecate"])
+            ]),
+          ]),
+          m("tbody", [
+            ctrl.reqts().map(function (r){
+              return m("tr", [
+                m("td", [
+                  m("a", {onclick: r.edit}, r.name),
+                ]),
+                m("td", [r.description]),
+                m("td", [process.levelDict[r.level]]),
+                m("td", [r.isImage ? "YES" : "NO"]),
+                m("td", [
+                  m("a", {onclick: r.deprecate}, "Deprecate")
+                ])
+              ]);
+            }),
+          ]),
+        ]),
+      ])
+    }
+  }
   
   function renderLGU(lgu){
     var level = lgu.level();
@@ -72,7 +108,52 @@ admin.view = function(ctrl){
     )
   }
 
-  return app.template(ctrl.app, "Admin", [
+  return app.template(ctrl.app, "Admin", {},
+    [ctrl.modal ? common.modal.view(ctrl.modal, function (ctrl){
+      return m("form", {onsubmit: ctrl.submit}, [
+        m(".section", [
+          m("h3", ctrl.input.id() ? "Editing Requirement" : "New Requirement")
+        ]),
+        m("hr"),
+        m(".section", [
+          common.field("Name", m("input", {
+            type: "text",
+            onchange: m.withAttr("value", ctrl.input.name),
+            value: ctrl.input.name()
+          })),
+          common.field("Description", m("input", {
+            type: "text",
+            onchange: m.withAttr("value", ctrl.input.description),
+            value: ctrl.input.description()
+          })),
+          common.field("Level", select2.view({
+            data: process.levelDict.toSelectValues(),
+            value: ctrl.input.level(),
+            onchange: function(data){
+              ctrl.input.level(data.id);
+            }}
+          )),
+          common.field("Image", 
+            m("label", [
+              m("input", { // Boolean = false,
+                type: "checkbox",
+                id: "can-image",
+                onchange: m.withAttr("checked", ctrl.input.isImage),
+                checked: ctrl.input.isImage()
+                }),
+              m("label", {"for": "can-image"}, [
+                "Check this if the file needs to be an image. e.g. Blueprints, photographs, etc..."
+              ])
+            ])
+          ),
+          m("button", [
+            "Submit"
+          ]),
+        ]),
+      ]);
+    }) : ""
+  ], 
+  [
     common.banner("Administrative Interface"),
     ctrl.app.isSuperAdmin()?
       m("section", [
@@ -115,7 +196,7 @@ admin.view = function(ctrl){
                           a.totalUsers
                         ]),
                         m("td", [
-                          ctrl.roles()[a.role]
+                          a.role
                         ])
                       ]);
                     }),
@@ -225,6 +306,8 @@ admin.view = function(ctrl){
                 ]),
               ])
             })
+            .case("LGU Requirements", requirementsView("LGU"))
+            .case("NGA Requirements", requirementsView("NGA"))
             .render()
         ]),
       ])

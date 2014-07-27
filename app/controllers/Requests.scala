@@ -56,7 +56,8 @@ object Requests extends Controller with Secured {
         "history" -> Event.findForRequest(id).map(_.listJson()),
         "projects" -> req.projects.map(_.toJson),
         "disasterTypes" -> DisasterType.jsonList,
-        "requirements" -> Requirement.getFor(req.govUnit.role).map(_.toJson),
+        "requirements" -> req.requirements.map(_.toJson),
+        "required" -> req.requirementIds,
         "projectTypes" -> ProjectType.jsonList,
         "projectScopes" -> ProjectScope.toSelectJson
       )
@@ -92,7 +93,8 @@ object Requests extends Controller with Secured {
             projectTypeId = projectTypeId,
             location = location,
             govUnitId = govUnitId,
-            authorId = user.id
+            authorId = user.id,
+            requirementIds = PGIntList(Requirement.getForGovUnitId(govUnitId).map(_.id.get))
           ), bucketKey)
         }
       })
@@ -396,6 +398,27 @@ object Requests extends Controller with Secured {
       )
 
     } else Rest.unauthorized()
+  }
+
+  def updateRequirements(id: Int) = IsSuperAdmin(){ implicit user => implicit request =>
+    Req.findById(id).map { implicit req =>
+      Form("requirementIds" -> seq(number)).bindFromRequest.fold(
+        Rest.formError(_),
+        newIds => {
+          val oldIds = req.requirementIds
+          val addedIds = newIds.diff(oldIds)
+          val removedIds = oldIds.diff(newIds)
+          req.copy(requirementIds = newIds).save().map { _ =>
+            Rest.success(
+              "events" -> {
+                (addedIds.map(Event.reqt(_)) ++ removedIds.map(Event.reqt(_, remove = true)))
+                .map(_.save().get.listJson)
+              }
+            )
+          }.getOrElse(Rest.serverError())
+        }
+      )
+    }.getOrElse(Rest.notFound())
   }
 
 }
