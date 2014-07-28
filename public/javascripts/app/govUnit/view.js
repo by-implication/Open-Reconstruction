@@ -128,7 +128,9 @@ govUnit.view = function(ctrl){
           m("h1", "Sub-LGUs"),
           ctrl.children().map(function (c){
             return m("div",
-              m("a", {href: routes.controllers.GovUnits.view(c.id).url, config: m.route}, c.name)
+              m("a", {href: routes.controllers.GovUnits.view(c.id).url, config: m.route}, [
+                c.name
+              ])
             );
           })
         ]),

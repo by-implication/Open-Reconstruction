@@ -1,5 +1,8 @@
 # --- !Ups
 
+ALTER TABLE lgus
+	RENAME COLUMN lgu_municipality_class TO lgu_income_class;
+
 CREATE TABLE municipality_classes (
   psgc ltree,
   legislative_district text,
@@ -18,10 +21,13 @@ DELETE FROM municipality_classes
 	OR income_class IS NULL;
 
 UPDATE lgus
-	SET lgu_municipality_class = income_class::int
+	SET lgu_income_class = income_class::int
 	FROM municipality_classes
 	WHERE psgc = lgu_psgc;
 
 # --- !Downs
+
+ALTER TABLE lgus
+	RENAME COLUMN lgu_income_class TO lgu_municipality_class;
 
 DROP TABLE municipality_classes;
