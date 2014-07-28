@@ -109,11 +109,11 @@ home.controller = function(){
 
   this.initMap = function(elem, isInit){
     var iconScale = function(count){
-      return 24 + Math.sqrt(count / Math.PI);
+      return 36 + Math.sqrt(count / Math.PI);
     }
-    var makeDivIcon = function(count){
+    var makeDivIcon = function(count, isTerminal){
       return L.divIcon({
-        className: "map-data-point",
+        className: "map-data-point " + (isTerminal ? "terminal" : "group"),
         iconSize: [iconScale(count), iconScale(count)],
         html: "<div class='marker'>" + count + "</div>"
       })
@@ -135,7 +135,7 @@ home.controller = function(){
         });
 
         self.requests().forEach(function(r){
-          var divIcon = makeDivIcon(r.count);
+          var divIcon = makeDivIcon(r.count, true);
           var c = L.marker([r.lat, r.lng], {fillColor: "red", color: "red", data: r.count, icon: divIcon});
           markers.addLayer(c);
         });
