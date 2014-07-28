@@ -30,7 +30,10 @@ govUnit.view = function(ctrl){
       ]),
     ]),
     common.banner([
-      ctrl.govUnit().name
+      ctrl.govUnit().name,
+      m("p", [
+        ctrl.incomeClass() ? ("Income class " + ctrl.incomeClass()) : "Unspecified Income Class"
+      ]),
     ]),
     m("section.map-container", [
       m("#detailMap", {config: ctrl.initMap}),
@@ -126,13 +129,39 @@ govUnit.view = function(ctrl){
       m(".row", [
         m(".columns.medium-9", [
           m("h1", "Sub-LGUs"),
-          ctrl.children().map(function (c){
-            return m("div",
-              m("a", {href: routes.controllers.GovUnits.view(c.id).url, config: m.route}, [
-                c.name
-              ])
-            );
-          })
+          m("table", [
+            m("thead", [
+              m("tr", [
+                m("th", [
+                  "Name"
+                ]),
+                m("th", [
+                  "Income Class"
+                ]),
+              ]),
+            ]),
+            m("tbody", [
+              ctrl.children().map(function(c){
+                return m("tr", [
+                  m("td", [
+                    m("a", {href: routes.controllers.GovUnits.view(c.id).url, config: m.route}, [
+                      c.name
+                    ])
+                  ]),
+                  m("td", [
+                    c.incomeClass ? c.incomeClass : "Not specified"
+                  ]),
+                ])
+              })
+            ]),
+          ]),
+          // ctrl.children().map(function (c){
+          //   return m("div",
+          //     m("a", {href: routes.controllers.GovUnits.view(c.id).url, config: m.route}, [
+          //       c.name
+          //     ])
+          //   );
+          // })
         ]),
       ]) : ""
     ]),
