@@ -5,19 +5,15 @@
 INSERT INTO reqs (req_description, project_type_id, req_disaster_name, 
   req_amount, author_id, req_location, req_disaster_date, req_date,
   disaster_type_id, assessing_agency_id, implementing_agency_id, req_level)
-SELECT group_id,
+SELECT DISTINCT group_id,
   CASE 
     WHEN array_agg(DISTINCT project_type_id) = ARRAY[NULL]::INT[] THEN 
       (SELECT project_type_id FROM project_types WHERE project_type_name = 'Others')
     WHEN count(DISTINCT project_type) = 1 THEN (array_agg(project_type_id))[1]
-    ELSE (SELECT project_type_id from project_types WHERE project_type_name = 'Mixed')
+    ELSE (SELECT project_type_id FROM project_types WHERE project_type_name = 'Others')
   END AS project_type_id,
-  trim(disaster_name), 
-  SUM( CASE
-    WHEN oparr_bohol.amount = '-' THEN 0
-    ELSE oparr_bohol.amount::numeric(12,2)
-    END
-  ) AS amount,
+  trim(disaster_name),
+  0 as amount,
   1 AS author_id, psgc AS loc,
   CASE 
     WHEN disaster_name ilike '%bohol%' THEN '2013-10-15'::date
@@ -47,7 +43,7 @@ LEFT JOIN (
   WHERE gov_unit_acronym IS NOT NULL
 ) AS agencies on oparr_bohol.implementing_agency ilike agencies.gov_unit_acronym
 WHERE implementation_pms_id IS NULL
-GROUP BY group_id, disaster_name, oparr_bohol.psgc, agencies.gov_unit_id, oparr_bohol.status;;
+GROUP BY group_id, project_type_id, disaster_name, oparr_bohol.psgc, agencies.gov_unit_id, oparr_bohol.status;;
 
 -- create DPWH EPLC requests
 

@@ -22,8 +22,12 @@ FROM (SELECT req_id, group_id, project_name,
     LEFT JOIN reqs on req_description = group_id
     LEFT JOIN gov_units AS gov_agencies on reqs.implementing_agency_id = gov_agencies.gov_unit_id
     LEFT JOIN project_types on initcap(project_type_name) = initcap(project_type)
+    LEFT JOIN project_types AS req_project_types on req_project_types.project_type_id = reqs.project_type_id
     WHERE oparr_bohol.psgc = reqs.req_location
     AND implementation_pms_id IS NULL
+    AND (req_project_types.project_type_id = project_types.project_type_id OR 
+      (req_project_types.project_type_name ilike 'Others' AND project_types.project_type_id IS NULL)
+    )
   ) AS new_projects
 WHERE (implementing_agency ilike gov_unit_acronym OR
     (implementing_agency NOT ILIKE coalesce(gov_unit_acronym, '') 
