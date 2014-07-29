@@ -543,6 +543,34 @@ request.view = function(ctrl){
 }
 
 request.approval = function(ctrl){
+
+  function status(){
+    var ba = ctrl.getBlockingAgency();
+    switch(ba){
+      case "AWAITING_ASSIGNMENT": {
+        if(ctrl.app.isSuperAdmin() || ctrl.currentUserBelongsToImplementingAgency()){
+          return [
+            "Please ",
+            m("a", {href: "#assignments", onclick: function(e){
+              e.preventDefault();
+              $("html, body").animate({scrollTop: $("#assignments").position().top + "px"})
+            }}, [
+              "assign an agency"
+            ]),
+            " to " + ((ctrl.request().level <=  1 ) ? "assess" : "execute") + " this request."
+          ];
+        } else if(ctrl.request().level == 0){
+          return "Waiting for the Office of Civil Defense to assign an agency to assess this request.";
+        } else {
+          var iaName = ctrl.implementingAgency().name || "implementing agency";
+          return "Waiting for " + iaName + " to assign an executing agency.";
+        }
+      }
+      case undefined: return "";
+      default: return "Waiting for " + ba + " approval."
+    }
+  }
+
   return m("section.approval", {className: ctrl.request().isRejected ? "rejected" : ""}, [
     request.progress(ctrl),
     m(".row", [
@@ -591,24 +619,7 @@ request.approval = function(ctrl){
               ]),
             ])
           : m("div", [
-            m("h4",
-              ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
-                (ctrl.app.isSuperAdmin() || ctrl.currentUserBelongsToImplementingAgency()) ?
-                  [
-                    "Please ",
-                    m("a", {href: "#assignments", onclick: function(e){
-                      e.preventDefault();
-                      $("html, body").animate({scrollTop: $("#assignments").position().top + "px"})
-                    }}, [
-                      "assign an agency"
-                    ]),
-                    " to " + ((ctrl.request().level <=  1 ) ? "assess" : "execute") + " this request."
-                  ]
-                : ((ctrl.request().level == 0) ?
-                  "Waiting for the Office of Civil Defense to assign an agency to assess this request."
-                  : "Waiting for " + ctrl.implementingAgency().name + " to assign an executing agency.")
-              : "Waiting for " + ctrl.getBlockingAgency() + " approval."
-            ),
+            m("h4", [status()]),
             m("div",
               ctrl.getBlockingAgency() === "AWAITING_ASSIGNMENT" ?
                 ctrl.app.isSuperAdmin() ?

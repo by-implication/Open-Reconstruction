@@ -266,7 +266,9 @@ request.controller = function(){
   }
 
   this.currentUserBelongsToImplementingAgency = function(){
-    return this.implementingAgency() && this.app.getCurrentUserProp("govUnit") && (this.implementingAgency().id === this.app.getCurrentUserProp("govUnit").id);
+    return this.implementingAgency().id &&
+    this.app.getCurrentUserProp("govUnit").id &&
+    (this.implementingAgency().id === this.app.getCurrentUserProp("govUnit").id);
   }
 
   this.currentUserCanAssignFunding = function(){
