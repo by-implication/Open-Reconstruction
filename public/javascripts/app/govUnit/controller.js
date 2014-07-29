@@ -15,6 +15,7 @@ govUnit.controller = function(){
   this.pageLimit = m.prop(1);
   this.children = m.prop([]);
   this.ancestors = m.prop([]);
+  this.incomeClass = m.prop(0);
   this.coords = m.prop();
 
   this.initMap = function(elem, isInit){
@@ -40,6 +41,7 @@ govUnit.controller = function(){
     if(r.lgu){
       ctrl.children(r.lgu.children);
       ctrl.ancestors(r.lgu.ancestors);
+      ctrl.incomeClass(r.lgu.incomeClass);
       if(r.lgu.lat){
         ctrl.coords(new L.LatLng(r.lgu.lat, r.lgu.lng));
       }

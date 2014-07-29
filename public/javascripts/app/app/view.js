@@ -13,6 +13,7 @@ app.template = function(){
       m("meta", {charset: "utf-8"}),
       m("title", title),
       m("meta", {name: "google", value: "notranslate"}),
+      m("meta", {name: "viewport", content: "width=1025"}),
       m("link[href='/assets/images/favicon.png'][rel='icon'][type='image/png']"),
       m("link[href='/assets/bower_components/nprogress/nprogress.css'][rel='stylesheet'][type='text/css']"),
       m("link[href='/assets/stylesheets/style.css'][rel='stylesheet'][type='text/css']"),

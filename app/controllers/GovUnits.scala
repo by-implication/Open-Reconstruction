@@ -37,10 +37,13 @@ object GovUnits extends Controller with Secured {
 
             Json.obj(
               "level" -> lgu.level,
-              "children" -> lgu.children.map { case (govUnit, lgu) => relativeJson(govUnit) },
+              "children" -> lgu.children.map { case (govUnit, lgu) =>
+                relativeJson(govUnit) ++ Json.obj("incomeClass" -> lgu.incomeClass)
+              },
               "ancestors" -> lgu.ancestors.map(relativeJson),
               "lat" -> lat,
-              "lng" -> lng
+              "lng" -> lng,
+              "incomeClass" -> lgu.incomeClass
             )
 
           }
