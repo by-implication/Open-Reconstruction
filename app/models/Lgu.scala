@@ -30,6 +30,8 @@ object Lgu extends LguGen {
     17 -> "REGION IV-B (MIMAROPA)"
   )
 
+  val COUNTRY_COORDS = (11.71418113, 122.8633113)
+
   val regionCoords = Map(
     // derived from the ff query:
     // SELECT subltree(psgc, 0, 1) AS region_psgc,

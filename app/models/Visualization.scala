@@ -37,19 +37,34 @@ object Visualization {
 
     def requestLocations(): Seq[(Long, BigDecimal, BigDecimal)] = {
       SQL("""
-        SELECT COUNT(*), lgus.lgu_lat, lgus.lgu_lng FROM reqs
+        SELECT COUNT(*), req_location, lgu_lat, lgu_lng FROM reqs
         LEFT JOIN lgus ON reqs.gov_unit_id = lgus.lgu_id
-        WHERE lgu_lat IS NOT NULL
-        GROUP BY lgus.lgu_lat, lgus.lgu_lng
+        GROUP BY reqs.req_location, lgu_lat, lgu_lng
+        ORDER BY req_location
       """)list(
         get[Long]("count") ~
+        get[String]("req_location") ~
         get[Option[BigDecimal]]("lgu_lat") ~
         get[Option[BigDecimal]]("lgu_lng") map {
-          case count~lat~lng => {
-            (count, lat.getOrElse(0), lng.getOrElse(0))
+          case count~location~lat~lng => {
+            (lat, lng) match {
+              case (Some(lat), Some(lng)) => (count, lat, lng)
+              case _ => {
+                try {
+                  val psgc = location.toInt
+                  (count, Lgu.regionCoords(psgc)._1, Lgu.regionCoords(psgc)._2)
+                } catch {
+                  case e:Exception => {
+                    (count, Lgu.COUNTRY_COORDS._1, Lgu.COUNTRY_COORDS._2)
+                  }
+                }
+              }
+            }
           }
         }
       )
+
+
     }
 
     SQL("""
