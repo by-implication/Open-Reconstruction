@@ -10,7 +10,7 @@ userCreation.controller = function(){
     isAdmin: m.prop(false)
   }
 
-  bi.ajax(routes.controllers.GovUnits.viewMeta(this.slug())).then(function (r){
+  bi.ajax(routes.controllers.GovUnits.viewMeta(this.slug(), 1)).then(function (r){
     this.govUnit(r.govUnit);
     this.input.govUnitId(r.govUnit.id);
   }.bind(this));
