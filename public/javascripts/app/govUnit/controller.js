@@ -18,6 +18,14 @@ govUnit.controller = function(){
   this.incomeClass = m.prop(0);
   this.coords = m.prop();
 
+  this.tab = m.route.param("t");
+  this.tabs = new common.tabs.controller();
+  this.tabs.tabs = m.prop([
+    {label: m.prop("Requests"), href: routes.controllers.GovUnits.view(ctrl.id, "requests").url}, 
+    {label: m.prop("Users"), href: routes.controllers.GovUnits.view(ctrl.id, "users").url},
+    {label: m.prop("Sub-LGUs"), href: routes.controllers.GovUnits.view(ctrl.id, "sub-lgus").url}
+  ]);
+
   this.initMap = function(elem, isInit){
     !function tryMap(){
       if($(elem).height()){

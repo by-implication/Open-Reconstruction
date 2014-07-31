@@ -110,13 +110,16 @@ GET     /gov-units/new/lgu/:l/:id/meta                   controllers.GovUnits.cr
 POST    /gov-units/new/lgu/:l/:id                        controllers.GovUnits.insertLgu(l: Int, id: Int)
 GET     /gov-units/search/:s                             controllers.GovUnits.search(s: String)
 GET     /gov-units/:id                                   controllers.GovUnits.view(id: Int)
+
+GET     /gov-units/:id/:tab                              controllers.GovUnits.viewTab(id: Int, tab: String)
+GET     /gov-units/:id/:tab/:p                           controllers.GovUnits.viewPage(id: Int, tab: String, p: Int)
+GET     /gov-units/:id/:tab/:p/meta                      controllers.GovUnits.viewMeta(id: Int, tab: String, p: Int)
+
 GET     /gov-units/:id/edit                              controllers.GovUnits.edit(id: Int)
 GET     /gov-units/:id/edit/meta                         controllers.GovUnits.editMeta(id: Int)
 POST    /gov-units/:id/edit                              controllers.GovUnits.update(id: Int)
 GET     /gov-units/:id/new-user                          controllers.Users.create(id: Int)
 POST    /gov-units/:id/new-user                          controllers.Users.insert(id: Int)
-GET     /gov-units/:id/:p                                controllers.GovUnits.viewPage(id: Int, p: Int)
-GET     /gov-units/:id/:p/meta                           controllers.GovUnits.viewMeta(id: Int, p: Int)
 
 GET     /dashboard                                       controllers.Dashboard.index
 GET     /dashboard/feed                                  controllers.Dashboard.feed

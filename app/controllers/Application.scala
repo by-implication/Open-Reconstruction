@@ -187,6 +187,7 @@ object Application extends Controller with Secured {
       GovUnits.listAgencies,
       GovUnits.listLgus,
       GovUnits.view,
+      GovUnits.viewTab,
       GovUnits.viewMeta,
       GovUnits.viewPage,
       GovUnits.createAgency,

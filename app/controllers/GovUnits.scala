@@ -12,19 +12,36 @@ object GovUnits extends Controller with Secured {
 
   def createAgency = Application.index
   def view = Application.index1 _
-  def viewPage = Application.index2 _
+  def viewTab(id: Int, tab: String) = Application.index
+  def viewPage(id: Int, tab: String, page: Int) = Application.index
   def edit = Application.index1 _
 
-  def viewMeta(id: Int, p: Int): Action[AnyContent] = GenericAction(){ implicit user => implicit request =>
+  val USERS = "users"
+  val REQUESTS = "requests"
+  val SUBLGUS = "sub-lgus"
+
+  def viewMeta(id: Int, tab: String, p: Int): Action[AnyContent] = GenericAction(){ implicit user => implicit request =>
     GovUnit.findById(id) match {
       case Some(govUnit) => {
-        val (reqs, count) = govUnit.requests(p)
+        val data = tab match {
+          case USERS =>  {
+            Json.obj("users" -> govUnit.users.map(_.infoJson))
+          }
+          case REQUESTS => {
+            val (reqs, count) = govUnit.requests(p)
+            Json.obj(
+              "requests" -> reqs.map(_.indexJson),
+              "pageLimit" -> Req.PAGE_LIMIT,
+              "totalReqs" -> count
+            )
+          }
+          case _ => {
+            JsNull
+          }
+        }
+
         Rest.success(
           "govUnit" -> govUnit.toJson,
-          "users" -> govUnit.users.map(_.infoJson),
-          "requests" -> reqs.map(_.indexJson),
-          "totalReqs" -> count,
-          "pageLimit" -> Req.PAGE_LIMIT,
           "lgu" -> Lgu.findById(id).map { lgu =>
 
             def relativeJson(g: GovUnit) = Json.obj(
@@ -45,8 +62,8 @@ object GovUnits extends Controller with Secured {
               "lng" -> lng,
               "incomeClass" -> lgu.incomeClass
             )
-
-          }
+          }, 
+          "data" -> data
         )
       }
       case None => Rest.notFound()
