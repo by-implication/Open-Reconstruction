@@ -200,7 +200,7 @@ request.controller = function(){
     
     description: new deg(this.canEdit, edit("description"), save("description")),
     amount: new deg(this.canEdit, edit("amount"), save("amount")),
-    location: new deg(this.canEdit, edit("location"), save("location")),
+    location: new deg(false, edit("location"), save("location")),
 
     assess: new deg(this.app.isSuperAdmin, edit("assessingAgency"), save("assessingAgency",
       function (r){
