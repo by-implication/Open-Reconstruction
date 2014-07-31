@@ -175,8 +175,7 @@ common.help = function(text, isRight){
   ])
 }
 
-common.field = function(name, content, help, outsideLabel){
-
+common.field = function(name, content, help, altLayout){
   var label = m("div.row", [
     m("div.columns.medium-12", name)
   ]);
@@ -187,10 +186,15 @@ common.field = function(name, content, help, outsideLabel){
     ]),
   ]);
 
-  if(outsideLabel){
-    return m("div", [
-      m("label", [label]),
-      contents
+  if(altLayout){
+    return m("label", [
+      label,
+      contents,
+      help ?
+        m(".help", [
+          help
+        ])
+      : ""
     ]);
   } else {
     return m("label", [
@@ -200,7 +204,7 @@ common.field = function(name, content, help, outsideLabel){
       : "",
       contents
     ]);
-  }
+  }  
 }
 
 common.formSection = function(icon, content, i){
