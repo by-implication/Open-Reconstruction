@@ -41,27 +41,37 @@ object Users extends Controller with Secured {
   def insert(govUnitId: Int) = UserAction(){ implicit user => implicit request =>
     if(user.isSuperAdmin || (user.isAdmin && user.govUnitId == govUnitId)){
 
-      val createForm: Form[User] = Form(
+      val createForm: Form[Seq[User]] = Form(
         mapping(
-          "name" -> nonEmptyText,
-          "handle" -> nonEmptyText,
-          "password" -> nonEmptyText,
-          "isAdmin" -> boolean
+          "users" -> seq(tuple(
+            "name" -> nonEmptyText,
+            "handle" -> nonEmptyText,
+            "password" -> nonEmptyText,
+            "isAdmin" -> boolean
+          )).verifying("No entries", _.size > 0)
         )
-        ((name, handle, password, isAdmin) => User(
-          name = name,
-          handle = handle,
-          password = password,
-          govUnitId = govUnitId,
-          isAdmin = isAdmin
-        ))
+        (users => users.map { u =>
+          val (name, handle, password, isAdmin) = u
+          User (
+            name = name,
+            handle = handle,
+            password = password,
+            govUnitId = govUnitId,
+            isAdmin = isAdmin
+          )
+        })
         (_ => None)
       )
-
+      
       createForm.bindFromRequest.fold(
         Rest.formError(_),
-        _.create().map(u => Rest.success(u.insertSeq:_*))
-        .getOrElse(Rest.serverError())
+        users => { 
+          val (created, failed) = users.map(_.create()).partition(_.isDefined)
+          Rest.success(
+            "created" -> created.map(u => Json.obj(u.get.insertSeq:_*)),
+            "failed" -> failed.size
+          )
+        }
       )
 
     } else Rest.unauthorized()
