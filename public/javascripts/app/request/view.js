@@ -33,9 +33,10 @@ request.view = function(ctrl){
                   ])
                 })),
               ]);
-            }).concat(m("button", [
-              "Submit"
-            ])))
+            }).concat([
+              m("button", ["Submit"]),
+              m("button.alert", {type: "button", onclick: ctrl.close}, "Cancel")
+            ]))
           ]);
         }
       ),
