@@ -21,4 +21,8 @@ userCreation.controller = function(){
       m.route(routes.controllers.GovUnits.view(this.slug()).url);
     }.bind(this), common.formErrorHandler);
   }.bind(this)
+
+  this.newEntry = function(){
+    console.log("Adding new user.");
+  }
 }

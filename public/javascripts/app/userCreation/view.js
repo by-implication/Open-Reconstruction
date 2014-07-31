@@ -31,6 +31,7 @@ userCreation.view = function(ctrl){
       common.formSection(
         "",
         [
+          m("button", {type: "button", onclick: ctrl.newEntry}, "Add new entry"),
           m("button", "Submit")
         ]
       )
