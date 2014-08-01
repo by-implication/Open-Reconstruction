@@ -414,7 +414,7 @@ common.modal.controller = function(options){
   }.bind(this);
   this.close = function(){
     this.isVisible(false);
-  }
+  }.bind(this);
   this.password = m.prop("");
   this.content = m.prop("");
   this.config = function(elem){
@@ -433,7 +433,7 @@ common.modal.controller = function(options){
 common.modal.view = function(ctrl, content, optionalClasses){
   if (ctrl.isVisible()) {
     return m("section.modal", {style: {height: ctrl.height()+"px"}, config: ctrl.config}, [
-      m(".curtain", {onclick: ctrl.close.bind(ctrl)}),
+      m(".curtain", {onclick: ctrl.close}),
       m(".row", [
         m(".columns.medium-centered.dialog", {
           config: ctrl.dialogConfig,

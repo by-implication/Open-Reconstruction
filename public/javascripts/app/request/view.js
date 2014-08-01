@@ -33,9 +33,10 @@ request.view = function(ctrl){
                   ])
                 })),
               ]);
-            }).concat(m("button", [
-              "Submit"
-            ])))
+            }).concat([
+              m("button", ["Submit"]),
+              m("button.alert", {type: "button", onclick: ctrl.close}, "Cancel")
+            ]))
           ]);
         }
       ),
@@ -352,7 +353,7 @@ request.view = function(ctrl){
               m("hr"),
               m(".big.section#documents", [
                 m(".header", [
-                  ctrl.app.isSuperAdmin() ? 
+                  ctrl.app.isSuperAdmin() && (ctrl.request().level < 3) ? 
                     m("a.button.right", {onclick: ctrl.requirementsModal.initAndOpen}, [
                       "Click here to edit requirements"
                     ]) 

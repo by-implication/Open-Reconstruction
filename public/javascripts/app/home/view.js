@@ -330,7 +330,7 @@ home.view = function(ctrl){
               ]),
               m(".columns.medium-6.medium-centered", [
                 m("p.big", [
-                  "A wise man once said: 'location, location, location'. All LGUs have GPS coordinates, and this allows us to easily show areas with damaged infrastructure, etc..."
+                  "All LGUs have GPS coordinates, and this allows us to easily show areas with damaged infrastructure. Each point in the map below shows the number of requests in that area."
                 ]),
               ]),
             ]),

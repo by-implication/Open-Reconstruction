@@ -402,22 +402,24 @@ object Requests extends Controller with Secured {
 
   def updateRequirements(id: Int) = IsSuperAdmin(){ implicit user => implicit request =>
     Req.findById(id).map { implicit req =>
-      Form("requirementIds" -> seq(number)).bindFromRequest.fold(
-        Rest.formError(_),
-        newIds => {
-          val oldIds = req.requirementIds
-          val addedIds = newIds.diff(oldIds)
-          val removedIds = oldIds.diff(newIds)
-          req.copy(requirementIds = newIds).save().map { _ =>
-            Rest.success(
-              "events" -> {
-                (addedIds.map(Event.reqt(_)) ++ removedIds.map(Event.reqt(_, remove = true)))
-                .map(_.save().get.listJson)
-              }
-            )
-          }.getOrElse(Rest.serverError())
-        }
-      )
+      if(req.level < 3){
+        Form("requirementIds" -> seq(number)).bindFromRequest.fold(
+          Rest.formError(_),
+          newIds => {
+            val oldIds = req.requirementIds
+            val addedIds = newIds.diff(oldIds)
+            val removedIds = oldIds.diff(newIds)
+            req.copy(requirementIds = newIds).save().map { _ =>
+              Rest.success(
+                "events" -> {
+                  (addedIds.map(Event.reqt(_)) ++ removedIds.map(Event.reqt(_, remove = true)))
+                  .map(_.save().get.listJson)
+                }
+              )
+            }.getOrElse(Rest.serverError())
+          }
+        )
+      } else Rest.unauthorized()
     }.getOrElse(Rest.notFound())
   }
 
