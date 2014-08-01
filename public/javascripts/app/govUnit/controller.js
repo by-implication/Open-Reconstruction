@@ -1,7 +1,7 @@
 govUnit.controller = function(){
   this.app = new app.controller();
   this.id = m.route.param("id");
-  this.page = parseInt(m.route.param("page")) || 1;
+  this.page = parseInt(m.route.param("p")) || 1;
   var ctrl = this;
   this.govUnit = m.prop({
     id: -1,
@@ -18,7 +18,7 @@ govUnit.controller = function(){
   this.incomeClass = m.prop(0);
   this.coords = m.prop();
 
-  this.tab = m.route.param("tab") || "users";
+  this.tab = m.route.param("t") || "users";
   this.tabs = new common.tabs.controller();
 
   this.tabs.tabs = m.prop([

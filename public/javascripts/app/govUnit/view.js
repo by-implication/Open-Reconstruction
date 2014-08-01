@@ -5,7 +5,7 @@ govUnit.view = function(ctrl){
     ctrl.totalReqs(),
     ctrl.pageLimit(),
     function (p){
-      return routes.controllers.GovUnits.viewPage(ctrl.id, p).url;
+      return routes.controllers.GovUnits.viewPage(ctrl.id, ctrl.tab, p).url;
     }
   );
 
