@@ -49,6 +49,10 @@ govUnit.controller = function(){
       if(r.lgu.lat){
         ctrl.coords(new L.LatLng(r.lgu.lat, r.lgu.lng));
       }
+    } 
+
+    if (!r.lgu || !r.lgu.children.length) {
+      ctrl.tabs.tabs().splice(2, 1);
     }
 
     switch(ctrl.tabs.currentTab()){
