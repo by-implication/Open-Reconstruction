@@ -18,12 +18,13 @@ govUnit.controller = function(){
   this.incomeClass = m.prop(0);
   this.coords = m.prop();
 
-  this.tab = m.route.param("t");
+  this.tab = m.route.param("tab") || "users";
   this.tabs = new common.tabs.controller();
+
   this.tabs.tabs = m.prop([
-    {label: m.prop("Requests"), href: routes.controllers.GovUnits.view(ctrl.id, "requests").url}, 
-    {label: m.prop("Users"), href: routes.controllers.GovUnits.view(ctrl.id, "users").url},
-    {label: m.prop("Sub-LGUs"), href: routes.controllers.GovUnits.view(ctrl.id, "sub-lgus").url}
+    {label: m.prop("Users"), href: routes.controllers.GovUnits.viewTab(ctrl.id, "users").url},
+    {label: m.prop("Requests"), href: routes.controllers.GovUnits.viewTab(ctrl.id, "requests").url}, 
+    {label: m.prop("Sub-LGUs"), href: routes.controllers.GovUnits.viewTab(ctrl.id, "sub-lgus").url},
   ]);
 
   this.initMap = function(elem, isInit){
@@ -40,20 +41,33 @@ govUnit.controller = function(){
     }()
   }
 
-  bi.ajax(routes.controllers.GovUnits.viewMeta(this.id, this.page)).then(function (r){
+  bi.ajax(routes.controllers.GovUnits.viewMeta(this.id, this.tab, this.page)).then(function (r){
     ctrl.govUnit(r.govUnit);
-    ctrl.users(r.users);
-    ctrl.requests(r.requests);
-    ctrl.totalReqs(r.totalReqs);
-    ctrl.pageLimit(r.pageLimit);
     if(r.lgu){
-      ctrl.children(r.lgu.children);
-      ctrl.ancestors(r.lgu.ancestors);
       ctrl.incomeClass(r.lgu.incomeClass);
+      ctrl.ancestors(r.lgu.ancestors);
       if(r.lgu.lat){
         ctrl.coords(new L.LatLng(r.lgu.lat, r.lgu.lng));
       }
     }
-  });
 
+    switch(ctrl.tabs.currentTab()){
+      case "Requests": {
+        ctrl.requests(r.data.requests);
+        ctrl.totalReqs(r.data.totalReqs);
+        ctrl.pageLimit(r.data.pageLimit);
+        break;
+      }
+      case "Users": {
+        ctrl.users(r.data.users);
+        break;
+      }
+      case "Sub-LGUs": {
+        if(r.lgu){
+          ctrl.children(r.lgu.children);
+        }
+        break;
+      }
+    }
+  });
 }
