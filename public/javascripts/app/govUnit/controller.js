@@ -41,6 +41,20 @@ govUnit.controller = function(){
     }()
   }
 
+  this.newUserModal = new common.modal.controller({
+    submit: function(e){
+      e.preventDefault();
+      bi.ajax(routes.controllers.Users.insert(ctrl.id), {
+        data: {password: ctrl.newUser.password, content: ctrl.saroModal.content}
+      }).then(function (r){
+        signoffActions(r);
+        ctrl.request().isSaroAssigned = true;
+        ctrl.newUser.close();
+        alert('SARO assigned.');
+      }, common.formErrorHandler);
+    }
+  });
+
   bi.ajax(routes.controllers.GovUnits.viewMeta(this.id, this.tab, this.page)).then(function (r){
     ctrl.govUnit(r.govUnit);
     if(r.lgu){

@@ -29,6 +29,32 @@ govUnit.view = function(ctrl){
         ]),
       ]),
     ]),
+    common.modal.view(
+      ctrl.newUserModal,
+      function(ctrl){
+        return m("form", {onsubmit: ctrl.submit}, [
+          m(".section", [
+            m("h3", "User Creation"),
+            m("p", [
+              "Create one or more users under this government unit."
+            ]),
+          ]),
+          m("hr"),
+          m(".section", [
+            common.field("Username", m("input", {
+              type: "text",
+              onchange: m.withAttr("value", ctrl.content)
+            })),
+            common.field("Password", m("input[type='password']", {
+              onchange: m.withAttr("value", ctrl.password)
+            })),
+            m("button", [
+              "Submit"
+            ]),
+          ]),
+        ])
+      }
+    ),
     common.banner([
       ctrl.govUnit().name,
       m("p", [
@@ -60,13 +86,9 @@ govUnit.view = function(ctrl){
               m("ul.button-group", [
                 ctrl.app.isGovUnitAdmin(ctrl.govUnit().id) ?
                   m("li", [
-                    m("a.button.small", 
-                      {
-                        href: routes.controllers.Users.create(ctrl.govUnit().id).url,
-                        config: m.route
-                      }, 
-                      ["Add new user"]
-                    )
+                    m("button.small", {onclick: ctrl.newUserModal.open}, [
+                      "Create User(s)"
+                    ])
                   ])
                 : "",
                 ctrl.app.isSuperAdmin() ?
