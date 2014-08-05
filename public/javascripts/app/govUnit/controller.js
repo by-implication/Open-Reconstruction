@@ -42,10 +42,22 @@ govUnit.controller = function(){
   }
 
   this.newUserModal = new common.modal.controller({
+    entries: [],
+    newEntry: function(){
+      ctrl.newUserModal.entries.push({
+        username: m.prop(""),
+        password: m.prop(""),
+        isAdmin: m.prop(false),
+        remove: function(){ ctrl.newUserModal.removeEntry(this); }
+      });
+    },
+    removeEntry: function (e){
+      ctrl.newUserModal.entries.splice(ctrl.newUserModal.entries.splice.indexOf(e), 1);
+    },
     submit: function(e){
       e.preventDefault();
       bi.ajax(routes.controllers.Users.insert(ctrl.id), {
-        data: {password: ctrl.newUser.password, content: ctrl.saroModal.content}
+        data: {password: ctrl.newUserModal.password, content: ctrl.newUserModal.content}
       }).then(function (r){
         signoffActions(r);
         ctrl.request().isSaroAssigned = true;
@@ -54,6 +66,8 @@ govUnit.controller = function(){
       }, common.formErrorHandler);
     }
   });
+
+  this.newUserModal.newEntry();
 
   bi.ajax(routes.controllers.GovUnits.viewMeta(this.id, this.tab, this.page)).then(function (r){
     ctrl.govUnit(r.govUnit);

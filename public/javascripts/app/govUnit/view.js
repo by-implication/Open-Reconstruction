@@ -40,18 +40,28 @@ govUnit.view = function(ctrl){
             ]),
           ]),
           m("hr"),
+          m(".section", ctrl.entries.map(function(entry){
+            return m("div", [
+              common.field("Username", m("input", {
+                type: "text",
+                onchange: m.withAttr("value", entry.username)
+              })),
+              common.field("Password", m("input[type='password']", {
+                onchange: m.withAttr("value", entry.password)
+              })),
+              common.field("Admin Privileges", m("input[type='checkbox']", {
+                onchange: m.withAttr("value", entry.isAdmin)
+              }))
+            ])
+          })),
           m(".section", [
-            common.field("Username", m("input", {
-              type: "text",
-              onchange: m.withAttr("value", ctrl.content)
-            })),
-            common.field("Password", m("input[type='password']", {
-              onchange: m.withAttr("value", ctrl.password)
-            })),
+            m("button", {type: "button", onclick: ctrl.newEntry}, [
+              "Add new entry"
+            ]),
             m("button", [
               "Submit"
-            ]),
-          ]),
+            ])
+          ])
         ])
       }
     ),
