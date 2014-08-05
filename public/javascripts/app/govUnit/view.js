@@ -62,6 +62,13 @@ govUnit.view = function(ctrl){
     ),
     common.banner([
       ctrl.govUnit().name,
+      ctrl.app.isSuperAdmin() ?
+        m(
+          "a.button.small", 
+          {href: routes.controllers.GovUnits.edit(ctrl.govUnit().id).url, config: m.route}, 
+          "Edit"
+        )
+      : "",
       m("p", [
         ctrl.incomeClass() ? ("Income class " + ctrl.incomeClass()) : "Unspecified Income Class"
       ]),
@@ -97,15 +104,6 @@ govUnit.view = function(ctrl){
                         config: m.route
                       }, 
                       ["Add new user"]
-                    )
-                  ])
-                : "",
-                ctrl.app.isSuperAdmin() ?
-                  m("li", [
-                    m(
-                      "a.button.small", 
-                      {href: routes.controllers.GovUnits.edit(ctrl.govUnit().id).url, config: m.route}, 
-                      "Edit"
                     )
                   ])
                 : ""
