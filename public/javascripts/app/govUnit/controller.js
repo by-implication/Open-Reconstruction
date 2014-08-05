@@ -17,6 +17,7 @@ govUnit.controller = function(){
   this.ancestors = m.prop([]);
   this.incomeClass = m.prop(0);
   this.coords = m.prop();
+  this.input = {};
 
   this.tab = m.route.param("t") || "users";
   this.tabs = new common.tabs.controller();
@@ -42,18 +43,6 @@ govUnit.controller = function(){
   }
 
   this.newUserModal = new common.modal.controller({
-    entries: [],
-    newEntry: function(){
-      ctrl.newUserModal.entries.push({
-        username: m.prop(""),
-        password: m.prop(""),
-        isAdmin: m.prop(false),
-        remove: function(){ ctrl.newUserModal.removeEntry(this); }
-      });
-    },
-    removeEntry: function (e){
-      ctrl.newUserModal.entries.splice(ctrl.newUserModal.entries.splice.indexOf(e), 1);
-    },
     submit: function(e){
       e.preventDefault();
       bi.ajax(routes.controllers.Users.insert(ctrl.id), {
@@ -66,8 +55,6 @@ govUnit.controller = function(){
       }, common.formErrorHandler);
     }
   });
-
-  this.newUserModal.newEntry();
 
   bi.ajax(routes.controllers.GovUnits.viewMeta(this.id, this.tab, this.page)).then(function (r){
     ctrl.govUnit(r.govUnit);

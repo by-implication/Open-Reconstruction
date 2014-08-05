@@ -10,10 +10,14 @@ userCreation.controller = function(){
     isAdmin: m.prop(false)
   }
 
+  var ctrl = this;
+
   bi.ajax(routes.controllers.GovUnits.viewMeta(this.slug(), "users", 1)).then(function (r){
     this.govUnit(r.govUnit);
     this.input.govUnitId(r.govUnit.id);
   }.bind(this));
+
+  this.entries = [];
 
   this.submit = function(e){
     e.preventDefault();
@@ -23,6 +27,18 @@ userCreation.controller = function(){
   }.bind(this)
 
   this.newEntry = function(){
-    console.log("Adding new user.");
+    ctrl.entries.push({
+      name: m.prop(""),
+      handle: m.prop(""),
+      password: m.prop(""),
+      isAdmin: m.prop(false),
+      remove: function(){ ctrl.removeEntry(this); }
+    });
+  }
+
+  this.newEntry();
+
+  this.removeEntry = function (e){
+    ctrl.entries.splice(ctrl.entries.splice.indexOf(e), 1);
   }
 }
