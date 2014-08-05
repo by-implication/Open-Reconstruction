@@ -96,9 +96,13 @@ govUnit.view = function(ctrl){
               m("ul.button-group", [
                 ctrl.app.isGovUnitAdmin(ctrl.govUnit().id) ?
                   m("li", [
-                    m("button.small", {onclick: ctrl.newUserModal.open}, [
-                      "Create User(s)"
-                    ])
+                    m("a.button.small", 
+                      {
+                        href: routes.controllers.Users.create(ctrl.govUnit().id).url,
+                        config: m.route
+                      }, 
+                      ["Add new user"]
+                    )
                   ])
                 : "",
                 ctrl.app.isSuperAdmin() ?
@@ -123,6 +127,11 @@ govUnit.view = function(ctrl){
                     m("td", [
                       "Type"
                     ]),
+                    ctrl.app.isGovUnitAdmin(ctrl.govUnit().id) ?
+                      m("td", [
+                        "Edit"
+                      ])
+                    : "",
                   ])
                 ]),
                 m("tbody", [
@@ -142,6 +151,13 @@ govUnit.view = function(ctrl){
                             "Admin"
                           : "Normal"
                         ]),
+                        ctrl.app.isGovUnitAdmin(ctrl.govUnit().id) ?
+                          m("td", [
+                            m("button.small", {onclick: ctrl.newUserModal.open}, [
+                              "Create User(s)"
+                            ])
+                          ])
+                        : "",
                       ])
                     })
                   : m("tr", [
