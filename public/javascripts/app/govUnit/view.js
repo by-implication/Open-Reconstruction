@@ -53,9 +53,6 @@ govUnit.view = function(ctrl){
             }))
           ]),
           m(".section", [
-            m("button", {type: "button", onclick: ctrl.newEntry}, [
-              "Add new entry"
-            ]),
             m("button", [
               "Submit"
             ])
@@ -152,7 +149,7 @@ govUnit.view = function(ctrl){
                         ctrl.app.isGovUnitAdmin(ctrl.govUnit().id) ?
                           m("td", [
                             m("button.small", {onclick: ctrl.newUserModal.open}, [
-                              "Create User(s)"
+                              "Edit"
                             ])
                           ])
                         : "",

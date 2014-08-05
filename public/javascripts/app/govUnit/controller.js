@@ -17,7 +17,6 @@ govUnit.controller = function(){
   this.ancestors = m.prop([]);
   this.incomeClass = m.prop(0);
   this.coords = m.prop();
-  this.input = {};
 
   this.tab = m.route.param("t") || "users";
   this.tabs = new common.tabs.controller();
@@ -43,6 +42,7 @@ govUnit.controller = function(){
   }
 
   this.newUserModal = new common.modal.controller({
+    input: {},
     submit: function(e){
       e.preventDefault();
       bi.ajax(routes.controllers.Users.insert(ctrl.id), {
