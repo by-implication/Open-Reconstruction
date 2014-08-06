@@ -43,19 +43,18 @@ govUnit.controller = function(){
 
   this.editUserModal = new common.modal.controller({
     input: {
+      id: m.prop(0),
       name: m.prop(""),
       handle: m.prop(""),
       isAdmin: m.prop(false)
     },
     submit: function(e){
       e.preventDefault();
-      bi.ajax(routes.controllers.Users.insert(ctrl.id), {
-        data: {password: ctrl.editUserModal.password, content: ctrl.editUserModal.content}
+      bi.ajax(routes.controllers.Users.update(ctrl.id, ctrl.editUserModal.input.id()), {
+        data: ctrl.editUserModal.input
       }).then(function (r){
-        signoffActions(r);
-        ctrl.request().isSaroAssigned = true;
-        ctrl.newUser.close();
-        alert('SARO assigned.');
+        ctrl.editUserModal.close();
+        alert('User updated!');
       }, common.formErrorHandler);
     }
   });
@@ -84,6 +83,7 @@ govUnit.controller = function(){
       case "Users": {
         ctrl.users(r.data.users.map(function(u){
           u.edit = function(){
+            ctrl.editUserModal.input.id(u.id);
             ctrl.editUserModal.input.name(u.name);
             ctrl.editUserModal.input.handle(u.handle);
             ctrl.editUserModal.input.isAdmin(u.isAdmin);

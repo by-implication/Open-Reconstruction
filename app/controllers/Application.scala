@@ -115,6 +115,7 @@ object Application extends Controller with Secured {
       Users.logout,
       Users.meta,
       Users.insert,
+      Users.update,
       Users.view,
       Users.viewPage,
       Users.viewMeta,

@@ -77,6 +77,35 @@ object Users extends Controller with Secured {
     } else Rest.unauthorized()
   }
 
+  def update(govUnitId: Int, userId: Int) = UserAction(){ implicit currentUser => implicit request =>
+    User.findById(userId) match {
+      case Some(user) => if(currentUser.isSuperAdmin || (currentUser.isAdmin && currentUser.govUnitId == govUnitId)){
+
+        val editForm: Form[User] = Form(
+          mapping(
+            "name" -> nonEmptyText,
+            "handle" -> nonEmptyText,
+            "isAdmin" -> boolean
+          )
+          ((name, handle, isAdmin) => {
+            user.copy(name = name, handle = handle, isAdmin = isAdmin)
+          })
+          (_ => None)
+        )
+        
+        editForm.bindFromRequest.fold(
+          Rest.formError(_),
+          user => {
+            user.save() 
+            Rest.success()
+          } 
+        )
+
+      } else Rest.unauthorized()
+      case None => Rest.notFound()
+    }
+  }
+
   def view = Application.index1 _
   def viewPage(id: Int, page: Int, sort: String, sortDir: String) = Application.index
 
