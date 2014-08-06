@@ -60,8 +60,7 @@ govUnit.view = function(ctrl){
             common.field("Admin Privileges", m("input[type='checkbox']", {
               checked: ctrl.input.isAdmin(),
               onclick: m.withAttr("checked", ctrl.input.isAdmin)
-            })),
-            ("Admin Privileges " + ctrl.input.isAdmin())
+            }))
           ]),
           m(".section", [
             m("button", [
