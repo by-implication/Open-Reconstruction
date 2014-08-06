@@ -41,7 +41,7 @@ govUnit.controller = function(){
     }()
   }
 
-  this.newUserModal = new common.modal.controller({
+  this.editUserModal = new common.modal.controller({
     input: {
       name: m.prop(""),
       handle: m.prop(""),
@@ -50,7 +50,7 @@ govUnit.controller = function(){
     submit: function(e){
       e.preventDefault();
       bi.ajax(routes.controllers.Users.insert(ctrl.id), {
-        data: {password: ctrl.newUserModal.password, content: ctrl.newUserModal.content}
+        data: {password: ctrl.editUserModal.password, content: ctrl.editUserModal.content}
       }).then(function (r){
         signoffActions(r);
         ctrl.request().isSaroAssigned = true;
@@ -84,10 +84,10 @@ govUnit.controller = function(){
       case "Users": {
         ctrl.users(r.data.users.map(function(u){
           u.edit = function(){
-            ctrl.newUserModal.input.name(u.name);
-            ctrl.newUserModal.input.handle(u.handle);
-            ctrl.newUserModal.input.isAdmin(u.isAdmin);
-            ctrl.newUserModal.open();
+            ctrl.editUserModal.input.name(u.name);
+            ctrl.editUserModal.input.handle(u.handle);
+            ctrl.editUserModal.input.isAdmin(u.isAdmin);
+            ctrl.editUserModal.open();
           }
           return u;
         }))

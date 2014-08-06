@@ -11,7 +11,7 @@ govUnit.view = function(ctrl){
 
   return app.template(ctrl.app, "Agency / LGU — " + ctrl.govUnit().name, {className: ""}, [
     common.modal.view(
-      ctrl.newUserModal,
+      ctrl.editUserModal,
       function(ctrl){
         return m("form", {onsubmit: ctrl.submit}, [
           m(".section", [
