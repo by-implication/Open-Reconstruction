@@ -42,7 +42,11 @@ govUnit.controller = function(){
   }
 
   this.newUserModal = new common.modal.controller({
-    input: {},
+    input: {
+      name: m.prop(""),
+      handle: m.prop(""),
+      isAdmin: m.prop(false)
+    },
     submit: function(e){
       e.preventDefault();
       bi.ajax(routes.controllers.Users.insert(ctrl.id), {
@@ -78,7 +82,15 @@ govUnit.controller = function(){
         break;
       }
       case "Users": {
-        ctrl.users(r.data.users);
+        ctrl.users(r.data.users.map(function(u){
+          u.edit = function(){
+            ctrl.newUserModal.input.name(u.name);
+            ctrl.newUserModal.input.handle(u.handle);
+            ctrl.newUserModal.input.isAdmin(u.isAdmin);
+            ctrl.newUserModal.open();
+          }
+          return u;
+        }))
         break;
       }
       case "Sub-LGUs": {

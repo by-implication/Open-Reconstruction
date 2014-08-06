@@ -41,16 +41,21 @@ govUnit.view = function(ctrl){
           ]),
           m("hr"),
           m(".section", [
-            common.field("Username", m("input", {
+            common.field("Name", m("input", {
+              value: ctrl.input.name(),
               type: "text",
-              onchange: m.withAttr("value", ctrl.input.username)
+              onchange: m.withAttr("value", ctrl.input.name)
             })),
-            common.field("Password", m("input[type='password']", {
-              onchange: m.withAttr("value", ctrl.input.password)
+            common.field("Username", m("input", {
+              value: ctrl.input.handle(),
+              type: "text",
+              onchange: m.withAttr("value", ctrl.input.handle)
             })),
             common.field("Admin Privileges", m("input[type='checkbox']", {
-              onchange: m.withAttr("value", ctrl.input.isAdmin)
-            }))
+              checked: ctrl.input.isAdmin(),
+              onclick: m.withAttr("checked", ctrl.input.isAdmin)
+            })),
+            ("Admin Privileges " + ctrl.input.isAdmin())
           ]),
           m(".section", [
             m("button", [
@@ -146,7 +151,7 @@ govUnit.view = function(ctrl){
                         ]),
                         ctrl.app.isGovUnitAdmin(ctrl.govUnit().id) ?
                           m("td", [
-                            m("button.small", {onclick: ctrl.newUserModal.open}, [
+                            m("button.small", {onclick: u.edit}, [
                               "Edit"
                             ])
                           ])
