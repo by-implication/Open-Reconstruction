@@ -13,7 +13,7 @@ userCreation.controller = function(){
 
   this.submit = function(e){
     e.preventDefault();
-    bi.ajax(routes.controllers.Users.insert(this.slug()), {data: this.entries}).then(function (r){
+    bi.ajax(routes.controllers.Users.insert(this.slug()), {data: {users: this.entries}}).then(function (r){
       m.route(routes.controllers.GovUnits.view(this.slug()).url);
     }.bind(this), common.formErrorHandler);
   }.bind(this)
