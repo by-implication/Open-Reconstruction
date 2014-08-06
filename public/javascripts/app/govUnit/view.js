@@ -9,32 +9,7 @@ govUnit.view = function(ctrl){
     }
   );
 
-  return app.template(ctrl.app, "Agency / LGU — " + ctrl.govUnit().name, [
-    m(".section.breadcrumbs", [
-      m(".row", [
-        m(".columns.medium-12", [
-          ctrl.ancestors().length ?
-            ctrl.ancestors().map(function (c, i){
-              return m("span.crumb", [
-                m("a", {href: routes.controllers.GovUnits.view(c.id).url, config: m.route}, c.name),
-                m("i.fa.fa-angle-right.arrow")
-              ])
-            }): "",
-            ctrl.govUnit().name,
-            ctrl.govUnit().acronym ?
-              m("span.acronym", [
-                "(" + ctrl.govUnit().acronym + ")"
-              ])
-            : "",
-            ctrl.app.isSuperAdmin() ?
-              m("a.right", {href: routes.controllers.GovUnits.edit(ctrl.govUnit().id).url, config: m.route}, [
-                m("i.fa.fa-edit"), 
-                " Edit"
-              ])
-            : "",
-        ]),
-      ]),
-    ]),
+  return app.template(ctrl.app, "Agency / LGU — " + ctrl.govUnit().name, {className: ""}, [
     common.modal.view(
       ctrl.newUserModal,
       function(ctrl){
@@ -69,7 +44,32 @@ govUnit.view = function(ctrl){
           ])
         ])
       }
-    ),
+    )], [
+    m(".section.breadcrumbs", [
+      m(".row", [
+        m(".columns.medium-12", [
+          ctrl.ancestors().length ?
+            ctrl.ancestors().map(function (c, i){
+              return m("span.crumb", [
+                m("a", {href: routes.controllers.GovUnits.view(c.id).url, config: m.route}, c.name),
+                m("i.fa.fa-angle-right.arrow")
+              ])
+            }): "",
+            ctrl.govUnit().name,
+            ctrl.govUnit().acronym ?
+              m("span.acronym", [
+                "(" + ctrl.govUnit().acronym + ")"
+              ])
+            : "",
+            ctrl.app.isSuperAdmin() ?
+              m("a.right", {href: routes.controllers.GovUnits.edit(ctrl.govUnit().id).url, config: m.route}, [
+                m("i.fa.fa-edit"), 
+                " Edit"
+              ])
+            : "",
+        ]),
+      ]),
+    ]),
     common.banner([
       ctrl.govUnit().name,
       m("p", [
