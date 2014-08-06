@@ -25,7 +25,13 @@ govUnit.view = function(ctrl){
               m("span.acronym", [
                 "(" + ctrl.govUnit().acronym + ")"
               ])
-            : ""
+            : "",
+            ctrl.app.isSuperAdmin() ?
+              m("a.right", {href: routes.controllers.GovUnits.edit(ctrl.govUnit().id).url, config: m.route}, [
+                m("i.fa.fa-edit"), 
+                " Edit"
+              ])
+            : "",
         ]),
       ]),
     ]),
@@ -62,13 +68,6 @@ govUnit.view = function(ctrl){
     ),
     common.banner([
       ctrl.govUnit().name,
-      ctrl.app.isSuperAdmin() ?
-        m(
-          "a.button.small", 
-          {href: routes.controllers.GovUnits.edit(ctrl.govUnit().id).url, config: m.route}, 
-          "Edit"
-        )
-      : "",
       m("p", [
         ctrl.incomeClass() ? ("Income class " + ctrl.incomeClass()) : "Unspecified Income Class"
       ]),
