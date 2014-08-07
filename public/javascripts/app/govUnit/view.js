@@ -22,15 +22,15 @@ govUnit.view = function(ctrl){
           ]),
           m("hr"),
           m(".section", [
+            common.field("Username", m("input", {
+              value: ctrl.input.handle(),
+              type: "text",
+              disabled: true
+            })),
             common.field("Name", m("input", {
               value: ctrl.input.name(),
               type: "text",
               onchange: m.withAttr("value", ctrl.input.name)
-            })),
-            common.field("Username", m("input", {
-              value: ctrl.input.handle(),
-              type: "text",
-              onchange: m.withAttr("value", ctrl.input.handle)
             })),
             common.field("Admin Privileges", m("input[type='checkbox']", {
               checked: ctrl.input.isAdmin(),

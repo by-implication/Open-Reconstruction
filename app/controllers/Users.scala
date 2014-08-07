@@ -80,19 +80,16 @@ object Users extends Controller with Secured {
   def update(govUnitId: Int, userId: Int) = UserAction(){ implicit currentUser => implicit request =>
     User.findById(userId) match {
       case Some(user) => if(currentUser.isSuperAdmin || (currentUser.isAdmin && currentUser.govUnitId == govUnitId)){
-
         val editForm: Form[User] = Form(
           mapping(
             "name" -> nonEmptyText,
-            "handle" -> nonEmptyText,
             "isAdmin" -> boolean
           )
-          ((name, handle, isAdmin) => {
-            user.copy(name = name, handle = handle, isAdmin = isAdmin)
+          ((name, isAdmin) => {
+            user.copy(name = name, isAdmin = isAdmin)
           })
           (_ => None)
         )
-        
         editForm.bindFromRequest.fold(
           Rest.formError(_),
           user => {
@@ -100,7 +97,6 @@ object Users extends Controller with Secured {
             Rest.success()
           } 
         )
-
       } else Rest.unauthorized()
       case None => Rest.notFound()
     }
