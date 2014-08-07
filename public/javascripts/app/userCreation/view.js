@@ -5,15 +5,15 @@ userCreation.view = function(ctrl){
       m(".row", [
         m(".columns.medium-12", [
           m("form", {onsubmit: ctrl.submit}, [
-            m("ul", [
-              m("li.new-user", ctrl.entries.map(function(entry){
-                return m(".row", [
+            m("ul", ctrl.entries.map(function(entry, index){
+              return m("li.new-user", [
+                m(".row", [
                   m(".columns.medium-12", [
                     m("button.alert[type=button].tiny.radius.right", {}, [
                       m("i.fa.fa-fw.fa-lg.fa-times")
                     ]),
                     m("h3", [
-                      "User 1"
+                      "User " + (index + 1)
                     ]),
                   ]),
                 ]),
@@ -50,8 +50,8 @@ userCreation.view = function(ctrl){
                     ),
                   ]),
                 ])
-              })),
-            ]),
+              ]);
+            })),
             m(".row", [
               m(".columns.medium-12", [
                 m("button", {type: "button", onclick: ctrl.newEntry}, "Add new entry"),
