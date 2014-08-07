@@ -1,6 +1,6 @@
 userCreation.view = function(ctrl){
   return app.template(ctrl.app, "New User", [
-    common.banner("Adding a user for " + ctrl.govUnit().name),
+    common.banner("Adding users for " + ctrl.govUnit().name),
     m("section", [
       m(".row", [
         m(".columns.medium-12", [
