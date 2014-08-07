@@ -114,9 +114,9 @@ GET     /gov-units/:id                                   controllers.GovUnits.vi
 GET     /gov-units/:id/edit                              controllers.GovUnits.edit(id: Int)
 GET     /gov-units/:id/edit/meta                         controllers.GovUnits.editMeta(id: Int)
 POST    /gov-units/:id/edit                              controllers.GovUnits.update(id: Int)
-POST    /gov-units/:id/user/:userId/update               controllers.Users.update(id: Int, userId: Int)
 GET     /gov-units/:id/user/new                          controllers.Users.create(id: Int)
 POST    /gov-units/:id/user/new                          controllers.Users.insert(id: Int)
+POST    /gov-units/:id/user/:userId/update               controllers.Users.update(id: Int, userId: Int)
 
 GET     /gov-units/:id/:tab                              controllers.GovUnits.viewTab(id: Int, tab: String)
 GET     /gov-units/:id/:tab/:p                           controllers.GovUnits.viewPage(id: Int, tab: String, p: Int)

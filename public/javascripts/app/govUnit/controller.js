@@ -54,6 +54,16 @@ govUnit.controller = function(){
         data: ctrl.editUserModal.input
       }).then(function (r){
         ctrl.editUserModal.close();
+        var user = _.find(ctrl.users(), function(u){
+          return u.id == ctrl.editUserModal.input.id();
+        })
+
+        if(user){
+          user.name = ctrl.editUserModal.input.name();
+          user.handle = ctrl.editUserModal.input.handle();
+          user.isAdmin = ctrl.editUserModal.input.isAdmin();
+        }
+
         alert('User updated!');
       }, common.formErrorHandler);
     }

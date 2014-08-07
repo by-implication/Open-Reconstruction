@@ -47,7 +47,7 @@ m.route(document, window.location.pathname, GATrackedRoutes({
   "/gov-units/new/lgu/:level/:parentId": lguCreation,
   "/gov-units/:id": govUnit,
   "/gov-units/:id/edit": govUnitEdit,
-  "/gov-units/:id/new-user": userCreation,
+  "/gov-units/:id/user/new": userCreation,
   "/gov-units/:id/:t": govUnit,
   "/gov-units/:id/:t/:p": govUnit,
   "/login": login,
