@@ -19,18 +19,21 @@ userCreation.controller = function(){
   }.bind(this)
 
   this.newEntry = function(){
-    ctrl.entries.push({
+    var entry = {
       name: m.prop(""),
       handle: m.prop(""),
       password: m.prop(""),
       isAdmin: m.prop(false),
-      remove: function(){ ctrl.removeEntry(this); }
-    });
+      remove: function(){
+        ctrl.removeEntry(entry);
+      }
+    }
+    ctrl.entries.push(entry)
   }
 
   this.newEntry();
 
   this.removeEntry = function (e){
-    ctrl.entries.splice(ctrl.entries.splice.indexOf(e), 1);
+    ctrl.entries.splice(ctrl.entries.indexOf(e), 1);
   }
 }
