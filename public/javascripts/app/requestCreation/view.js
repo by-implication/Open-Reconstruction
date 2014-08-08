@@ -163,7 +163,7 @@ requestCreation.view = function(ctrl){
                       m(".columns.medium-6", [
                         m("label", [
                           "Description",
-                          m("input", {onchange: m.withAttr("value", e.description), type: "text", placeholder: "e.g. Reconstruction of a seawall for barangay A"}),
+                          m("input", {value: e.description(), onchange: m.withAttr("value", e.description), type: "text", placeholder: "e.g. Reconstruction of a seawall for barangay A"}),
                         ]),
                       ]),
                       m(".columns.medium-3", [
@@ -191,7 +191,7 @@ requestCreation.view = function(ctrl){
                       m(".columns.medium-3", [
                         m("label", [
                           "Estimated Amount",
-                          m("input", {type: "number", onchange: m.withAttr("value", e.amount)}),
+                          m("input", {value: e.amount(), type: "number", onchange: m.withAttr("value", e.amount)}),
                         ]),
                       ]),
                     ]),

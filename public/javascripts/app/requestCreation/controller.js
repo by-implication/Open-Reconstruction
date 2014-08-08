@@ -79,7 +79,8 @@ requestCreation.controller = function(){
         location: m.prop(""),
         attachments: m.prop([]),
         bucketKey: bucketKey,
-        remove: function(){ ctrl.removeEntry(this); },
+        remove: function(){ 
+          ctrl.removeEntry(entry); },
         openLocationModal: function(){
           ctrl.activeEntry(entry);
           ctrl.locModal.open();
