@@ -63,7 +63,7 @@ object Req extends ReqGen {
           varMap.add('govUnitId -> user.govUnitId)
         }
       }),
-      "assessor" -> (() => conds.add("req_level = 0")),
+      "assessor" -> (() => conds.add(if(user.isSuperAdmin) "req_level = 0" else "false")),
       "executor" -> (() => {
         conds.add("executing_agency_id IS NULL", "implementing_agency_id = {govUnitId}")
         varMap.add('govUnitId -> user.govUnitId)

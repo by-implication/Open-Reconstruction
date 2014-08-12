@@ -27,15 +27,15 @@ dashboard.controller = function(){
       identifier: ctrl.tabFilters.FEED,
       href: nav({tab: "feed"}),
       label: m.prop("Feed")
-    }].concat(ctrl.app.isSuperAdmin() ? {
+    }, {
       identifier: ctrl.tabFilters.PENDING,
       href: nav({tab: "pending"}),
       label: m.prop("Pending requests")
-    } : []).concat({
+    }, {
       identifier: ctrl.tabFilters.MINE,
       href: nav({tab: "mine"}),
       label: m.prop("My requests")
-    });
+    }];
   };
   this.count = m.prop(0);
   this.pageLimit = m.prop(1);

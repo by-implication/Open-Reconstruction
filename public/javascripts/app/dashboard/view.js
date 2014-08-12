@@ -59,7 +59,11 @@ dashboard.view = function(ctrl){
       filters.ALL = {id: "all", label: "All"};
 
       filters.push(filters.ALL);
-      filters.push(filters.SIGNOFF);
+      
+      if(ctrl.app.currentUser().govUnit.role != "LGU"){
+        filters.push(filters.SIGNOFF);
+      }
+
       if(ctrl.app.isSuperAdmin()){
         filters.push(filters.ASSESSOR);
       } else if(!(ctrl.app.isDBM() || ctrl.app.isOP())){
