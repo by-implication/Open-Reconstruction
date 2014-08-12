@@ -55,14 +55,14 @@ GET     /browse/requests                                 controllers.Requests.in
 GET     /browse/requests/:p/:pid/:l/:s/:sD/:d/:a/:rS/:rL      controllers.Requests.indexPage(p: Int, pid: Int, l: String, s: String, sD: String, d: Int, a: Int, rS: String, rL: String)
 GET     /browse/requests/:p/:pid/:l/:s/:sD/:d/:a/:rS/:rL/meta controllers.Requests.indexMeta(p: Int, pid: Int, l: String, s: String, sD: String, d: Int, a: Int, rS: String, rL: String)
 
-GET     /browse/requests/new                             controllers.Requests.create
-GET     /browse/requests/new/meta                        controllers.Requests.createMeta
-GET     /browse/requests/new/bucketKey                   controllers.Attachments.getNewBucketKey
-POST    /browse/requests/new/attach/:k/:rId              controllers.Attachments.addToBucket(k: String, rId: Int)
-GET     /browse/requests/new/thumb/:k/:rId/:f            controllers.Attachments.bucketThumb(k: String, rId: Int, f: String)
-GET     /browse/requests/new/preview/:k/:rId/:f          controllers.Attachments.bucketPreview(k: String, rId: Int, f: String)
-GET     /browse/requests/new/download/:k/:rId/:f         controllers.Attachments.bucketDownload(k: String, rId: Int, f: String)
-POST    /browse/requests/new                             controllers.Requests.insert
+GET     /dashboard/requests/new                             controllers.Requests.create
+GET     /dashboard/requests/new/meta                        controllers.Requests.createMeta
+GET     /dashboard/requests/new/bucketKey                   controllers.Attachments.getNewBucketKey
+POST    /dashboard/requests/new/attach/:k/:rId              controllers.Attachments.addToBucket(k: String, rId: Int)
+GET     /dashboard/requests/new/thumb/:k/:rId/:f            controllers.Attachments.bucketThumb(k: String, rId: Int, f: String)
+GET     /dashboard/requests/new/preview/:k/:rId/:f          controllers.Attachments.bucketPreview(k: String, rId: Int, f: String)
+GET     /dashboard/requests/new/download/:k/:rId/:f         controllers.Attachments.bucketDownload(k: String, rId: Int, f: String)
+POST    /dashboard/requests/new                             controllers.Requests.insert
 
 GET     /browse/requests/:id                             controllers.Requests.view(id: Int)
 GET     /browse/requests/:id/assignments                 controllers.Requests.viewAssignments(id: Int)
