@@ -21,8 +21,6 @@ CREATE TABLE oparr_bohol (
   psgc text,
   latitude decimal,
   longitude decimal,
-  province_municipality text,
-  psgc_level text,
   source text,
   status text,
   version text
