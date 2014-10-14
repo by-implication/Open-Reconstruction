@@ -59,7 +59,8 @@ SELECT req_id, dpwh_eplc.project_id,
   contract_start_date,
   contract_end_date
 FROM dpwh_eplc
-LEFT JOIN reqs on req_remarks = dpwh_eplc.project_id;;
+LEFT JOIN reqs on req_remarks = dpwh_eplc.project_id
+WHERE activity_1_start_date IS NOT NULL;;
 
 -- assign DILG RAY projects
 

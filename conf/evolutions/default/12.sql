@@ -82,7 +82,8 @@ SELECT project_description,
     LIMIT 1
   ) AS implementing_agency_id,
   6 AS req_level
-FROM dpwh_eplc;;
+FROM dpwh_eplc
+WHERE activity_1_start_date IS NOT NULL;;
 
 -- create DILG RAY requests
 
