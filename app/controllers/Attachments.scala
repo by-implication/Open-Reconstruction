@@ -1,5 +1,7 @@
 package controllers
 
+import com.thebuzzmedia.exiftool._
+import com.thebuzzmedia.exiftool.ExifTool._
 import java.io.File
 import play.api._
 import play.api.libs.Files.TemporaryFile
@@ -38,7 +40,14 @@ object Attachments extends Controller with Secured {
   def addToBucket(key: String, requirementId: Int) = UserAction(parse.multipartFormData){ implicit user => implicit request =>
     request.body.file("file").map { upload =>
       Requirement.findById(requirementId).map { requirement =>
-        if(Bucket(key).add(requirement, upload)){
+      val bucket = Bucket(key)
+        if(bucket.add(requirement, upload)){
+          if (requirement.isImage || requirement.name == "Photograph(s)") {
+            val photo = bucket.getFile(requirement, upload.filename).file
+            val exifTool = new ExifTool()
+            val coords = exifTool.getImageMeta(photo, Tag.GPS_LATITUDE, Tag.GPS_LONGITUDE);
+            play.Logger.info("Coordinates: " + coords)
+          }
           Rest.success(
             "key" -> key,
             "filename" -> upload.filename,

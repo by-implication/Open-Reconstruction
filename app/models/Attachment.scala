@@ -2,6 +2,8 @@ package recon.models
 
 import anorm._
 import anorm.SqlParser._
+import com.thebuzzmedia.exiftool._
+import com.thebuzzmedia.exiftool.ExifTool._
 import java.io.File
 import java.sql.Timestamp
 import play.api.db._
@@ -41,6 +43,16 @@ case class Attachment(
 {
 
   lazy val uploader = User.findById(uploaderId).get
+
+  lazy val geotags: Option[Geotag] = Geotag.findById(id)
+
+  lazy val coords: Option[(String, String)] = {
+    for {
+      g <- geotags
+      lat <- g.latitude
+      lng <- g.longitude
+    } yield (lat, lng)
+  }
 
   override def insertJson = Attachment.insertJson(this, uploader)
 
@@ -256,7 +268,18 @@ case class Bucket(key: String){
                     .create().map { a =>
 
                   moveFile(f.file, a.file)
-                  if(requirement.isImage) moveFile(f.thumb, a.thumb)
+                  if(requirement.isImage) {
+                    moveFile(f.thumb, a.thumb)
+                    val exifTool = new ExifTool()
+                    val coords = exifTool.getImageMeta(a.file, Tag.GPS_LATITUDE, Tag.GPS_LONGITUDE);
+                    if (coords.containsKey(Tag.GPS_LATITUDE) && coords.containsKey(Tag.GPS_LONGITUDE)) {
+                      Geotag(
+                        id = a.id, 
+                        latitude = Some(coords.get(Tag.GPS_LATITUDE)), 
+                        longitude = Some(coords.get(Tag.GPS_LONGITUDE))
+                      ).create()
+                    }
+                  } 
 
                   Event.attachment(a)(req, req.author).create().getOrElse(Rest.serverError())
 
