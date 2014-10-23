@@ -9,13 +9,68 @@ import play.api.Play.current
 import recon.support._
 
 object Geotag extends GeotagGen {
+
+  // use java.math.BigDecimal taken from scala.math.BigDecimal for benefit of SqlParser
+
+  override def insert(o: Geotag): Option[Geotag] = DB.withConnection { implicit c =>
+    o.id match {
+      case NotAssigned => {
+        val id = SQL("""
+          insert into geotags (
+            geotag_id,
+            geotag_latitude,
+            geotag_longitude
+          ) VALUES (
+            DEFAULT,
+            {latitude},
+            {longitude}
+          )
+        """).on(
+          'id -> o.id,
+          'latitude -> o.latitude.map(_.bigDecimal),
+          'longitude -> o.longitude.map(_.bigDecimal)
+        ).executeInsert()
+        id.map(i => o.copy(id=Id(i.toInt)))
+      }
+      case Id(n) => {
+        SQL("""
+          insert into geotags (
+            geotag_id,
+            geotag_latitude,
+            geotag_longitude
+          ) VALUES (
+            {id},
+            {latitude},
+            {longitude}
+          )
+        """).on(
+          'id -> o.id,
+          'latitude -> o.latitude.map(_.bigDecimal),
+          'longitude -> o.longitude.map(_.bigDecimal)
+        ).executeInsert().flatMap(x => Some(o))
+      }
+    }
+  }
+
+  override def update(o: Geotag): Boolean = DB.withConnection { implicit c =>
+    SQL("""
+      update geotags set
+        geotag_latitude={latitude},
+        geotag_longitude={longitude}
+      where geotag_id={id}
+    """).on(
+      'id -> o.id,
+      'latitude -> o.latitude.map(_.bigDecimal),
+      'longitude -> o.longitude.map(_.bigDecimal)
+    ).executeUpdate() > 0
+  }
 }
 
 // GENERATED case class start
 case class Geotag(
   id: Pk[Int] = NA,
-  latitude: Option[String] = None,
-  longitude: Option[String] = None
+  latitude: Option[BigDecimal] = None,
+  longitude: Option[BigDecimal] = None
 ) extends GeotagCCGen with Entity[Geotag]
 // GENERATED case class end
 
@@ -23,8 +78,8 @@ case class Geotag(
 trait GeotagGen extends EntityCompanion[Geotag] {
   val simple = {
     get[Pk[Int]]("geotag_id") ~
-    get[Option[String]]("geotag_latitude") ~
-    get[Option[String]]("geotag_longitude") map {
+    get[Option[BigDecimal]]("geotag_latitude") ~
+    get[Option[BigDecimal]]("geotag_longitude") map {
       case id~latitude~longitude =>
         Geotag(id, latitude, longitude)
     }
@@ -98,8 +153,8 @@ trait GeotagGen extends EntityCompanion[Geotag] {
       where geotag_id={id}
     """).on(
       'id -> o.id,
-      'latitude -> o.latitude,
-      'longitude -> o.longitude
+      'latitude -> o.latitude.map(_.bigDecimal),
+      'longitude -> o.longitude.map(_.bigDecimal)
     ).executeUpdate() > 0
   }
 

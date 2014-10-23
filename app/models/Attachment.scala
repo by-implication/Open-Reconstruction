@@ -46,7 +46,7 @@ case class Attachment(
 
   lazy val geotags: Option[Geotag] = Geotag.findById(id)
 
-  lazy val coords: Option[(String, String)] = {
+  lazy val coords: Option[(BigDecimal, BigDecimal)] = {
     for {
       g <- geotags
       lat <- g.latitude
@@ -275,8 +275,8 @@ case class Bucket(key: String){
                     if (coords.containsKey(Tag.GPS_LATITUDE) && coords.containsKey(Tag.GPS_LONGITUDE)) {
                       Geotag(
                         id = a.id, 
-                        latitude = Some(coords.get(Tag.GPS_LATITUDE)), 
-                        longitude = Some(coords.get(Tag.GPS_LONGITUDE))
+                        latitude = Some(BigDecimal(coords.get(Tag.GPS_LATITUDE))), 
+                        longitude = Some(BigDecimal(coords.get(Tag.GPS_LONGITUDE)))
                       ).create()
                     }
                   } 
