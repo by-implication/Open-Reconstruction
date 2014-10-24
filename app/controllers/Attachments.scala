@@ -5,7 +5,7 @@ import com.thebuzzmedia.exiftool.ExifTool._
 import java.io.File
 import play.api._
 import play.api.libs.Files.TemporaryFile
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, JsNull}
 import play.api.mvc._
 import recon.models._
 import recon.support._
@@ -42,11 +42,18 @@ object Attachments extends Controller with Secured {
       Requirement.findById(requirementId).map { requirement =>
       val bucket = Bucket(key)
         if(bucket.add(requirement, upload)){
-          if (requirement.isImage || requirement.name == "Photograph(s)") {
-            val photo = bucket.getFile(requirement, upload.filename).file
-            val exifTool = new ExifTool()
-            val coords = exifTool.getImageMeta(photo, Tag.GPS_LATITUDE, Tag.GPS_LONGITUDE);
-            play.Logger.info("Coordinates: " + coords)
+          val meta = {
+            if (requirement.isImage || requirement.name == "Photograph(s)") {
+              val photo = bucket.getFile(requirement, upload.filename).file
+              val exifTool = new ExifTool()
+              val coords = exifTool.getImageMeta(photo, Tag.GPS_LATITUDE, Tag.GPS_LONGITUDE);
+              if(coords.containsKey(Tag.GPS_LATITUDE) && coords.containsKey(Tag.GPS_LONGITUDE)) {
+                Json.obj(
+                  "lat" -> coords.get(Tag.GPS_LATITUDE),
+                  "lng" -> coords.get(Tag.GPS_LONGITUDE)
+                )
+              } else JsNull
+            } else JsNull
           }
           Rest.success(
             "key" -> key,
@@ -56,7 +63,8 @@ object Attachments extends Controller with Secured {
             "uploader" -> Json.obj(
               "id" -> user.id,
               "name" -> user.name
-            )
+            ),
+            "metadata" -> meta
           )
         } else {
           Rest.serverError()
