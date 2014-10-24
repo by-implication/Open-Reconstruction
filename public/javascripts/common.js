@@ -626,12 +626,12 @@ common.processReqts = function(reqts){
   return _reqts;
 }
 
-common.attachmentFor = function(reqt, atts){
-  for(var i in atts){
-    if(atts[i].requirementId == reqt.id){
-      return atts[i];
-    }
-  }
+// Returns an array of attachments for a certain requirement.
+
+common.attachmentsFor = function(reqt, atts){
+  return _.filter(atts, function(att){
+    return reqt.id == att.requirementId;
+  })
 }
 
 common.collapsibleFilter = {}

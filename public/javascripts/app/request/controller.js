@@ -455,6 +455,6 @@ request.controller = function(){
     });
   }
 
-  this.attachmentFor = common.attachmentFor;
+  this.attachmentsFor = common.attachmentsFor;
 
 }

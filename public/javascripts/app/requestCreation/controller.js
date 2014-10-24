@@ -39,7 +39,7 @@ requestCreation.controller = function(){
 
   this.attModal = new common.modal.controller({
     requirements: m.prop([]),
-    getFor: common.attachmentFor,
+    getFor: common.attachmentsFor,
     activeEntry: ctrl.activeEntry,
     initDropzone: function(entry, reqt){
       return function(elem, isInit){

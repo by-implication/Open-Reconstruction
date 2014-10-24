@@ -371,39 +371,52 @@ request.view = function(ctrl){
                             m("ul.large-block-grid-3.medium-block-grid-2", [reqts
                                 .filter(function (reqt){ return _.contains(ctrl.required(), reqt.id); })
                                 .map(function (reqt){
-                              var att = ctrl.attachmentFor(reqt, ctrl.attachments());
-                              var uploadDate = att && new Date(att.dateUploaded);
+                              var atts = ctrl.attachmentsFor(reqt, ctrl.attachments());
                               var canUpload = ctrl.curUserCanUpload();
                               return m("li.document", [
                                 m("h4", [
                                   reqt.name
-                                ]),
-                                att ? m(
-                                  ".file", [
-                                    m(".info", [
-                                      m("a", {href: routes.controllers.Attachments.download(att.id).url}, att.filename),
-                                      " uploaded ",
-                                      m("span", {title: uploadDate}, helper.timeago(uploadDate)),
-                                      " by ",
-                                      m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
-                                    ]),
-                                    m("ul.button-group.round", [
-                                      m("li", [
-                                        m("a.button.tiny", {href: routes.controllers.Attachments.preview(att.id).url, title: "preview"}, [
-                                          m("i.fa.fa-fw.fa-lg.fa-eye")
+                                ]), 
+                                atts.length ? m(
+                                  "ul", ( function(){
+                                    var attachments = _.map(atts, function(att){
+                                      var uploadDate = atts.length && new Date(att.dateUploaded);
+                                      return m(
+                                        "li.file", [
+                                        m(".info", [
+                                          m("a", {href: routes.controllers.Attachments.download(att.id).url}, att.filename),
+                                          " uploaded ",
+                                          m("span", {title: uploadDate}, helper.timeago(uploadDate)),
+                                          " by ",
+                                          m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
                                         ]),
-                                      ]),
-                                      canUpload ?
-                                        m("li", [
-                                          m("a.button.tiny", {onclick: function(){ ctrl.archive(att); }, title: "archive"}, [
-                                            m("i.fa.fa-fw.fa-lg.fa-archive")
-                                          ])
-                                        ])
-                                      : ""
-                                    ]),
+                                        m("ul.button-group.round", [
+                                          m("li", [
+                                            m("a.button.tiny", {href: routes.controllers.Attachments.preview(att.id).url, title: "preview"}, [
+                                              m("i.fa.fa-fw.fa-lg.fa-eye")
+                                            ]),
+                                          ]),
+                                          canUpload ?
+                                            m("li", [
+                                              m("a.button.tiny", {onclick: function(){ ctrl.archive(att); }, title: "archive"}, [
+                                                m("i.fa.fa-fw.fa-lg.fa-archive")
+                                              ])
+                                            ])
+                                          : ""
+                                        ]),
+                                      ])
+                                    })
 
-
-                                  ]
+                                    if(canUpload && reqt.name == "Photograph(s)") {
+                                      attachments.push(m(".dropzone", {config: ctrl.initAttachmentDropzone(reqt)}, [
+                                        m(".dz-message", "Drop documents here or click to browse")
+                                      ]))
+                                    } else {
+                                      attachments.push("No documents have been uploaded yet.")
+                                    }
+                                    console.log(attachments);
+                                    return attachments;
+                                  }())
                                 ) : (
                                   canUpload ?
                                   m(".dropzone", {config: ctrl.initAttachmentDropzone(reqt)}, [
