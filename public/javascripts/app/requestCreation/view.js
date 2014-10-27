@@ -33,6 +33,11 @@ requestCreation.view = function(ctrl){
               "Tell us where the project is. Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map."
             ]),
             m("div", {id: "map", config: modCtrl.initMap}),
+            m("div.dropzone", {config: ctrl.attModal.initDropzone(ctrl.activeEntry(), ctrl.attModal.requirements()[0][0])}, [
+              m(".dz-message", [
+                "Drop documents here or click to browse"
+              ]),
+            ])
           ])
         },
         "medium-8"
