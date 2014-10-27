@@ -59,6 +59,12 @@ requestCreation.controller = function(){
           dz.on("success", function (_, r){
             entry.attachments().push(r);
             m.redraw();
+            if(r.metadata) {
+              if(confirm('Set coordinates to photo exif data?')) {
+                var strCoords = r.metadata.lat+","+r.metadata.lng;
+                ctrl.activeEntry().location(strCoords);
+              }
+            }
           }.bind(this));
 
         }
