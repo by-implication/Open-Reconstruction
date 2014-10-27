@@ -56,7 +56,7 @@ requestCreation.view = function(ctrl){
               return m("div", {class: level == 0 ? "current" : ""},
                 [
                   m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
-                    var att = ctrl.getFor(reqt, ctrl.activeEntry().attachments());
+                    var att = ctrl.getFor(reqt, ctrl.activeEntry().attachments())[0];
                     var uploadDate = att && new Date(att.dateUploaded);
                     return m("li.document", [
                       m("h4", [
