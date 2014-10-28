@@ -381,7 +381,7 @@ request.view = function(ctrl){
                                   "ul", ( function(){
                                     var attachments = _.map(atts, function(att){
                                       var uploadDate = atts.length && new Date(att.dateUploaded);
-                                      var thumb = (att) ? m("img", {src: routes.controllers.Attachments.thumb(att.id).url, height: 128, width: 128}) : "";
+                                      var thumb = (att && reqt.isImage) ? m("img", {src: routes.controllers.Attachments.thumb(att.id).url, height: 128, width: 128}) : "";
                                       return m(
                                         "li.file", [
                                         thumb,
