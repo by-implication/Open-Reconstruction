@@ -53,8 +53,16 @@ requestCreation.view = function(ctrl){
               ]),
             ]),
             m("div", 
-              ctrl.attModal.getFor(photoReqt, ctrl.activeEntry().attachments()).map(function (att) {
-                var thumb = att ? m("img", {src: routes.controllers.Attachments.bucketThumb(att.key, photoReqt.id, att.filename).url, height: 128, width: 128}) : "";
+              ctrl.activeEntry().locations().map(function (loc) {
+                var thumb = m("img", {
+                    src: routes.controllers.Attachments.bucketThumb(loc.key, loc.requirementId, loc.filename).url, 
+                    height: 128, 
+                    width: 128,
+                    onclick: function(){
+                      ctrl.activeEntry().location(loc.lat + "," + loc.lng)
+                    }
+                  }
+                )
                 return thumb;
               })
             ),

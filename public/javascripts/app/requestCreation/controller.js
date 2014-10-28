@@ -61,10 +61,13 @@ requestCreation.controller = function(){
             entry.attachments().push(r);
             m.redraw();
             if(r.metadata) {
-              if(confirm('Set coordinates to photo exif data?')) {
-                var strCoords = r.metadata.lat+","+r.metadata.lng;
-                ctrl.activeEntry().location(strCoords);
-              }
+              entry.locations().push({
+                key: r.key,
+                requirementId: r.requirementId,
+                filename: r.filename,
+                lat: r.metadata.lat, 
+                lng: r.metadata.lng
+              });
             }
           }.bind(this));
 
@@ -84,6 +87,7 @@ requestCreation.controller = function(){
         amount: m.prop(0),
         projectTypeId: m.prop(1),
         location: m.prop(""),
+        locations: m.prop([]),
         attachments: m.prop([]),
         bucketKey: bucketKey,
         remove: function(){ 
