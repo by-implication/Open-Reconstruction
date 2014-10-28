@@ -381,8 +381,10 @@ request.view = function(ctrl){
                                   "ul", ( function(){
                                     var attachments = _.map(atts, function(att){
                                       var uploadDate = atts.length && new Date(att.dateUploaded);
+                                      var thumb = (att) ? m("img", {src: routes.controllers.Attachments.thumb(att.id).url, height: 128, width: 128}) : "";
                                       return m(
                                         "li.file", [
+                                        thumb,
                                         m(".info", [
                                           m("a", {href: routes.controllers.Attachments.download(att.id).url}, att.filename),
                                           " uploaded ",
@@ -414,7 +416,6 @@ request.view = function(ctrl){
                                     } else {
                                       attachments.push("No documents have been uploaded yet.")
                                     }
-                                    console.log(attachments);
                                     return attachments;
                                   }())
                                 ) : (

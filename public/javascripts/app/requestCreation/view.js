@@ -21,6 +21,8 @@ requestCreation.view = function(ctrl){
     ctrl.govUnit({ id: govUnit.id, text: govUnit.name });
   }
 
+  var photoReqt = ctrl.requirements()[0][0];
+
   return app.template(ctrl.app, "New Request", {className: "detail"},[
       common.modal.view(
         ctrl.locModal,
@@ -45,11 +47,17 @@ requestCreation.view = function(ctrl){
             m("p.help", [
               "If the photo was taken with a smartphone that has GPS, we can take the location from the photo."
             ]),
-            m("div.dropzone", {config: ctrl.attModal.initDropzone(ctrl.activeEntry(), ctrl.requirements()[0][0])}, [
+            m("div.dropzone", {config: ctrl.attModal.initDropzone(ctrl.activeEntry(), photoReqt)}, [
               m(".dz-message", [
                 "Drop documents here or click to browse"
               ]),
-            ])
+            ]),
+            m("div", 
+              ctrl.attModal.getFor(photoReqt, ctrl.activeEntry().attachments()).map(function (att) {
+                var thumb = att ? m("img", {src: routes.controllers.Attachments.bucketThumb(att.key, photoReqt.id, att.filename).url, height: 128, width: 128}) : "";
+                return thumb;
+              })
+            ),
           ])
         },
         "medium-8"
@@ -75,12 +83,14 @@ requestCreation.view = function(ctrl){
                   m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
                     var att = attCtrl.getFor(reqt, attCtrl.activeEntry().attachments())[0];
                     var uploadDate = att && new Date(att.dateUploaded);
+                    var thumb = (att && reqt.isImage) ? m("img", {src: routes.controllers.Attachments.bucketThumb(att.key, reqt.id, att.filename).url, height: 128, width: 128}) : "";
                     return m("li.document", [
                       m("h4", [
                         reqt.name
                       ]),
                       att ? m(
                         "div", [
+                          thumb,
                           m("a", {href: routes.controllers.Attachments.bucketDownload(att.key, reqt.id, att.filename).url}, att.filename),
                           " uploaded ",
                           m("span", {title: uploadDate}, helper.timeago(uploadDate)),
