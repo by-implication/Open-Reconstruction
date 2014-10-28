@@ -615,6 +615,9 @@ common.dateField = function(label, timestampProp, htmlProp){
   );
 }
 
+// Add requirements to their respective levels.
+// Returns an array of levels containing an array of requirements for that level.
+
 common.processReqts = function(reqts){
   var _reqts = [];
   reqts.forEach(function (r){

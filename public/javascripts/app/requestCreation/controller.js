@@ -12,6 +12,7 @@ requestCreation.controller = function(){
   this.govUnit = m.prop();
   this.requirementLevel = m.prop("Submission");
   this.activeEntry = m.prop();
+  this.requirements = m.prop();
 
   this.locModal = new common.modal.controller({
     initMap: function(elem, isInit){
@@ -113,7 +114,7 @@ requestCreation.controller = function(){
 
   bi.ajax(routes.controllers.Requests.createMeta()).then(function (data){
     ctrl.info(data);
-    ctrl.attModal.requirements(common.processReqts(data.requirements));
+    ctrl.requirements(common.processReqts(data.requirements));
     ctrl.newEntry(data.bucketKey);
   });
 

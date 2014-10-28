@@ -33,7 +33,7 @@ requestCreation.view = function(ctrl){
               "Tell us where the project is. Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map."
             ]),
             m("div", {id: "map", config: modCtrl.initMap}),
-            m("div.dropzone", {config: ctrl.attModal.initDropzone(ctrl.activeEntry(), ctrl.attModal.requirements()[0][0])}, [
+            m("div.dropzone", {config: ctrl.attModal.initDropzone(ctrl.activeEntry(), ctrl.requirements()[0][0])}, [
               m(".dz-message", [
                 "Drop documents here or click to browse"
               ]),
@@ -44,10 +44,10 @@ requestCreation.view = function(ctrl){
       ),
       common.modal.view(
         ctrl.attModal,
-        function (ctrl){
+        function (attCtrl){
           return m(".section", [
             m("h2", [
-              "Attachments for " + ctrl.activeEntry().description()
+              "Attachments for " + attCtrl.activeEntry().description()
             ]),
             m("p.help", [
               "While these attachments are necessary for your request to progress, you may submit your request with incomplete attachments, and upload them at a later time."
@@ -61,7 +61,7 @@ requestCreation.view = function(ctrl){
               return m("div", {class: level == 0 ? "current" : ""},
                 [
                   m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
-                    var att = ctrl.getFor(reqt, ctrl.activeEntry().attachments())[0];
+                    var att = attCtrl.getFor(reqt, attCtrl.activeEntry().attachments())[0];
                     var uploadDate = att && new Date(att.dateUploaded);
                     return m("li.document", [
                       m("h4", [
@@ -76,7 +76,7 @@ requestCreation.view = function(ctrl){
                           m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
                           m("a", {href: routes.controllers.Attachments.bucketPreview(att.key, reqt.id, att.filename).url}, "[PREVIEW]")
                         ]
-                      ) : m("div.dropzone", {config: ctrl.initDropzone(ctrl.activeEntry(), reqt)}, [
+                      ) : m("div.dropzone", {config: attCtrl.initDropzone(attCtrl.activeEntry(), reqt)}, [
                         m(".dz-message", [
                           "Drop documents here or click to browse"
                         ]),
