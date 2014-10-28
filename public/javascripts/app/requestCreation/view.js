@@ -30,9 +30,21 @@ requestCreation.view = function(ctrl){
               "Location for " + ctrl.activeEntry().description()
             ]),
             m("p.help", [
-              "Tell us where the project is. Use the pin icon on the left side of the map (below the zoom controls) to place a pin on the map."
+              "Tell us where the project is.You can either:"
+            ]),
+            m("h2", [
+              "Pin the location on a map."
+            ]),
+            m("p.help", [
+              "Use the button below the zoom controls to drop a pin on the location of the project."
             ]),
             m("div", {id: "map", config: modCtrl.initMap}),
+            m("h2", [
+              "Use the location of a photo."
+            ]),
+            m("p.help", [
+              "If the photo was taken with a smartphone that has GPS, we can take the location from the photo."
+            ]),
             m("div.dropzone", {config: ctrl.attModal.initDropzone(ctrl.activeEntry(), ctrl.requirements()[0][0])}, [
               m(".dz-message", [
                 "Drop documents here or click to browse"
