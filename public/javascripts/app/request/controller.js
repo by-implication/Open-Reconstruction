@@ -137,6 +137,7 @@ request.controller = function(){
   });
 
   this.attachments = m.prop([]);
+  this.attachmentLocations = m.prop([]);
 
   this.history = m.prop([]);
   this.location = m.prop("");
@@ -355,6 +356,16 @@ request.controller = function(){
       this.coords(latlng);
     }
 
+    data.attachments.map(function(att) {
+      var meta = att.metadata
+      if(meta && meta.lat && meta.lng) {
+        this.attachmentLocations().push({
+          id: att.id,
+          coords: new L.LatLng(meta.lat, meta.lng)
+        })
+      }
+    }.bind(this))
+
   }.bind(this));
 
   var signoffActions = function(r){
@@ -396,6 +407,10 @@ request.controller = function(){
         if(ctrl.coords()){
           map.setView(ctrl.coords(), 8);
           common.leaflet.addMarker(ctrl.coords());
+          ctrl.attachmentLocations().map(function(loc){
+            common.leaflet.addMarker(loc.coords, true);
+            common.leaflet.addPopup(loc.coords, '<img src=\"' + routes.controllers.Attachments.thumb(loc.id).url + '\" height="128" width="128"/>');
+          })
           if(!ctrl.hasCoords){
             setTimeout(function(){
               common.leaflet.addPopup(ctrl.coords(), "No location defined but<br/>the requesting LGU is here.")

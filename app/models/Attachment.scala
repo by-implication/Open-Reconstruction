@@ -17,16 +17,31 @@ import scala.concurrent.duration._
 
 object Attachment extends AttachmentGen {
 
-  def insertJson(attachment: Attachment, uploader: User) = Json.obj(
-    "id" -> attachment.id,
-    "filename" -> attachment.filename,
-    "dateUploaded" -> attachment.dateUploaded,
-    "requirementId" -> attachment.requirementId,
-    "uploader" -> Json.obj(
-      "id" -> uploader.id,
-      "name" -> uploader.name
+  def insertJson(attachment: Attachment, uploader: User) = {
+
+    val meta = attachment.coords match {
+      case Some((lat, lng)) => {
+        Json.obj(
+          "lat" -> lat,
+          "lng" -> lng
+        )
+      } 
+      case _ => JsNull
+    }
+
+    Json.obj(
+      "id" -> attachment.id,
+      "filename" -> attachment.filename,
+      "dateUploaded" -> attachment.dateUploaded,
+      "requirementId" -> attachment.requirementId,
+      "uploader" -> Json.obj(
+        "id" -> uploader.id,
+        "name" -> uploader.name
+      ),
+      "metadata" -> meta
     )
-  )
+  } 
+
 
 }
 
