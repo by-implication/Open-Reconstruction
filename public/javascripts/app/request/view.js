@@ -381,7 +381,24 @@ request.view = function(ctrl){
                                   "ul", ( function(){
                                     var attachments = _.map(atts, function(att){
                                       var uploadDate = atts.length && new Date(att.dateUploaded);
-                                      var thumb = (att && reqt.isImage) ? m("img", {src: routes.controllers.Attachments.thumb(att.id).url, height: 128, width: 128}) : "";
+
+                                      if (att && reqt.isImage) {
+                                        var thumb = m("img", {src: routes.controllers.Attachments.thumb(att.id).url, height: 128, width: 128});
+                                        var meta = att.metadata;
+                                        var mapLink = (meta && meta.lat && meta.lng) ? m("li", [
+                                          m("a.button.tiny", {
+                                            href: "https://www.google.com.ph/maps/place/"+meta.lat+","+meta.lng, 
+                                            title: "open map",
+                                            target: "blank"
+                                          }, [
+                                            m("i.fa.fa-fw.fa-lg.fa-map-marker")
+                                          ]),
+                                        ]) : "";
+                                      } else {
+                                        var thumb = "";
+                                        var mapLink = "";
+                                      }
+
                                       return m(
                                         "li.file", [
                                         thumb,
@@ -398,6 +415,7 @@ request.view = function(ctrl){
                                               m("i.fa.fa-fw.fa-lg.fa-eye")
                                             ]),
                                           ]),
+                                          mapLink,
                                           canUpload ?
                                             m("li", [
                                               m("a.button.tiny", {onclick: function(){ ctrl.archive(att); }, title: "archive"}, [
