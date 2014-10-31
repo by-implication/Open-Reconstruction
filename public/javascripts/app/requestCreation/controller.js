@@ -71,7 +71,6 @@ requestCreation.controller = function(){
 
           dz.on("success", function (_, r){
             entry.attachments().push(r);
-            m.redraw();
             if(r.metadata) {
               entry.locations().push({
                 key: r.key,
@@ -81,6 +80,7 @@ requestCreation.controller = function(){
                 lng: r.metadata.lng
               });
             }
+            m.redraw();
           }.bind(this));
 
         }
