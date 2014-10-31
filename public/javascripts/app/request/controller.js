@@ -408,8 +408,11 @@ request.controller = function(){
           map.setView(ctrl.coords(), 8);
           common.leaflet.addMarker(ctrl.coords());
           ctrl.attachmentLocations().map(function(loc){
-            common.leaflet.addMarker(loc.coords, true);
-            common.leaflet.addPopup(loc.coords, '<img src=\"' + routes.controllers.Attachments.thumb(loc.id).url + '\" height="128" width="128"/>');
+            common.leaflet
+              .addMarker(loc.coords, true) // add marker
+              .on("click", function(){ // chainable since addMarker returns marker
+                common.leaflet.addPopup(loc.coords, '<img src=\"' + routes.controllers.Attachments.thumb(loc.id).url + '\" height="128" width="128"/>');
+              });
           })
           if(!ctrl.hasCoords){
             setTimeout(function(){

@@ -540,8 +540,10 @@ common.leaflet = {
   },
 
   addMarker: function(coords, noClear){
-    if(!noClear) this.clearMarkers()
-    this.markers.push(L.marker(coords).addTo(this._map));
+    if(!noClear) this.clearMarkers();
+    var marker = L.marker(coords);
+    this.markers.push(marker.addTo(this._map));
+    return marker;
   },
 
   clearMarkers: function(){
@@ -551,16 +553,18 @@ common.leaflet = {
   },
 
   addPopup: function(coords, content){
+    var popup = L.popup()
+      .setLatLng(coords)
+      .setContent(content);
     if(this._map){
-      L.popup()
-        .setLatLng(coords)
-        .setContent(content)
-        .openOn(this._map);
+      popup.openOn(this._map);
     } else {
       setTimeout(function(){
+        // keep trying;
         this.addPopup(coords, content);
       }.bind(this), 100);
     }
+    return popup;
   },
 
   addDrawControls: function(callback){
