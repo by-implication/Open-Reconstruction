@@ -38,40 +38,43 @@ requestCreation.view = function(ctrl){
             ]),
             m("hr"),
             m(".section", [
-              m("h3", [
-                "Pin the location on a map."
-              ]),
-              m("p.help", [
-                "Use the button below the zoom controls to drop a pin on the location of the project."
-              ]),
-              m("div", {id: "map", config: modCtrl.initMap})
-            ]),
-            m("hr"),
-            m(".section", [
-              m("h3", [
-                "Use the location of a photo."
-              ]),
-              m("p.help", [
-                "If the photo was taken with a smartphone that has GPS, we can take the location from the photo."
-              ]),
-              m("div.dropzone", {config: ctrl.attModal.initDropzone(ctrl.activeEntry(), photoReqt)}, [
-                m(".dz-message", [
-                  "Drop documents here or click to browse"
+              m(".row", [
+                m(".columns.large-8", [
+                  m("h4", [
+                    "Using the map"
+                  ]),
+                  m("p.help", [
+                    "Use the button below the zoom controls to drop a pin on the location of the project."
+                  ]),
+                  m("div", {id: "map", config: modCtrl.initMap})
+                ]),
+                m(".columns.large-4", [
+                  m("h4", [
+                    "Using a photo"
+                  ]),
+                  m("p.help", [
+                    "If the photo was taken with a smartphone that has GPS, we can take the location from the photo."
+                  ]),
+                  m("div.dropzone", {config: ctrl.attModal.initDropzone(ctrl.activeEntry(), photoReqt)}, [
+                    m(".dz-message", [
+                      "Drop documents here or click to browse"
+                    ]),
+                  ]),
+                  m("div", 
+                    ctrl.activeEntry().locations().map(function (loc) {
+                      var thumb = m("img", {
+                          src: routes.controllers.Attachments.bucketThumb(loc.key, loc.requirementId, loc.filename).url, 
+                          height: 128, 
+                          width: 128,
+                          onclick: modCtrl.setLocation(loc)
+                        }
+                      )
+                      return thumb;
+                    })
+                  ),
                 ]),
               ]),
-              m("div", 
-                ctrl.activeEntry().locations().map(function (loc) {
-                  var thumb = m("img", {
-                      src: routes.controllers.Attachments.bucketThumb(loc.key, loc.requirementId, loc.filename).url, 
-                      height: 128, 
-                      width: 128,
-                      onclick: modCtrl.setLocation(loc)
-                    }
-                  )
-                  return thumb;
-                })
-              ),
-            ])
+            ]),
           ]
         },
         "medium-8"
