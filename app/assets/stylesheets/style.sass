@@ -2,7 +2,6 @@
 @import colors/colors
 @import bourbon/bourbon
 @import neat/neat
-
 @import variables
 $desktopWidth: 1024px
 
@@ -408,7 +407,8 @@ label
   color: $gray
 
 button.micro, .button.micro
-  @extend .tiny
+  // @extend .tiny
+  +button-size($padding:$button-tny)
   padding: 5px 8px
 
 .display-edit-group
@@ -1181,6 +1181,8 @@ thead
         display: block
 
 .document
+  // img
+  //   display: block
   .file
     .info
       margin-bottom: 10px
