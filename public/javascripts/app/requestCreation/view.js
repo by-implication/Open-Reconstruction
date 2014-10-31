@@ -29,7 +29,7 @@ requestCreation.view = function(ctrl){
         function (modCtrl){
           return m(".section", [
             m("h2", [
-              "Location for " + ctrl.activeEntry().description()
+              "Location for " + (ctrl.activeEntry().description() ? ctrl.activeEntry().description() : "Project")
             ]),
             m("p.help", [
               "Tell us where the project is.You can either:"

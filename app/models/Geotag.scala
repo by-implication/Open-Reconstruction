@@ -153,8 +153,8 @@ trait GeotagGen extends EntityCompanion[Geotag] {
       where geotag_id={id}
     """).on(
       'id -> o.id,
-      'latitude -> o.latitude.map(_.bigDecimal),
-      'longitude -> o.longitude.map(_.bigDecimal)
+      'latitude -> o.latitude,
+      'longitude -> o.longitude
     ).executeUpdate() > 0
   }
 
