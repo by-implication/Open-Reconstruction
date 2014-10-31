@@ -65,9 +65,7 @@ requestCreation.view = function(ctrl){
                       src: routes.controllers.Attachments.bucketThumb(loc.key, loc.requirementId, loc.filename).url, 
                       height: 128, 
                       width: 128,
-                      onclick: function(){
-                        ctrl.activeEntry().location(loc.lat + "," + loc.lng)
-                      }
+                      onclick: modCtrl.setLocation(loc)
                     }
                   )
                   return thumb;

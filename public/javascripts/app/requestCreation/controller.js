@@ -29,11 +29,23 @@ requestCreation.controller = function(){
 
             layer.bindPopup("<h5>Location Saved!</h5>Your coordinates are<br/>" + strCoords);
             editableLayers.clearLayers();
+            common.leaflet.clearMarkers();
             editableLayers.addLayer(layer);
             editableLayers.openPopup();
 
           });
         }, 100);
+      }
+    },
+    setLocation: function(loc){
+      return function(){
+        var editableLayers = common.leaflet.layers['drawLayers'];
+        var strCoords = loc.lat + "," + loc.lng;
+        ctrl.activeEntry().location(strCoords);
+        var coords = new L.LatLng(loc.lat, loc.lng);
+        editableLayers.clearLayers();
+        common.leaflet.addMarker(coords, false);
+        common.leaflet.addPopup(coords, "<h5>Location Saved!</h5>Your coordinates are<br/>" + strCoords);
       }
     }
   });
@@ -59,7 +71,6 @@ requestCreation.controller = function(){
 
           dz.on("success", function (_, r){
             entry.attachments().push(r);
-            m.redraw();
             if(r.metadata) {
               entry.locations().push({
                 key: r.key,
@@ -69,6 +80,7 @@ requestCreation.controller = function(){
                 lng: r.metadata.lng
               });
             }
+            m.redraw();
           }.bind(this));
 
         }

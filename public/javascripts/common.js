@@ -526,6 +526,7 @@ common.leaflet = {
 
   _map: null,
   markers: [],
+  layers: {},
 
   map: function(elem){
 
@@ -566,6 +567,7 @@ common.leaflet = {
 
     var editableLayers = new L.FeatureGroup();
     this._map.addLayer(editableLayers);
+    this.layers['drawLayers'] = editableLayers;
 
     // Initialise the draw control and pass it the FeatureGroup of editable layers
     var drawControl = new L.Control.Draw({
