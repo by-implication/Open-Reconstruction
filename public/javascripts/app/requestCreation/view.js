@@ -55,7 +55,7 @@ requestCreation.view = function(ctrl){
                   m("p.help", [
                     "If the photo was taken with a smartphone that has GPS, we can take the location from the photo."
                   ]),
-                  m("div.dropzone", {config: ctrl.attModal.initDropzone(ctrl.activeEntry(), photoReqt)}, [
+                  m("div.dropzone", {config: ctrl.initDropzone(ctrl.activeEntry(), photoReqt)}, [
                     m(".dz-message", [
                       "Drop documents here or click to browse"
                     ]),
@@ -80,16 +80,16 @@ requestCreation.view = function(ctrl){
         "medium-8"
       ),
       common.modal.view(
-        ctrl.attModal,
-        function (attCtrl){
+        ctrl.docModal,
+        function (docCtrl){
           return m(".section", [
             m("h2", [
-              "Attachments for " + attCtrl.activeEntry().description()
+              "Attachments for " + ctrl.activeEntry().description()
             ]),
             m("p.help", [
               "While these attachments are necessary for your request to progress, you may submit your request with incomplete attachments, and upload them at a later time."
             ]),
-            m("div", ctrl.requirements().map(function (reqts, level){
+            m("div", docCtrl.items().map(function (reqts, level){
               var levelDict = [
                 "Submission",
                 "Agency Validation",
@@ -98,7 +98,7 @@ requestCreation.view = function(ctrl){
               return m("div", {class: level == 0 ? "current" : ""},
                 [
                   m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
-                    var att = attCtrl.getFor(reqt, attCtrl.activeEntry().attachments())[0];
+                    var att = docCtrl.getFor(reqt, ctrl.activeEntry().attachments())[0];
                     var uploadDate = att && new Date(att.dateUploaded);
                     var thumb = (att && reqt.isImage) ? m("img", {src: routes.controllers.Attachments.bucketThumb(att.key, reqt.id, att.filename).url, height: 128, width: 128}) : "";
                     return m("li.document", [
@@ -115,7 +115,7 @@ requestCreation.view = function(ctrl){
                           m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
                           m("a", {href: routes.controllers.Attachments.bucketPreview(att.key, reqt.id, att.filename).url}, "[PREVIEW]")
                         ]
-                      ) : m("div.dropzone", {config: attCtrl.initDropzone(attCtrl.activeEntry(), reqt)}, [
+                      ) : m("div.dropzone", {config: ctrl.initDropzone(ctrl.activeEntry(), reqt)}, [
                         m(".dz-message", [
                           "Drop documents here or click to browse"
                         ]),
@@ -249,6 +249,11 @@ requestCreation.view = function(ctrl){
                           ]),
                           m("li", [
                             m("button[type=button].tiny", {onclick: e.openAttachmentsModal}, "Add attachments" +
+                              (e.attachments().length ? " (" + e.attachments().length + " uploaded)" : "")
+                            )
+                          ]),
+                          m("li", [
+                            m("button[type=button].tiny", {onclick: e.openImagesModal}, "Add images" +
                               (e.attachments().length ? " (" + e.attachments().length + " uploaded)" : "")
                             )
                           ]),

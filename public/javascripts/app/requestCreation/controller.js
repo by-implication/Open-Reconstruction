@@ -50,42 +50,83 @@ requestCreation.controller = function(){
     }
   });
 
-  this.attModal = new common.modal.controller({
-    requirements: m.prop([]),
-    getFor: common.attachmentsFor,
-    activeEntry: ctrl.activeEntry,
-    initDropzone: function(entry, reqt){
-      return function(elem, isInit){
-        if(!isInit){
+  this.initDropzone = function(entry, reqt){
+    return function(elem, isInit){
+      if(!isInit){
 
-          var dz = new Dropzone(elem, {
-            url: routes.controllers.Attachments.addToBucket(entry.bucketKey, reqt.id).url,
-            previewTemplate: m.stringify(common.dropzonePreviewTemplate),
-            dictDefaultMessage: "Drop photos here, or click to browse.",
-            clickable: true,
-            autoDiscover: false,
-            thumbnailWidth: 128,
-            thumbnailHeight: 128,
-            acceptedFiles: reqt.isImage ? "image/*" : ""
-          })
+        var dz = new Dropzone(elem, {
+          url: routes.controllers.Attachments.addToBucket(entry.bucketKey, reqt.id).url,
+          previewTemplate: m.stringify(common.dropzonePreviewTemplate),
+          dictDefaultMessage: "Drop photos here, or click to browse.",
+          clickable: true,
+          autoDiscover: false,
+          thumbnailWidth: 128,
+          thumbnailHeight: 128,
+          acceptedFiles: reqt.isImage ? "image/*" : ""
+        })
 
-          dz.on("success", function (_, r){
-            entry.attachments().push(r);
-            if(r.metadata) {
-              entry.locations().push({
-                key: r.key,
-                requirementId: r.requirementId,
-                filename: r.filename,
-                lat: r.metadata.lat, 
-                lng: r.metadata.lng
-              });
-            }
-            m.redraw();
-          }.bind(this));
-
-        }
+        dz.on("success", function (_, r){
+          entry.attachments().push(r);
+          if(r.metadata) {
+            entry.locations().push({
+              key: r.key,
+              requirementId: r.requirementId,
+              filename: r.filename,
+              lat: r.metadata.lat, 
+              lng: r.metadata.lng
+            });
+          }
+          m.redraw();
+        }.bind(this));
       }
     }
+  }
+
+  var attachmentTypes = {
+    ANY: 0,
+    DOCUMENT: 1,
+    IMAGE: 2
+  };
+
+  var filterRequirements = function(type){
+    return function() {
+      var predicate = function() {
+        switch(type) {
+          case attachmentTypes.DOCUMENT:  {
+            return function(reqt) {
+              return !reqt.isImage;
+            }
+            break;
+          }
+          case attachmentTypes.IMAGE: {
+            return function(reqt) {
+              return reqt.isImage;
+            }
+            break;
+          }
+          case attachmentTypes.ANY:
+          default: {
+            return function(reqt) {
+              return true;
+            }
+          }
+        }
+      }();
+
+      return ctrl.requirements().map(function(reqts) {
+        return reqts.filter(predicate);;
+      });
+    }
+  };
+
+  this.docModal = new common.modal.controller({
+    getFor: common.attachmentsFor,
+    items: filterRequirements(attachmentTypes.DOCUMENT)
+  });
+
+  this.imgModal = new common.modal.controller({
+    getFor: common.attachmentsFor,
+    items: filterRequirements(attachmentTypes.IMAGE)
   });
 
   this.preamble = m.prop(false);
@@ -110,7 +151,7 @@ requestCreation.controller = function(){
         },
         openAttachmentsModal: function(){
           ctrl.activeEntry(entry);
-          ctrl.attModal.open();
+          ctrl.docModal.open();
         }
       }
 
