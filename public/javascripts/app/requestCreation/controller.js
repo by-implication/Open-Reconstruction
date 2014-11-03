@@ -67,13 +67,13 @@ requestCreation.controller = function(){
 
         dz.on("success", function (_, r){
           entry.attachments().push(r);
-          if(r.metadata) {
+          if(r.isImage) {
             entry.locations().push({
               key: r.key,
               requirementId: r.requirementId,
               filename: r.filename,
-              lat: r.metadata.lat, 
-              lng: r.metadata.lng
+              lat: r.metadata ? r.metadata.lat : undefined, 
+              lng: r.metadata ? r.metadata.lng : undefined
             });
           }
           m.redraw();

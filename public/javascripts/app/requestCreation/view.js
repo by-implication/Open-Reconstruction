@@ -62,14 +62,24 @@ requestCreation.view = function(ctrl){
                   ]),
                   m("div", 
                     ctrl.activeEntry().locations().map(function (loc) {
-                      var thumb = m("img", {
-                          src: routes.controllers.Attachments.bucketThumb(loc.key, loc.requirementId, loc.filename).url, 
-                          height: 128, 
-                          width: 128,
-                          onclick: modCtrl.setLocation(loc)
-                        }
-                      )
-                      return thumb;
+                      if (loc.lat && loc.lng) {
+                        return m("img", {
+                            src: routes.controllers.Attachments.bucketThumb(loc.key, loc.requirementId, loc.filename).url, 
+                            height: 128, 
+                            width: 128,
+                            onclick: modCtrl.setLocation(loc)
+                          }
+                        )
+                      } else {
+                        return m("div.no-location", [
+                          m("img", {
+                              src: routes.controllers.Attachments.bucketThumb(loc.key, loc.requirementId, loc.filename).url, 
+                              height: 128, 
+                              width: 128
+                            }
+                          )
+                        ])
+                      }
                     })
                   ),
                 ]),
