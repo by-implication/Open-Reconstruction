@@ -84,7 +84,7 @@ requestCreation.view = function(ctrl){
         function (docCtrl){
           return m(".section", [
             m("h2", [
-              "Attachments for " + ctrl.activeEntry().description()
+              ctrl.activeEntry().description() ? "Documents for " + ctrl.activeEntry().description() : "Documents"
             ]),
             m("p.help", [
               "While these attachments are necessary for your request to progress, you may submit your request with incomplete attachments, and upload them at a later time."
@@ -99,6 +99,56 @@ requestCreation.view = function(ctrl){
                 [
                   m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
                     var att = docCtrl.getFor(reqt, ctrl.activeEntry().attachments())[0];
+                    var uploadDate = att && new Date(att.dateUploaded);
+                    var thumb = (att && reqt.isImage) ? m("img", {src: routes.controllers.Attachments.bucketThumb(att.key, reqt.id, att.filename).url, height: 128, width: 128}) : "";
+                    return m("li.document", [
+                      m("h4", [
+                        reqt.name
+                      ]),
+                      att ? m(
+                        "div", [
+                          thumb,
+                          m("a", {href: routes.controllers.Attachments.bucketDownload(att.key, reqt.id, att.filename).url}, att.filename),
+                          " uploaded ",
+                          m("span", {title: uploadDate}, helper.timeago(uploadDate)),
+                          " by ",
+                          m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
+                          m("a", {href: routes.controllers.Attachments.bucketPreview(att.key, reqt.id, att.filename).url}, "[PREVIEW]")
+                        ]
+                      ) : m("div.dropzone", {config: ctrl.initDropzone(ctrl.activeEntry(), reqt)}, [
+                        m(".dz-message", [
+                          "Drop documents here or click to browse"
+                        ]),
+                      ])
+                    ]);
+                  })])
+                ]
+              );
+            })),
+          ]);
+        },
+        "medium-8"
+      ),
+      common.modal.view(
+        ctrl.imgModal,
+        function (imgCtrl){
+          return m(".section", [
+            m("h2", [
+              ctrl.activeEntry().description() ? "Images for " + ctrl.activeEntry().description() : "Images"
+            ]),
+            m("p.help", [
+              "While these attachments are necessary for your request to progress, you may submit your request with incomplete attachments, and upload them at a later time."
+            ]),
+            m("div", imgCtrl.items().map(function (reqts, level){
+              var levelDict = [
+                "Submission",
+                "Agency Validation",
+                "OCD Validation"
+              ];
+              return m("div", {class: level == 0 ? "current" : ""},
+                [
+                  m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
+                    var att = imgCtrl.getFor(reqt, ctrl.activeEntry().attachments())[0];
                     var uploadDate = att && new Date(att.dateUploaded);
                     var thumb = (att && reqt.isImage) ? m("img", {src: routes.controllers.Attachments.bucketThumb(att.key, reqt.id, att.filename).url, height: 128, width: 128}) : "";
                     return m("li.document", [
@@ -248,7 +298,7 @@ requestCreation.view = function(ctrl){
                             )
                           ]),
                           m("li", [
-                            m("button[type=button].tiny", {onclick: e.openAttachmentsModal}, "Add attachments" +
+                            m("button[type=button].tiny", {onclick: e.openDocumentsModal}, "Add documents" +
                               (e.attachments().length ? " (" + e.attachments().length + " uploaded)" : "")
                             )
                           ]),

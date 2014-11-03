@@ -149,9 +149,13 @@ requestCreation.controller = function(){
           ctrl.activeEntry(entry);
           ctrl.locModal.open();
         },
-        openAttachmentsModal: function(){
+        openDocumentsModal: function(){
           ctrl.activeEntry(entry);
           ctrl.docModal.open();
+        },
+        openImagesModal: function(){
+          ctrl.activeEntry(entry);
+          ctrl.imgModal.open();
         }
       }
 
