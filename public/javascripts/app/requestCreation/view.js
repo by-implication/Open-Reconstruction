@@ -160,9 +160,6 @@ requestCreation.view = function(ctrl){
                   var uploadDate = new Date(att.dateUploaded);
                   var thumb = reqt.isImage ? m("img", {src: routes.controllers.Attachments.bucketThumb(att.key, reqt.id, att.filename).url, height: 128, width: 128}) : "";
                   return m("li.document", [
-                    m("h4", [
-                      reqt.name
-                    ]),
                     m("element", [
                       m("div", [
                         thumb,
