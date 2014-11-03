@@ -475,6 +475,19 @@ request.view = function(ctrl){
                 ]),
               ]),
               m("hr"),
+              m(".big.section#images", [
+                m(".header", [
+                  m("h1", ["Images"])
+                ]),
+                m(".content", [
+                  m(".row", [
+                    m(".columns.medium-12", [
+                      attachmentList(attachmentTypes.IMAGE)
+                    ]),
+                  ]),
+                ]),
+              ]),
+              m("hr"),
               m(".big.section#documents", [
                 m(".header", [
                   ctrl.app.isSuperAdmin() && (ctrl.request().level < 3) ? 
@@ -488,19 +501,6 @@ request.view = function(ctrl){
                   m(".row", [
                     m(".columns.medium-12", [
                       attachmentList(attachmentTypes.DOCUMENT)
-                    ]),
-                  ]),
-                ]),
-              ]),
-              m("hr"),
-              m(".big.section#images", [
-                m(".header", [
-                  m("h1", ["Images"])
-                ]),
-                m(".content", [
-                  m(".row", [
-                    m(".columns.medium-12", [
-                      attachmentList(attachmentTypes.IMAGE)
                     ]),
                   ]),
                 ]),
