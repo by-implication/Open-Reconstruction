@@ -493,6 +493,19 @@ request.view = function(ctrl){
                 ]),
               ]),
               m("hr"),
+              m(".big.section#images", [
+                m(".header", [
+                  m("h1", ["Images"])
+                ]),
+                m(".content", [
+                  m(".row", [
+                    m(".columns.medium-12", [
+                      attachmentList(attachmentTypes.IMAGE)
+                    ]),
+                  ]),
+                ]),
+              ]),
+              m("hr"),
               m(".big.section#references", [
                 m(".header", [
                   m("h1", ["References"]),
