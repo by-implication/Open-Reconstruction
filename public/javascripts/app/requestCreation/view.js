@@ -90,11 +90,6 @@ requestCreation.view = function(ctrl){
               "While these attachments are necessary for your request to progress, you may submit your request with incomplete attachments, and upload them at a later time."
             ]),
             m("div", docCtrl.items().map(function (reqts, level){
-              var levelDict = [
-                "Submission",
-                "Agency Validation",
-                "OCD Validation"
-              ];
               return m("div", {class: level == 0 ? "current" : ""},
                 [
                   m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
@@ -140,11 +135,6 @@ requestCreation.view = function(ctrl){
               "While these attachments are necessary for your request to progress, you may submit your request with incomplete attachments, and upload them at a later time."
             ]),
             m("div", imgCtrl.items().map(function (reqts, level){
-              var levelDict = [
-                "Submission",
-                "Agency Validation",
-                "OCD Validation"
-              ];
               return m("div", {class: level == 0 ? "current" : ""},
                 [
                   m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
