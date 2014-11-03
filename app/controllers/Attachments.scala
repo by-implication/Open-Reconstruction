@@ -57,6 +57,7 @@ object Attachments extends Controller with Secured {
           }
           Rest.success(
             "key" -> key,
+            "isImage" -> requirement.isImage,
             "filename" -> upload.filename,
             "dateUploaded" -> Time.now,
             "requirementId" -> requirementId,

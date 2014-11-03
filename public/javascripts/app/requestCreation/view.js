@@ -300,12 +300,12 @@ requestCreation.view = function(ctrl){
                           ]),
                           m("li", [
                             m("button[type=button].tiny", {onclick: e.openDocumentsModal}, "Add documents" +
-                              (e.attachments().length ? " (" + e.attachments().length + " uploaded)" : "")
+                              (e.attachments().length ? " (" + e.attachments().filter(function(a){return !a.isImage}).length + " uploaded)" : "")
                             )
                           ]),
                           m("li", [
                             m("button[type=button].tiny", {onclick: e.openImagesModal}, "Add images" +
-                              (e.attachments().length ? " (" + e.attachments().length + " uploaded)" : "")
+                              (e.attachments().length ? " (" + e.attachments().filter(function(a){return a.isImage}).length + " uploaded)" : "")
                             )
                           ]),
                         ]),
