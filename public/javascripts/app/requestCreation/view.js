@@ -138,29 +138,40 @@ requestCreation.view = function(ctrl){
               return m("div", {class: level == 0 ? "current" : ""},
                 [
                   m("ul.large-block-grid-3.medium-block-grid-2", [reqts.map(function (reqt){
-                    var att = imgCtrl.getFor(reqt, ctrl.activeEntry().attachments())[0];
-                    var uploadDate = att && new Date(att.dateUploaded);
-                    var thumb = (att && reqt.isImage) ? m("img", {src: routes.controllers.Attachments.bucketThumb(att.key, reqt.id, att.filename).url, height: 128, width: 128}) : "";
-                    return m("li.document", [
-                      m("h4", [
-                        reqt.name
-                      ]),
-                      att ? m(
-                        "div", [
-                          thumb,
-                          m("a", {href: routes.controllers.Attachments.bucketDownload(att.key, reqt.id, att.filename).url}, att.filename),
-                          " uploaded ",
-                          m("span", {title: uploadDate}, helper.timeago(uploadDate)),
-                          " by ",
-                          m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
-                          m("a", {href: routes.controllers.Attachments.bucketPreview(att.key, reqt.id, att.filename).url}, "[PREVIEW]")
-                        ]
-                      ) : m("div.dropzone", {config: ctrl.initDropzone(ctrl.activeEntry(), reqt)}, [
-                        m(".dz-message", [
-                          "Drop documents here or click to browse"
+                    var atts = imgCtrl.getFor(reqt, ctrl.activeEntry().attachments());
+                    var list = atts.map(function(att) {
+                      var uploadDate = att && new Date(att.dateUploaded);
+                      var thumb = (att && reqt.isImage) ? m("img", {src: routes.controllers.Attachments.bucketThumb(att.key, reqt.id, att.filename).url, height: 128, width: 128}) : "";
+
+                      return m("li.document", [
+                        m("h4", [
+                          reqt.name
+                        ]),
+                        m("element", [
+                          m("div", [
+                            thumb,
+                            m("a", {href: routes.controllers.Attachments.bucketDownload(att.key, reqt.id, att.filename).url}, att.filename),
+                            " uploaded ",
+                            m("span", {title: uploadDate}, helper.timeago(uploadDate)),
+                            " by ",
+                            m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
+                            m("a", {href: routes.controllers.Attachments.bucketPreview(att.key, reqt.id, att.filename).url}, "[PREVIEW]")
+                          ])
                         ]),
                       ])
-                    ]);
+                    })
+
+                    list.push(
+                      m("li.document", [
+                        m("div.dropzone", {config: ctrl.initDropzone(ctrl.activeEntry(), reqt)}, [
+                          m(".dz-message", [
+                            "Drop documents here or click to browse"
+                          ]),
+                        ])
+                      ])
+                    )
+
+                    return list;
                   })])
                 ]
               );
