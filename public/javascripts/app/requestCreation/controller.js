@@ -13,6 +13,7 @@ requestCreation.controller = function(){
   this.requirementLevel = m.prop("Submission");
   this.activeEntry = m.prop();
   this.requirements = m.prop();
+  this.setLocationOnUpload = m.prop(false);
 
   this.locModal = new common.modal.controller({
     initMap: function(elem, isInit){
@@ -68,13 +69,17 @@ requestCreation.controller = function(){
         dz.on("success", function (_, r){
           entry.attachments().push(r);
           if(r.isImage) {
-            entry.locations().push({
+            var loc = {
               key: r.key,
               requirementId: r.requirementId,
               filename: r.filename,
               lat: r.metadata ? r.metadata.lat : undefined, 
               lng: r.metadata ? r.metadata.lng : undefined
-            });
+            }
+            entry.locations().push(loc);
+            if (ctrl.setLocationOnUpload() && r.metadata) {
+              ctrl.locModal.setLocation(loc)();
+            }
           }
           m.redraw();
         }.bind(this));
@@ -147,6 +152,7 @@ requestCreation.controller = function(){
           ctrl.removeEntry(entry); },
         openLocationModal: function(){
           ctrl.activeEntry(entry);
+          ctrl.setLocationOnUpload(true);
           ctrl.locModal.open();
         },
         openDocumentsModal: function(){
@@ -155,6 +161,7 @@ requestCreation.controller = function(){
         },
         openImagesModal: function(){
           ctrl.activeEntry(entry);
+          ctrl.setLocationOnUpload(false);
           ctrl.imgModal.open();
         }
       }
