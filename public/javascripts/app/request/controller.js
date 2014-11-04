@@ -303,6 +303,47 @@ request.controller = function(){
     }
   }
 
+  var attachmentTypes = {
+    ANY: 0,
+    DOCUMENT: 1,
+    IMAGE: 2
+  }
+
+  var filterRequirements = function(type){
+    return function() {
+      var predicate = function() {
+        switch(type) {
+          case attachmentTypes.DOCUMENT:  {
+            return function(reqt) {
+              return !reqt.isImage;
+            }
+            break;
+          }
+          case attachmentTypes.IMAGE: {
+            return function(reqt) {
+              return reqt.isImage;
+            }
+            break;
+          }
+          case attachmentTypes.ANY:
+          default: {
+            return function(reqt) {
+              return true;
+            }
+          }
+        }
+      }();
+
+      return ctrl.requirements().map(function(reqts) {
+        return reqts.filter(predicate);;
+      });
+    }
+  };
+
+  this.documents = filterRequirements(attachmentTypes.DOCUMENT);
+
+  this.images = filterRequirements(attachmentTypes.IMAGE);
+
   bi.ajax(routes.controllers.Requests.viewMeta(this.id)).then(function (data){
 
     this.request(data.request);
