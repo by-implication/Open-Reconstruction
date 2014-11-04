@@ -386,16 +386,17 @@ request.view = function(ctrl){
                 m(".content", [
                   m(".row", [
                     m(".columns.medium-12", [
+                      ctrl.curUserCanUpload() ? m(".dropzone", 
+                        { config: ctrl.initAttachmentDropzone(_.flatten(ctrl.images())[0]) },
+                        [m(".dz-message", "Drop documents here or click to browse")]
+                      ) : '',
                       ctrl.images().map(function (reqts) {
                         return m("ul.large-block-grid-3.medium-block-grid-2", [
                           reqts.map(function (reqt) {
-
-                            var atts = ctrl.attachmentsFor(reqt, ctrl.attachments());
                             var canUpload = ctrl.curUserCanUpload();
+                            var atts = ctrl.attachmentsFor(reqt, ctrl.attachments()).map(function (att) {
 
-                            return atts.map(function (att) {
-
-                              var uploadDate = atts.length && new Date(att.dateUploaded);
+                              var uploadDate = new Date(att.dateUploaded);
                               var thumb = m("img", {src: routes.controllers.Attachments.thumb(att.id).url, height: 128, width: 128});
                               var meta = att.metadata;
 
@@ -437,6 +438,8 @@ request.view = function(ctrl){
                               ]);
 
                             });
+
+                            return atts.length ? atts : "No images have been uploaded."
 
                           })
                         ])
