@@ -386,89 +386,60 @@ request.view = function(ctrl){
                 m(".content", [
                   m(".row", [
                     m(".columns.medium-12", [
-                      ctrl.images().map(function (reqts, level){
-                        return m("div", {class: level == (ctrl.request().level+1) ? "current" : ""},
-                          [
-                            m("h2", levelDict[level]),
-                            m("ul.large-block-grid-3.medium-block-grid-2", [reqts
-                                .filter(function (reqt){ return _.contains(ctrl.required(), reqt.id); })
-                                .map(function (reqt){
-                              var atts = ctrl.attachmentsFor(reqt, ctrl.attachments());
-                              var canUpload = ctrl.curUserCanUpload();
-                              return m("li.document", [
-                                m("h4", [
-                                  reqt.name
-                                ]), 
-                                atts.length ? m(
-                                  "ul", ( function(){
-                                    var attachments = _.map(atts, function(att){
-                                      var uploadDate = atts.length && new Date(att.dateUploaded);
+                      ctrl.images().map(function (reqts) {
+                        return m("ul.large-block-grid-3.medium-block-grid-2", [
+                          reqts.map(function (reqt) {
 
-                                      if (att && reqt.isImage) {
-                                        var thumb = m("img", {src: routes.controllers.Attachments.thumb(att.id).url, height: 128, width: 128});
-                                        var meta = att.metadata;
-                                        var mapLink = (meta && meta.lat && meta.lng) ? m("li", [
-                                          m("a.button.tiny", {
-                                            href: "https://www.google.com.ph/maps/place/"+meta.lat+","+meta.lng, 
-                                            title: "open map",
-                                            target: "blank"
-                                          }, [
-                                            m("i.fa.fa-fw.fa-lg.fa-map-marker")
-                                          ]),
-                                        ]) : "";
-                                      } else {
-                                        var thumb = "";
-                                        var mapLink = "";
-                                      }
+                            var atts = ctrl.attachmentsFor(reqt, ctrl.attachments());
+                            var canUpload = ctrl.curUserCanUpload();
 
-                                      return m(
-                                        "li.file", [
-                                        thumb,
-                                        m(".info", [
-                                          m("a", {href: routes.controllers.Attachments.download(att.id).url}, att.filename),
-                                          " uploaded ",
-                                          m("span", {title: uploadDate}, helper.timeago(uploadDate)),
-                                          " by ",
-                                          m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
-                                        ]),
-                                        m("ul.button-group.round", [
-                                          m("li", [
-                                            m("a.button.tiny", {href: routes.controllers.Attachments.preview(att.id).url, title: "preview"}, [
-                                              m("i.fa.fa-fw.fa-lg.fa-eye")
-                                            ]),
-                                          ]),
-                                          mapLink,
-                                          canUpload ?
-                                            m("li", [
-                                              m("a.button.tiny", {onclick: function(){ ctrl.archive(att); }, title: "archive"}, [
-                                                m("i.fa.fa-fw.fa-lg.fa-archive")
-                                              ])
-                                            ])
-                                          : ""
-                                        ]),
-                                      ])
-                                    })
+                            return atts.map(function (att) {
 
-                                    if(canUpload && reqt.name == "Photograph(s)") {
-                                      attachments.push(m(".dropzone", {config: ctrl.initAttachmentDropzone(reqt)}, [
-                                        m(".dz-message", "Drop documents here or click to browse")
-                                      ]))
-                                    } else {
-                                      attachments.push("No documents have been uploaded yet.")
-                                    }
-                                    return attachments;
-                                  }())
-                                ) : (
+                              var uploadDate = atts.length && new Date(att.dateUploaded);
+                              var thumb = m("img", {src: routes.controllers.Attachments.thumb(att.id).url, height: 128, width: 128});
+                              var meta = att.metadata;
+
+                              var mapLink = (meta && meta.lat && meta.lng) ? m("li", [
+                                m("a.button.tiny", {
+                                  href: "https://www.google.com.ph/maps/place/"+meta.lat+","+meta.lng, 
+                                  title: "open map",
+                                  target: "blank"
+                                }, [
+                                  m("i.fa.fa-fw.fa-lg.fa-map-marker")
+                                ]),
+                              ]) : "";
+
+                              return m(
+                                "li.file", [
+                                thumb,
+                                m(".info", [
+                                  m("a", {href: routes.controllers.Attachments.download(att.id).url}, att.filename),
+                                  " uploaded ",
+                                  m("span", {title: uploadDate}, helper.timeago(uploadDate)),
+                                  " by ",
+                                  m("a", {href: routes.controllers.Users.view(att.uploader.id).url}, att.uploader.name),
+                                ]),
+                                m("ul.button-group.round", [
+                                  m("li", [
+                                    m("a.button.tiny", {href: routes.controllers.Attachments.preview(att.id).url, title: "preview"}, [
+                                      m("i.fa.fa-fw.fa-lg.fa-eye")
+                                    ]),
+                                  ]),
+                                  mapLink,
                                   canUpload ?
-                                  m(".dropzone", {config: ctrl.initAttachmentDropzone(reqt)}, [
-                                    m(".dz-message", "Drop documents here or click to browse")
-                                  ])
-                                  : "No documents have been uploaded yet."
-                                )
+                                    m("li", [
+                                      m("a.button.tiny", {onclick: function(){ ctrl.archive(att); }, title: "archive"}, [
+                                        m("i.fa.fa-fw.fa-lg.fa-archive")
+                                      ])
+                                    ])
+                                  : ""
+                                ]),
                               ]);
-                            })])
-                          ]
-                        );
+
+                            });
+
+                          })
+                        ])
 
                       })
                     ]),
