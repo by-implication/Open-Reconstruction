@@ -429,7 +429,7 @@ request.controller = function(){
 
         var map = common.leaflet.map(elem);
 
-        if(ctrl.canEdit){
+        if(ctrl.canEdit()){
           common.leaflet.addDrawControls(function (e){
 
             common.leaflet.clearMarkers();
