@@ -1,11 +1,12 @@
 # --- !Ups
 
-CREATE TABLE geotags (
-  geotag_id int PRIMARY KEY REFERENCES attachments(attachment_id) ON DELETE CASCADE,
-  geotag_latitude decimal,
-  geotag_longitude decimal
+CREATE TABLE attachment_metas (
+  attachment_meta_id int PRIMARY KEY REFERENCES attachments(attachment_id) ON DELETE CASCADE,
+  attachment_meta_latitude decimal,
+  attachment_meta_longitude decimal,
+  attachment_meta_date_taken timestamp
 );;
 
 # --- !Downs
 
-DROP TABLE geotags;;
+DROP TABLE attachment_metas;;

@@ -3,6 +3,7 @@ package controllers
 import com.thebuzzmedia.exiftool._
 import com.thebuzzmedia.exiftool.ExifTool._
 import java.io.File
+import java.sql.Timestamp
 import play.api._
 import play.api.libs.Files.TemporaryFile
 import play.api.libs.json.{Json, JsNull}
@@ -46,11 +47,12 @@ object Attachments extends Controller with Secured {
             if (requirement.isImage || requirement.name == "Photograph(s)") {
               val photo = bucket.getFile(requirement, upload.filename).file
               val exifTool = new ExifTool()
-              val coords = exifTool.getImageMeta(photo, Tag.GPS_LATITUDE, Tag.GPS_LONGITUDE);
-              if(coords.containsKey(Tag.GPS_LATITUDE) && coords.containsKey(Tag.GPS_LONGITUDE)) {
+              val exifData = exifTool.getImageMeta(photo, Tag.GPS_LATITUDE, Tag.GPS_LONGITUDE)
+
+              if(exifData.containsKey(Tag.GPS_LATITUDE) && exifData.containsKey(Tag.GPS_LONGITUDE)) {
                 Json.obj(
-                  "lat" -> coords.get(Tag.GPS_LATITUDE),
-                  "lng" -> coords.get(Tag.GPS_LONGITUDE)
+                  "lat" -> exifData.get(Tag.GPS_LATITUDE),
+                  "lng" -> exifData.get(Tag.GPS_LONGITUDE)
                 )
               } else JsNull
             } else JsNull

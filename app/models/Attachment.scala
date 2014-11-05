@@ -59,11 +59,11 @@ case class Attachment(
 
   lazy val uploader = User.findById(uploaderId).get
 
-  lazy val geotags: Option[Geotag] = Geotag.findById(id)
+  lazy val metadata: Option[AttachmentMeta] = AttachmentMeta.findById(id)
 
   lazy val coords: Option[(BigDecimal, BigDecimal)] = {
     for {
-      g <- geotags
+      g <- metadata
       lat <- g.latitude
       lng <- g.longitude
     } yield (lat, lng)
@@ -286,12 +286,28 @@ case class Bucket(key: String){
                   if(requirement.isImage) {
                     moveFile(f.thumb, a.thumb)
                     val exifTool = new ExifTool()
-                    val coords = exifTool.getImageMeta(a.file, Tag.GPS_LATITUDE, Tag.GPS_LONGITUDE);
-                    if (coords.containsKey(Tag.GPS_LATITUDE) && coords.containsKey(Tag.GPS_LONGITUDE)) {
-                      Geotag(
+                    val exifData = exifTool.getImageMeta(a.file, Tag.GPS_LATITUDE, Tag.GPS_LONGITUDE, Tag.DATE_TIME_ORIGINAL)
+
+                    val dateTime = (if(exifData.containsKey(Tag.DATE_TIME_ORIGINAL)) {
+                      val date = exifData.get(Tag.DATE_TIME_ORIGINAL).split(" ")(0).replace(":", "-")
+                      val time = exifData.get(Tag.DATE_TIME_ORIGINAL).split(" ")(1)
+                      Some(Timestamp.valueOf(date + " " + time))
+                    } else None)
+
+                    val lat = if (exifData.containsKey(Tag.GPS_LATITUDE)) {
+                      Some(BigDecimal(exifData.get(Tag.GPS_LATITUDE)))
+                    } else None
+
+                    val lng = if (exifData.containsKey(Tag.GPS_LONGITUDE)) {
+                      Some(BigDecimal(exifData.get(Tag.GPS_LONGITUDE)))
+                    } else None
+
+                    if (exifData.containsKey(Tag.GPS_LATITUDE) && exifData.containsKey(Tag.GPS_LONGITUDE)) {
+                      AttachmentMeta(
                         id = a.id, 
-                        latitude = Some(BigDecimal(coords.get(Tag.GPS_LATITUDE))), 
-                        longitude = Some(BigDecimal(coords.get(Tag.GPS_LONGITUDE)))
+                        latitude = lat, 
+                        longitude = lng,
+                        dateTaken = dateTime
                       ).create()
                     }
                   } 
