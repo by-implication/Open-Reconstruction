@@ -85,13 +85,43 @@ object Attachments extends Controller with Secured {
                 .create().map { a =>
               a.file.getParentFile().mkdirs()
               upload.ref.moveTo(a.file, true)
-              if (requirement.isImage) ImageHandling.generateAttachmentThumbnail(a)
+              if (requirement.isImage) {
+                ImageHandling.generateAttachmentThumbnail(a)
+
+                val exifTool = new ExifTool()
+                val exifData = exifTool.getImageMeta(a.file, Tag.GPS_LATITUDE, Tag.GPS_LONGITUDE, Tag.DATE_TIME_ORIGINAL)
+
+                val dateTime = (if(exifData.containsKey(Tag.DATE_TIME_ORIGINAL)) {
+                  val date = exifData.get(Tag.DATE_TIME_ORIGINAL).split(" ")(0).replace(":", "-")
+                  val time = exifData.get(Tag.DATE_TIME_ORIGINAL).split(" ")(1)
+                  Some(Timestamp.valueOf(date + " " + time))
+                } else None)
+
+                val lat = if (exifData.containsKey(Tag.GPS_LATITUDE)) {
+                  Some(BigDecimal(exifData.get(Tag.GPS_LATITUDE)))
+                } else None
+
+                val lng = if (exifData.containsKey(Tag.GPS_LONGITUDE)) {
+                  Some(BigDecimal(exifData.get(Tag.GPS_LONGITUDE)))
+                } else None
+
+                if (exifData.containsKey(Tag.GPS_LATITUDE) && exifData.containsKey(Tag.GPS_LONGITUDE)) {
+                  AttachmentMeta(
+                    id = a.id, 
+                    latitude = lat, 
+                    longitude = lng,
+                    dateTaken = dateTime
+                  ).create()
+                }
+              }
+              
               if(req.addToAttachments(a.id)){
                 Event.attachment(a).create().map { e => Rest.success(
                   "attachment" -> Attachment.insertJson(a, user),
                   "event" -> e.listJson()
                 )}.getOrElse(Rest.serverError())
               } else Rest.serverError()
+
             }.getOrElse(Rest.serverError())
           }.getOrElse(Rest.notFound())
         } else Rest.unauthorized()
