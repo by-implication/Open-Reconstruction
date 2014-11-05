@@ -11,11 +11,12 @@ if (system.args.length === 1) {
 // suppress js errors from being logged
 page.onError = function(){};
 page.customHeaders = { "X-Do-Not-Prerender": true };
-
+page.settings.loadImages = false;
+page.settings.resourceTimeout = 15 * 1000;
 page.open(system.args[1], function (status) {
-	console.log(JSON.stringify({
-		status: status,
-		content: page.content
-	}));
+  console.log(JSON.stringify({
+    status: status,
+    content: page.content
+  }));
     phantom.exit();
 });

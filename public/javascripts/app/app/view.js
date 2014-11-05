@@ -51,7 +51,7 @@ app.footer = function(ctrl){
         m(".large-4.medium-4.columns", [
           m(".row", [
             m(".large-5.columns", [
-              m("img[src='http://www.gov.ph/wp-content/themes/govph4/faith-assets/img/govph-seal-mono-footer.png']")
+              m("img[src='/assets/images/gov-seal-footer.png']")
             ]),
             m(".large-7.columns", [
               m("h4", "Republic of the Philippines"),
