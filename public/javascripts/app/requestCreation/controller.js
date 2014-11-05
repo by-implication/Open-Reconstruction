@@ -81,6 +81,7 @@ requestCreation.controller = function(){
               ctrl.locModal.setLocation(loc)();
             }
           }
+          $(elem).removeClass('dz-started');
           m.redraw();
         }.bind(this));
       }

@@ -491,7 +491,6 @@ request.controller = function(){
         var dz = new Dropzone(elem, {
           url: routes.controllers.Attachments.add(this.id, reqt.id).url,
           previewTemplate: m.stringify(common.dropzonePreviewTemplate), 
-          maxFiles: 1,
           clickable: true,
           autoDiscover: false,
           acceptedFiles: reqt.isImage ? "image/*" : ""
@@ -500,6 +499,7 @@ request.controller = function(){
         dz.on("success", function (_, r){
           this.attachments().push(r.attachment);
           this.history().unshift(r.event);
+          $(elem).removeClass('dz-started');
           m.redraw();
         }.bind(this));
 
