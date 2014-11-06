@@ -19,14 +19,32 @@ object Attachment extends AttachmentGen {
 
   def insertJson(attachment: Attachment, uploader: User) = {
 
-    val meta = attachment.coords match {
-      case Some((lat, lng)) => {
-        Json.obj(
-          "lat" -> lat,
-          "lng" -> lng
-        )
-      } 
-      case _ => JsNull
+    var base = Json.obj()
+
+    attachment.metadata match {
+      case Some(meta) => {
+
+        (meta.latitude, meta.longitude) match {
+          case (Some(lat), Some(lng)) => {
+            base = base ++ Json.obj(
+              "lat" -> lat,
+              "lng" -> lng
+            )
+          }
+          case _ => {}
+        }
+
+        meta.dateTaken match {
+          case Some(dateTime) => {
+            base = base ++ Json.obj(
+              "dateTaken" -> dateTime
+            )
+          }
+          case _ => {}
+        }
+
+      }
+      case None => {}
     }
 
     Json.obj(
@@ -38,9 +56,9 @@ object Attachment extends AttachmentGen {
         "id" -> uploader.id,
         "name" -> uploader.name
       ),
-      "metadata" -> meta
+      "metadata" -> (if (base.keys.isEmpty) JsNull else base)
     )
-  } 
+  }
 
 
 }
