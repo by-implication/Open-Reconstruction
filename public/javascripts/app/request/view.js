@@ -394,7 +394,11 @@ request.view = function(ctrl){
                         return m("ul.large-block-grid-3.medium-block-grid-2", [
                           reqts.map(function (reqt) {
                             var canUpload = ctrl.curUserCanUpload();
-                            var atts = ctrl.attachmentsFor(reqt, ctrl.attachments()).map(function (att) {
+                            var atts = _.sortBy(ctrl.attachmentsFor(reqt, ctrl.attachments()), function (att) {
+                              if (att.metadata && att.metadata.dateTaken) {
+                                return att.metadata.dateTaken;
+                              } else return 0;
+                            }).reverse().map(function (att) {
 
                               var uploadDate = new Date(att.dateUploaded);
                               var thumb = m("img", {src: routes.controllers.Attachments.thumb(att.id).url, height: 128, width: 128});
@@ -410,11 +414,16 @@ request.view = function(ctrl){
                                 ]),
                               ]) : "";
 
+                              var dateTaken = (meta && meta.dateTaken) ? m("span", [
+                                (" taken " + helper.timeago(new Date(meta.dateTaken)) + ", ")
+                              ]) : "";
+
                               return m(
                                 "li.file", [
                                 thumb,
                                 m(".info", [
                                   m("a", {href: routes.controllers.Attachments.download(att.id).url}, att.filename),
+                                  dateTaken,
                                   " uploaded ",
                                   m("span", {title: uploadDate}, helper.timeago(uploadDate)),
                                   " by ",
