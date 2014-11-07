@@ -100,7 +100,7 @@ case class Attachment(
     """).on('reqId -> reqId, 'attachmentId -> id).executeUpdate() > 0
   }
   
-  private lazy val folderSeq = Seq("attachments", dateUploaded.toString.split(" ")(0))
+  private lazy val folderSeq = Seq(attachmentPath, dateUploaded.toString.split(" ")(0))
 
   lazy val path = (folderSeq :+ id.toString).mkString(File.separator)
 
@@ -354,7 +354,7 @@ case class Bucket(key: String){
 
 object Bucket {
 
-  def FOLDER = "buckets"
+  def FOLDER = bucketPath
 
   private def ALPHANUM = ('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')
   private def TIMEOUT = 1.day

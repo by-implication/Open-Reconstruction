@@ -14,6 +14,9 @@ package object models {
     lazy val tracker = current.configuration.getString("analytics.tracker").getOrElse("UA-52262569-1")
   }
 
+  lazy val bucketPath = current.configuration.getString("recon.bucket_path").getOrElse("buckets")
+  lazy val attachmentPath = current.configuration.getString("recon.attachment_path").getOrElse("attachments")
+
   def NA = anorm.NotAssigned
 
   implicit def optionToPk[A](opt: Option[A]): Pk[A] = opt match {
