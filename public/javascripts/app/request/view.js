@@ -431,7 +431,7 @@ request.view = function(ctrl){
                                 ]),
                                 m("ul.button-group.round", [
                                   m("li", [
-                                    m("a.button.tiny", {href: routes.controllers.Attachments.preview(att.id).url, title: "preview"}, [
+                                    m("a.button.tiny", {href: routes.controllers.Attachments.preview(att.id).url, title: "preview", target: "blank"}, [
                                       m("i.fa.fa-fw.fa-lg.fa-eye")
                                     ]),
                                   ]),
