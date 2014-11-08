@@ -44,7 +44,9 @@ object Application extends Controller with Secured {
               prerender(url).map { content =>
                 Ok(Html(content))
               }.getOrElse(NotFound)
-            } else NotFound
+            } else {
+              Ok(views.html.index())
+            } 
           } else {
             Ok(views.html.index())
           }
