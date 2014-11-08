@@ -34,23 +34,13 @@ object Application extends Controller with Secured {
         case None => false
       }
 
-      if(prerenderEnabled){
-        if(!doNotPrerender){
-          if(!prerenderBotsOnly || isBot){
-            if(request.path != controllers.routes.Application.index().url) {
-              // play.Logger.info("prerender!")
-              val port = Play.configuration.getString("http.port")
-              val url = String.format("http://localhost:%s%s", port.getOrElse("9000"), request.uri)
-              prerender(url).map { content =>
-                Ok(Html(content))
-              }.getOrElse(NotFound)
-            } else NotFound
-          } else {
-            Ok(views.html.index())
-          }
-        } else {
-          Ok(views.html.index())
-        }
+      if(prerenderEnabled && !doNotPrerender && (!prerenderBotsOnly || isBot) && request.path != controllers.routes.Application.index().url) {
+        // play.Logger.info("prerender!")
+        val port = Play.configuration.getString("http.port")
+        val url = String.format("http://localhost:%s%s", port.getOrElse("9000"), request.uri)
+        prerender(url).map { content =>
+          Ok(Html(content))
+        }.getOrElse(NotFound)
       } else {
         Ok(views.html.index())
       }
