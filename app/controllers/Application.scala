@@ -63,11 +63,13 @@ object Application extends Controller with Secured {
 
   def prerender(url: String): Option[String] = {
     import scala.sys.process._
-    val result = Seq("phantomjs", "prerender.js", url).!!
-    val jsResult = Json.parse(result)
-    if ((jsResult \ "status").as[String] == "success"){
-      (jsResult \ "content").asOpt[String]
-    } else None
+    
+    for {
+      result <- Try(Seq("phantomjs", "prerender.js", url).!!).toOption
+      jsResult = Json.parse(result)
+      status <- (jsResult \ "status").asOpt[String]
+      content <- (jsResult \ "content").asOpt[String] if (status == "success")
+    } yield content
   }
 
   def index1(x: Int) = index
