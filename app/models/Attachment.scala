@@ -253,6 +253,7 @@ case class Bucket(key: String){
   def add(requirement: Requirement, upload: FilePart[TemporaryFile]): Boolean = {
     try {
       val bf = getFile(requirement, upload.filename)
+      play.Logger.info("File upload attempt: "  + bf.file)
       upload.ref.moveTo(bf.file, true)
       if(requirement.isImage){
         bf.thumb.getParentFile().mkdirs()
@@ -261,6 +262,7 @@ case class Bucket(key: String){
       true
     } catch {
       case t: Throwable => {
+        play.Logger.error("Failed to add file to bucket.")
         play.Logger.error(t.toString)
         false
       }
