@@ -26,7 +26,7 @@ CREATE TABLE oparr_bohol (
   version text
 );;
 
-COPY oparr_bohol FROM 'oparr_bohol.csv' CSV ENCODING 'ISO_8859_9';;
+COPY oparr_bohol FROM 'oparr_bohol_update.csv' CSV ENCODING 'ISO_8859_9';;
 
 CREATE TABLE dilg_ray (
   dilg_id text,
@@ -96,13 +96,18 @@ CREATE TABLE dpwh_eplc (
   project_abc decimal,
   bid_price decimal,
   number_of_bidder integer,
+  completed_amount decimal,
   actual_start_year integer,
   actual_start_month integer,
   actual_percentage_started decimal,
   actual_completion_year integer,
   actual_completion_month integer,
   actual_percentage_completed decimal,
-  completed_amount decimal,
+  physical_planned decimal,
+  physical_revised decimal,
+  physical_actual decimal,
+  physical_slippage decimal,
+  physical_performance_index decimal,
   implementation_mode text,
   irr_pk integer,
   irr_description text,
@@ -139,20 +144,19 @@ CREATE TABLE dpwh_eplc (
   activity_11 text,
   activity_11_start_date timestamp,
   activity_11_end_date timestamp,
-  project_type text,
-  months_of_completion integer,
-  disaster text,
-  psgc text,
   SAA_NO text,
   SAA_DATE timestamp,
   SAA_AMOUNT decimal,
   SARO_NUMBER text,
   obligation_amount decimal,
-  physical_planned decimal,
-  physical_revised decimal,
-  physical_actual decimal,
-  physical_slippage decimal,
-  physical_performance_index decimal,
+  project_type text,
+  months_of_completion integer,
+  disaster text,
+  psgc text,
+  psgc_level text,
+  latitude decimal,
+  longitude decimal,
+  allotment_date timestamp,
   plan_nov_2013 decimal,
   plan_dec_2013 decimal,
   plan_jan_2014 decimal,
@@ -230,14 +234,10 @@ CREATE TABLE dpwh_eplc (
   actual_sep_2015 decimal,
   actual_oct_2015 decimal,
   actual_nov_2015 decimal,
-  actual_dec_2015 decimal,
-  latitude decimal,
-  longitude decimal,
-  allotment_date timestamp,
-  psgc_level text
+  actual_dec_2015 decimal
 );;
 
-COPY dpwh_eplc FROM 'dpwh_eplc.csv' CSV ENCODING 'ISO_8859_9';;
+COPY dpwh_eplc FROM 'dpwh_eplc_update.csv' CSV ENCODING 'ISO_8859_9';;
 
 CREATE TABLE saro_bureau_g (
     agency text,
