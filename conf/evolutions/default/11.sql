@@ -26,7 +26,7 @@ CREATE TABLE oparr_bohol (
   version text
 );;
 
-COPY oparr_bohol FROM 'oparr_bohol_update.csv' CSV ENCODING 'ISO_8859_9';;
+COPY oparr_bohol FROM 'oparr_bohol.csv' CSV ENCODING 'ISO_8859_9';;
 
 CREATE TABLE dilg_ray (
   dilg_id text,
@@ -237,7 +237,7 @@ CREATE TABLE dpwh_eplc (
   actual_dec_2015 decimal
 );;
 
-COPY dpwh_eplc FROM 'dpwh_eplc_update.csv' CSV ENCODING 'ISO_8859_9';;
+COPY dpwh_eplc FROM 'dpwh_eplc.csv' CSV ENCODING 'ISO_8859_9';;
 
 CREATE TABLE saro_bureau_g (
     agency text,
