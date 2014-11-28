@@ -240,17 +240,19 @@ CREATE TABLE dpwh_eplc (
 COPY dpwh_eplc FROM 'dpwh_eplc.csv' CSV ENCODING 'ISO_8859_9';;
 
 CREATE TABLE saro_bureau_g (
-    agency text,
-    saro_number text,
-    saro_date date,
-    month text,
-    year integer,
-    amount decimal,
-    fund_source text,
-    project_quantity integer,
-    disaster text,
-    disaster_date date,
-    remarks text
+  agency text,
+  match_status text,
+  saro_number text,
+  saro_date date,
+  month text,
+  year integer,
+  amount decimal,
+  fund_source text,
+  disaster text,
+  disaster_date date,
+  dataset_source text,
+  remarks text,
+  eplc_id text
 );;
 
 COPY saro_bureau_g FROM 'Clean_SARO_BureauG.csv' CSV ENCODING 'ISO_8859_9';;
