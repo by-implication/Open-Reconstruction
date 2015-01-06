@@ -1,9 +1,12 @@
 # --- !Ups
 
-ALTER TABLE users
-	ADD COLUMN user_last_feed_visit timestamp NOT NULL DEFAULT NOW();
+CREATE TABLE attachment_metas (
+  attachment_meta_id int PRIMARY KEY REFERENCES attachments(attachment_id) ON DELETE CASCADE,
+  attachment_meta_latitude decimal,
+  attachment_meta_longitude decimal,
+  attachment_meta_date_taken timestamp
+);;
 
 # --- !Downs
 
-ALTER TABLE users
-	DROP COLUMN user_last_feed_visit;
+DROP TABLE attachment_metas;;

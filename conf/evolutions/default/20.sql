@@ -1,11 +1,9 @@
 # --- !Ups
 
-ALTER TABLE reqs
-	DROP COLUMN req_validated,
-	DROP COLUMN req_remarks;
+ALTER TABLE users
+	ADD COLUMN user_last_feed_visit timestamp NOT NULL DEFAULT NOW();
 
 # --- !Downs
 
-ALTER TABLE reqs
-	ADD COLUMN req_validated boolean NOT NULL DEFAULT false,
-	ADD COLUMN req_remarks text;
+ALTER TABLE users
+	DROP COLUMN user_last_feed_visit;

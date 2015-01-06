@@ -1,53 +1,38 @@
 # --- !Ups
 
-ALTER TABLE reqs
-	ADD COLUMN gov_unit_id int REFERENCES gov_units,
-	ADD COLUMN req_legacy boolean NOT NULL DEFAULT FALSE,
-	ADD COLUMN executing_agency_id int REFERENCES gov_units(gov_unit_id);
+ALTER TABLE gov_units
+	ADD COLUMN gov_unit_search_key text;
 
-UPDATE reqs
-	SET gov_unit_id = users.gov_unit_id
-	FROM users WHERE author_id = user_id;
+UPDATE gov_units
+	SET gov_unit_search_key = gov_unit_name;
 
-ALTER TABLE reqs
-	ALTER COLUMN gov_unit_id SET NOT NULL;
+UPDATE gov_units g
+	SET gov_unit_search_key = s.gov_unit_name
+	FROM gov_units s, lgus l, lgus ls
+	WHERE g.gov_unit_id = l.lgu_id
+	AND s.gov_unit_id = ls.lgu_id
+	AND subltree(l.lgu_psgc, 0, 2) = ls.lgu_psgc;
 
-UPDATE roles
-	SET role_permissions = array_append(role_permissions, 7)
-	WHERE role_name = ANY(ARRAY['NGA', 'OCD']);
+UPDATE gov_units g
+	SET gov_unit_search_key = concat(s.gov_unit_name, ', ', g.gov_unit_search_key)
+	FROM gov_units s, lgus l, lgus ls
+	WHERE nlevel(l.lgu_psgc) > 2
+	AND g.gov_unit_id = l.lgu_id
+	AND s.gov_unit_id = ls.lgu_id
+	AND subltree(l.lgu_psgc, 0, 3) = ls.lgu_psgc;
 
-UPDATE reqs
-	SET gov_unit_id = lgu_id
-	FROM lgus
-	WHERE req_location = ltree2text(lgu_psgc);
+UPDATE gov_units g
+	SET gov_unit_search_key = concat(s.gov_unit_name, ', ', g.gov_unit_search_key)
+	FROM gov_units s, lgus l, lgus ls
+	WHERE nlevel(l.lgu_psgc) > 3
+	AND g.gov_unit_id = l.lgu_id
+	AND s.gov_unit_id = ls.lgu_id
+	AND subltree(l.lgu_psgc, 0, 4) = ls.lgu_psgc;
 
-UPDATE reqs
-	SET req_legacy = true
-	WHERE author_id = 1;
-
-UPDATE users
-	SET gov_unit_id = 2 -- OCD
-	WHERE user_id = 1; -- Legacy Data
-
-UPDATE reqs
-	SET gov_unit_id = 2 -- OCD
-	WHERE gov_unit_id = 1; -- Legacy Data
-
-DELETE FROM gov_units
-	WHERE gov_unit_id = 1; -- Legacy Data
+ALTER TABLE gov_units
+	ALTER COLUMN gov_unit_search_key SET NOT NULL;
 
 # --- !Downs
 
-INSERT INTO gov_units VALUES (1, 'Legacy Data', null, 1);
-
-UPDATE users
-	SET gov_unit_id = 1 -- Legacy Data
-	WHERE user_id = 1; -- Legacy Data
-
-UPDATE roles
-	SET role_permissions = array_remove(role_permissions, 7);
-
-ALTER TABLE reqs
-	DROP COLUMN gov_unit_id,
-	DROP COLUMN req_legacy,
-  DROP COLUMN executing_agency_id;
+ALTER TABLE gov_units
+	DROP COLUMN gov_unit_search_key;

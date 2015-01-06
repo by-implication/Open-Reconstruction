@@ -1,32 +1,33 @@
 # --- !Ups
 
-ALTER TABLE reqs
-	ADD COLUMN project_id int DEFAULT 0;
+ALTER TABLE lgus
+	RENAME COLUMN lgu_municipality_class TO lgu_income_class;
 
-INSERT INTO reqs (req_description, project_type_id, req_amount, author_id, req_location,
-	req_date, disaster_id, assessing_agency_id, implementing_agency_id, req_level, gov_unit_id,
-	project_id, req_legacy)
-SELECT p.project_name, r.project_type_id, p.project_amount, author_id, req_location,
-	req_date, disaster_id, assessing_agency_id, implementing_agency_id, req_level, gov_unit_id,
-	p.project_id, true
-FROM projects p LEFT JOIN reqs r ON p.req_id = r.req_id;
+CREATE TABLE municipality_classes (
+  psgc ltree,
+  legislative_district text,
+  city_class text,
+  income_class text,
+  name text
+);
 
-UPDATE projects p
-	SET req_id = r.req_id
-	FROM reqs r
-	WHERE r.project_id = p.project_id;
+COPY municipality_classes FROM 'municipality_classes.csv' CSV ENCODING 'ISO_8859_9';
 
-DELETE FROM projects p
-	WHERE project_id IN (
-		SELECT p.project_id
-		FROM projects p LEFT JOIN reqs r ON p.req_id = r.req_id
-		WHERE r.project_id = 0
-	);
+UPDATE municipality_classes
+	SET income_class = substring(trim(income_class) for 1);
 
-DELETE FROM reqs
-	WHERE project_id = 0;
+DELETE FROM municipality_classes
+	WHERE NOT isnumeric(income_class)
+	OR income_class IS NULL;
 
-ALTER TABLE reqs
-	DROP COLUMN project_id;
+UPDATE lgus
+	SET lgu_income_class = income_class::int
+	FROM municipality_classes
+	WHERE psgc = lgu_psgc;
 
 # --- !Downs
+
+ALTER TABLE lgus
+	RENAME COLUMN lgu_income_class TO lgu_municipality_class;
+
+DROP TABLE municipality_classes;
