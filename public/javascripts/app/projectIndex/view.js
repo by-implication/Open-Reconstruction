@@ -48,6 +48,9 @@ projectIndex.view = function(ctrl){
                   "Name"
                 ]),
                 m("td", [
+                  "Request ID"
+                ]),
+                m("td", [
                   "Scope"
                 ]),
                 m("td", [
@@ -72,6 +75,7 @@ projectIndex.view = function(ctrl){
             ]),
             m("tbody",
               ctrl.projects().map(function (p){
+                console.log(p);
                 return m("tr", [
                   m("td", [
                     // m("a", {href: routes.controllers.Projects.view(p.id).url}, [
@@ -82,6 +86,11 @@ projectIndex.view = function(ctrl){
                     // m("a", {href: routes.controllers.Projects.view(p.id).url}, [
                       p.name
                     // ])
+                  ]),
+                  m("td", [
+                    m("a", {href: routes.controllers.Requests.view(p.reqId).url, config: m.route}, [
+                      p.reqId
+                    ])
                   ]),
                   m("td", [
                     p.scope

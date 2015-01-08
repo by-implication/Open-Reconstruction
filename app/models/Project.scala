@@ -59,6 +59,7 @@ case class Project(
     "amount" -> amount,
     "scope" -> scope.name,
     "bidPrice" -> bidPrice,
+    "reqId" -> reqId,
     "projectContractId" -> projectContractId,
     "contract" -> Json.obj(
       "cost" -> contractCost,
