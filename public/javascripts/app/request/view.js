@@ -463,7 +463,7 @@ request.view = function(ctrl){
                 m(".header", [
                   ctrl.app.isSuperAdmin() && (ctrl.request().level < 3) ? 
                     m("a.button.right", {onclick: ctrl.requirementsModal.initAndOpen}, [
-                      "Click here to edit requirements"
+                      "Edit requirements"
                     ]) 
                   : "",
                   m("h1", ["Documents"]),
