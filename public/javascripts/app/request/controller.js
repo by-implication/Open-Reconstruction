@@ -359,7 +359,7 @@ request.controller = function(){
     this.history(data.history);
     this.assessingAgencies(data.assessingAgencies);
     this.implementingAgencies(data.implementingAgencies);
-    this.executingAgencies(data.implementingAgencies); // Make a new list that includes even LGUs.
+    this.executingAgencies(data.implementingAgencies.concat(data.govUnit));
     this.assessingAgency(data.assessingAgency || this.unassignedAgency);
     this.implementingAgency(data.implementingAgency || this.unassignedAgency);
     this.executingAgency(data.executingAgency || this.unassignedAgency);
