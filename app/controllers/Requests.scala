@@ -304,7 +304,7 @@ object Requests extends Controller with Secured {
         "input" -> number.verifying("Unauthorized",
           id => (user.isSuperAdmin || user.isDBM) && (id match {
             case 0 => true
-            case _ => GovUnit.findById(id).get.canImplement
+            case _ => GovUnit.findById(id).get.canImplement || req.govUnitId == id
           })
         )
       )(govUnitId => req.copy(implementingAgencyId = govUnitId match {

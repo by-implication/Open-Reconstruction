@@ -358,8 +358,11 @@ request.controller = function(){
     this.attachments(data.attachments);
     this.history(data.history);
     this.assessingAgencies(data.assessingAgencies);
-    this.implementingAgencies(data.implementingAgencies);
-    this.executingAgencies(data.implementingAgencies.concat(data.govUnit));
+
+    var assignableAgencies = data.implementingAgencies.concat(data.govUnit);
+    this.implementingAgencies(assignableAgencies);
+    this.executingAgencies(assignableAgencies);
+
     this.assessingAgency(data.assessingAgency || this.unassignedAgency);
     this.implementingAgency(data.implementingAgency || this.unassignedAgency);
     this.executingAgency(data.executingAgency || this.unassignedAgency);
