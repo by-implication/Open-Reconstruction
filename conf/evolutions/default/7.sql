@@ -149,6 +149,8 @@ CREATE TABLE dpwh_eplc (
   SAA_AMOUNT decimal,
   SARO_NUMBER text,
   obligation_amount decimal,
+  disbursement decimal,
+  financial_progress decimal,
   project_type text,
   months_of_completion integer,
   disaster text,

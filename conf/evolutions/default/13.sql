@@ -22,6 +22,6 @@ UPDATE reqs
 
 # --- !Downs
 
-DROP FUNCTION psgcify;
+DROP FUNCTION IF EXISTS psgcify();
 
-DROP FUNCTION filter_zeros;
+DROP FUNCTION IF EXISTS filter_zeros();
