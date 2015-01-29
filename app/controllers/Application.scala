@@ -34,7 +34,7 @@ object Application extends Controller with Secured {
         case None => false
       }
 
-      if(prerenderEnabled && !doNotPrerender && (!prerenderBotsOnly || isBot) && request.path != controllers.routes.Application.index().url) {
+      if(prerenderEnabled && !doNotPrerender && (!prerenderBotsOnly || isBot)) {
         // play.Logger.info("prerender!")
         val port = Play.configuration.getString("http.port")
         val url = String.format("http://localhost:%s%s", port.getOrElse("9000"), request.uri)
