@@ -67,14 +67,6 @@ home.controller = function(){
     return r;
   }
 
-  bi.ajax(routes.controllers.Viz.indexMeta()).then(function (r){
-    self.mostCommonDisasterType(r.mostCommonDisasterType);
-    self.mostCommonProjectType(r.mostCommonProjectType);
-    self.byLevel(r.byLevel);
-    self.byMonth(padMonths(r.byMonth));
-    self.byDisasterType(r.byDisasterType);
-  });
-
   bi.ajax(routes.controllers.Viz.getData("landing")).then(function (r){
     self.vizData(r.data);
     self.requests(r.data.requests);
