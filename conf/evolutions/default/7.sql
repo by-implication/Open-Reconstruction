@@ -148,7 +148,6 @@ CREATE TABLE dpwh_eplc (
   SAA_DATE timestamp,
   SAA_AMOUNT decimal,
   SARO_NUMBER text,
-  SARO_match boolean,
   obligation_amount decimal,
   disbursement decimal,
   financial_progress decimal,
