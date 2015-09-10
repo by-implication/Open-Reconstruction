@@ -88,11 +88,11 @@ object Application extends Controller with Secured {
       play.Logger.info("  Generating Sample Users")
       play.Logger.info(User.generateSamples())
       play.Logger.info("* Sample users generated")
-    }
 
-    play.Logger.info("  Generating legacy Users")
-    play.Logger.info(User.generateLegacyUsers())
-    play.Logger.info("* Legacy users generated")
+      play.Logger.info("  Generating legacy Users")
+      play.Logger.info(User.generateLegacyUsers())
+      play.Logger.info("* Legacy users generated")
+    }
 
     Redirect(routes.Application.index)
   }
