@@ -55,7 +55,7 @@ The client-side (in-browser) requirements are already included in the project, a
 
 ## License
 
-(TODO: decide which open-source license to offer this under. Maybe MIT or Apache?)
+This system is open source, and is provided under the terms of the ISC license found in [LICENSE.txt](https://github.com/by-implication/Open-Reconstruction/blob/master/LICENSE.txt).
 
 ---
 
