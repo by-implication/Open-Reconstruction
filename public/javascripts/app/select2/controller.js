@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2014 By Implication, Inc. under the terms of the
+ * ISC license found in LICENSE.txt
+ */
+
 select2.config = function(ctrl){
   return function(elem, isInit){
     var el = $(elem);

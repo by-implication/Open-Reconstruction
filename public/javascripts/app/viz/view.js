@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2014 By Implication, Inc. under the terms of the
+ * ISC license found in LICENSE.txt
+ */
+
 viz.view = function(ctrl){
   return app.template(ctrl.app, "Visualizations — " + ctrl.vis.title(), {className: "detail"}, [
     m("div#view.viz", [

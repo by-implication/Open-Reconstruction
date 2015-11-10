@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2014 By Implication, Inc. under the terms of the
+ * ISC license found in LICENSE.txt
+ */
+
 agencyCreation.view = function(ctrl){
   return app.template(ctrl.app, "New Agency", [
     common.banner("New Agency"),

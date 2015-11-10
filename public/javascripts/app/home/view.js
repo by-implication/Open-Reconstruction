@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2014 By Implication, Inc. under the terms of the
+ * ISC license found in LICENSE.txt
+ */
+
 home.view = function(ctrl){
   return app.template(ctrl.app, "Home", [
     m("div#home", [

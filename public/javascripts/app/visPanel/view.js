@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2014 By Implication, Inc. under the terms of the
+ * ISC license found in LICENSE.txt
+ */
+
 visPanel.view = function(ctrl){
   return m(".vis-panel", {
     className: _.chain(ctrl.tags())

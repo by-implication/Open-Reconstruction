@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2014 By Implication, Inc. under the terms of the
+ * ISC license found in LICENSE.txt
+ */
+
 // this is to make sure charts are ok
 // (ideally) we need a callback when rendering is finished
 visPanel.onresizer = {

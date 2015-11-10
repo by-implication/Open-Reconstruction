@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2014 By Implication, Inc. under the terms of the
+ * ISC license found in LICENSE.txt
+ */
+
 app.template = function(){
 
   var args = Array.prototype.slice.call(arguments, 0);

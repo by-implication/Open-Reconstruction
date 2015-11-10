@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2014 By Implication, Inc. under the terms of the
+ * ISC license found in LICENSE.txt
+ */
+
 select2.view = function(ctrl, additionalOptions){
   var defaultOptions = {
     config: select2.config(ctrl),
